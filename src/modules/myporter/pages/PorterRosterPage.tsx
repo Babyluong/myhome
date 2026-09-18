@@ -1,4 +1,4 @@
-﻿// src/modules/myporter/pages/PorterRosterPage.tsx
+// src/modules/myporter/pages/PorterRosterPage.tsx
 import React, { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
@@ -112,7 +112,7 @@ export const PorterRosterPage: React.FC = () => {
       if (profRes.data) setPorters(profRes.data)
       if (excRes.data) setExchanges(excRes.data)
     } catch (err: any) {
-      toast.error('Ralat Memuat Jadual', err.message)
+      toast.error('Error Loading Roster', err.message)
     } finally {
       setLoading(false)
     }
@@ -124,7 +124,7 @@ export const PorterRosterPage: React.FC = () => {
   // Month computations
   const currentYear = selectedDate.getFullYear()
   const currentMonth = selectedDate.getMonth()
-  const monthName = selectedDate.toLocaleDateString('ms-MY', { month: 'long', year: 'numeric' })
+  const monthName = selectedDate.toLocaleDateString('en-MY', { month: 'long', year: 'numeric' })
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
 
   // Construct 7-day weekly ranges for the selected month
@@ -140,7 +140,7 @@ export const PorterRosterPage: React.FC = () => {
 
       ranges.push({
         weekIndex: wIdx,
-        label: `Minggu ${wIdx} (${currentStart} - ${currentEnd} ${selectedDate.toLocaleDateString('ms-MY', { month: 'short' })})`,
+        label: `Week ${wIdx} (${currentStart} - ${currentEnd} ${selectedDate.toLocaleDateString('en-MY', { month: 'short' })})`,
         startDay: currentStart,
         endDay: currentEnd,
         startDateStr: startStr,
@@ -203,11 +203,11 @@ export const PorterRosterPage: React.FC = () => {
     try {
       const res = await moveOrUpdateRosterShift(targetPorterId, targetDate, draggedItem.shiftType)
       if (res.data) {
-        toast.success('Syif Dikemaskini (Drag & Drop)', `Syif ${draggedItem.shiftType.toUpperCase()} berjaya diletakkan pada ${targetDate}.`)
+        toast.success('Shift Updated (Drag & Drop)', `Shift ${draggedItem.shiftType.toUpperCase()} successfully assigned on ${targetDate}.`)
         fetchData()
       }
     } catch (err: any) {
-      toast.error('Ralat Mengemaskini Syif', err.message)
+      toast.error('Error Updating Shift', err.message)
     } finally {
       setDraggedItem(null)
     }
@@ -242,13 +242,13 @@ export const PorterRosterPage: React.FC = () => {
       if (type === 'weekly') {
         const targetWeek = activeWeekRange || weekRanges[0]
         await exportRosterToPdf(filteredPorters, roster, selectedDate, targetWeek)
-        toast.success('Eksport PDF Mingguan Berjaya', `Jadual ${targetWeek.label} Hospital Lawas telah dimuat turun.`)
+        toast.success('Weekly PDF Export Successful', `Roster for ${targetWeek.label} has been downloaded.`)
       } else {
         await exportRosterToPdf(filteredPorters, roster, selectedDate, null)
-        toast.success('Eksport PDF Bulanan Berjaya', 'Jadual bertugas bulanan Hospital Lawas telah dimuat turun.')
+        toast.success('Monthly PDF Export Successful', 'Full monthly duty roster has been downloaded.')
       }
     } catch (err: any) {
-      toast.error('Ralat Eksport PDF', err.message)
+      toast.error('PDF Export Error', err.message)
     }
   }
 
@@ -259,7 +259,7 @@ export const PorterRosterPage: React.FC = () => {
     const tgtPorter = porters.find(p => p.id === swapTargetId)
 
     if (!reqPorter || !tgtPorter) {
-      toast.error('Pilihan Tidak Sah', 'Sila pilih pemohon dan penerima pertukaran.')
+      toast.error('Invalid Selection', 'Please choose requester and recipient for swap.')
       return
     }
 
@@ -273,48 +273,48 @@ export const PorterRosterPage: React.FC = () => {
         target_porter_name: tgtPorter.full_name,
         target_date: swapTargetDate,
         target_shift: swapTargetShift,
-        reason: swapReason || 'Urusan peribadi/keluarga.'
+        reason: swapReason || 'Personal / family matters.'
       })
 
       if (res.data) {
-        toast.success('Permohonan Dihantar', 'Permohonan pertukaran syif sedang menunggu kelulusan penyelia.')
+        toast.success('Request Submitted', 'Shift swap request is pending supervisor approval.')
         setIsSwapModalOpen(false)
         fetchData()
       }
     } catch (err: any) {
-      toast.error('Ralat Menghantar Permohonan', err.message)
+      toast.error('Error Submitting Request', err.message)
     }
   }
 
   const handleApproveSwap = async (exchangeId: string) => {
     try {
-      const res = await approveShiftExchange(exchangeId, 'Penyelia PPK')
+      const res = await approveShiftExchange(exchangeId, 'Porter Supervisor')
       if (res.data) {
-        toast.success('Pertukaran Diluluskan!', 'Jadual bertugas kedua-dua PPK telah ditukar secara automatik.')
+        toast.success('Swap Approved!', 'Duty rosters for both porters have been updated.')
         fetchData()
       }
     } catch (err: any) {
-      toast.error('Ralat Kelulusan', err.message)
+      toast.error('Approval Error', err.message)
     }
   }
 
   const handleRejectSwap = async (exchangeId: string) => {
     try {
-      const res = await rejectShiftExchange(exchangeId, 'Tidak menepati kekosongan syif')
+      const res = await rejectShiftExchange(exchangeId, 'Slot mismatch')
       if (res.data) {
-        toast.success('Permohonan Ditolak', 'Permohonan pertukaran telah ditolak.')
+        toast.success('Request Rejected', 'Shift exchange request was rejected.')
         fetchData()
       }
     } catch (err: any) {
-      toast.error('Ralat', err.message)
+      toast.error('Error', err.message)
     }
   }
 
   const shiftConfigMap: Record<ShiftType, { label: string; short: string; hours: number; color: string; icon: React.ElementType }> = {
-    morning: { label: 'Pagi (07:00 - 15:00)', short: 'P', hours: 8, color: 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30', icon: Sun },
-    evening: { label: 'Petang (14:00 - 22:00)', short: 'PT', hours: 8, color: 'bg-orange-500/20 text-orange-300 border-orange-500/40 hover:bg-orange-500/30', icon: Sunset },
-    night: { label: 'Malam (21:30 - 07:30)', short: 'M', hours: 10, color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 hover:bg-indigo-500/30', icon: Moon },
-    off: { label: 'Rehat (Off Day)', short: 'R', hours: 0, color: 'bg-slate-800/60 text-slate-400 border-slate-700 hover:bg-slate-800', icon: Coffee }
+    morning: { label: 'Morning (07:00 - 15:00)', short: 'M', hours: 8, color: 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30', icon: Sun },
+    evening: { label: 'Evening (14:00 - 22:00)', short: 'E', hours: 8, color: 'bg-orange-500/20 text-orange-300 border-orange-500/40 hover:bg-orange-500/30', icon: Sunset },
+    night: { label: 'Night (21:30 - 07:30)', short: 'N', hours: 10, color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 hover:bg-indigo-500/30', icon: Moon },
+    off: { label: 'Off Day', short: 'OFF', hours: 0, color: 'bg-slate-800/60 text-slate-400 border-slate-700 hover:bg-slate-800', icon: Coffee }
   }
   return (
     <div className="w-full space-y-8 pb-16">
@@ -323,10 +323,10 @@ export const PorterRosterPage: React.FC = () => {
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-3">
             <CalendarIcon className="w-8 h-8 text-sky-400" />
-            <span>Jadual Bertugas Syif & Zon PPK</span>
+            <span>Porter Shift & Zone Duty Roster</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Pengurusan penugasan giliran syif Pembantu Perawatan Kesihatan (PPK) mengikut minggu, had 43 jam mingguan, dan pertukaran syif
+            Shift rotation schedule management for Healthcare Support Officers (PPK) by week, 43-hour weekly cap, and shift swaps
           </p>
         </div>
 
@@ -336,7 +336,7 @@ export const PorterRosterPage: React.FC = () => {
             className="flex items-center gap-2 bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-700 hover:to-red-800 text-white font-bold rounded-xl px-4 py-2 text-xs shadow-lg shadow-rose-500/20"
           >
             <FileDown className="w-4 h-4" />
-            <span>Eksport Jadual (PDF)</span>
+            <span>Export Roster (PDF)</span>
           </Button>
 
           <Button
@@ -353,7 +353,7 @@ export const PorterRosterPage: React.FC = () => {
             className="flex items-center gap-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold rounded-xl px-4 py-2 text-xs shadow-lg shadow-amber-500/20"
           >
             <ArrowLeftRight className="w-4 h-4" />
-            <span>Mohon Tukar Syif ({exchanges.filter(e => e.status === 'pending').length})</span>
+            <span>Request Shift Swap ({exchanges.filter(e => e.status === 'pending').length})</span>
           </Button>
 
           <Button
@@ -365,7 +365,7 @@ export const PorterRosterPage: React.FC = () => {
             className="flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-bold rounded-xl px-4 py-2 text-xs shadow-lg shadow-sky-500/20"
           >
             <Plus className="w-4 h-4" />
-            <span>Tambah Penugasan</span>
+            <span>Add Assignment</span>
           </Button>
         </div>
       </div>
@@ -379,22 +379,22 @@ export const PorterRosterPage: React.FC = () => {
             </div>
             <div>
               <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-                <span>Had Bekerja Maksimum 43 Jam Seminggu</span>
+                <span>Maximum 43-Hour Weekly Working Limit</span>
                 <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold rounded-full">
-                  Pekeliling KKM PPK
+                  MOH PPK Guideline
                 </span>
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                Sekiranya jumlah jam minggu ini kurang daripada 43 jam, baki defisit perlu diganti/ditambah pada jadual minggu berikutnya.
+                If total hours this week fall below 43 hours, the deficit carries forward to be added to the following week's schedule.
               </p>
             </div>
           </div>
 
           <div className="text-xs text-slate-300 font-mono bg-slate-950 px-3.5 py-1.5 rounded-xl border border-slate-800">
             {activeWeekRange ? (
-              <span>Paparan: <strong className="text-sky-400">{activeWeekRange.label}</strong> ({activeWeekRange.startDateStr} hingga {activeWeekRange.endDateStr})</span>
+              <span>View: <strong className="text-sky-400">{activeWeekRange.label}</strong> ({activeWeekRange.startDateStr} to {activeWeekRange.endDateStr})</span>
             ) : (
-              <span>Paparan: <strong className="text-sky-400">Keseluruhan Bulan {monthName}</strong></span>
+              <span>View: <strong className="text-sky-400">Full Month of {monthName}</strong></span>
             )}
           </div>
         </div>
@@ -415,11 +415,11 @@ export const PorterRosterPage: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h4 className="font-extrabold text-white text-xs">{summary.porter_name}</h4>
-                    <p className="text-[10px] text-slate-400 font-mono">Had: 43 Jam Seminggu</p>
+                    <p className="text-[10px] text-slate-400 font-mono">Limit: 43 Hours/Week</p>
                   </div>
                   <div className="text-right">
                     <span className="font-mono font-black text-sm text-white">
-                      {summary.total_hours_scheduled} <span className="text-[10px] font-normal text-slate-400">/ 43j</span>
+                      {summary.total_hours_scheduled} <span className="text-[10px] font-normal text-slate-400">/ 43h</span>
                     </span>
                   </div>
                 </div>
@@ -443,19 +443,19 @@ export const PorterRosterPage: React.FC = () => {
                   {isOptimum && (
                     <span className="text-emerald-400 font-bold flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" />
-                      <span>Cukup 43 Jam (Optimum)</span>
+                      <span>Optimum (43 Hours)</span>
                     </span>
                   )}
                   {isDeficit && (
                     <span className="text-amber-400 font-semibold flex items-center gap-1">
                       <AlertTriangle className="w-3 h-3" />
-                      <span>Kurang {summary.deficit_carried_forward}j (Ganti minggu depan)</span>
+                      <span>Deficit {summary.deficit_carried_forward}h (Carry forward)</span>
                     </span>
                   )}
                   {isOver && (
                     <span className="text-rose-400 font-bold flex items-center gap-1">
                       <AlertTriangle className="w-3 h-3" />
-                      <span>Lebih {summary.hour_difference}j (Melebihi Had)</span>
+                      <span>Over {summary.hour_difference}h (Exceeds Cap)</span>
                     </span>
                   )}
                   <span className="font-mono text-slate-500 font-bold">{pct}%</span>
@@ -496,7 +496,7 @@ export const PorterRosterPage: React.FC = () => {
               variant="outline"
               className="text-xs font-bold border-slate-800 bg-slate-950 text-sky-400 hover:text-white rounded-xl h-9 px-3"
             >
-              Hari Ini
+              Today
             </Button>
           </div>
 
@@ -508,7 +508,7 @@ export const PorterRosterPage: React.FC = () => {
                 activeView === 'matrix' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
-              Matriks Jadual
+              Roster Matrix
             </button>
             <button
               onClick={() => setActiveView('weekly_board')}
@@ -516,7 +516,7 @@ export const PorterRosterPage: React.FC = () => {
                 activeView === 'weekly_board' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
-              Papan Syif Harian
+              Daily Shift Board
             </button>
             <button
               onClick={() => setActiveView('exchanges')}
@@ -524,7 +524,7 @@ export const PorterRosterPage: React.FC = () => {
                 activeView === 'exchanges' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
-              <span>Tukar Syif</span>
+              <span>Shift Swaps</span>
               {exchanges.filter(e => e.status === 'pending').length > 0 && (
                 <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
               )}
@@ -536,7 +536,7 @@ export const PorterRosterPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800">
           <span className="text-xs font-bold text-slate-400 flex items-center gap-1.5 mr-2">
             <Filter className="w-3.5 h-3.5 text-sky-400" />
-            <span>Pilih Minggu:</span>
+            <span>Select Week:</span>
           </span>
 
           <button
@@ -547,7 +547,7 @@ export const PorterRosterPage: React.FC = () => {
                 : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
             }`}
           >
-            Semua Bulan (1 - {daysInMonth})
+            Full Month (1 - {daysInMonth})
           </button>
 
           {weekRanges.map((w) => (
@@ -568,13 +568,13 @@ export const PorterRosterPage: React.FC = () => {
         {/* PORTER, ZONE & SEARCH FILTERS */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
           <div>
-            <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Tapis Petugas PPK</label>
+            <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Filter Porters</label>
             <select
               value={filterPorterId}
               onChange={(e) => setFilterPorterId(e.target.value)}
               className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-xs text-white"
             >
-              <option value="all">Semua Petugas PPK ({porters.length})</option>
+              <option value="all">All Porters ({porters.length})</option>
               {porters.map((p) => (
                 <option key={p.id} value={p.id}>{p.full_name} ({p.staff_no})</option>
               ))}
@@ -582,28 +582,28 @@ export const PorterRosterPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Tapis Zon Penugasan</label>
+            <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Filter Zones</label>
             <select
               value={filterZone}
               onChange={(e) => setFilterZone(e.target.value)}
               className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-xs text-white"
             >
-              <option value="all">Semua Zon Hospital</option>
-              <option value="Zon A">Zon A (Wad Kenanga / Mawar)</option>
-              <option value="Zon B">Zon B (Dewan Bedah & ICU)</option>
-              <option value="Zon C">Zon C (Makmal & Farmasi)</option>
-              <option value="Zon D">Zon D (Kecemasan & Trauma)</option>
+              <option value="all">All Hospital Zones</option>
+              <option value="Zon A">Zone A (Kenanga / Mawar Ward)</option>
+              <option value="Zon B">Zone B (Operating Theatre & ICU)</option>
+              <option value="Zon C">Zone C (Laboratory & Pharmacy)</option>
+              <option value="Zon D">Zone D (Emergency & Trauma)</option>
               <option value="Central Pool">Central Pool & Triage</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Cari Nama / No. Staf</label>
+            <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Search Name / Staff No</label>
             <div className="relative">
               <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
               <input
                 type="text"
-                placeholder="Cari PPK..."
+                placeholder="Search Porter..."
                 value={filterSearch}
                 onChange={(e) => setFilterSearch(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
@@ -615,25 +615,25 @@ export const PorterRosterPage: React.FC = () => {
 
       {/* SHIFT LEGEND BAR */}
       <div className="flex flex-wrap items-center gap-3 text-xs bg-slate-900/60 border border-slate-800/80 px-5 py-3 rounded-2xl">
-        <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider mr-2">Petunjuk Syif:</span>
+        <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider mr-2">Shift Legend:</span>
         <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 font-bold">
           <Sun className="w-3.5 h-3.5" />
-          <span>Pagi (P): 07:00 - 15:00 (8j)</span>
+          <span>Morning (M): 07:00 - 15:00 (8h)</span>
         </div>
         <div className="flex items-center gap-1.5 px-3 py-1 bg-orange-500/10 border border-orange-500/30 rounded-xl text-orange-300 font-bold">
           <Sunset className="w-3.5 h-3.5" />
-          <span>Petang (PT): 14:00 - 22:00 (8j)</span>
+          <span>Evening (E): 14:00 - 22:00 (8h)</span>
         </div>
         <div className="flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-indigo-300 font-bold">
           <Moon className="w-3.5 h-3.5" />
-          <span>Malam (M): 21:30 - 07:30 (10j)</span>
+          <span>Night (N): 21:30 - 07:30 (10h)</span>
         </div>
         <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-800 border border-slate-700 rounded-xl text-slate-300 font-bold">
           <Coffee className="w-3.5 h-3.5" />
-          <span>Rehat (R): Hari Kelepasan (0j)</span>
+          <span>Off Day (OFF): Rest Day (0h)</span>
         </div>
         <span className="text-slate-500 ml-auto text-[11px] hidden lg:inline">
-          💡 <em>Klik atau seret (drag & drop) kotak syif untuk menukar penugasan.</em>
+          💡 <em>Click or drag & drop shift badges to update assignments.</em>
         </span>
       </div>
       {/* VIEW 1: MATRIX TABLE (WEEKLY OR MONTHLY) */}
@@ -644,12 +644,12 @@ export const PorterRosterPage: React.FC = () => {
               <CalendarDays className="w-5 h-5 text-sky-400" />
               <span>
                 {activeWeekRange
-                  ? `Jadual Penugasan Syif: ${activeWeekRange.label}`
-                  : `Jadual Penugasan Syif: Bulan Penuh (${monthName})`}
+                  ? `Shift Assignment Roster: ${activeWeekRange.label}`
+                  : `Shift Assignment Roster: Full Month (${monthName})`}
               </span>
             </h3>
             <span className="text-xs text-slate-400 font-mono">
-              Memaparkan <strong className="text-sky-400">{filteredPorters.length}</strong> orang petugas PPK
+              Displaying <strong className="text-sky-400">{filteredPorters.length}</strong> Healthcare Support Officers (PPK)
             </span>
           </div>
 
@@ -657,8 +657,8 @@ export const PorterRosterPage: React.FC = () => {
             <table className="w-full text-xs text-left border-collapse min-w-[700px]">
               <thead className="bg-slate-950 text-slate-400 uppercase font-bold text-[10px] border-b border-slate-800 sticky top-0 z-10">
                 <tr>
-                  <th className="p-3 w-56 sticky left-0 bg-slate-950 z-20">Petugas PPK</th>
-                  <th className="p-3 w-40">Zon Bertugas</th>
+                  <th className="p-3 w-56 sticky left-0 bg-slate-950 z-20">Porter Staff</th>
+                  <th className="p-3 w-40">Duty Zone</th>
                   {(() => {
                     const startDay = activeWeekRange ? activeWeekRange.startDay : 1
                     const endDay = activeWeekRange ? activeWeekRange.endDay : daysInMonth
@@ -679,14 +679,14 @@ export const PorterRosterPage: React.FC = () => {
                             isToday ? 'bg-sky-500/20 text-sky-300 font-black' : isWeekend ? 'text-amber-400/80 bg-slate-950/80' : ''
                           }`}
                         >
-                          <div className="text-[10px] font-bold uppercase">{dateObj.toLocaleDateString('ms-MY', { weekday: 'short' })}</div>
+                          <div className="text-[10px] font-bold uppercase">{dateObj.toLocaleDateString('en-MY', { weekday: 'short' })}</div>
                           <div className="text-xs font-extrabold">{dayNum}</div>
                         </th>
                       )
                     })
                   })()}
-                  <th className="p-3 text-center border-l border-slate-800">Jumlah Jam</th>
-                  <th className="p-3 text-center border-l border-slate-800">Status 43j</th>
+                  <th className="p-3 text-center border-l border-slate-800">Total Hours</th>
+                  <th className="p-3 text-center border-l border-slate-800">43h Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60">
@@ -732,7 +732,7 @@ export const PorterRosterPage: React.FC = () => {
                             onDrop={() => handleDropOnDate(porter.id, dateStr)}
                             onClick={() => handleCellClick(porter.id, dateStr, shiftType)}
                             className="p-1.5 text-center border-l border-slate-800/40 hover:bg-sky-500/10 cursor-pointer transition-colors"
-                            title={`${porter.full_name} - ${dateStr}: ${cfg.label} (${hours} jam). Klik untuk tukar syif.`}
+                            title={`${porter.full_name} - ${dateStr}: ${cfg.label} (${hours}h). Click to cycle shift.`}
                           >
                             <div
                               draggable
@@ -743,7 +743,7 @@ export const PorterRosterPage: React.FC = () => {
                             >
                               <span>{cfg.short}</span>
                               {activeWeekRange && (
-                                <span className="text-[9px] font-normal opacity-80">({hours}j)</span>
+                                <span className="text-[9px] font-normal opacity-80">({hours}h)</span>
                               )}
                             </div>
                           </td>
@@ -751,21 +751,21 @@ export const PorterRosterPage: React.FC = () => {
                       })}
 
                       <td className="p-3 text-center font-mono font-black text-sky-400 border-l border-slate-800 bg-slate-950/40">
-                        {totalHours}j
+                        {totalHours}h
                       </td>
 
                       <td className="p-3 text-center border-l border-slate-800 bg-slate-950/40">
                         {totalHours === 43 ? (
                           <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 font-bold text-[10px] rounded-full">
-                            Optimum (43j)
+                            Optimum (43h)
                           </span>
                         ) : totalHours < 43 ? (
                           <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 font-bold text-[10px] rounded-full">
-                            Kurang {43 - totalHours}j
+                            Deficit {43 - totalHours}h
                           </span>
                         ) : (
                           <span className="px-2 py-0.5 bg-rose-500/20 text-rose-400 font-bold text-[10px] rounded-full">
-                            Lebih {totalHours - 43}j
+                            Over {totalHours - 43}h
                           </span>
                         )}
                       </td>
@@ -793,7 +793,7 @@ export const PorterRosterPage: React.FC = () => {
                 onDrop={() => {
                   if (draggedItem) {
                     moveOrUpdateRosterShift(draggedItem.porterId, todayStr, shiftKey).then(() => {
-                      toast.success('Syif Ditukar', `PPK telah dipindahkan ke ${cfg.label}.`)
+                      toast.success('Shift Reassigned', `Porter moved to ${cfg.label}.`)
                       fetchData()
                       setDraggedItem(null)
                     })
@@ -806,11 +806,11 @@ export const PorterRosterPage: React.FC = () => {
                     <cfg.icon className="w-5 h-5 text-sky-400" />
                     <div>
                       <h4 className="font-extrabold text-white text-xs">{cfg.label}</h4>
-                      <p className="text-[10px] text-slate-400 font-mono">{cfg.hours} Jam Bekerja</p>
+                      <p className="text-[10px] text-slate-400 font-mono">{cfg.hours} Working Hours</p>
                     </div>
                   </div>
                   <span className="font-mono font-black text-xs px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-slate-200">
-                    {portersInShift.length} PPK
+                    {portersInShift.length} Porters
                   </span>
                 </div>
 
@@ -843,7 +843,7 @@ export const PorterRosterPage: React.FC = () => {
 
                   {portersInShift.length === 0 && (
                     <div className="h-full flex items-center justify-center p-8 border-2 border-dashed border-slate-800 rounded-2xl text-center">
-                      <p className="text-xs text-slate-500">Tiada penugasan bagi syif ini. Tarik kad PPK ke sini untuk memasukkan.</p>
+                      <p className="text-xs text-slate-500">No porters assigned to this shift. Drag & drop cards here to assign.</p>
                     </div>
                   )}
                 </div>
@@ -860,10 +860,10 @@ export const PorterRosterPage: React.FC = () => {
             <div>
               <h3 className="text-base font-extrabold text-white flex items-center gap-2">
                 <ArrowLeftRight className="w-5 h-5 text-amber-400" />
-                <span>Senarai Permohonan Pertukaran Syif (Suka Sama Suka)</span>
+                <span>Shift Swap Requests Management</span>
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                Kelulusan rasmi pertukaran syif antara kakitangan PPK dengan audit automatik jadual
+                Official supervisor approval for mutual shift swaps with automated roster auditing
               </p>
             </div>
 
@@ -871,21 +871,21 @@ export const PorterRosterPage: React.FC = () => {
               onClick={() => setIsSwapModalOpen(true)}
               className="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl px-4 py-2"
             >
-              + Mohon Pertukaran Baharu
+              + Submit New Shift Swap
             </Button>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-xs text-left text-slate-300">
               <thead className="bg-slate-950 text-slate-400 uppercase font-bold text-[10px] border-b border-slate-800">
                 <tr>
-                  <th className="p-3.5">Pemohon Asal</th>
-                  <th className="p-3.5">Syif Dilepaskan</th>
-                  <th className="p-3.5">Petugas Pengganti</th>
-                  <th className="p-3.5">Syif Diambil</th>
-                  <th className="p-3.5">Sebab Pertukaran</th>
+                  <th className="p-3.5">Requester</th>
+                  <th className="p-3.5">Relinquished Shift</th>
+                  <th className="p-3.5">Target Porter</th>
+                  <th className="p-3.5">Acquired Shift</th>
+                  <th className="p-3.5">Swap Reason</th>
                   <th className="p-3.5 text-center">Status</th>
-                  <th className="p-3.5 text-right">Tindakan</th>
+                  <th className="p-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60">
@@ -908,7 +908,7 @@ export const PorterRosterPage: React.FC = () => {
                             ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40'
                             : 'bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse'
                       }`}>
-                        {ex.status === 'approved' ? 'DILULUSKAN' : ex.status === 'rejected' ? 'DITOLAK' : 'MENUNGGU KELULUSAN'}
+                        {ex.status === 'approved' ? 'APPROVED' : ex.status === 'rejected' ? 'REJECTED' : 'PENDING APPROVAL'}
                       </span>
                     </td>
                     <td className="p-3.5 text-right">
@@ -919,7 +919,7 @@ export const PorterRosterPage: React.FC = () => {
                             className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 font-bold"
                           >
                             <Check className="w-3.5 h-3.5" />
-                            <span>Lulus</span>
+                            <span>Approve</span>
                           </Button>
                           <Button
                             onClick={() => handleRejectSwap(ex.id)}
@@ -927,12 +927,12 @@ export const PorterRosterPage: React.FC = () => {
                             className="border-rose-700 text-rose-400 hover:bg-rose-950 px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 font-bold"
                           >
                             <X className="w-3.5 h-3.5" />
-                            <span>Tolak</span>
+                            <span>Reject</span>
                           </Button>
                         </div>
                       ) : (
                         <span className="text-slate-500 font-mono text-[10px]">
-                          {ex.approved_by || 'Selesai'}
+                          {ex.approved_by || 'Completed'}
                         </span>
                       )}
                     </td>
@@ -941,6 +941,71 @@ export const PorterRosterPage: React.FC = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile View: High-End Shift Swap Cards */}
+          <div className="md:hidden divide-y divide-slate-800/60">
+            {exchanges.map((ex) => (
+              <div key={ex.id} className="p-4 space-y-3 hover:bg-slate-900/40 transition">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h4 className="font-bold text-white text-sm">
+                      {ex.requester_porter_name}
+                      <span className="text-slate-400 font-normal mx-1.5">⇄</span>
+                      {ex.target_porter_name}
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-0.5">{ex.reason}</p>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold flex-shrink-0 ${
+                    ex.status === 'approved'
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                      : ex.status === 'rejected'
+                        ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40'
+                        : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                  }`}>
+                    {ex.status === 'approved' ? 'APPROVED' : ex.status === 'rejected' ? 'REJECTED' : 'PENDING'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-xs">
+                  <div>
+                    <div className="text-[10px] text-slate-400 uppercase font-semibold">Dilepas</div>
+                    <div className="font-mono text-amber-400 font-bold mt-0.5">
+                      {ex.requester_shift.toUpperCase()}
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono">{ex.requester_date}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-slate-400 uppercase font-semibold">Diperoleh</div>
+                    <div className="font-mono text-sky-400 font-bold mt-0.5">
+                      {ex.target_shift.toUpperCase()}
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono">{ex.target_date}</div>
+                  </div>
+                </div>
+
+                {ex.status === 'pending' ? (
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={() => handleApproveSwap(ex.id)}
+                      className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow"
+                    >
+                      <Check className="w-3.5 h-3.5" /> Approve
+                    </button>
+                    <button
+                      onClick={() => handleRejectSwap(ex.id)}
+                      className="flex-1 py-2 bg-slate-800 hover:bg-rose-950/80 text-rose-400 border border-slate-700 hover:border-rose-700 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5"
+                    >
+                      <X className="w-3.5 h-3.5" /> Reject
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-right text-[11px] text-slate-500 font-mono">
+                    Tindakan: {ex.approved_by || 'Selesai'}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -948,11 +1013,11 @@ export const PorterRosterPage: React.FC = () => {
       <Modal
         isOpen={isPdfModalOpen}
         onClose={() => setIsPdfModalOpen(false)}
-        title="Pilihan Eksport Jadual Bertugas PDF (Hospital Lawas)"
+        title="Official PDF Roster Export (Lawas Hospital)"
       >
         <div className="space-y-4 p-3 text-xs">
           <p className="text-slate-300">
-            Sila pilih format penjanaan fail PDF rasmi berserta Kepala Surat Hospital Lawas dan Jata Negara:
+            Please choose the official PDF report format complete with Lawas Hospital Header and Crest:
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -963,9 +1028,9 @@ export const PorterRosterPage: React.FC = () => {
               <div className="p-2.5 bg-sky-500/10 rounded-xl w-fit text-sky-400">
                 <FileDown className="w-5 h-5" />
               </div>
-              <h4 className="font-extrabold text-white text-sm">Jadual Mingguan</h4>
+              <h4 className="font-extrabold text-white text-sm">Weekly Roster</h4>
               <p className="text-slate-400 text-[11px]">
-                Eksport jadual bagi <strong className="text-sky-400">{activeWeekRange?.label || 'Minggu 1'}</strong> (7 hari dengan kolum luas dan butiran syif mingguan).
+                Export roster for <strong className="text-sky-400">{activeWeekRange?.label || 'Week 1'}</strong> (7 days with detailed shift columns).
               </p>
             </div>
 
@@ -976,9 +1041,9 @@ export const PorterRosterPage: React.FC = () => {
               <div className="p-2.5 bg-emerald-500/10 rounded-xl w-fit text-emerald-400">
                 <Printer className="w-5 h-5" />
               </div>
-              <h4 className="font-extrabold text-white text-sm">Jadual Bulanan Penuh</h4>
+              <h4 className="font-extrabold text-white text-sm">Full Monthly Roster</h4>
               <p className="text-slate-400 text-[11px]">
-                Eksport matriks keseluruhan bagi <strong className="text-emerald-400">Bulan {monthName}</strong> (1 hingga {daysInMonth} hari).
+                Export complete monthly matrix for <strong className="text-emerald-400">{monthName}</strong> (1 to {daysInMonth} days).
               </p>
             </div>
           </div>
@@ -989,7 +1054,7 @@ export const PorterRosterPage: React.FC = () => {
               onClick={() => setIsPdfModalOpen(false)}
               className="border-slate-700 text-slate-300"
             >
-              Tutup
+              Close
             </Button>
           </div>
         </div>
@@ -999,21 +1064,21 @@ export const PorterRosterPage: React.FC = () => {
       <Modal
         isOpen={isSwapModalOpen}
         onClose={() => setIsSwapModalOpen(false)}
-        title="Permohonan Pertukaran Syif (Shift Swap)"
+        title="Shift Swap Request"
       >
         <form onSubmit={handleCreateSwap} className="space-y-4 p-2 text-xs">
           <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-amber-300 text-xs flex items-start gap-2.5">
             <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <span>
-              Pertukaran syif adalah berasaskan persetujuan bersama (Suka Sama Suka) dan tidak boleh melanggar had waktu kerja 43 jam seminggu.
+              Shift swaps are based on mutual agreement and must comply with the 43-hour weekly work cap.
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-3">
-              <h4 className="font-extrabold text-white text-xs">Kakitangan Pemohon:</h4>
+              <h4 className="font-extrabold text-white text-xs">Requesting Porter:</h4>
               <div>
-                <label className="block text-slate-400 font-bold mb-1">Nama PPK</label>
+                <label className="block text-slate-400 font-bold mb-1">Porter Name</label>
                 <select
                   value={swapRequesterId}
                   onChange={(e) => setSwapRequesterId(e.target.value)}
@@ -1025,7 +1090,7 @@ export const PorterRosterPage: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-slate-400 font-bold mb-1">Tarikh Syif Pemohon</label>
+                <label className="block text-slate-400 font-bold mb-1">Requester Shift Date</label>
                 <input
                   type="date"
                   value={swapRequesterDate}
@@ -1035,24 +1100,24 @@ export const PorterRosterPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-slate-400 font-bold mb-1">Jenis Syif Asal</label>
+                <label className="block text-slate-400 font-bold mb-1">Relinquishing Shift Type</label>
                 <select
                   value={swapRequesterShift}
                   onChange={(e) => setSwapRequesterShift(e.target.value as ShiftType)}
                   className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-white font-semibold"
                 >
-                  <option value="morning">Pagi (07:00 - 15:00)</option>
-                  <option value="evening">Petang (14:00 - 22:00)</option>
-                  <option value="night">Malam (21:30 - 07:30)</option>
-                  <option value="off">Rehat (Off Day)</option>
+                  <option value="morning">Morning (07:00 - 15:00)</option>
+                  <option value="evening">Evening (14:00 - 22:00)</option>
+                  <option value="night">Night (21:30 - 07:30)</option>
+                  <option value="off">Off Day</option>
                 </select>
               </div>
             </div>
 
             <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-3">
-              <h4 className="font-extrabold text-white text-xs">Kakitangan Pengganti (Target):</h4>
+              <h4 className="font-extrabold text-white text-xs">Target Replacement Porter:</h4>
               <div>
-                <label className="block text-slate-400 font-bold mb-1">Nama PPK</label>
+                <label className="block text-slate-400 font-bold mb-1">Porter Name</label>
                 <select
                   value={swapTargetId}
                   onChange={(e) => setSwapTargetId(e.target.value)}
@@ -1064,7 +1129,7 @@ export const PorterRosterPage: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-slate-400 font-bold mb-1">Tarikh Syif Pengganti</label>
+                <label className="block text-slate-400 font-bold mb-1">Target Shift Date</label>
                 <input
                   type="date"
                   value={swapTargetDate}
@@ -1074,28 +1139,28 @@ export const PorterRosterPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-slate-400 font-bold mb-1">Jenis Syif Diambil</label>
+                <label className="block text-slate-400 font-bold mb-1">Acquired Shift Type</label>
                 <select
                   value={swapTargetShift}
                   onChange={(e) => setSwapTargetShift(e.target.value as ShiftType)}
                   className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-white font-semibold"
                 >
-                  <option value="morning">Pagi (07:00 - 15:00)</option>
-                  <option value="evening">Petang (14:00 - 22:00)</option>
-                  <option value="night">Malam (21:30 - 07:30)</option>
-                  <option value="off">Rehat (Off Day)</option>
+                  <option value="morning">Morning (07:00 - 15:00)</option>
+                  <option value="evening">Evening (14:00 - 22:00)</option>
+                  <option value="night">Night (21:30 - 07:30)</option>
+                  <option value="off">Off Day</option>
                 </select>
               </div>
             </div>
           </div>
 
           <div>
-            <label className="block text-slate-400 font-bold mb-1">Alasan Pertukaran</label>
+            <label className="block text-slate-400 font-bold mb-1">Reason for Swap</label>
             <textarea
               rows={2}
               value={swapReason}
               onChange={(e) => setSwapReason(e.target.value)}
-              placeholder="cth: Menggantikan teman ada temujanji klinik kesihatan..."
+              placeholder="e.g. Covering for medical appointment..."
               className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
               required
             />
@@ -1108,13 +1173,13 @@ export const PorterRosterPage: React.FC = () => {
               onClick={() => setIsSwapModalOpen(false)}
               className="border-slate-700 text-slate-300"
             >
-              Batal
+              Cancel
             </Button>
             <Button
               type="submit"
               className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6"
             >
-              Hantar Permohonan
+              Submit Request
             </Button>
           </div>
         </form>
@@ -1124,7 +1189,7 @@ export const PorterRosterPage: React.FC = () => {
       <Modal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        title="Penugasan Syif Petugas PPK"
+        title="Assign Porter Shift"
       >
         <form
           onSubmit={async (e) => {
@@ -1138,14 +1203,14 @@ export const PorterRosterPage: React.FC = () => {
               shift: editShift,
               zone: editZone
             })
-            toast.success('Syif Disimpan', `Syif untuk ${porter.full_name} pada ${editDate} telah dikemaskini.`)
+            toast.success('Shift Saved', `Shift for ${porter.full_name} on ${editDate} has been updated.`)
             setIsEditModalOpen(false)
             fetchData()
           }}
           className="space-y-4 p-2 text-xs"
         >
           <div>
-            <label className="block text-slate-400 font-bold mb-1">Petugas PPK</label>
+            <label className="block text-slate-400 font-bold mb-1">Porter Staff</label>
             <select
               value={editPorterId}
               onChange={(e) => setEditPorterId(e.target.value)}
@@ -1159,7 +1224,7 @@ export const PorterRosterPage: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-400 font-bold mb-1">Tarikh</label>
+              <label className="block text-slate-400 font-bold mb-1">Date</label>
               <input
                 type="date"
                 value={editDate}
@@ -1169,22 +1234,22 @@ export const PorterRosterPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-slate-400 font-bold mb-1">Syif</label>
+              <label className="block text-slate-400 font-bold mb-1">Shift</label>
               <select
                 value={editShift}
                 onChange={(e) => setEditShift(e.target.value as ShiftType)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-semibold"
               >
-                <option value="morning">Pagi (07:00 - 15:00, 8j)</option>
-                <option value="evening">Petang (14:00 - 22:00, 8j)</option>
-                <option value="night">Malam (21:30 - 07:30, 10j)</option>
-                <option value="off">Rehat (Off Day, 0j)</option>
+                <option value="morning">Morning (07:00 - 15:00, 8h)</option>
+                <option value="evening">Evening (14:00 - 22:00, 8h)</option>
+                <option value="night">Night (21:30 - 07:30, 10h)</option>
+                <option value="off">Off Day (0h)</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-slate-400 font-bold mb-1">Zon Penugasan Utama</label>
+            <label className="block text-slate-400 font-bold mb-1">Primary Duty Zone</label>
             <input
               type="text"
               value={editZone}
@@ -1201,13 +1266,13 @@ export const PorterRosterPage: React.FC = () => {
               onClick={() => setIsEditModalOpen(false)}
               className="border-slate-700 text-slate-300"
             >
-              Batal
+              Cancel
             </Button>
             <Button
               type="submit"
               className="bg-sky-600 hover:bg-sky-700 text-white font-bold px-6"
             >
-              Simpan Penugasan
+              Save Assignment
             </Button>
           </div>
         </form>

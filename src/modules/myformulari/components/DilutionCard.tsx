@@ -1,305 +1,429 @@
-import React from 'react'
-import { Droplets, CheckCircle2, XCircle, AlertTriangle, Clock, Activity, ShieldAlert, MapPin, Sparkles, Layers, ArrowRight, ShieldCheck, Thermometer } from 'lucide-react'
+import React, { useState } from 'react'
+import {
+  Droplets,
+  CheckCircle2,
+  AlertTriangle,
+  Clock,
+  Activity,
+  Sparkles,
+  ShieldCheck,
+  BookOpen,
+  Info,
+  Syringe,
+  FileText,
+  AlertOctagon,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Thermometer,
+  Layers,
+  Zap,
+  HelpCircle,
+  Copy,
+  Check,
+  ArrowRight,
+  Stethoscope,
+  HeartPulse
+} from 'lucide-react'
 import { ReconstitutionProtocol, DilutionProtocol } from '../types/formulariTypes'
+import { getKkmDilutionProtocol, KkmDilutionMonograph } from '../data/kkmDilutionMasterDatabase'
 
 interface DilutionCardProps {
   reconstitution?: ReconstitutionProtocol
   dilution?: DilutionProtocol
   drugName: string
+  monograph?: KkmDilutionMonograph
+}
+
+interface ParsedRegimen {
+  title: string
+  items: string[]
+  isSpecial?: boolean
+}
+
+function parseAdministrationRegimens(text: string): ParsedRegimen[] {
+  if (!text) return []
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
+  const regimens: ParsedRegimen[] = []
+  let current: ParsedRegimen = { title: '', items: [] }
+
+  for (const line of lines) {
+    const isHeading = /^(I\.|II\.|III\.|IV\.|V\.|Loading dose|Maintenance dose|Test dose|Total dose|IV bolus|IV infusion|Continuous infusion|Deep IM|IM|SC|Intermittent infusion)/i.test(line)
+
+    if (isHeading) {
+      if (current.title || current.items.length > 0) {
+        regimens.push(current)
+      }
+      current = { title: line, items: [] }
+    } else {
+      if (!current.title) {
+        current.title = 'Panduan & Tatacara Pemberian (Standard Administration)'
+      }
+      current.items.push(line)
+    }
+  }
+
+  if (current.title || current.items.length > 0) {
+    regimens.push(current)
+  }
+
+  return regimens
+}
+
+function formatHighlightedText(text: string): React.ReactNode {
+  // Highlight common dosage units, rates, and durations
+  const parts = text.split(/(\b\d+(?:\.\d+)?\s*(?:mg\/kg(?:\/hr)?|mg\/ml|mcg\/kg\/min|mg\/min|mmol\/L|mmol\/hr|mg|g|mcg|ml|l|hours?|mins?|minutes?|seconds?|days?)\b)/gi)
+  
+  return parts.map((part, i) => {
+    if (/^\d+(?:\.\d+)?\s*(?:mg\/kg|mg\/ml|mcg\/kg|mg\/min|mmol|mg|g|mcg|ml|l|hours?|mins?|minutes?|seconds?|days?)/i.test(part.trim())) {
+      return (
+        <span key={i} className="font-extrabold text-teal-900 bg-teal-100/60 px-1.5 py-0.5 rounded text-[11px] font-mono mx-0.5">
+          {part}
+        </span>
+      )
+    }
+    return part
+  })
 }
 
 export const DilutionCard: React.FC<DilutionCardProps> = ({
   reconstitution,
   dilution,
-  drugName
+  drugName,
+  monograph: propMonograph
 }) => {
-  if (!reconstitution?.isApplicable && !dilution?.isApplicable) {
+  const [isCopied, setIsCopied] = useState(false)
+  const [showReferences, setShowReferences] = useState(false)
+
+  // Look up official KKM monograph
+  const kkmMonograph = propMonograph || getKkmDilutionProtocol(drugName)
+
+  const handleCopyProtocol = () => {
+    if (!kkmMonograph) return
+    const text = `[KKM IV DILUTION PROTOCOL] ${kkmMonograph.rawTitle}
+Jenama KKM: ${kkmMonograph.brandText}
+Rekonstitusi: ${kkmMonograph.reconstitutionText}
+Pelarut (Diluent): ${kkmMonograph.diluentText}
+Had Pelarutan: ${kkmMonograph.suggestedMinimumDilutions}
+Arahan Pemberian:
+${kkmMonograph.administrationText}
+Kestabilan: ${kkmMonograph.stabilityRaw}
+Peringatan: ${kkmMonograph.comments.join('; ')}`
+    navigator.clipboard.writeText(text)
+    setIsCopied(true)
+    setTimeout(() => setIsCopied(false), 2000)
+  }
+
+  if (!kkmMonograph && !reconstitution?.isApplicable && !dilution?.isApplicable) {
     return (
-      <div className="p-8 bg-slate-50 rounded-3xl border border-slate-200 text-center text-slate-500 space-y-2">
-        <Droplets className="w-10 h-10 mx-auto text-slate-400 opacity-60" />
-        <p className="font-bold text-slate-800 text-sm">Tiada Protokol Rekonstitusi / Pelarutan IV Khusus</p>
-        <p className="text-xs text-slate-500 max-w-md mx-auto">
-          Ubat ini sedia untuk digunakan dalam bentuk dos asal (cth: tablet oral, sirap sedia guna, krim) dan tidak memerlukan pembancuhan parenteral.
-        </p>
+      <div className="p-8 bg-slate-50/80 rounded-3xl border border-slate-200 text-center text-slate-500 space-y-3">
+        <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+          <Droplets className="w-6 h-6" />
+        </div>
+        <div>
+          <h4 className="font-bold text-slate-800 text-sm">Tiada Protokol Pelarutan IV Khusus</h4>
+          <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 leading-relaxed">
+            Ubat ini sedia untuk digunakan dalam bentuk dos asal atau tidak memerlukan pelarutan khas. Sila rujuk Risalah Sisipan Produk (Product Insert) pengeluar.
+          </p>
+        </div>
       </div>
     )
   }
 
-  return (
-    <div className="space-y-6">
-      {/* QUICK CLINICAL SUMMARY DASHBOARD */}
-      <div className="bg-gradient-to-br from-indigo-900 via-slate-900 to-violet-950 text-white rounded-3xl p-6 sm:p-7 shadow-md border border-indigo-800/60 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
-          <div className="flex items-center gap-2.5">
-            <Sparkles className="w-5 h-5 text-indigo-400" />
-            <h4 className="text-sm font-black tracking-wide uppercase text-indigo-200">
-              Ringkasan Pantas Infusi & Pembancuhan (Clinical IV Quick-Guide)
-            </h4>
+  if (kkmMonograph) {
+    const isLiquid = !kkmMonograph.isReconstitutionRequired
+    const regimens = parseAdministrationRegimens(kkmMonograph.administrationText)
+
+    // Check if suggested dilutions has peripheral vs central line distinctions
+    const suggested = kkmMonograph.suggestedMinimumDilutions
+    const hasCentral = /central/i.test(suggested)
+    const hasPeripheral = /peripheral/i.test(suggested)
+
+    return (
+      <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden text-slate-900">
+        {/* Top Accent Gradient Bar */}
+        <div className="h-2 w-full bg-gradient-to-r from-teal-500 via-cyan-500 to-indigo-600" />
+
+        {/* Card Header Section */}
+        <div className="p-6 sm:p-7 border-b border-slate-100 bg-gradient-to-b from-slate-50/70 to-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[11px] font-mono font-black text-teal-800 bg-teal-50 border border-teal-200 px-2.5 py-0.5 rounded-lg">
+                {kkmMonograph.id}
+              </span>
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-teal-900 bg-teal-100/90 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-teal-700" />
+                <span>Rujukan Rasmi KKM 2024/2025</span>
+              </span>
+              {isLiquid ? (
+                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                  <span>Sediaan Cecair / Sedia Guna</span>
+                </span>
+              ) : (
+                <span className="text-[10px] font-bold text-amber-900 bg-amber-50 border border-amber-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                  <Syringe className="w-3 h-3 text-amber-600" />
+                  <span>Rekonstitusi Serbuk Diperlukan</span>
+                </span>
+              )}
+            </div>
+
+            <h3 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              {kkmMonograph.rawTitle}
+            </h3>
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 font-medium">
+              <span>Jenama Berdaftar KKM: <strong className="text-slate-800 font-bold">{kkmMonograph.brandText}</strong></span>
+              {kkmMonograph.pageNumber && (
+                <span className="text-slate-400">• Muka Surat Dokumen: {kkmMonograph.pageNumber}</span>
+              )}
+            </div>
           </div>
-          <span className="text-[11px] font-bold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 px-3 py-0.5 rounded-full">
-            Garis Panduan IV KKM
-          </span>
+
+          <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
+            <button
+              onClick={handleCopyProtocol}
+              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
+            >
+              {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-slate-500" />}
+              <span>{isCopied ? 'Tersalin!' : 'Salin Protokol'}</span>
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
-          {/* 1. Guna Apa Untuk Bancuh */}
-          <div className="bg-white/10 backdrop-blur-xs p-3.5 rounded-2xl border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-300 block">
-              1. Guna Apa Untuk Bancuh (Reconstitute):
-            </span>
-            <p className="text-white font-bold text-sm">
-              {reconstitution?.preferredSolvent || 'Water for Injection (WFI)'}
+        {/* 4 Hero Clinical Metric Badges */}
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50/50 border-b border-slate-100">
+          {/* Metric 1: Reconstitution */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+            <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+              <Syringe className="w-3.5 h-3.5 text-teal-600" />
+              <span>1. Rekonstitusi</span>
+            </div>
+            <p className="text-xs font-extrabold text-slate-900 leading-snug">
+              {kkmMonograph.isReconstitutionRequired ? kkmMonograph.reconstitutionText : 'Not required (Cecair Ampul Sedia Guna)'}
             </p>
-            <span className="text-[11px] text-slate-300 block">
-              Isipadu: {reconstitution?.solventVolume || 'Ikut label vial'}
-            </span>
           </div>
 
-          {/* 2. Guna Apa Untuk Dilute */}
-          <div className="bg-white/10 backdrop-blur-xs p-3.5 rounded-2xl border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-300 block">
-              2. Cecair Pembawa (Diluent):
-            </span>
-            <p className="text-white font-bold text-sm">
-              {dilution?.compatibleDiluents?.[0] || '0.9% Normal Saline (NS)'}
+          {/* Metric 2: Compatible Diluents */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+            <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+              <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600" />
+              <span>2. Pelarut (Diluent)</span>
+            </div>
+            <p className="text-xs font-black text-teal-900 leading-snug">
+              {kkmMonograph.diluentText}
             </p>
-            <span className="text-[11px] text-slate-300 block">
-              Isipadu beg: {dilution?.standardDilution?.volume || '50 mL - 100 mL'}
-            </span>
           </div>
 
-          {/* 3. Cara & Berapa Lama Infusi */}
-          <div className="bg-white/10 backdrop-blur-xs p-3.5 rounded-2xl border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-300 block">
-              3. Berapa Lama Infusi (Duration):
-            </span>
-            <p className="text-emerald-300 font-black text-sm flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" />
-              <span>{dilution?.standardDilution?.infusionDuration || '30 - 60 minit'}</span>
+          {/* Metric 3: Minimum Volume / Concentration */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+            <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+              <Layers className="w-3.5 h-3.5 text-indigo-600" />
+              <span>3. Had Pelarutan Minimum</span>
+            </div>
+            <p className="text-xs font-extrabold text-slate-900 leading-snug line-clamp-2" title={kkmMonograph.suggestedMinimumDilutions}>
+              {kkmMonograph.suggestedMinimumDilutions}
             </p>
-            <span className="text-[11px] text-slate-300 block">
-              Laluan: {dilution?.standardDilution?.route || 'IV Intermittent Infusion'}
-            </span>
           </div>
 
-          {/* 4. Di Mana Hendak Simpan */}
-          <div className="bg-white/10 backdrop-blur-xs p-3.5 rounded-2xl border border-white/10 space-y-1">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-300 block">
-              4. Di Mana & Berapa Lama Tahan:
-            </span>
-            <p className="text-amber-300 font-bold text-sm">
-              Suhu Bilik / Peti Sejuk (2-8°C)
+          {/* Metric 4: Stability */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+            <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+              <Clock className="w-3.5 h-3.5 text-amber-600" />
+              <span>4. Kestabilan Suhu Bilik</span>
+            </div>
+            <p className="text-xs font-black text-slate-900 leading-snug">
+              {kkmMonograph.stabilityRows && kkmMonograph.stabilityRows.length > 0
+                ? `${kkmMonograph.stabilityRows[0].roomTemp} (Suhu Bilik)`
+                : kkmMonograph.stabilityRaw}
             </p>
-            <span className="text-[11px] text-slate-300 block">
-              Beg IV: Tahan 8j (25°C) / 48j (2-8°C)
-            </span>
+          </div>
+        </div>
+
+        {/* Body Content Sections */}
+        <div className="p-6 sm:p-7 space-y-6">
+          {/* Section A: Suggested Minimum Dilutions & Fluid Restriction Comparison */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-800">
+              <Layers className="w-4 h-4 text-teal-600" />
+              <span>Cadangan Pelarutan Minimum &amp; Sekatan Cecair (Suggested Minimum Dilutions):</span>
+            </div>
+
+            <div className="p-4.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <p className="text-xs font-semibold text-slate-800 leading-relaxed whitespace-pre-line">
+                {kkmMonograph.suggestedMinimumDilutions}
+              </p>
+
+              {/* Incompatibility Alerts if present */}
+              {kkmMonograph.incompatibleDiluents && kkmMonograph.incompatibleDiluents.some(i => !i.startsWith('Jangan campur')) && (
+                <div className="mt-3 p-3 bg-rose-50 border border-rose-200 rounded-xl text-[11px] text-rose-900 font-medium space-y-1">
+                  <span className="font-extrabold text-rose-950 uppercase tracking-wide block flex items-center gap-1">
+                    <AlertOctagon className="w-3.5 h-3.5 text-rose-600" />
+                    <span>Larangan Keserasian Cecair (Incompatible Diluents):</span>
+                  </span>
+                  {kkmMonograph.incompatibleDiluents.filter(i => !i.startsWith('Jangan campur')).map((inc, i) => (
+                    <p key={i} className="flex items-start gap-1.5 text-rose-800">
+                      <span className="font-bold text-rose-600">✕</span>
+                      <span>{inc}</span>
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Section B: Structured Administration Regimens */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-800">
+              <Activity className="w-4 h-4 text-cyan-600" />
+              <span>Tatacara &amp; Rejimen Pemberian Infusi (Administration Protocols):</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {regimens.map((reg, idx) => (
+                <div
+                  key={idx}
+                  className="p-5 rounded-2xl bg-cyan-50/40 border border-cyan-200/80 shadow-2xs space-y-2.5 flex flex-col justify-between"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-cyan-700 text-white flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                        {idx + 1}
+                      </span>
+                      <h4 className="text-xs font-extrabold text-cyan-950 leading-snug">
+                        {reg.title}
+                      </h4>
+                    </div>
+
+                    {reg.items.length > 0 && (
+                      <div className="space-y-1.5 pl-7 text-xs text-slate-700 leading-relaxed font-medium">
+                        {reg.items.map((item, itemIdx) => (
+                          <div key={itemIdx} className="flex items-start gap-1.5">
+                            <span className="text-cyan-600 font-bold mt-0.5">•</span>
+                            <p className="text-slate-800">{formatHighlightedText(item)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Section C: Stability Table */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-800">
+              <Clock className="w-4 h-4 text-indigo-600" />
+              <span>Jadual Kestabilan &amp; Penyimpanan (Stability Table):</span>
+            </div>
+
+            {kkmMonograph.stabilityRows && kkmMonograph.stabilityRows.length > 0 ? (
+              <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-2xs bg-white">
+                <table className="w-full text-xs text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100/90 border-b border-slate-200 text-slate-800">
+                      <th className="p-3.5 font-extrabold w-2/5 border-r border-slate-200">Peringkat Penyediaan (Phase)</th>
+                      <th className="p-3.5 font-extrabold w-3/10 border-r border-slate-200">
+                        <div className="flex items-center gap-1.5">
+                          <Thermometer className="w-4 h-4 text-blue-600" />
+                          <span>Peti Sejuk (Fridge 2 – 8°C)</span>
+                        </div>
+                      </th>
+                      <th className="p-3.5 font-extrabold w-3/10">
+                        <div className="flex items-center gap-1.5">
+                          <Activity className="w-4 h-4 text-amber-600" />
+                          <span>Suhu Bilik (RT &lt; 25°C)</span>
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {kkmMonograph.stabilityRows.map((row, idx) => (
+                      <tr key={idx} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50/60 transition-colors">
+                        <td className="p-3.5 font-bold text-slate-800 border-r border-slate-100 bg-slate-50/50">
+                          {row.phase}
+                        </td>
+                        <td className="p-3.5 text-slate-700 border-r border-slate-100 font-mono font-semibold">
+                          {row.fridge}
+                        </td>
+                        <td className="p-3.5 text-slate-950 font-mono font-black">
+                          {row.roomTemp}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+                {kkmMonograph.stabilityRaw}
+              </div>
+            )}
+          </div>
+
+          {/* Section D: Clinical Comments & Precaution Warnings */}
+          {kkmMonograph.comments && kkmMonograph.comments.length > 0 && (
+            <div className="p-5 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-950 space-y-2.5">
+              <div className="flex items-center gap-2 font-bold text-amber-900 uppercase tracking-wide">
+                <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                <span>Peringatan Klinikal &amp; Langkah Berjaga-jaga (Clinical Comments):</span>
+              </div>
+              <ul className="space-y-1.5 pl-6 list-disc text-amber-950 font-medium">
+                {kkmMonograph.comments.map((comment, i) => (
+                  <li key={i} className="leading-relaxed">
+                    {comment}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Section E: Collapsible References Footer */}
+          <div className="pt-2 border-t border-slate-100">
+            <button
+              onClick={() => setShowReferences(!showReferences)}
+              className="text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-colors cursor-pointer py-1"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-slate-400" />
+              <span>Rujukan Rasmi KKM ({kkmMonograph.references?.length || 0})</span>
+              {showReferences ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
+
+            {showReferences && (
+              <div className="mt-3 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 space-y-1 font-medium">
+                <p className="font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">
+                  Sumber &amp; Dokumen Rujukan Rasmi:
+                </p>
+                {kkmMonograph.references.map((ref, idx) => (
+                  <p key={idx} className="leading-relaxed">
+                    {ref}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
+    )
+  }
 
-      {/* 1. RECONSTITUTION SECTION */}
-      {reconstitution?.isApplicable && (
-        <div className="bg-white rounded-3xl border border-teal-200 shadow-xs overflow-hidden">
-          <div className="bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-700 text-white p-5 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Droplets className="w-5 h-5" />
-              <div>
-                <h4 className="font-bold text-sm">Langkah 1: Rekonstitusi Serbuk Botol (Vial Reconstitution)</h4>
-                <p className="text-[11px] text-teal-100">Cara membancuh serbuk kering asal menjadi larutan pekat sebelum dilarutkan ke dalam beg IV</p>
-              </div>
-            </div>
-            {reconstitution.standardVialStrength && (
-              <span className="text-xs bg-white/20 px-3 py-1 rounded-full font-bold">
-                Kekuatan: {reconstitution.standardVialStrength}
-              </span>
-            )}
-          </div>
-
-          <div className="p-6 space-y-5">
-            {/* Quick Metrics Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-3.5 bg-teal-50/70 rounded-2xl border border-teal-100">
-                <span className="text-[11px] text-teal-800 font-bold uppercase tracking-wider block mb-0.5">Pelarut Disyorkan</span>
-                <strong className="text-sm text-slate-900">{reconstitution.preferredSolvent || 'Water for Injection (WFI)'}</strong>
-                <span className="text-[11px] text-slate-500 block mt-0.5">atau 0.9% Normal Saline</span>
-              </div>
-
-              <div className="p-3.5 bg-teal-50/70 rounded-2xl border border-teal-100">
-                <span className="text-[11px] text-teal-800 font-bold uppercase tracking-wider block mb-0.5">Isipadu Pelarut Ditambah</span>
-                <strong className="text-sm text-slate-900">{reconstitution.solventVolume || '3.2 mL (bagi 1.5g)'}</strong>
-                <span className="text-[11px] text-slate-500 block mt-0.5">Suntik perlahan ke dinding vial</span>
-              </div>
-
-              <div className="p-3.5 bg-teal-50/70 rounded-2xl border border-teal-100">
-                <span className="text-[11px] text-teal-800 font-bold uppercase tracking-wider block mb-0.5">Kepekatan Terhasil</span>
-                <strong className="text-sm text-teal-950 font-bold">{reconstitution.resultingConcentration || '375 mg/mL'}</strong>
-                <span className="text-[11px] text-slate-500 block mt-0.5">Selepas larut sepenuhnya</span>
-              </div>
-            </div>
-
-            {/* Step by Step Instructions */}
-            {reconstitution.stepByStepInstructions && reconstitution.stepByStepInstructions.length > 0 && (
-              <div>
-                <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-teal-600" />
-                  <span>Arahan Pembancuhan Aseptik Langkah Demi Langkah:</span>
-                </h5>
-                <ol className="space-y-2 text-xs text-slate-700 list-decimal list-inside bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200">
-                  {reconstitution.stepByStepInstructions.map((step, idx) => (
-                    <li key={idx} className="leading-relaxed pl-1">
-                      <span className="text-slate-800 font-medium">{step}</span>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            )}
-
-            {/* Appearance & Displacement */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-teal-50/40 p-3.5 rounded-2xl border border-teal-100">
-              <div>
-                <span className="font-bold text-teal-900 block mb-0.5">Rupa Fizikal Larutan:</span>
-                <span className="text-slate-700 font-medium">{reconstitution.physicalAppearance || 'Jernih, tidak berwarna hingga kuning jerami pucat tanpa zarah terampai.'}</span>
-              </div>
-              <div>
-                <span className="font-bold text-teal-900 block mb-0.5">Isipadu Anjakan (Displacement Volume):</span>
-                <span className="text-slate-700 font-medium">{reconstitution.displacementVolume || '0.8 mL per 1.5g vial (ambil kira jika mengira dos pediatrik).'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 2. DILUTION & INFUSION SECTION */}
-      {dilution?.isApplicable && (
-        <div className="bg-white rounded-3xl border border-indigo-200 shadow-xs overflow-hidden">
-          <div className="bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-700 text-white p-5 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Activity className="w-5 h-5" />
-              <div>
-                <h4 className="font-bold text-sm">Langkah 2: Pelarutan Sekunder & Kaedah Infusi IV (Dilution & Infusion Protocol)</h4>
-                <p className="text-[11px] text-indigo-100">Garis panduan kepekatan selamat, cecair pembawa serasi & tempoh titisan infusi KKM</p>
-              </div>
-            </div>
-            <span className="text-xs bg-white/20 px-3 py-1 rounded-full font-bold">
-              Laluan: {dilution.standardDilution.route}
-            </span>
-          </div>
-
-          <div className="p-6 space-y-5">
-            {/* Infusion Parameters Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-              <div className="p-3.5 bg-indigo-50/60 rounded-2xl border border-indigo-100">
-                <span className="text-[11px] text-indigo-800 font-bold uppercase tracking-wider block mb-0.5">Dos Lazim</span>
-                <strong className="text-xs text-slate-900">{dilution.standardDilution.doseRange}</strong>
-              </div>
-
-              <div className="p-3.5 bg-indigo-50/60 rounded-2xl border border-indigo-100">
-                <span className="text-[11px] text-indigo-800 font-bold uppercase tracking-wider block mb-0.5">Isipadu Pelarutan Beg IV</span>
-                <strong className="text-xs text-slate-900">{dilution.standardDilution.volume}</strong>
-                <span className="text-[10px] text-slate-500 block mt-0.5">50 mL - 100 mL Normal Saline</span>
-              </div>
-
-              <div className="p-3.5 bg-indigo-50/60 rounded-2xl border border-indigo-100">
-                <span className="text-[11px] text-indigo-800 font-bold uppercase tracking-wider block mb-0.5">Kepekatan Akhir Beg</span>
-                <strong className="text-xs text-indigo-950 font-bold">{dilution.standardDilution.finalConcentration}</strong>
-                <span className="text-[10px] text-slate-500 block mt-0.5">Maks 45 mg/mL jika sekatan cecair</span>
-              </div>
-
-              <div className="p-3.5 bg-emerald-50/80 rounded-2xl border border-emerald-200">
-                <span className="text-[11px] text-emerald-800 font-bold uppercase tracking-wider block mb-0.5">Tempoh Infusi (How Long)</span>
-                <strong className="text-xs text-emerald-950 font-black flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span>{dilution.standardDilution.infusionDuration}</span>
-                </strong>
-                <span className="text-[10px] text-emerald-700 block mt-0.5">IV Bolus: perlahan &gt;10-15 min</span>
-              </div>
-            </div>
-
-            {/* Compatibility with Infusion Fluids */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-2">
-                <h5 className="text-xs font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Cecair Pembawa Yang Boleh Digunakan (Compatible):</span>
-                </h5>
-                <ul className="space-y-1 text-xs text-emerald-800 font-medium">
-                  {dilution.compatibleDiluents.map((fluid, idx) => (
-                    <li key={idx} className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      <span>{fluid}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="p-4 bg-rose-50/70 rounded-2xl border border-rose-200 space-y-2">
-                <h5 className="text-xs font-bold text-rose-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span>Cecair / Bahan DILARANG Digunakan (Incompatible):</span>
-                </h5>
-                <ul className="space-y-1 text-xs text-rose-800 font-medium">
-                  {dilution.incompatibleDiluents.map((fluid, idx) => (
-                    <li key={idx} className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                      <span>{fluid}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Y-Site Compatibility Matrix */}
-            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-              <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                Kesesuaian Laluan Y-Site (Y-Site Line Compatibility & Flushing):
-              </h5>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                <div>
-                  <span className="font-bold text-emerald-800 block mb-1">Boleh Dikongsi Talian (Y-Site Compatible):</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {dilution.ySiteCompatibility.compatible.map((item, idx) => (
-                      <span key={idx} className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-md font-semibold text-[11px]">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <span className="font-bold text-rose-800 block mb-1">DILARANG Kongsi Talian (Y-Site Incompatible):</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {dilution.ySiteCompatibility.incompatible.map((item, idx) => (
-                      <span key={idx} className="bg-rose-100 text-rose-800 px-2.5 py-0.5 rounded-md font-semibold text-[11px]">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="text-[11px] text-slate-600 mt-1.5 italic font-medium">
-                    * Mesti gunakan talian IV berasingan atau bilas (flush) dengan &ge; 20 mL Normal Saline sebelum dan selepas ubat tidak serasi (cth: Aminoglycosides / Gentamicin).
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Monitoring Parameters */}
-            {dilution.monitoringParameters && dilution.monitoringParameters.length > 0 && (
-              <div>
-                <h5 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  Parameter Pemantauan Semasa Infusi:
-                </h5>
-                <div className="flex flex-wrap gap-2 text-xs">
-                  {dilution.monitoringParameters.map((param, idx) => (
-                    <span key={idx} className="bg-indigo-50 text-indigo-900 border border-indigo-200 px-3 py-1 rounded-xl font-medium">
-                      • {param}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+  // Fallback for custom specialist protocols
+  return (
+    <div className="p-6 bg-white border border-slate-200 rounded-3xl space-y-4 text-xs">
+      <div className="flex items-center gap-2 text-teal-800 font-bold">
+        <Activity className="w-4 h-4 text-teal-600" />
+        <span>Protokol Pelarutan Klinikal: {drugName}</span>
+      </div>
+      {dilution?.standardDilution && (
+        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+          <p><strong>Laluan:</strong> {dilution.standardDilution.route}</p>
+          <p><strong>Pelarut:</strong> {dilution.compatibleDiluents.join(', ')}</p>
+          <p><strong>Tempoh:</strong> {dilution.standardDilution.infusionDuration}</p>
         </div>
       )}
     </div>
   )
 }
+
+export default DilutionCard

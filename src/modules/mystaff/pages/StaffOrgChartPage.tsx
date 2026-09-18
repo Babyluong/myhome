@@ -125,7 +125,7 @@ const REAL_SYSTEM_DEFAULT_ORG: OrgNode = {
       children: [
         {
           id: 'user-lead-logistik',
-          name: 'Mohamad Izwan bin Mat Zaid',
+          name: 'Mohamad Aiman bin Mat Zaki',
           role: 'Ketua Unit Farmasi Logistik & Bekalan',
           grade: 'UF9',
           department: 'Jabatan Farmasi',
@@ -277,6 +277,8 @@ const getAvatarGradient = (name: string) => {
 export function StaffOrgChartPage() {
   const navigate = useNavigate()
   const { language } = useLanguage()
+  const isEn = language !== 'ms'
+  const isMs = language === 'ms'
   const toast = useToast()
   const { user } = useAuthStore()
 
@@ -918,28 +920,28 @@ export function StaffOrgChartPage() {
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Hadir
+            {isMs ? 'Hadir' : 'Present'}
           </span>
         )
       case 'leave':
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-            Cuti
+            {isMs ? 'Cuti' : 'On Leave'}
           </span>
         )
       case 'movement':
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-            Tugas Luar
+            {isMs ? 'Tugas Luar' : 'Outstation'}
           </span>
         )
       case 'vacant':
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-            Kosong
+            {isMs ? 'Kosong' : 'Vacant'}
           </span>
         )
       default:
@@ -1173,14 +1175,22 @@ export function StaffOrgChartPage() {
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-indigo-500/10 border border-indigo-500/20"><Network className="w-6 h-6 text-indigo-400" /></div>
             <div>
-              <h1 className="text-lg font-bold text-white tracking-tight">Carta Organisasi Hospital & Jabatan</h1>
+              <h1 className="text-lg font-bold text-white tracking-tight">
+                {isMs ? 'Carta Organisasi Hospital & Jabatan' : 'Hospital & Department Organizational Chart'}
+              </h1>
               <div className="flex flex-wrap items-center gap-2 mt-1">
-                <p className="text-xs text-white/40">{isLoadingUsers ? 'Memuat data…' : `${stats.total} posisi · ${stats.active} hadir · ${stats.vacant} kekosongan`}</p>
+                <p className="text-xs text-white/40">
+                  {isLoadingUsers 
+                    ? (isMs ? 'Memuat data…' : 'Loading data…') 
+                    : isMs 
+                    ? `${stats.total} posisi · ${stats.active} hadir · ${stats.vacant} kekosongan` 
+                    : `${stats.total} positions · ${stats.active} present · ${stats.vacant} vacant`}
+                </p>
                 <span className="text-white/20">·</span>
                 {cloudSyncStatus === 'saving' && (
                   <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
                     <RefreshCw className="w-3 h-3 animate-spin" />
-                    <span>Menyimpan ke Cloud…</span>
+                    <span>{isMs ? 'Menyimpan ke Cloud…' : 'Saving to Cloud…'}</span>
                   </span>
                 )}
                 {cloudSyncStatus === 'synced' && (
@@ -1192,13 +1202,13 @@ export function StaffOrgChartPage() {
                 {cloudSyncStatus === 'error' && (
                   <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-rose-400 bg-rose-500/10 px-2.5 py-0.5 rounded-full border border-rose-500/20">
                     <CloudOff className="w-3.5 h-3.5 text-rose-400" />
-                    <span>Ralat Cloud</span>
+                    <span>{isMs ? 'Ralat Cloud' : 'Cloud Error'}</span>
                   </span>
                 )}
                 {cloudSyncStatus === 'offline' && (
                   <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 bg-slate-500/10 px-2.5 py-0.5 rounded-full border border-slate-500/20">
                     <CloudOff className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Mod Tempatan</span>
+                    <span>{isMs ? 'Mod Tempatan' : 'Local Mode'}</span>
                   </span>
                 )}
               </div>
@@ -1207,7 +1217,7 @@ export function StaffOrgChartPage() {
           <div className="flex flex-wrap items-center gap-2">
             {/* View Toggle */}
             <div className="flex items-center p-1 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-              {([['tree', GitFork, 'Hierarki'], ['grid', LayoutGrid, 'Grid'], ['list', ListFilter, 'Direktori']] as [string, any, string][]).map(([mode, Icon, label]) => (
+              {([['tree', GitFork, isMs ? 'Hierarki' : 'Hierarchy'], ['grid', LayoutGrid, 'Grid'], ['list', ListFilter, isMs ? 'Direktori' : 'Directory']] as [string, any, string][]).map(([mode, Icon, label]) => (
                 <button
                   key={mode}
                   onClick={() => setViewMode(mode as any)}
@@ -1231,7 +1241,7 @@ export function StaffOrgChartPage() {
               }`}
             >
               <Edit3 className="w-3.5 h-3.5" />
-              <span>{isEditMode ? 'Selesai Edit' : 'Edit Hierarki'}</span>
+              <span>{isEditMode ? (isMs ? 'Selesai Edit' : 'Done Editing') : (isMs ? 'Edit Hierarki' : 'Edit Hierarchy')}</span>
             </button>
 
             {isEditMode && (
@@ -1241,14 +1251,14 @@ export function StaffOrgChartPage() {
                   className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors duration-150"
                 >
                   <UserPlus className="w-3.5 h-3.5" />
-                  <span>Tambah Posisi</span>
+                  <span>{isMs ? 'Tambah Posisi' : 'Add Position'}</span>
                 </button>
                 <button
                   onClick={handleResetToDefault}
                   className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium bg-white/[0.05] border border-white/[0.08] text-white/50 hover:text-white/80 transition-colors duration-150"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Reset</span>
+                  <span>{isMs ? 'Reset' : 'Reset'}</span>
                 </button>
               </>
             )}
@@ -1257,10 +1267,10 @@ export function StaffOrgChartPage() {
               <button
                 onClick={() => window.print()}
                 className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 shadow-lg shadow-indigo-500/20 transition-all duration-150 hover:scale-[1.02] active:scale-[0.98]"
-                title="Cetak Carta Organisasi Rasmi (PDF Landscape)"
+                title={isMs ? "Cetak Carta Organisasi Rasmi (PDF Landscape)" : "Print Official Org Chart (PDF Landscape)"}
               >
                 <Printer className="w-4 h-4 text-white" />
-                <span>Cetak PDF</span>
+                <span>{isMs ? 'Cetak PDF' : 'Print PDF'}</span>
               </button>
             )}
           </div>
@@ -1269,10 +1279,10 @@ export function StaffOrgChartPage() {
         {/* ── STATS ROW ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Jumlah Posisi', value: stats.total, color: '#6366f1', icon: Users },
-            { label: 'Hadir Bertugas', value: stats.active, color: '#22c55e', icon: CheckCircle2 },
-            { label: 'Jawatan Kosong', value: stats.vacant, color: '#f59e0b', icon: UserX },
-            { label: 'Cuti / Tugas Luar', value: stats.leave + stats.movement, color: '#ef4444', icon: Palmtree },
+            { label: isMs ? 'Jumlah Posisi' : 'Total Positions', value: stats.total, color: '#6366f1', icon: Users },
+            { label: isMs ? 'Hadir Bertugas' : 'Present On Duty', value: stats.active, color: '#22c55e', icon: CheckCircle2 },
+            { label: isMs ? 'Jawatan Kosong' : 'Vacant Positions', value: stats.vacant, color: '#f59e0b', icon: UserX },
+            { label: isMs ? 'Cuti / Tugas Luar' : 'Leave / Outstation', value: stats.leave + stats.movement, color: '#ef4444', icon: Palmtree },
           ].map(({ label, value, color, icon: Icon }) => (
             <div
               key={label}
@@ -1295,7 +1305,7 @@ export function StaffOrgChartPage() {
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Cari nama, jawatan, gred..."
+              placeholder={isMs ? "Cari nama, jawatan, gred..." : "Search name, position, grade..."}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-slate-900 transition-all duration-150 shadow-sm font-medium"
@@ -1312,7 +1322,7 @@ export function StaffOrgChartPage() {
             onChange={e => setSelectedUnit(e.target.value)}
             className="px-3 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-slate-200 font-medium focus:outline-none focus:border-indigo-500 cursor-pointer shadow-sm"
           >
-            <option value="all" className="bg-slate-900 text-slate-200">Semua Unit</option>
+            <option value="all" className="bg-slate-900 text-slate-200">{isMs ? 'Semua Unit' : 'All Units'}</option>
             {unitsList.map(u => <option key={u} value={u} className="bg-slate-900 text-slate-200">{u}</option>)}
           </select>
 
@@ -1321,12 +1331,12 @@ export function StaffOrgChartPage() {
             onChange={e => setSelectedStatus(e.target.value)}
             className="px-3 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-slate-200 font-medium focus:outline-none focus:border-indigo-500 cursor-pointer shadow-sm"
           >
-            <option value="all" className="bg-slate-900 text-slate-200">Semua Status</option>
-            <option value="active" className="bg-slate-900 text-slate-200">Hadir Bertugas</option>
-            <option value="vacant" className="bg-slate-900 text-slate-200">Jawatan Kosong</option>
-            <option value="movement" className="bg-slate-900 text-slate-200">Tugas Luar</option>
-            <option value="leave" className="bg-slate-900 text-slate-200">Cuti</option>
-            <option value="course" className="bg-slate-900 text-slate-200">Kursus</option>
+            <option value="all" className="bg-slate-900 text-slate-200">{isMs ? 'Semua Status' : 'All Statuses'}</option>
+            <option value="active" className="bg-slate-900 text-slate-200">{isMs ? 'Hadir Bertugas' : 'Present On Duty'}</option>
+            <option value="vacant" className="bg-slate-900 text-slate-200">{isMs ? 'Jawatan Kosong' : 'Vacant'}</option>
+            <option value="movement" className="bg-slate-900 text-slate-200">{isMs ? 'Tugas Luar' : 'Outstation'}</option>
+            <option value="leave" className="bg-slate-900 text-slate-200">{isMs ? 'Cuti' : 'On Leave'}</option>
+            <option value="course" className="bg-slate-900 text-slate-200">{isMs ? 'Kursus' : 'Course'}</option>
           </select>
 
           {(searchQuery || selectedUnit !== 'all' || selectedStatus !== 'all') && (
@@ -1334,7 +1344,7 @@ export function StaffOrgChartPage() {
               onClick={() => { setSearchQuery(''); setSelectedUnit('all'); setSelectedStatus('all') }}
               className="px-3 py-2 text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors duration-150"
             >
-              Reset
+              {isMs ? 'Set Semula' : 'Reset'}
             </button>
           )}
         </div>

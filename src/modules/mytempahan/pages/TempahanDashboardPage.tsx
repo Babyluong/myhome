@@ -74,8 +74,8 @@ export const TempahanDashboardPage: React.FC = () => {
       console.error('Error loading tempahan dashboard data:', err)
       addToast({
         type: 'error',
-        title: 'Ralat Memuat Data',
-        message: 'Gagal memuat senarai fasiliti dan tempahan terkini.'
+        title: 'Error Loading Data',
+        message: 'Failed to load facility registry and latest bookings.'
       })
     } finally {
       setLoading(false)
@@ -161,7 +161,7 @@ export const TempahanDashboardPage: React.FC = () => {
           <button
             onClick={() => navigate(ROUTES.HUB)}
             className="p-2.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
-            title="Kembali ke Hub Utama"
+            title="Back to Main Hub"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -173,19 +173,19 @@ export const TempahanDashboardPage: React.FC = () => {
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-                Pusat Kawalan Tempahan Fasiliti
+                Facility & Room Booking Command Center
               </h1>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
-                Hospital Lawas
+                Lawas Hospital
               </span>
               {stats?.pendingApprovals ? (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 animate-pulse">
-                  {stats.pendingApprovals} Menunggu Kelulusan
+                  {stats.pendingApprovals} Pending Approval
                 </span>
               ) : null}
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Sistem Pengurusan & Tempahan Dewan Persidangan, Bilik Mesyuarat dan Ruang Latihan Klinikal
+              Conference Halls, Meeting Rooms & Clinical Training Space Booking System
             </p>
           </div>
         </div>
@@ -197,7 +197,7 @@ export const TempahanDashboardPage: React.FC = () => {
             className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all flex items-center gap-2 shadow-2xs"
           >
             <Calendar className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-            <span>Kalendar Penuh</span>
+            <span>Full Calendar</span>
           </button>
 
           <button
@@ -205,7 +205,7 @@ export const TempahanDashboardPage: React.FC = () => {
             className="px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2 active:scale-95"
           >
             <Plus className="w-4 h-4" />
-            <span>Tempahan Baharu</span>
+            <span>New Booking</span>
           </button>
         </div>
       </div>
@@ -216,7 +216,7 @@ export const TempahanDashboardPage: React.FC = () => {
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Tempahan Hari Ini
+              Today's Bookings
             </span>
             <div className="p-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/60">
               <Calendar className="w-4 h-4" />
@@ -227,7 +227,7 @@ export const TempahanDashboardPage: React.FC = () => {
               {todayBookings.length}
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Acara & mesyuarat berjadual
+              Scheduled events & meetings
             </div>
           </div>
         </div>
@@ -239,7 +239,7 @@ export const TempahanDashboardPage: React.FC = () => {
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Menunggu Kelulusan
+              Pending Approvals
             </span>
             <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60">
               <AlertCircle className="w-4 h-4" />
@@ -250,12 +250,12 @@ export const TempahanDashboardPage: React.FC = () => {
               {stats?.pendingApprovals ?? 0}
               {stats?.pendingApprovals ? (
                 <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200 font-bold border border-amber-200 dark:border-amber-800">
-                  Tindakan
+                  Action
                 </span>
               ) : null}
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1 group-hover:text-amber-600 dark:group-hover:text-amber-400">
-              Semak kelulusan permohonan <ChevronRight className="w-3.5 h-3.5" />
+              Review applications queue <ChevronRight className="w-3.5 h-3.5" />
             </div>
           </div>
         </div>
@@ -264,7 +264,7 @@ export const TempahanDashboardPage: React.FC = () => {
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Kadar Utilisasi
+              Utilization Rate
             </span>
             <div className="p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">
               <TrendingUp className="w-4 h-4" />
@@ -275,7 +275,7 @@ export const TempahanDashboardPage: React.FC = () => {
               {stats?.averageUtilizationRate ?? 42}%
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Bulan semasa ({stats?.totalHoursBooked ?? 0} Jam)
+              Current month ({stats?.totalHoursBooked ?? 0} Hours)
             </div>
           </div>
         </div>
@@ -284,7 +284,7 @@ export const TempahanDashboardPage: React.FC = () => {
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Fasiliti Tersedia
+              Available Facilities
             </span>
             <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
               <CheckCircle2 className="w-4 h-4" />
@@ -295,7 +295,7 @@ export const TempahanDashboardPage: React.FC = () => {
               {rooms.length - currentOccupancyMap.size} / {rooms.length}
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Bilik sedia untuk ditempah
+              Rooms ready for booking
             </div>
           </div>
         </div>
@@ -307,18 +307,18 @@ export const TempahanDashboardPage: React.FC = () => {
         <div className="xl:col-span-2 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
             <div>
-              <h2 className="text-base font-bold text-slate-900 dark:text-white">Ketersediaan Fasiliti & Bilik</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Pilih fasiliti hospital untuk semak jadual atau tempah slot masa.</p>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">Facility & Room Availability</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Select hospital facility to check schedule or book a time slot.</p>
             </div>
 
             {/* Category Filter Pills */}
-            <div className="flex items-center gap-1 overflow-x-auto pb-1 max-w-full">
+            <div className="flex items-center gap-1.5 flex-wrap max-w-full">
               {[
-                { id: 'all', label: 'Semua' },
-                { id: 'meeting_room', label: 'Mesyuarat' },
-                { id: 'conference_hall', label: 'Dewan' },
-                { id: 'training_room', label: 'Latihan' },
-                { id: 'computer_lab', label: 'Makmal IT' }
+                { id: 'all', label: 'All' },
+                { id: 'meeting_room', label: 'Meeting Room' },
+                { id: 'conference_hall', label: 'Hall' },
+                { id: 'training_room', label: 'Training' },
+                { id: 'computer_lab', label: 'IT Lab' }
               ].map(tab => (
                 <button
                   key={tab.id}
@@ -362,7 +362,7 @@ export const TempahanDashboardPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Jadual Acara Hari Ini</h3>
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Today's Event Schedule</h3>
               </div>
               <span className="text-[11px] font-mono font-semibold text-slate-500 dark:text-slate-400">
                 {todayStr}
@@ -372,7 +372,7 @@ export const TempahanDashboardPage: React.FC = () => {
             {todayBookings.length === 0 ? (
               <div className="text-center py-8 text-slate-400 dark:text-slate-500 text-xs">
                 <Calendar className="w-8 h-8 mx-auto mb-2 text-slate-300 dark:text-slate-600 stroke-1" />
-                Tiada acara atau mesyuarat berjadual untuk hari ini.
+                No events or meetings scheduled for today.
               </div>
             ) : (
               <div className="space-y-2.5">
@@ -387,7 +387,7 @@ export const TempahanDashboardPage: React.FC = () => {
                         {b.start_time} - {b.end_time}
                       </span>
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">
-                        {b.room?.name || 'Bilik'}
+                        {b.room?.name || 'Room'}
                       </span>
                     </div>
 
@@ -408,42 +408,42 @@ export const TempahanDashboardPage: React.FC = () => {
               onClick={() => navigate(ROUTES.TEMPAHAN_CALENDAR)}
               className="w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors flex items-center justify-center gap-1.5"
             >
-              Lihat Kalendar Bulanan <ArrowRight className="w-3.5 h-3.5" />
+              View Monthly Calendar <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Quick Shortcuts */}
           <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
             <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Akses Pantas Modul
+              Module Quick Links
             </h4>
             <div className="space-y-1 text-xs">
               <button
                 onClick={() => navigate(ROUTES.TEMPAHAN_MY_BOOKINGS)}
                 className="w-full p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/80 flex items-center justify-between transition-colors text-left"
               >
-                <span>Permohonan Tempahan Saya</span>
+                <span>My Booking Requests</span>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </button>
               <button
                 onClick={() => navigate(ROUTES.TEMPAHAN_APPROVAL_QUEUE)}
                 className="w-full p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/80 flex items-center justify-between transition-colors text-left"
               >
-                <span>Semakan Kelulusan Pentadbir</span>
+                <span>Admin Approval Review</span>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </button>
               <button
                 onClick={() => navigate(ROUTES.TEMPAHAN_ROOM_REGISTRY)}
                 className="w-full p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/80 flex items-center justify-between transition-colors text-left"
               >
-                <span>Direktori Fasiliti & Bilik</span>
+                <span>Facility & Room Directory</span>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </button>
               <button
                 onClick={() => navigate(ROUTES.TEMPAHAN_REPORTS)}
                 className="w-full p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/80 flex items-center justify-between transition-colors text-left"
               >
-                <span>Laporan Utilisasi & Statistik</span>
+                <span>Utilization & Statistics Reports</span>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </button>
             </div>
@@ -455,29 +455,29 @@ export const TempahanDashboardPage: React.FC = () => {
       <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">Senarai Permohonan Terkini</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Permohonan tempahan ruang yang dihantar oleh jabatan hospital.</p>
+            <h2 className="text-base font-bold text-slate-900 dark:text-white">Recent Booking Applications</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Space booking applications submitted by hospital departments.</p>
           </div>
 
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN_MY_BOOKINGS)}
             className="text-xs font-bold text-teal-700 dark:text-teal-400 hover:underline flex items-center gap-1"
           >
-            Lihat Semua <ChevronRight className="w-3.5 h-3.5" />
+            View All <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-xs text-left">
             <thead className="text-[11px] font-bold uppercase text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/60 border-y border-slate-100 dark:border-slate-800">
               <tr>
-                <th className="py-3 px-4">No. Rujukan</th>
-                <th className="py-3 px-4">Tujuan / Program</th>
-                <th className="py-3 px-4">Fasiliti</th>
-                <th className="py-3 px-4">Tarikh & Masa</th>
-                <th className="py-3 px-4">Pemohon</th>
+                <th className="py-3 px-4">Reference No.</th>
+                <th className="py-3 px-4">Purpose / Program</th>
+                <th className="py-3 px-4">Facility</th>
+                <th className="py-3 px-4">Date & Time</th>
+                <th className="py-3 px-4">Applicant</th>
                 <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Tindakan</th>
+                <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -504,7 +504,7 @@ export const TempahanDashboardPage: React.FC = () => {
                         b.status === 'completed' && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                       )}
                     >
-                      {b.status === 'approved' ? 'DILULUSKAN' : b.status === 'pending' ? 'DALAM SEMAKAN' : b.status.toUpperCase()}
+                      {b.status === 'approved' ? 'APPROVED' : b.status === 'pending' ? 'UNDER REVIEW' : b.status.toUpperCase()}
                     </span>
                   </td>
                   <td className="py-3 px-4 text-right">
@@ -512,13 +512,61 @@ export const TempahanDashboardPage: React.FC = () => {
                       onClick={() => openBookingDetails(b)}
                       className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-[11px] transition-colors"
                     >
-                      Perincian
+                      Details
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View: High-End Native Booking Cards */}
+        <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+          {recentBookings.map(b => (
+            <div key={b.id} className="p-4 space-y-2.5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 inline-block">
+                    {b.booking_number}
+                  </span>
+                  <h4 className="font-bold text-slate-900 dark:text-white text-sm mt-1">
+                    {b.purpose}
+                  </h4>
+                </div>
+                <span
+                  className={cn(
+                    'px-2 py-0.5 rounded-full text-[10px] font-semibold border flex-shrink-0',
+                    b.status === 'approved' && 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+                    b.status === 'pending' && 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+                    b.status === 'rejected' && 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+                    b.status === 'completed' && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                  )}
+                >
+                  {b.status === 'approved' ? 'APPROVED' : b.status === 'pending' ? 'UNDER REVIEW' : b.status.toUpperCase()}
+                </span>
+              </div>
+
+              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5 border border-slate-100 dark:border-slate-800 text-xs space-y-1">
+                <div className="flex items-center justify-between text-slate-600 dark:text-slate-300 font-medium">
+                  <span>Bilik: <strong className="text-slate-900 dark:text-white">{b.room?.name || '-'}</strong></span>
+                  <span className="font-mono text-[11px]">{b.start_time} - {b.end_time}</span>
+                </div>
+                <div className="text-[11px] text-slate-400 dark:text-slate-500">
+                  Tarikh: {b.date} • Pemohon: {b.pemohon_name} ({b.pemohon_department})
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-1">
+                <button
+                  onClick={() => openBookingDetails(b)}
+                  className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-colors"
+                >
+                  Lihat Butiran
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

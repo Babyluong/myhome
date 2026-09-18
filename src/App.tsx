@@ -3,25 +3,25 @@ import { AppRouter } from '@/routes'
 import { ToastContainer } from '@/components/ui'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { useAuthStore } from '@/stores/authStore'
-
+import { useRbacStore } from '@/stores/rbacStore'
 import { LanguageProvider } from '@/shared/contexts/LanguageContext'
 
 function App() {
   const { setLoading, checkSession, logout } = useAuthStore()
 
   useEffect(() => {
-    // Check if there's an existing session
+    // 1. Initialize RBAC store and realtime sync across tabs/devices
+    const cleanupRbac = useRbacStore.getState().init()
+
+    // 2. Check if there's an existing session
     const initAuth = async () => {
       try {
-        // Check session validity
         const isValid = checkSession()
         if (!isValid) {
-          // Session expired or invalid, ensure user is logged out
           logout()
         }
       } catch (error) {
         console.error('Auth initialization error:', error)
-        // On error, ensure loading is set to false
         setLoading(false)
       } finally {
         setLoading(false)
@@ -29,6 +29,10 @@ function App() {
     }
 
     initAuth()
+
+    return () => {
+      cleanupRbac()
+    }
   }, [checkSession, setLoading, logout])
 
   return (
@@ -42,4 +46,3 @@ function App() {
 }
 
 export default App
-

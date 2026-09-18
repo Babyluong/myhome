@@ -36,6 +36,7 @@ const PerolehanSubMenu = lazy(() => import('@/modules/hub/pages/modules/Peroleha
 const FileSubMenu = lazy(() => import('@/modules/hub/pages/modules/FileSubMenu'))
 const FormulariSubMenu = lazy(() => import('@/modules/hub/pages/modules/FormulariSubMenu'))
 const FormulariDashboardPage = lazy(() => import('@/modules/myformulari/pages/FormulariDashboardPage'))
+const HospitalLawasFormulariPage = lazy(() => import('@/modules/myformulari/pages/HospitalLawasFormulariPage'))
 const DrugDetailPage = lazy(() => import('@/modules/myformulari/pages/DrugDetailPage'))
 const HamListPage = lazy(() => import('@/modules/myformulari/pages/HamListPage'))
 const LasaListPage = lazy(() => import('@/modules/myformulari/pages/LasaListPage'))
@@ -43,6 +44,7 @@ const DilutionProtocolPage = lazy(() => import('@/modules/myformulari/pages/Dilu
 const AntimicrobialGuidelinePage = lazy(() => import('@/modules/myformulari/pages/AntimicrobialGuidelinePage'))
 const DrugQuotaPage = lazy(() => import('@/modules/myformulari/pages/DrugQuotaPage'))
 const DrugAlternativesPage = lazy(() => import('@/modules/myformulari/pages/DrugAlternativesPage'))
+const AntidoteProtocolPage = lazy(() => import('@/modules/myformulari/pages/AntidoteProtocolPage'))
 const PorterSubMenu = lazy(() => import('@/modules/hub/pages/modules/PorterSubMenu'))
 const TransporterSubMenu = lazy(() => import('@/modules/hub/pages/modules/TransporterSubMenu'))
 const PriviledgingSubMenu = lazy(() => import('@/modules/hub/pages/modules/PriviledgingSubMenu'))
@@ -75,6 +77,14 @@ const StaffLeaveApplyPage = lazy(() => import('@/modules/mystaff/pages/StaffLeav
 const StaffReminderPage = lazy(() => import('@/modules/mystaff/pages/StaffReminderPage'))
 const StaffHodPage = lazy(() => import('@/modules/mystaff/pages/StaffHodPage'))
 const StaffOrgChartPage = lazy(() => import('@/modules/mystaff/pages/StaffOrgChartPage'))
+
+// MyTimeOff pages
+const TimeOffDashboardPage = lazy(() => import('@/modules/mytimeoff/pages/TimeOffDashboardPage'))
+const TimeOffClaimPage = lazy(() => import('@/modules/mytimeoff/pages/TimeOffClaimPage'))
+const TimeOffMyClaimsPage = lazy(() => import('@/modules/mytimeoff/pages/TimeOffMyClaimsPage'))
+const TimeOffRedeemPage = lazy(() => import('@/modules/mytimeoff/pages/TimeOffRedeemPage'))
+const TimeOffHistoryPage = lazy(() => import('@/modules/mytimeoff/pages/TimeOffHistoryPage'))
+const TimeOffHodPage = lazy(() => import('@/modules/mytimeoff/pages/TimeOffHodPage'))
 
 // MyPerolehan pages
 const MyPerolehanDashboard = lazy(() => import('@/modules/myperolehan/pages/MyPerolehanDashboard'))
@@ -842,6 +852,14 @@ const router = createBrowserRouter(
             ),
           },
           {
+            path: 'hospital-lawas',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <HospitalLawasFormulariPage />
+              </Suspense>
+            ),
+          },
+          {
             path: 'drug/:id',
             element: (
               <Suspense fallback={<PageLoader />}>
@@ -894,6 +912,14 @@ const router = createBrowserRouter(
             element: (
               <Suspense fallback={<PageLoader />}>
                 <DrugAlternativesPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'antidotes',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <AntidoteProtocolPage />
               </Suspense>
             ),
           },
@@ -1176,6 +1202,63 @@ const router = createBrowserRouter(
         ],
       },
       {
+        path: 'timeoff',
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/timeoff/dashboard" replace />,
+          },
+          {
+            path: 'dashboard',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <TimeOffDashboardPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'claim/new',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <TimeOffClaimPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'claims',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <TimeOffMyClaimsPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'redeem',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <TimeOffRedeemPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'history',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <TimeOffHistoryPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'hod',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <TimeOffHodPage />
+              </Suspense>
+            ),
+          },
+        ],
+      },
+      {
         path: 'perolehan',
         children: [
           {
@@ -1447,15 +1530,26 @@ const router = createBrowserRouter(
       {
         path: 'pharmacy/oxygen',
         element: (
-          <ProtectedRoute allowedRoles={[
-            SYSTEM_ROLES.PHARMACY_DIRECTOR,
-            SYSTEM_ROLES.PHARMACY_MANAGER,
-            SYSTEM_ROLES.PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_ASSISTANT,
-            SYSTEM_ROLES.ASSISTANT_PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_STOREKEEPER,
-            SYSTEM_ROLES.PHARMACY_STAFF,
-          ]}>
+          <ProtectedRoute
+            requiredModule="cylinder"
+            allowedRoles={[
+              SYSTEM_ROLES.SYSTEM_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR,
+              SYSTEM_ROLES.PHARMACY_DIRECTOR,
+              SYSTEM_ROLES.PHARMACY_MANAGER,
+              SYSTEM_ROLES.PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_ASSISTANT,
+              SYSTEM_ROLES.ASSISTANT_PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_STOREKEEPER,
+              SYSTEM_ROLES.PHARMACY_STAFF,
+              SYSTEM_ROLES.NURSE,
+              SYSTEM_ROLES.DOCTOR,
+              SYSTEM_ROLES.MEDICAL_OFFICER,
+              SYSTEM_ROLES.ASSISTANT_MEDICAL_OFFICER,
+              SYSTEM_ROLES.STAFF,
+            ]}
+          >
             <Suspense fallback={<PageLoader />}>
               <OxygenDashboardPage />
             </Suspense>
@@ -1465,15 +1559,26 @@ const router = createBrowserRouter(
       {
         path: 'pharmacy/oxygen/cylinders',
         element: (
-          <ProtectedRoute allowedRoles={[
-            SYSTEM_ROLES.PHARMACY_DIRECTOR,
-            SYSTEM_ROLES.PHARMACY_MANAGER,
-            SYSTEM_ROLES.PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_ASSISTANT,
-            SYSTEM_ROLES.ASSISTANT_PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_STOREKEEPER,
-            SYSTEM_ROLES.PHARMACY_STAFF,
-          ]}>
+          <ProtectedRoute
+            requiredModule="cylinder"
+            allowedRoles={[
+              SYSTEM_ROLES.SYSTEM_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR,
+              SYSTEM_ROLES.PHARMACY_DIRECTOR,
+              SYSTEM_ROLES.PHARMACY_MANAGER,
+              SYSTEM_ROLES.PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_ASSISTANT,
+              SYSTEM_ROLES.ASSISTANT_PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_STOREKEEPER,
+              SYSTEM_ROLES.PHARMACY_STAFF,
+              SYSTEM_ROLES.NURSE,
+              SYSTEM_ROLES.DOCTOR,
+              SYSTEM_ROLES.MEDICAL_OFFICER,
+              SYSTEM_ROLES.ASSISTANT_MEDICAL_OFFICER,
+              SYSTEM_ROLES.STAFF,
+            ]}
+          >
             <Suspense fallback={<PageLoader />}>
               <OxygenDashboardPage />
             </Suspense>
@@ -1483,15 +1588,26 @@ const router = createBrowserRouter(
       {
         path: 'pharmacy/oxygen/consumption',
         element: (
-          <ProtectedRoute allowedRoles={[
-            SYSTEM_ROLES.PHARMACY_DIRECTOR,
-            SYSTEM_ROLES.PHARMACY_MANAGER,
-            SYSTEM_ROLES.PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_ASSISTANT,
-            SYSTEM_ROLES.ASSISTANT_PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_STOREKEEPER,
-            SYSTEM_ROLES.PHARMACY_STAFF,
-          ]}>
+          <ProtectedRoute
+            requiredModule="cylinder"
+            allowedRoles={[
+              SYSTEM_ROLES.SYSTEM_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR,
+              SYSTEM_ROLES.PHARMACY_DIRECTOR,
+              SYSTEM_ROLES.PHARMACY_MANAGER,
+              SYSTEM_ROLES.PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_ASSISTANT,
+              SYSTEM_ROLES.ASSISTANT_PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_STOREKEEPER,
+              SYSTEM_ROLES.PHARMACY_STAFF,
+              SYSTEM_ROLES.NURSE,
+              SYSTEM_ROLES.DOCTOR,
+              SYSTEM_ROLES.MEDICAL_OFFICER,
+              SYSTEM_ROLES.ASSISTANT_MEDICAL_OFFICER,
+              SYSTEM_ROLES.STAFF,
+            ]}
+          >
             <Suspense fallback={<PageLoader />}>
               <OxygenDashboardPage />
             </Suspense>
@@ -1501,15 +1617,26 @@ const router = createBrowserRouter(
       {
         path: 'pharmacy/oxygen/qr',
         element: (
-          <ProtectedRoute allowedRoles={[
-            SYSTEM_ROLES.PHARMACY_DIRECTOR,
-            SYSTEM_ROLES.PHARMACY_MANAGER,
-            SYSTEM_ROLES.PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_ASSISTANT,
-            SYSTEM_ROLES.ASSISTANT_PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_STOREKEEPER,
-            SYSTEM_ROLES.PHARMACY_STAFF,
-          ]}>
+          <ProtectedRoute
+            requiredModule="cylinder"
+            allowedRoles={[
+              SYSTEM_ROLES.SYSTEM_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR,
+              SYSTEM_ROLES.PHARMACY_DIRECTOR,
+              SYSTEM_ROLES.PHARMACY_MANAGER,
+              SYSTEM_ROLES.PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_ASSISTANT,
+              SYSTEM_ROLES.ASSISTANT_PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_STOREKEEPER,
+              SYSTEM_ROLES.PHARMACY_STAFF,
+              SYSTEM_ROLES.NURSE,
+              SYSTEM_ROLES.DOCTOR,
+              SYSTEM_ROLES.MEDICAL_OFFICER,
+              SYSTEM_ROLES.ASSISTANT_MEDICAL_OFFICER,
+              SYSTEM_ROLES.STAFF,
+            ]}
+          >
             <Suspense fallback={<PageLoader />}>
               <OxygenDashboardPage />
             </Suspense>
@@ -1519,15 +1646,26 @@ const router = createBrowserRouter(
       {
         path: 'pharmacy/oxygen/reconciliation',
         element: (
-          <ProtectedRoute allowedRoles={[
-            SYSTEM_ROLES.PHARMACY_DIRECTOR,
-            SYSTEM_ROLES.PHARMACY_MANAGER,
-            SYSTEM_ROLES.PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_ASSISTANT,
-            SYSTEM_ROLES.ASSISTANT_PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_STOREKEEPER,
-            SYSTEM_ROLES.PHARMACY_STAFF,
-          ]}>
+          <ProtectedRoute
+            requiredModule="cylinder"
+            allowedRoles={[
+              SYSTEM_ROLES.SYSTEM_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR,
+              SYSTEM_ROLES.PHARMACY_DIRECTOR,
+              SYSTEM_ROLES.PHARMACY_MANAGER,
+              SYSTEM_ROLES.PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_ASSISTANT,
+              SYSTEM_ROLES.ASSISTANT_PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_STOREKEEPER,
+              SYSTEM_ROLES.PHARMACY_STAFF,
+              SYSTEM_ROLES.NURSE,
+              SYSTEM_ROLES.DOCTOR,
+              SYSTEM_ROLES.MEDICAL_OFFICER,
+              SYSTEM_ROLES.ASSISTANT_MEDICAL_OFFICER,
+              SYSTEM_ROLES.STAFF,
+            ]}
+          >
             <Suspense fallback={<PageLoader />}>
               <OxygenDashboardPage />
             </Suspense>
@@ -1537,15 +1675,26 @@ const router = createBrowserRouter(
       {
         path: 'pharmacy/oxygen/reports',
         element: (
-          <ProtectedRoute allowedRoles={[
-            SYSTEM_ROLES.PHARMACY_DIRECTOR,
-            SYSTEM_ROLES.PHARMACY_MANAGER,
-            SYSTEM_ROLES.PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_ASSISTANT,
-            SYSTEM_ROLES.ASSISTANT_PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_STOREKEEPER,
-            SYSTEM_ROLES.PHARMACY_STAFF,
-          ]}>
+          <ProtectedRoute
+            requiredModule="cylinder"
+            allowedRoles={[
+              SYSTEM_ROLES.SYSTEM_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR,
+              SYSTEM_ROLES.PHARMACY_DIRECTOR,
+              SYSTEM_ROLES.PHARMACY_MANAGER,
+              SYSTEM_ROLES.PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_ASSISTANT,
+              SYSTEM_ROLES.ASSISTANT_PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_STOREKEEPER,
+              SYSTEM_ROLES.PHARMACY_STAFF,
+              SYSTEM_ROLES.NURSE,
+              SYSTEM_ROLES.DOCTOR,
+              SYSTEM_ROLES.MEDICAL_OFFICER,
+              SYSTEM_ROLES.ASSISTANT_MEDICAL_OFFICER,
+              SYSTEM_ROLES.STAFF,
+            ]}
+          >
             <Suspense fallback={<PageLoader />}>
               <CylinderReportPage />
             </Suspense>
@@ -1555,15 +1704,26 @@ const router = createBrowserRouter(
       {
         path: 'pharmacy/oxygen/maintenance',
         element: (
-          <ProtectedRoute allowedRoles={[
-            SYSTEM_ROLES.PHARMACY_DIRECTOR,
-            SYSTEM_ROLES.PHARMACY_MANAGER,
-            SYSTEM_ROLES.PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_ASSISTANT,
-            SYSTEM_ROLES.ASSISTANT_PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_STOREKEEPER,
-            SYSTEM_ROLES.PHARMACY_STAFF,
-          ]}>
+          <ProtectedRoute
+            requiredModule="cylinder"
+            allowedRoles={[
+              SYSTEM_ROLES.SYSTEM_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR,
+              SYSTEM_ROLES.PHARMACY_DIRECTOR,
+              SYSTEM_ROLES.PHARMACY_MANAGER,
+              SYSTEM_ROLES.PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_ASSISTANT,
+              SYSTEM_ROLES.ASSISTANT_PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_STOREKEEPER,
+              SYSTEM_ROLES.PHARMACY_STAFF,
+              SYSTEM_ROLES.NURSE,
+              SYSTEM_ROLES.DOCTOR,
+              SYSTEM_ROLES.MEDICAL_OFFICER,
+              SYSTEM_ROLES.ASSISTANT_MEDICAL_OFFICER,
+              SYSTEM_ROLES.STAFF,
+            ]}
+          >
             <Suspense fallback={<PageLoader />}>
               <CylinderMaintenancePage />
             </Suspense>
@@ -1573,15 +1733,26 @@ const router = createBrowserRouter(
       {
         path: 'pharmacy/oxygen/ledger',
         element: (
-          <ProtectedRoute allowedRoles={[
-            SYSTEM_ROLES.PHARMACY_DIRECTOR,
-            SYSTEM_ROLES.PHARMACY_MANAGER,
-            SYSTEM_ROLES.PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_ASSISTANT,
-            SYSTEM_ROLES.ASSISTANT_PHARMACIST,
-            SYSTEM_ROLES.PHARMACY_STOREKEEPER,
-            SYSTEM_ROLES.PHARMACY_STAFF,
-          ]}>
+          <ProtectedRoute
+            requiredModule="cylinder"
+            allowedRoles={[
+              SYSTEM_ROLES.SYSTEM_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMIN,
+              SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR,
+              SYSTEM_ROLES.PHARMACY_DIRECTOR,
+              SYSTEM_ROLES.PHARMACY_MANAGER,
+              SYSTEM_ROLES.PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_ASSISTANT,
+              SYSTEM_ROLES.ASSISTANT_PHARMACIST,
+              SYSTEM_ROLES.PHARMACY_STOREKEEPER,
+              SYSTEM_ROLES.PHARMACY_STAFF,
+              SYSTEM_ROLES.NURSE,
+              SYSTEM_ROLES.DOCTOR,
+              SYSTEM_ROLES.MEDICAL_OFFICER,
+              SYSTEM_ROLES.ASSISTANT_MEDICAL_OFFICER,
+              SYSTEM_ROLES.STAFF,
+            ]}
+          >
             <Suspense fallback={<PageLoader />}>
               <CylinderKewPs4LedgerPage />
             </Suspense>

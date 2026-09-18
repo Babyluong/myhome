@@ -5,20 +5,21 @@ import {
   ArrowLeft, 
   Users, 
   Printer, 
-  Calendar,
-  Clock,
-  UserCheck,
-  Shield,
-  Activity,
-  MapPin
+  Calendar, 
+  Clock, 
+  UserCheck, 
+  Shield, 
+  Activity, 
+  MapPin 
 } from 'lucide-react'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { 
-  getDriverActivityReport,
-  getTransporterRoles
+  getDriverActivityReport, 
+  getTransporterRoles 
 } from '../services/transporterService'
 import { getUsers } from '@/services/userService'
 import type { UserWithRelations } from '@/shared/types/auth'
@@ -28,12 +29,14 @@ import {
   CardTitle, 
   CardContent, 
   Button, 
-  Input
+  Input 
 } from '@/components/ui'
 
 const TransporterDriverMonitorPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
+  const { language } = useLanguage()
+  const isEn = language !== 'ms'
   const toast = useToast()
 
   const [drivers, setDrivers] = useState<UserWithRelations[]>([])
@@ -78,7 +81,10 @@ const TransporterDriverMonitorPage: React.FC = () => {
           setReportData(res.data)
         }
       } catch (err: any) {
-        toast.error('Gagal Memuatkan Rekod', err.message || 'Sila cuba lagi.')
+        toast.error(
+          isEn ? 'Failed to Load Records' : 'Gagal Memuatkan Rekod', 
+          err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
+        )
       } finally {
         setLoading(false)
       }
@@ -94,29 +100,29 @@ const TransporterDriverMonitorPage: React.FC = () => {
     // Title / Header
     doc.setFont('Helvetica', 'bold')
     doc.setFontSize(16)
-    doc.text('KEMENTERIAN KESIHATAN MALAYSIA', 105, 20, { align: 'center' })
+    doc.text('MINISTRY OF HEALTH MALAYSIA', 105, 20, { align: 'center' })
     doc.setFontSize(13)
-    doc.text(`LAPORAN AKTIVITI & PENYELIAAN PEMANDU BULANAN`, 105, 28, { align: 'center' })
+    doc.text(`MONTHLY DRIVER SUPERVISION & ACTIVITY REPORT`, 105, 28, { align: 'center' })
     doc.setFontSize(10)
-    doc.text(`PEMANDU: ${reportData.driverName.toUpperCase()}`, 105, 34, { align: 'center' })
-    doc.text(`BULAN/TAHUN: ${month}/${year}`, 105, 40, { align: 'center' })
+    doc.text(`DRIVER: ${reportData.driverName.toUpperCase()}`, 105, 34, { align: 'center' })
+    doc.text(`PERIOD: ${month}/${year}`, 105, 40, { align: 'center' })
 
     doc.setLineWidth(0.5)
     doc.line(15, 45, 195, 45)
 
     // Summary statistics
-    doc.text(`Jumlah Perjalanan Selesai: ${reportData.totalTrips}`, 15, 52)
-    doc.text(`Jumlah Masa Memandu (Anggaran): ${reportData.totalDurationHours} jam`, 15, 58)
+    doc.text(`Total Completed Trips: ${reportData.totalTrips}`, 15, 52)
+    doc.text(`Total Driving Time (Estimated): ${reportData.totalDurationHours} hours`, 15, 58)
 
     // Table rows
-    const tableHeaders = [['Tarikh', 'Rujukan', 'Kenderaan', 'Model Kenderaan', 'Destinasi', 'Tempoh (jam)']]
+    const tableHeaders = [['Date', 'Ref No', 'Vehicle Plate', 'Vehicle Model', 'Destination', 'Duration (Hours)']]
     const tableBody = reportData.trips.map((t: any) => [
       t.date,
       t.referenceNo,
       t.vehicleNo,
       t.vehicleModel,
       t.destination,
-      `${t.durationHours} jam`
+      `${t.durationHours} hrs`
     ])
 
     autoTable(doc, {
@@ -130,16 +136,19 @@ const TransporterDriverMonitorPage: React.FC = () => {
 
     const finalY = (doc as any).lastAutoTable.finalY + 15
     doc.setFontSize(9)
-    doc.text('Disediakan Oleh:', 25, finalY)
+    doc.text('Prepared By:', 25, finalY)
     doc.text('______________________________', 25, finalY + 15)
-    doc.text('Tandatangan Penyelia Pentadbiran', 25, finalY + 20)
+    doc.text('Administrative Supervisor Signature', 25, finalY + 20)
 
-    doc.text('Disahkan & Diperakui Oleh:', 135, finalY)
+    doc.text('Approved & Endorsed By:', 135, finalY)
     doc.text('______________________________', 135, finalY + 15)
-    doc.text('Tandatangan Pengarah Hospital / JKN', 135, finalY + 20)
+    doc.text('Hospital Director Signature', 135, finalY + 20)
 
-    doc.save(`Laporan_Aktiviti_Pemandu_${reportData.driverName.replace(/\s+/g, '_')}_${month}_${year}.pdf`)
-    toast.success('PDF Dimuat Turun', `Laporan aktiviti ${reportData.driverName} berjaya dijana.`)
+    doc.save(`Driver_Activity_Report_${reportData.driverName.replace(/\s+/g, '_')}_${month}_${year}.pdf`)
+    toast.success(
+      isEn ? 'PDF Downloaded' : 'PDF Dimuat Turun', 
+      isEn ? `Activity report for ${reportData.driverName} generated.` : `Laporan aktiviti ${reportData.driverName} berjaya dijana.`
+    )
   }
 
   return (
@@ -148,10 +157,10 @@ const TransporterDriverMonitorPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Papan Pemuka</span>
+        <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
       </button>
 
       {/* Header */}
@@ -159,19 +168,21 @@ const TransporterDriverMonitorPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <Users className="w-8 h-8 text-indigo-600" />
-            Pemantauan & Aktiviti Pemandu (Driver Supervision)
+            {isEn ? 'Driver Supervision & Activity Monitoring' : 'Pemantauan & Aktiviti Pemandu (Driver Supervision)'}
           </h1>
           <p className="text-slate-500 text-sm">
-            Pantau jumlah jam bekerja, trip selesai, dan pengagihan kenderaan bagi setiap pemandu bertugas di hospital.
+            {isEn 
+              ? 'Supervise working hours, completed missions, and vehicle assignments across hospital duty drivers.' 
+              : 'Pantau jumlah jam bekerja, trip selesai, dan pengagihan kenderaan bagi setiap pemandu bertugas di hospital.'}
           </p>
         </div>
         <Button 
           disabled={!reportData || reportData.trips.length === 0}
           onClick={handlePrintPDF}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-2"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-2 cursor-pointer"
         >
           <Printer className="w-4 h-4" />
-          <span>Cetak Laporan Aktiviti</span>
+          <span>{isEn ? 'Print Activity Report' : 'Cetak Laporan Aktiviti'}</span>
         </Button>
       </div>
 
@@ -181,14 +192,16 @@ const TransporterDriverMonitorPage: React.FC = () => {
           
           {/* Driver Selector */}
           <div className="space-y-1">
-            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">Pilih Pemandu</label>
+            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+              {isEn ? 'Select Driver' : 'Pilih Pemandu'}
+            </label>
             <select
               value={selectedDriverId}
               onChange={(e) => setSelectedDriverId(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors"
+              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
             >
               {drivers.length === 0 ? (
-                <option value="">Tiada pemandu berdaftar</option>
+                <option value="">{isEn ? 'No registered drivers' : 'Tiada pemandu berdaftar'}</option>
               ) : (
                 drivers.map(d => (
                   <option key={d.id} value={d.id}>
@@ -201,15 +214,17 @@ const TransporterDriverMonitorPage: React.FC = () => {
 
           {/* Month */}
           <div className="space-y-1">
-            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">Bulan</label>
+            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+              {isEn ? 'Month' : 'Bulan'}
+            </label>
             <select
               value={month}
               onChange={(e) => setMonth(parseInt(e.target.value, 10))}
-              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors"
+              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
             >
               {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => (
                 <option key={m} value={m}>
-                  {new Date(2026, m - 1, 1).toLocaleString('ms-MY', { month: 'long' })}
+                  {new Date(2026, m - 1, 1).toLocaleString(isEn ? 'en-US' : 'ms-MY', { month: 'long' })}
                 </option>
               ))}
             </select>
@@ -217,11 +232,13 @@ const TransporterDriverMonitorPage: React.FC = () => {
 
           {/* Year */}
           <div className="space-y-1">
-            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">Tahun</label>
+            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+              {isEn ? 'Year' : 'Tahun'}
+            </label>
             <select
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value, 10))}
-              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors"
+              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
             >
               {[2025, 2026, 2027].map(y => (
                 <option key={y} value={y}>{y}</option>
@@ -231,7 +248,7 @@ const TransporterDriverMonitorPage: React.FC = () => {
 
           <div className="flex items-end">
             <div className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-center text-xs font-bold text-slate-600">
-              Total: {reportData?.totalDurationHours || 0} hours active
+              {isEn ? 'Total:' : 'Jumlah:'} {reportData?.totalDurationHours || 0} {isEn ? 'hours active' : 'jam aktif'}
             </div>
           </div>
 
@@ -242,19 +259,23 @@ const TransporterDriverMonitorPage: React.FC = () => {
       <Card className="border border-slate-200 shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">Memuatkan aktiviti pemandu...</div>
+            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+              {isEn ? 'Loading driver activities...' : 'Memuatkan aktiviti pemandu...'}
+            </div>
           ) : !reportData || reportData.trips.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">Tiada sejarah tugasan perjalanan bagi pemandu ini dalam tempoh tersebut.</div>
+            <div className="p-12 text-center text-slate-500">
+              {isEn ? 'No trip history for this driver during the selected period.' : 'Tiada sejarah tugasan perjalanan bagi pemandu ini dalam tempoh tersebut.'}
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    <th className="px-6 py-4">Tarikh</th>
-                    <th className="px-6 py-4">No. Rujukan</th>
-                    <th className="px-6 py-4">Kenderaan Digunakan</th>
-                    <th className="px-6 py-4">Destinasi</th>
-                    <th className="px-6 py-4">Anggaran Tempoh</th>
+                    <th className="px-6 py-4">{isEn ? 'Date' : 'Tarikh'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Ref No' : 'No. Rujukan'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Assigned Vehicle' : 'Kenderaan Digunakan'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Destination' : 'Destinasi'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Estimated Duration' : 'Anggaran Tempoh'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
@@ -275,7 +296,7 @@ const TransporterDriverMonitorPage: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap font-mono font-bold text-indigo-600 tabular-nums">
-                        {trip.durationHours} jam
+                        {trip.durationHours} {isEn ? 'hrs' : 'jam'}
                       </td>
                     </tr>
                   ))}

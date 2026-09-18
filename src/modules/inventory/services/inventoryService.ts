@@ -2136,10 +2136,12 @@ export async function getStockTransactions(
         query = query.eq('to_location_id', filter.to_location_id)
       }
       if (filter?.date_from) {
-        query = query.gte('transaction_date', `${filter.date_from}T00:00:00`)
+        const fromDate = filter.date_from.includes('T') ? filter.date_from : `${filter.date_from}T00:00:00`
+        query = query.gte('transaction_date', fromDate)
       }
       if (filter?.date_to) {
-        query = query.lte('transaction_date', `${filter.date_to}T23:59:59`)
+        const toDate = filter.date_to.includes('T') ? filter.date_to : `${filter.date_to}T23:59:59`
+        query = query.lte('transaction_date', toDate)
       }
 
       const { data, error } = await query
@@ -2233,10 +2235,12 @@ export async function getItemMovementSummary(
         .order('transaction_date', { ascending: false })
 
       if (dateFrom) {
-        txQuery = txQuery.gte('transaction_date', `${dateFrom}T00:00:00`)
+        const fromDate = dateFrom.includes('T') ? dateFrom : `${dateFrom}T00:00:00`
+        txQuery = txQuery.gte('transaction_date', fromDate)
       }
       if (dateTo) {
-        txQuery = txQuery.lte('transaction_date', `${dateTo}T23:59:59`)
+        const toDate = dateTo.includes('T') ? dateTo : `${dateTo}T23:59:59`
+        txQuery = txQuery.lte('transaction_date', toDate)
       }
 
       const { data: txns } = await txQuery
@@ -2310,10 +2314,12 @@ export async function getDepartmentIssuanceBreakdown(
         .in('transaction_type', ['issue', 'transfer_out'])
 
       if (dateFrom) {
-        query = query.gte('transaction_date', `${dateFrom}T00:00:00`)
+        const fromDate = dateFrom.includes('T') ? dateFrom : `${dateFrom}T00:00:00`
+        query = query.gte('transaction_date', fromDate)
       }
       if (dateTo) {
-        query = query.lte('transaction_date', `${dateTo}T23:59:59`)
+        const toDate = dateTo.includes('T') ? dateTo : `${dateTo}T23:59:59`
+        query = query.lte('transaction_date', toDate)
       }
 
       const { data, error } = await query
@@ -2708,7 +2714,7 @@ export async function bringForwardStock(
 ): Promise<ApiResponse<{ batch: StockBatch; transaction: StockTransaction }>> {
   try {
     const txnDate = payload.transaction_date 
-      ? `${payload.transaction_date}T00:00:00.000Z` 
+      ? (payload.transaction_date.includes('T') ? payload.transaction_date : `${payload.transaction_date}T00:00:00.000Z`) 
       : new Date().toISOString()
     const currentYear = new Date().getFullYear()
     const uniqueSuffix = `${Date.now().toString().slice(-5)}-${Math.floor(100 + Math.random() * 900)}`
@@ -4869,7 +4875,10 @@ export async function triggerCcSync(
 
         let finalDrugCode = mdc;
 
-        if (matched) {
+        // If the sheet provides a valid MDC/KKM code, ALWAYS respect the uploaded code over legacy synthetic codes!
+        if (mdc && !mdc.toUpperCase().startsWith('CC-') && mdc !== '-' && mdc.toLowerCase() !== 'nil') {
+          finalDrugCode = mdc;
+        } else if (matched && matched.drug_code && !matched.drug_code.toUpperCase().startsWith('CC-')) {
           finalDrugCode = matched.drug_code;
         } else if (!finalDrugCode || finalDrugCode === '-' || finalDrugCode.toLowerCase() === 'nil') {
           const nameSlug = itemName.replace(/[^a-zA-Z0-9]/g, '').substring(0, 15).toUpperCase();
@@ -5340,9 +5349,12 @@ export async function importCcSyncCsv(
 
         let finalDrugCode = mdc;
 
-        if (matched) {
+        // If the sheet provides a valid MDC/KKM code, ALWAYS respect the uploaded code over legacy synthetic codes!
+        if (mdc && !mdc.toUpperCase().startsWith('CC-') && mdc !== '-' && mdc.toLowerCase() !== 'nil') {
+          finalDrugCode = mdc;
+        } else if (matched && matched.drug_code && !matched.drug_code.toUpperCase().startsWith('CC-')) {
           finalDrugCode = matched.drug_code;
-        } else {
+        } else if (!finalDrugCode || finalDrugCode === '-' || finalDrugCode.toLowerCase() === 'nil') {
           const nameSlug = itemName.replace(/[^a-zA-Z0-9]/g, '').substring(0, 15).toUpperCase();
           finalDrugCode = `CC-${nameSlug || idx}-${idx}`;
         }

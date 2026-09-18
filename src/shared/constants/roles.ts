@@ -19,6 +19,21 @@ export const SYSTEM_ROLES = {
   PORTER_STAFF: 'porter_staff',
   PORTER_SUPERVISOR: 'porter_supervisor',
   PORTER_ADMIN: 'porter_admin',
+  SISTER: 'sister',
+  SENIOR_ASSISTANT_MEDICAL_OFFICER: 'senior_assistant_medical_officer',
+  MATRON: 'matron',
+  HOSPITAL_DIRECTOR: 'hospital_director',
+  PROCUREMENT_OFFICER: 'procurement_officer',
+  BUDGET_OFFICER: 'budget_officer',
+  PHYSIOTHERAPIST: 'physiotherapist',
+  RADIOGRAPHER: 'radiographer',
+  MEDICAL_LAB_TECHNICIAN: 'medical_lab_technician',
+  OCCUPATIONAL_THERAPIST: 'occupational_therapist',
+  PATHOLOGIST: 'pathologist',
+  INVENTORY_MANAGER: 'inventory_manager',
+  GENERAL_SERVICE_ASSISTANT: 'general_service_assistant',
+  HOSPITAL_DRIVER: 'hospital_driver',
+  DEPARTMENT_HEAD: 'department_head',
 } as const
 
 export const ROLE_DISPLAY_NAMES: Record<string, string> = {
@@ -42,5 +57,21 @@ export const ROLE_DISPLAY_NAMES: Record<string, string> = {
   [SYSTEM_ROLES.PORTER_STAFF]: 'Porter (PPK)',
   [SYSTEM_ROLES.PORTER_SUPERVISOR]: 'Penyelia Porter (PPK Supervisor)',
   [SYSTEM_ROLES.PORTER_ADMIN]: 'Porter Admin',
+  [SYSTEM_ROLES.SISTER]: 'Sister',
+  [SYSTEM_ROLES.SENIOR_ASSISTANT_MEDICAL_OFFICER]: 'Senior Assistant Medical Officer',
+  [SYSTEM_ROLES.MATRON]: 'Matron',
+  [SYSTEM_ROLES.HOSPITAL_DIRECTOR]: 'Hospital Director',
+  [SYSTEM_ROLES.PROCUREMENT_OFFICER]: 'Procurement Officer',
+  [SYSTEM_ROLES.BUDGET_OFFICER]: 'Budget Officer',
+  [SYSTEM_ROLES.PHYSIOTHERAPIST]: 'Physiotherapist',
+  [SYSTEM_ROLES.RADIOGRAPHER]: 'Radiographer',
+  [SYSTEM_ROLES.MEDICAL_LAB_TECHNICIAN]: 'Medical Laboratory Technologist',
+  [SYSTEM_ROLES.OCCUPATIONAL_THERAPIST]: 'Occupational Therapist',
+  [SYSTEM_ROLES.PATHOLOGIST]: 'Pathologist',
+  [SYSTEM_ROLES.INVENTORY_MANAGER]: 'Inventory Manager',
+  [SYSTEM_ROLES.GENERAL_SERVICE_ASSISTANT]: 'General Service Assistant',
+  [SYSTEM_ROLES.HOSPITAL_DRIVER]: 'Hospital Driver',
+  [SYSTEM_ROLES.DEPARTMENT_HEAD]: 'Department Head',
 } as const
+
 

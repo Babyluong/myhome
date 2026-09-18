@@ -1,4 +1,4 @@
-﻿// src/modules/myporter/pages/PorterReceiverPanelPage.tsx
+// src/modules/myporter/pages/PorterReceiverPanelPage.tsx
 import React, { useEffect, useState } from 'react'
 import { 
   CheckCircle2, 
@@ -57,12 +57,12 @@ export const PorterReceiverPanelPage: React.FC = () => {
       const res = await receiverVerifyAndComplete(jobId, proof, rating)
       if (res.data) {
         soundAlert.playSuccessTone()
-        toast.success('Penerimaan Disahkan!', 'Tugasan telah selesai dan rekod audit telah dikemaskini.')
+        toast.success('Receipt Confirmed!', 'Task completed and audit records have been updated.')
         setIsVerificationModalOpen(false)
         fetchJobs()
       }
     } catch (err: any) {
-      toast.error('Ralat Pengesahan', err.message)
+      toast.error('Verification Error', err.message)
     }
   }
 
@@ -94,10 +94,10 @@ export const PorterReceiverPanelPage: React.FC = () => {
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-3">
           <ShieldCheck className="w-8 h-8 text-emerald-400" />
-          <span>Pengesahan Penerimaan Kargo / Pesakit</span>
+          <span>Cargo & Patient Receipt Verification</span>
         </h1>
         <p className="text-xs text-slate-400 mt-1">
-          Panel penerima untuk wad, dewan bedah, makmal & farmasi mengesahkan penyerahan PPK
+          Receiver confirmation console for wards, operating theatres, laboratories & pharmacy to sign off porter handovers
         </p>
       </div>
 
@@ -105,11 +105,11 @@ export const PorterReceiverPanelPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
         <div className="flex flex-wrap gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
           {[
-            { key: 'all', label: 'Semua Masuk' },
-            { key: 'blood_bank', label: 'Darah' },
-            { key: 'lab_specimen', label: 'Makmal' },
-            { key: 'patient_transfer', label: 'Pesakit' },
-            { key: 'pharmacy_run', label: 'Farmasi' },
+            { key: 'all', label: 'All Incoming' },
+            { key: 'blood_bank', label: 'Blood Bank' },
+            { key: 'lab_specimen', label: 'Lab Specimen' },
+            { key: 'patient_transfer', label: 'Patient Transfer' },
+            { key: 'pharmacy_run', label: 'Pharmacy' },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -127,7 +127,7 @@ export const PorterReceiverPanelPage: React.FC = () => {
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
           <input
             type="text"
-            placeholder="Cari Penghantaran..."
+            placeholder="Search Deliveries..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -139,14 +139,14 @@ export const PorterReceiverPanelPage: React.FC = () => {
       <div className="space-y-4">
         <h2 className="text-base font-bold text-white flex items-center gap-2">
           <Clock className="w-5 h-5 text-amber-400" />
-          <span>Penghantaran Menunggu Tindakan / Sedang Tiba ({filteredIncoming.length})</span>
+          <span>Incoming & Pending Verification Deliveries ({filteredIncoming.length})</span>
         </h2>
 
         {filteredIncoming.length === 0 ? (
           <div className="p-12 text-center text-slate-500 bg-slate-900/40 rounded-3xl border border-slate-800">
             <CheckCircle2 className="w-10 h-10 mx-auto text-slate-700 mb-2" />
-            <p className="font-bold text-slate-400">Tiada penghantaran masuk yang sedang menunggu tindakan.</p>
-            <p className="text-xs text-slate-500">Semua kargo dan pesakit telah disahkan selamat tiba.</p>
+            <p className="font-bold text-slate-400">No incoming deliveries awaiting verification.</p>
+            <p className="text-xs text-slate-500">All incoming cargo and patients have been safely acknowledged.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -172,19 +172,19 @@ export const PorterReceiverPanelPage: React.FC = () => {
 
                   <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-xs space-y-1.5">
                     <p className="text-slate-400">
-                      Dari: <strong className="text-slate-200">{job.origin_department_name}</strong>
+                      From: <strong className="text-slate-200">{job.origin_department_name}</strong>
                     </p>
                     <p className="text-slate-400">
-                      Ke Destinasi: <strong className="text-emerald-400">{job.destination_department_name}</strong> ({job.destination_location_details})
+                      To Destination: <strong className="text-emerald-400">{job.destination_department_name}</strong> ({job.destination_location_details})
                     </p>
                     <p className="text-slate-400">
-                      PPK Bertugas: <strong className="text-white">{job.assigned_porter_name || 'Menunggu PPK'}</strong>
+                      Assigned Porter: <strong className="text-white">{job.assigned_porter_name || 'Awaiting Porter'}</strong>
                     </p>
                   </div>
 
                   {job.patient_data && (
                     <div className="p-2.5 bg-blue-950/30 border border-blue-800/40 rounded-xl text-xs text-slate-300">
-                      Pesakit: <strong>{job.patient_data.patient_name}</strong> ({job.patient_data.patient_rn})
+                      Patient: <strong>{job.patient_data.patient_name}</strong> ({job.patient_data.patient_rn})
                     </div>
                   )}
 
@@ -198,7 +198,7 @@ export const PorterReceiverPanelPage: React.FC = () => {
                       className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold shadow-lg rounded-xl flex items-center justify-center gap-2 text-xs"
                     >
                       <PenTool className="w-4 h-4" />
-                      <span>Sahkan Penerimaan & Tandatangan</span>
+                      <span>Verify Receipt & Sign Handover</span>
                     </Button>
                   </div>
                 </div>
@@ -212,7 +212,7 @@ export const PorterReceiverPanelPage: React.FC = () => {
       <div className="space-y-4 pt-4 border-t border-slate-800">
         <h2 className="text-base font-bold text-white flex items-center gap-2">
           <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-          <span>Rekod Penerimaan Disahkan Terdahulu</span>
+          <span>Previously Verified Delivery Records</span>
         </h2>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
@@ -225,19 +225,19 @@ export const PorterReceiverPanelPage: React.FC = () => {
                     <span className="font-semibold text-white">{job.sub_category || job.category}</span>
                   </div>
                   <p className="text-slate-400">
-                    Dari: {job.origin_department_name} ➔ Ke: {job.destination_department_name}
+                    From: {job.origin_department_name} ➔ To: {job.destination_department_name}
                   </p>
                 </div>
 
                 <div className="text-left sm:text-right space-y-1">
                   <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Disahkan oleh: {job.handover_proof?.recipient_name || 'Jururawat'}</span>
+                    <span>Verified by: {job.handover_proof?.recipient_name || 'Nurse'}</span>
                   </div>
                   {job.rating && (
                     <div className="flex items-center sm:justify-end gap-1 text-amber-400 text-[11px]">
                       <Star className="w-3 h-3 fill-amber-400" />
-                      <span>{job.rating.rating_stars} / 5 Bintang</span>
+                      <span>{job.rating.rating_stars} / 5 Stars</span>
                     </div>
                   )}
                 </div>

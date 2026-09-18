@@ -1,5 +1,5 @@
 // src/modules/mytempahan/services/tempahanPdfService.ts
-// Official KKM / Hospital Lawas Facility Booking Confirmation Slip PDF Generator
+// Official MOH / Lawas Hospital Facility Booking Confirmation Slip PDF Generator
 
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
@@ -30,13 +30,13 @@ export async function generateBookingConfirmationPdf(booking: Booking): Promise<
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(12)
   doc.setTextColor(15, 23, 42) // Slate 900
-  doc.text('SLIP PENGESAHAN TEMPAHAN FASILITI & BILIK MESYUARAT', pageWidth / 2, currentY, { align: 'center' })
+  doc.text('FACILITY & MEETING ROOM BOOKING CONFIRMATION SLIP', pageWidth / 2, currentY, { align: 'center' })
 
   currentY += 4.5
   doc.setFont('helvetica', 'italic')
   doc.setFontSize(8.5)
   doc.setTextColor(100, 116, 139) // Slate 500
-  doc.text('Hospital Lawas Facility Booking Confirmation Slip (Format Rasmi KKM)', pageWidth / 2, currentY, { align: 'center' })
+  doc.text('Lawas Hospital Official Facility Booking Slip (MOH Standard)', pageWidth / 2, currentY, { align: 'center' })
 
   // 4. Generate QR Code
   currentY += 5
@@ -68,7 +68,7 @@ export async function generateBookingConfirmationPdf(booking: Booking): Promise<
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(8)
   doc.setTextColor(71, 85, 105)
-  doc.text('NO. RUJUKAN TEMPAHAN:', margin + 7, currentY + 6)
+  doc.text('BOOKING REFERENCE NO.:', margin + 7, currentY + 6)
   doc.setFontSize(11)
   doc.setTextColor(2, 132, 199) // Sky 600
   doc.text(booking.booking_number, margin + 7, currentY + 12)
@@ -76,9 +76,9 @@ export async function generateBookingConfirmationPdf(booking: Booking): Promise<
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(8)
   doc.setTextColor(71, 85, 105)
-  doc.text('STATUS PERMOHONAN:', margin + 75, currentY + 6)
+  doc.text('APPLICATION STATUS:', margin + 75, currentY + 6)
   doc.setFontSize(10)
-  const statusLabel = booking.status === 'approved' ? 'DILULUSKAN (APPROVED)' : booking.status.toUpperCase()
+  const statusLabel = booking.status === 'approved' ? 'APPROVED' : booking.status.toUpperCase()
   doc.setTextColor(booking.status === 'approved' ? 16 : 220, booking.status === 'approved' ? 149 : 38, booking.status === 'approved' ? 95 : 38)
   doc.text(statusLabel, margin + 75, currentY + 12)
 
@@ -86,46 +86,46 @@ export async function generateBookingConfirmationPdf(booking: Booking): Promise<
 
   const durationHrs = Math.round(((timeToMinutes(booking.end_time) - timeToMinutes(booking.start_time)) / 60) * 10) / 10
 
-  // 6. Section 1: Maklumat Pemohon & Acara Table
+  // 6. Section 1: Applicant & Event Details Table
   autoTable(doc, {
     startY: currentY,
     margin: { left: margin + 4, right: margin + 4 },
     theme: 'grid',
     styles: { fontSize: 8, cellPadding: 2.2, textColor: [30, 41, 59] },
     headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold' },
-    head: [['1. MAKLUMAT PEMOHON & BUTIRAN ACARA', 'SPESIFIKASI']],
+    head: [['1. APPLICANT & EVENT DETAILS', 'SPECIFICATIONS']],
     body: [
-      ['Nama Pemohon', booking.pemohon_name || booking.user?.full_name || 'Pegawai Hospital Lawas'],
-      ['Jawatan & Jabatan / Unit', `${booking.pemohon_jawatan || 'Pegawai Perubatan'} (${booking.pemohon_department || booking.department?.department_name || 'Unit Berkaitan'})`],
-      ['No. Telefon & Emel', `${booking.pemohon_phone || '085-284100'} | ${booking.pemohon_email || 'hosp_lawas@moh.gov.my'}`],
-      ['Tujuan Acara / Mesyuarat', booking.purpose],
-      ['Kategori Acara / Keutamaan', `${booking.event_type} [Keutamaan: ${booking.priority.toUpperCase()}]`],
-      ['Tarikh Acara', `${booking.date} (${new Date(booking.date).toLocaleDateString('ms-MY', { weekday: 'long' })})`],
-      ['Masa Mula - Tamat', `${booking.start_time} hingga ${booking.end_time} (${durationHrs} Jam)`],
-      ['Anggaran Kehadiran Peserta', `${booking.attendees_count} Orang`]
+      ['Applicant Name', booking.pemohon_name || booking.user?.full_name || 'Lawas Hospital Officer'],
+      ['Designation & Department', `${booking.pemohon_jawatan || 'Medical Officer'} (${booking.pemohon_department || booking.department?.department_name || 'Designated Unit'})`],
+      ['Phone & Email', `${booking.pemohon_phone || '085-284100'} | ${booking.pemohon_email || 'hosp_lawas@moh.gov.my'}`],
+      ['Meeting / Event Purpose', booking.purpose],
+      ['Event Category / Priority', `${booking.event_type} [Priority: ${booking.priority.toUpperCase()}]`],
+      ['Event Date', `${booking.date} (${new Date(booking.date).toLocaleDateString('en-US', { weekday: 'long' })})`],
+      ['Start - End Time', `${booking.start_time} to ${booking.end_time} (${durationHrs} Hours)`],
+      ['Estimated Attendees', `${booking.attendees_count} Pax`]
     ]
   })
 
   currentY = (doc as any).lastAutoTable.finalY + 3.5
 
-  // 7. Section 2: Butiran Fasiliti & Susun Atur Table
+  // 7. Section 2: Facility & Logistics Table
   autoTable(doc, {
     startY: currentY,
     margin: { left: margin + 4, right: margin + 4 },
     theme: 'grid',
     styles: { fontSize: 8, cellPadding: 2.2, textColor: [30, 41, 59] },
-    headStyles: { fillColor: [192, 38, 211], textColor: [255, 255, 255], fontStyle: 'bold' }, // Fuchsia 600
-    head: [['2. MAKLUMAT FASILITI & LOGISTIK', 'BUTIRAN']],
+    headStyles: { fillColor: [13, 148, 136], textColor: [255, 255, 255], fontStyle: 'bold' }, // Teal 600
+    head: [['2. FACILITY & LOGISTICS DETAILS', 'SPECIFICATIONS']],
     body: [
-      ['Nama Fasiliti / Ruang', `${booking.room?.name || 'Bilik Mesyuarat'} (${booking.room?.room_code || '-'})`],
-      ['Lokasi & Aras Bangunan', `${booking.room?.location || '-'} [${booking.room?.floor_level || '-'}]`],
-      ['Kapasiti Maksimum Bilik', `${booking.room?.capacity || '-'} Pax`],
-      ['Bentuk Susunan Meja & Kerusi', (booking.layout_type || 'boardroom').toUpperCase()],
-      ['Fasiliti & Peralatan Dimohon', (booking.requested_amenities || []).join(', ') || 'Peralatan asas bilik'],
-      ['Peralatan Tambahan', (booking.peralatan_tambahan || []).map(p => `${p.equipment_name} (${p.quantity} unit)`).join(', ') || 'Tiada'],
-      ['Jamuan / Katering', booking.tempahan_makanan?.diperlukan ? `Ya (${booking.tempahan_makanan.jenis_hidangan} - ${booking.tempahan_makanan.anggaran_pax} pax di ${booking.tempahan_makanan.lokasi_hidang})` : 'Tiada Jamuan'],
-      ['Tetamu Kenamaan (VIP)', booking.tetamu_vip?.ada_vip ? `Ya: ${(booking.tetamu_vip.senarai_vip || []).join(', ')}` : 'Tiada'],
-      ['Keperluan Khas / Catatan', booking.special_requirements || 'Tiada']
+      ['Facility / Room Name', `${booking.room?.name || 'Conference Room'} (${booking.room?.room_code || '-'})`],
+      ['Location & Building Level', `${booking.room?.location || '-'} [${booking.room?.floor_level || '-'}]`],
+      ['Maximum Room Capacity', `${booking.room?.capacity || '-'} Pax`],
+      ['Seating & Table Layout', (booking.layout_type || 'boardroom').toUpperCase()],
+      ['Requested Amenities', (booking.requested_amenities || []).join(', ') || 'Standard room amenities'],
+      ['Additional Equipment', (booking.peralatan_tambahan || []).map(p => `${p.equipment_name} (${p.quantity} unit)`).join(', ') || 'None'],
+      ['Catering / Refreshments', booking.tempahan_makanan?.diperlukan ? `Yes (${booking.tempahan_makanan.jenis_hidangan} - ${booking.tempahan_makanan.anggaran_pax} pax at ${booking.tempahan_makanan.lokasi_hidang})` : 'No Catering'],
+      ['VIP Dignitaries', booking.tetamu_vip?.ada_vip ? `Yes: ${(booking.tetamu_vip.senarai_vip || []).join(', ')}` : 'None'],
+      ['Special Requirements / Notes', booking.special_requirements || 'None']
     ]
   })
 
@@ -139,14 +139,14 @@ export async function generateBookingConfirmationPdf(booking: Booking): Promise<
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(7.5)
   doc.setTextColor(15, 23, 42)
-  doc.text('TERMA & SYARAT PENGGUNAAN FASILITI HOSPITAL LAWAS:', margin + 6, currentY + 4.5)
+  doc.text('TERMS & CONDITIONS FOR LAWAS HOSPITAL FACILITY USE:', margin + 6, currentY + 4.5)
 
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(7)
   doc.setTextColor(71, 85, 105)
-  doc.text('1. Pemohon bertanggungjawab memastikan kebersihan, keselamatan peralatan IT/AV, serta suis elektrik dimatikan selepas selesai.', margin + 6, currentY + 8.5)
-  doc.text('2. Makanan & minuman hanya dibenarkan jika ruang tersebut mempunyai kebenaran katering. Sisa katering wajib dibersihkan serta-merta.', margin + 6, currentY + 12)
-  doc.text('3. Kunci dan peralatan tambahan hendaklah diserahkan kembali kepada Pegawai Penjaga Bilik sejurus selepas majlis tamat.', margin + 6, currentY + 15.5)
+  doc.text('1. The applicant is responsible for maintaining facility cleanliness, safeguarding IT/AV equipment, and turning off electrical switches after use.', margin + 6, currentY + 8.5)
+  doc.text('2. Food and beverages are only permitted in designated catering areas. Catering waste must be cleared immediately after the event.', margin + 6, currentY + 12)
+  doc.text('3. Room keys and additional equipment must be returned to the Facility Officer-in-Charge immediately following the event.', margin + 6, currentY + 15.5)
 
   currentY += 21
 
@@ -159,24 +159,24 @@ export async function generateBookingConfirmationPdf(booking: Booking): Promise<
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(7.5)
   doc.setTextColor(15, 23, 42)
-  doc.text('PERAKUAN PEMOHON:', margin + 6, currentY + 4.5)
+  doc.text('APPLICANT DECLARATION:', margin + 6, currentY + 4.5)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(7)
-  doc.text('Tandatangan:', margin + 6, currentY + 16)
-  doc.text(`Nama: ${booking.pemohon_name || booking.user?.full_name || 'Pegawai Pemohon'}`, margin + 6, currentY + 21)
-  doc.text(`Tarikh: ${booking.created_at.slice(0, 10)}`, margin + 6, currentY + 25.5)
+  doc.text('Signature:', margin + 6, currentY + 16)
+  doc.text(`Name: ${booking.pemohon_name || booking.user?.full_name || 'Applicant Officer'}`, margin + 6, currentY + 21)
+  doc.text(`Date: ${booking.created_at.slice(0, 10)}`, margin + 6, currentY + 25.5)
 
   // Approver Signature Box
   doc.rect(margin + 4 + sigBoxWidth + 4, currentY, sigBoxWidth, sigBoxHeight)
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(7.5)
   doc.setTextColor(15, 23, 42)
-  doc.text('KELULUSAN PENTADBIR FASILITI:', margin + 6 + sigBoxWidth + 4, currentY + 4.5)
+  doc.text('FACILITY ADMIN APPROVAL:', margin + 6 + sigBoxWidth + 4, currentY + 4.5)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(7)
-  doc.text('Tandatangan & Cop Rasmi:', margin + 6 + sigBoxWidth + 4, currentY + 16)
-  doc.text(`Pegawai: ${booking.approved_by_name || booking.approved_by || 'Pentadbir Fasiliti Hospital'}`, margin + 6 + sigBoxWidth + 4, currentY + 21)
-  doc.text(`Tarikh Diluluskan: ${booking.approved_at ? booking.approved_at.slice(0, 10) : '-'}`, margin + 6 + sigBoxWidth + 4, currentY + 25.5)
+  doc.text('Signature & Official Stamp:', margin + 6 + sigBoxWidth + 4, currentY + 16)
+  doc.text(`Officer: ${booking.approved_by_name || booking.approved_by || 'Hospital Facility Administrator'}`, margin + 6 + sigBoxWidth + 4, currentY + 21)
+  doc.text(`Approval Date: ${booking.approved_at ? booking.approved_at.slice(0, 10) : '-'}`, margin + 6 + sigBoxWidth + 4, currentY + 25.5)
 
   return doc.output('blob')
 }
@@ -186,7 +186,7 @@ export async function downloadBookingConfirmationPdf(booking: Booking): Promise<
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `Slip_Tempahan_${booking.booking_number}.pdf`
+  a.download = `Booking_Slip_${booking.booking_number}.pdf`
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)

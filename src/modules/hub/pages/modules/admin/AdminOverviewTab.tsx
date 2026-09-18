@@ -196,10 +196,10 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onTabChange 
               Jejak Audit Aktiviti (Recent Audit Logs)
             </h3>
             <button
-              onClick={() => onTabChange('users')}
+              onClick={() => onTabChange('logs')}
               className="text-xs text-teal-400 hover:text-teal-300 font-semibold flex items-center gap-1 transition-colors"
             >
-              View Users List <ArrowRight className="w-3.5 h-3.5" />
+              Lihat Semua Log (System Logs) <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 

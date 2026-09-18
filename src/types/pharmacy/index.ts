@@ -622,7 +622,7 @@ export interface OxygenReceptionRecord extends BaseEntity {
   total_amount: number
   vote_code: string
   vote_activity: string
-  status: 'completed' | 'pending_invoice' | 'outstanding_po'
+  status: 'completed' | 'pending_invoice' | 'outstanding_po' | 'pending' | 'pending_delivery'
   supplier_name?: string | null
   created_by?: string
   ids?: string[]
@@ -634,6 +634,7 @@ export interface OxygenReceptionItem extends BaseEntity {
   cylinder_size_id: string
   cylinder_type_id: string
   unit_price: number
+  quantity?: number
 }
 
 export interface OxygenFinancialSummary {
@@ -642,6 +643,16 @@ export interface OxygenFinancialSummary {
   liabilities: number
   current_balance: number
   loan_charges: number
+  vote_code?: string
+  available_vote_codes?: string[]
+  by_vote_code?: Record<string, {
+    total_allocation: number
+    total_expenses: number
+    liabilities: number
+    current_balance: number
+    loan_charges: number
+    vote_activity?: string
+  }>
 }
 
 export interface OxygenReturnDocument extends BaseEntity {
@@ -696,6 +707,69 @@ export interface OxygenRequestDocumentWithRelations extends OxygenRequestDocumen
   items?: OxygenRequestDocumentItem[]
 }
 
+export interface OxygenReceiveDocument extends BaseEntity {
+  hospital_id: string
+  document_number: string
+  supplier_id: string
+  delivery_order_no?: string
+  status: 'draft' | 'completed' | 'cancelled'
+  received_date: string
+  remarks?: string
+  created_by?: string
+}
+
+export interface OxygenReceiveDocumentItem extends BaseEntity {
+  receive_document_id: string
+  cylinder_id: string
+}
+
+export interface OxygenReceiveDocumentWithRelations extends OxygenReceiveDocument {
+  supplier?: Supplier
+  creator?: {
+    id: string
+    full_name: string
+  }
+  items?: (OxygenReceiveDocumentItem & {
+    cylinder?: OxygenCylinderWithRelations
+  })[]
+}
+
+export interface SupplierTrackedCylinder {
+  id: string
+  serial_number: string
+  qr_code?: string
+  cylinder_size_id?: string
+  cylinder_type_id?: string
+  size_code?: string
+  size_name?: string
+  type_code?: string
+  type_name?: string
+  capacity?: string | number
+  supplier_tagged: boolean
+  is_loan: boolean
+  supplier_id?: string
+  supplier_name?: string
+  tracking_mode: 'at_supplier' | 'in_hospital'
+  document_id?: string
+  document_number?: string
+  delivery_order_no?: string
+  document_date?: string
+  days_elapsed: number
+  is_overdue: boolean
+  current_status: string
+  current_location: string
+  assigned_ward?: string
+}
+
+export interface SupplierCylinderTrackingSummary {
+  atSupplierCount: number
+  atSupplierOverdueCount: number
+  inHospitalCount: number
+  inHospitalEmptyCount: number
+  totalTracked: number
+  cylinders: SupplierTrackedCylinder[]
+}
+
 // =====================================================
 // CYLINDER DISPATCH REQUEST TYPES
 // =====================================================
@@ -720,6 +794,10 @@ export interface CylinderDispatchRequest extends BaseEntity {
   remarks?: string;
   rejection_reason?: string;
   created_by?: string;
+  is_external_facility?: boolean;
+  external_facility_name?: string;
+  indent_direction?: 'outbound' | 'inbound';
+  external_operation?: 'request' | 'receive' | 'return';
 }
 
 export interface CylinderDispatchRequestItem extends BaseEntity {
@@ -729,6 +807,15 @@ export interface CylinderDispatchRequestItem extends BaseEntity {
   quantity_issued: number;
   usage_notes?: string;
   cylinder_id?: string;
+  cylinder_size_id?: string;
+  dispatched_serials?: string[];
+  assigned_cylinders?: Array<{
+    id: string;
+    serial_number: string;
+    qr_code?: string;
+    cylinder_size_id?: string;
+    size_code?: string;
+  }>;
 }
 
 export interface CylinderDispatchRequestWithRelations extends CylinderDispatchRequest {
@@ -741,6 +828,7 @@ export interface CylinderDispatchRequestWithRelations extends CylinderDispatchRe
   issuer?: { id: string; full_name: string; jawatan?: string };
   approver?: { id: string; full_name: string; jawatan?: string };
   items?: CylinderDispatchRequestItem[];
+  dispatched_movements?: any[];
 }
 
 export interface CylinderDispatchKPI {

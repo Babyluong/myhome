@@ -6,7 +6,7 @@ import {
   Camera, Keyboard, Database, Check, QrCode, AlertCircle, 
   RefreshCw, CheckCircle2, Volume2, VolumeX, Search 
 } from 'lucide-react';
-import { supabase } from '@/services/supabase';
+import { supabase, isSupabaseConfigured } from '@/services/supabase';
 import type { User } from '@/types';
 
 interface ManualIssueModalProps {
@@ -59,8 +59,18 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
   const [allAvailableCylinders, setAllAvailableCylinders] = useState<any[]>([]);
   // Standard trackable cylinders for the scan & picker console
   const [availableCylinders, setAvailableCylinders] = useState<any[]>([]);
+  // Complete hospital cylinder inventory (for on-demand resolution and direct ward transfer)
+  const [allHospitalCylinders, setAllHospitalCylinders] = useState<any[]>([]);
   const [isLoadingCylinders, setIsLoadingCylinders] = useState(false);
   const [selectedCylinders, setSelectedCylinders] = useState<any[]>([]);
+
+  // Action card for a scanned cylinder located in another ward / requiring transfer or store check-in
+  const [pendingActionCylinder, setPendingActionCylinder] = useState<any | null>(null);
+  const [isSubmittingAction, setIsSubmittingAction] = useState(false);
+  // Auto direct ward transfer toggle
+  const [allowWardTransfer, setAllowWardTransfer] = useState(false);
+  // Picker scope: 'store' (in-stock available) vs 'wards' (issued/transferable)
+  const [pickerScope, setPickerScope] = useState<'store' | 'wards'>('store');
 
   // Database Picker state
   const [showPicker, setShowPicker] = useState(true);
@@ -71,7 +81,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
   // Reset page when filter changes
   useEffect(() => {
     setPickerPage(1);
-  }, [selectedTypeFilter, qrInput]);
+  }, [selectedTypeFilter, qrInput, pickerScope]);
 
   // Loan quantities: 101-F & 101-N
   const [loanQtyF, setLoanQtyF] = useState<number>(0);
@@ -212,7 +222,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
     setLoanSerialsN(updated);
   };
 
-  // Fetch available cylinders from database on open
+  // Fetch available cylinders and hospital inventory from database on open
   useEffect(() => {
     if (isOpen && hospitalId) {
       const fetchAvailable = async () => {
@@ -227,13 +237,21 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
               department:departments(*)
             `)
             .eq('hospital_id', hospitalId)
-            .eq('status', 'available');
+            .neq('status', 'condemned');
 
           if (!err && data) {
-            setAllAvailableCylinders(data);
+            setAllHospitalCylinders(data);
+
+            // Filter in-stock / store available cylinders
+            const inStock = data.filter((c: any) => {
+              const st = (c.status || '').toLowerCase();
+              const loc = (c.current_location || '').toLowerCase();
+              return st === 'available' || st === 'in_stock' || st === 'full' || loc.includes('store') || loc.includes('farmasi');
+            });
+            setAllAvailableCylinders(inStock);
 
             // Map or store standard trackable cylinders (filter out 101-N / 8m³ loan unit)
-            const normalized = data
+            const normalized = inStock
               .filter((c: any) => {
                 const sizeCode = c.size_info?.code || '';
                 const isLoan = c.supplier_tagged || c.is_loan || c.size_info?.is_loan || !sizeCode.startsWith('P');
@@ -380,10 +398,32 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
     };
   }, [cameraActive, useRealCamera, stream]);
 
+  // Code normalizers for QR/Barcode matching
+  const normalizeCode = (val?: string): string => {
+    return (val || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  };
+
+  const stripO2 = (val?: string): string => {
+    return normalizeCode(val).replace(/^O2/, '');
+  };
+
   // Code scanner or input submission logic
-  const handleCylinderSelectByCode = (code: string) => {
-    const cleaned = code.trim();
+  const handleCylinderSelectByCode = async (code: string) => {
+    let cleaned = code.trim();
     if (!cleaned) return;
+
+    // Support QR codes that are encoded as URLs (extract the last segment as the serial/code)
+    if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) {
+      try {
+        const url = new URL(cleaned);
+        const pathSegments = url.pathname.split('/').filter(Boolean);
+        if (pathSegments.length > 0) {
+          cleaned = decodeURIComponent(pathSegments[pathSegments.length - 1]);
+        }
+      } catch (err) {
+        console.warn("Failed to parse scanned URL:", err);
+      }
+    }
 
     // Check if loan cylinder is scanned
     const upper = cleaned.toUpperCase();
@@ -393,37 +433,189 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
       return;
     }
 
-    // Normalise the scanned code: strip common QR prefixes like "O2-" or "O2 "
-    // so that a QR value of "O2-P101-F0130" still matches a serial of "P101-F0130"
-    const normaliseCode = (raw: string) =>
-      raw.trim().replace(/^O2[-\s]*/i, '').trim().toLowerCase();
+    const cleanNorm = normalizeCode(cleaned);
+    const cleanStripped = stripO2(cleaned);
+    const cleanLower = cleaned.toLowerCase();
 
-    const cleanedNorm = normaliseCode(cleaned);
-
-    // Find cylinder in inventory – try exact match first, then normalised prefix-stripped match
-    const match = availableCylinders.find(c => {
-      const serial = (c.serial_number || '').toLowerCase();
-      const qr     = (c.qr_code     || '').toLowerCase();
-      const serialNorm = normaliseCode(c.serial_number || '');
-      const qrNorm     = normaliseCode(c.qr_code     || '');
+    const matchesCylinder = (c: any) => {
+      const s = (c.serial_number || '').toLowerCase();
+      const q = (c.qr_code || '').toLowerCase();
+      const sNorm = normalizeCode(c.serial_number);
+      const qNorm = normalizeCode(c.qr_code);
+      const sStrip = stripO2(c.serial_number);
+      const qStrip = stripO2(c.qr_code);
 
       return (
-        serial === cleaned.toLowerCase() ||
-        qr     === cleaned.toLowerCase() ||
-        serialNorm === cleanedNorm       ||
-        qrNorm     === cleanedNorm
+        s === cleanLower ||
+        q === cleanLower ||
+        sNorm === cleanNorm ||
+        qNorm === cleanNorm ||
+        (cleanStripped && sStrip === cleanStripped) ||
+        (cleanStripped && qStrip === cleanStripped) ||
+        (cleanNorm.length >= 4 && (sNorm.endsWith(cleanNorm) || qNorm.endsWith(cleanNorm))) ||
+        (cleanStripped.length >= 4 && (sStrip.endsWith(cleanStripped) || qStrip.endsWith(cleanStripped)))
       );
-    });
+    };
 
-    if (!match) {
-      playBeep('error');
-      setError(`Cylinder "${cleaned}" not found in available store inventory.`);
+    // 1. Find cylinder in available store inventory
+    const match = availableCylinders.find(matchesCylinder);
+    if (match) {
+      toggleCylinderSelect(match);
+      setQrInput('');
+      setPendingActionCylinder(null);
+      setError(null);
       return;
     }
 
-    // Toggle select
-    toggleCylinderSelect(match);
+    // 2. Check if cylinder exists anywhere in hospital inventory
+    let hospitalMatch = allHospitalCylinders.find(matchesCylinder);
+
+    // If still not found in memory, perform on-demand Supabase query
+    if (!hospitalMatch && isSupabaseConfigured() && hospitalId) {
+      try {
+        const { data: dbCyls } = await supabase
+          .from('pharmacy_oxygen_cylinder_inventory')
+          .select(`
+            *,
+            type_info:pharmacy_oxygen_cylinder_types(*),
+            size_info:pharmacy_oxygen_cylinder_sizes(*),
+            department:departments(*)
+          `)
+          .eq('hospital_id', hospitalId)
+          .or(`serial_number.ilike.%${cleaned}%,qr_code.ilike.%${cleaned}%,serial_number.ilike.%${cleanStripped}%`);
+
+        if (dbCyls && dbCyls.length > 0) {
+          hospitalMatch = dbCyls.find(matchesCylinder) || dbCyls[0];
+          if (hospitalMatch) {
+            setAllHospitalCylinders(prev => {
+              if (prev.some(p => p.id === hospitalMatch.id)) return prev;
+              return [hospitalMatch, ...prev];
+            });
+          }
+        }
+      } catch (dbErr) {
+        console.warn('On-demand cylinder search error:', dbErr);
+      }
+    }
+
+    if (hospitalMatch) {
+      const status = (hospitalMatch.status || '').toLowerCase();
+      const loc = hospitalMatch.department?.department_name || hospitalMatch.current_location || 'General Ward';
+
+      // Format display name for candidate
+      const sizeCode = hospitalMatch.size_info?.code || '';
+      const prefix = sizeCode.startsWith('P') ? sizeCode : `P${sizeCode}`;
+      const typeCode = hospitalMatch.type_info?.code || '';
+      const capacity = hospitalMatch.size_info?.capacity ? `${Number(hospitalMatch.size_info.capacity)}${hospitalMatch.size_info.unit || 'm3'}` : '';
+      const typeNameDisplay = `${prefix}${typeCode ? ` ${typeCode}` : ''}${capacity ? ` (${capacity})` : ''}`;
+      const enrichedMatch = { ...hospitalMatch, type_name_display: typeNameDisplay, size_code: sizeCode };
+
+      // If cylinder is available or store location, add directly
+      if (status === 'available' || status === 'in_stock' || status === 'full' || loc.toLowerCase().includes('store') || loc.toLowerCase().includes('farmasi')) {
+        toggleCylinderSelect(enrichedMatch);
+        setQrInput('');
+        setPendingActionCylinder(null);
+        setError(null);
+        return;
+      }
+
+      // If auto direct transfer mode is enabled, immediately add with transfer tag
+      if (allowWardTransfer) {
+        handleConfirmTransferAndSelect(enrichedMatch);
+        return;
+      }
+
+      // Otherwise show smart action card for user confirmation
+      playBeep('error');
+      setPendingActionCylinder(enrichedMatch);
+      setError(null);
+      setQrInput('');
+      return;
+    }
+
+    // 3. Cylinder not found in entire hospital database
+    playBeep('error');
+    setError(`Silinder "${cleaned}" tidak dijumpai dalam rekod inventori hospital.`);
+    setPendingActionCylinder(null);
+  };
+
+  const handleConfirmTransferAndSelect = (cyl: any) => {
+    const loc = cyl.department?.department_name || cyl.current_location || 'General Ward';
+    const enriched = {
+      ...cyl,
+      is_transfer: true,
+      transfer_from: loc,
+      size_code: cyl.size_info?.code || cyl.size_code || '101-F'
+    };
+    setSelectedCylinders(prev => {
+      if (prev.some(c => c.id === cyl.id)) return prev;
+      return [...prev, enriched];
+    });
+    setPendingActionCylinder(null);
     setQrInput('');
+    playBeep('success');
+    setSuccessFlash(true);
+    setTimeout(() => setSuccessFlash(false), 500);
+    setError(null);
+  };
+
+  const handleCheckInToStoreAndSelect = async (cyl: any) => {
+    setIsSubmittingAction(true);
+    try {
+      if (hospitalId) {
+        // Update Supabase to available in Pharmacy Store
+        await supabase
+          .from('pharmacy_oxygen_cylinder_inventory')
+          .update({
+            status: 'available',
+            current_location: 'Pharmacy Store',
+            department_id: null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', cyl.id);
+
+        // Record movement log
+        await supabase
+          .from('pharmacy_oxygen_cylinder_movements')
+          .insert({
+            hospital_id: hospitalId,
+            cylinder_id: cyl.id,
+            movement_type: 'returned',
+            from_location: cyl.current_location || 'Ward',
+            to_location: 'Pharmacy Store',
+            moved_by: currentUser?.id || null,
+            moved_at: new Date().toISOString(),
+            remarks: 'Checked into Pharmacy Store via Manual Issue Modal'
+          });
+      }
+
+      const enriched = {
+        ...cyl,
+        status: 'available',
+        current_location: 'Pharmacy Store',
+        department_id: null,
+        size_code: cyl.size_info?.code || cyl.size_code || '101-F'
+      };
+
+      // Add to available cylinders and select it
+      setAvailableCylinders(prev => [enriched, ...prev.filter(c => c.id !== cyl.id)]);
+      setSelectedCylinders(prev => {
+        if (prev.some(c => c.id === cyl.id)) return prev;
+        return [...prev, enriched];
+      });
+
+      setPendingActionCylinder(null);
+      setQrInput('');
+      playBeep('success');
+      setSuccessFlash(true);
+      setTimeout(() => setSuccessFlash(false), 500);
+      setError(null);
+    } catch (err) {
+      console.error('Error checking in cylinder:', err);
+      setError('Gagal mendaftar masuk silinder ke stor: ' + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setIsSubmittingAction(false);
+    }
   };
 
   const toggleCylinderSelect = (cyl: any) => {
@@ -431,28 +623,69 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
     if (isSelected) {
       setSelectedCylinders(selectedCylinders.filter(c => c.id !== cyl.id));
     } else {
-      setSelectedCylinders([...selectedCylinders, cyl]);
+      const loc = cyl.department?.department_name || cyl.current_location || 'General Ward';
+      const isTransfer = cyl.is_ward_cylinder || cyl.is_transfer || (cyl.status && cyl.status !== 'available' && !loc.toLowerCase().includes('store') && !loc.toLowerCase().includes('farmasi'));
+      const enriched = {
+        ...cyl,
+        is_transfer: isTransfer,
+        transfer_from: isTransfer ? (cyl.transfer_from || loc) : undefined
+      };
+      setSelectedCylinders([...selectedCylinders, enriched]);
       playBeep('success');
       setSuccessFlash(true);
       setTimeout(() => setSuccessFlash(false), 500);
     }
     setError(null);
+    setPendingActionCylinder(null);
   };
 
-  // Filter available cylinders list by type/size and manual query
-  const filteredAvailable = availableCylinders.filter(c => {
+  // Trackable cylinders in wards/departments (available for transfer)
+  const wardCylinders = allHospitalCylinders
+    .filter((c: any) => {
+      const st = (c.status || '').toLowerCase();
+      const loc = (c.current_location || '').toLowerCase();
+      const sizeCode = c.size_info?.code || '';
+      const isLoan = c.supplier_tagged || c.is_loan || c.size_info?.is_loan || !sizeCode.startsWith('P');
+      return !isLoan && (st === 'issued' || st === 'allocated' || st === 'in_use' || (!loc.includes('store') && !loc.includes('farmasi') && st !== 'returned_to_supplier'));
+    })
+    .map((c: any) => {
+      const sizeCode = c.size_info?.code || '';
+      const prefix = sizeCode.startsWith('P') ? sizeCode : `P${sizeCode}`;
+      const typeCode = c.type_info?.code || '';
+      const capacity = c.size_info?.capacity ? `${Number(c.size_info.capacity)}${c.size_info.unit || 'm3'}` : '';
+      let displayName = prefix;
+      if (typeCode) {
+        displayName = `${prefix} ${typeCode}${capacity ? ` (${capacity})` : ''}`;
+      } else if (capacity) {
+        displayName = `${prefix} (${capacity})`;
+      }
+
+      return {
+        ...c,
+        type_name_display: displayName,
+        size_code: sizeCode,
+        is_ward_cylinder: true
+      };
+    });
+
+  const currentDisplayPool = pickerScope === 'store' ? availableCylinders : wardCylinders;
+
+  // Filter cylinders list by type/size, location and manual query
+  const filteredAvailable = currentDisplayPool.filter(c => {
     if (selectedTypeFilter && c.type_name_display !== selectedTypeFilter) return false;
     if (!qrInput) return true;
     const query = qrInput.toLowerCase();
+    const loc = (c.department?.department_name || c.current_location || '').toLowerCase();
     return (
       (c.serial_number || '').toLowerCase().includes(query) || 
       (c.qr_code || '').toLowerCase().includes(query) || 
-      c.type_name_display.toLowerCase().includes(query)
+      c.type_name_display.toLowerCase().includes(query) ||
+      loc.includes(query)
     );
   });
 
   const availableTypes = Array.from(
-    new Set(availableCylinders.map((c) => c.type_name_display))
+    new Set(currentDisplayPool.map((c) => c.type_name_display))
   ).filter(Boolean).sort();
 
   // Pagination calculations
@@ -497,17 +730,21 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
     const dispatchItems: { size_code: string; quantity: number; usage_notes?: string }[] = [];
 
     // 1. Group trackable cylinders by size code
-    const trackableGroups: { [size: string]: number } = {};
+    const trackableGroups: { [size: string]: any[] } = {};
     selectedCylinders.forEach(c => {
       const code = c.size_code || '101-N';
-      trackableGroups[code] = (trackableGroups[code] || 0) + 1;
+      if (!trackableGroups[code]) trackableGroups[code] = [];
+      trackableGroups[code].push(c);
     });
 
     Object.keys(trackableGroups).forEach(code => {
+      const cylList = trackableGroups[code];
+      const serials = cylList.map((c: any) => c.serial_number || c.qr_code).filter(Boolean);
+      const serialsStr = serials.join(', ');
       dispatchItems.push({
         size_code: code,
-        quantity: trackableGroups[code],
-        usage_notes: 'Trackable inventory cylinder'
+        quantity: cylList.length,
+        usage_notes: serialsStr ? `Serials (${serials.length}): ${serialsStr}` : 'Trackable inventory cylinder'
       });
     });
 
@@ -657,26 +894,29 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
               >
                 <option value="">Select Department...</option>
                 {(() => {
-                  const ALLOWED_CLINICAL = [
-                    'Emergency and trauma',
-                    'General ward',
-                    'Paediatric ward',
-                    'Maternity ward',
-                    'Operation Theater',
-                    'Radiology and radiography',
-                    'Nephrology'
+                  const ALLOWED_CYLINDER_DEPTS = [
+                    { key: 'general_ward', name: 'General ward', match: (n: string, c: string) => (n.includes('general') && n.includes('ward')) || c === 'GENERAL_WARD' },
+                    { key: 'paediatric_ward', name: 'Paediatric ward', match: (n: string, c: string) => n.includes('paediatric') || n.includes('pediatric') || c === 'PAEDIATRIC_WARD' },
+                    { key: 'maternity_ward', name: 'Maternity Ward', match: (n: string, c: string) => n.includes('maternity') || c === 'MATERNITY_WARD' },
+                    { key: 'emergency_trauma', name: 'Emergency and Trauma', match: (n: string, c: string) => (n.includes('emergency') && !n.includes('pharmacy')) || n.includes('trauma') || c === 'EMERGENCY_TRAUMA' },
+                    { key: 'radiology', name: 'Radiology and Radiography', match: (n: string, c: string) => n.includes('radiolog') || c === 'RADIOLOGY' },
+                    { key: 'nephrology', name: 'Nephrology', match: (n: string, c: string) => n.includes('nephrolog') || c === 'NEPHROLOGY' },
+                    { key: 'operation_theater', name: 'Operation Theater', match: (n: string, c: string) => n.includes('operation') || n.includes('theater') || n.includes('theatre') || c === 'OPERATION_THEATER' },
                   ];
 
-                  const matched = departments.filter(d => {
-                    const name = (d.department_name || '').toLowerCase().trim();
-                    return ALLOWED_CLINICAL.some(a => a.toLowerCase() === name || name.includes(a.toLowerCase().split(' ')[0]));
-                  });
+                  const listToRender: { id: string; department_name: string }[] = [];
+                  for (const def of ALLOWED_CYLINDER_DEPTS) {
+                    const found = (departments || []).find((d) => {
+                      const n = (d.department_name || '').toLowerCase().trim();
+                      const c = ((d as any).department_code || '').toUpperCase().trim();
+                      return def.match(n, c);
+                    });
+                    if (found) {
+                      listToRender.push({ id: found.id, department_name: def.name });
+                    }
+                  }
 
-                  const listToRender = matched.length > 0
-                    ? matched
-                    : ALLOWED_CLINICAL.map((name, idx) => ({ id: `dept-auto-manual-${idx}`, department_name: name }));
-
-                  return listToRender.map((dept) => (
+                  return (listToRender.length > 0 ? listToRender : (departments || [])).map((dept) => (
                     <option key={dept.id} value={dept.id}>
                       {dept.department_name}
                     </option>
@@ -789,6 +1029,19 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
+                        onClick={() => setAllowWardTransfer(!allowWardTransfer)}
+                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[10px] font-bold transition-all cursor-pointer border ${
+                          allowWardTransfer
+                            ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.2)]'
+                            : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                        }`}
+                        title="Benarkan pemindahan terus silinder yang berada di wad tanpa prompt tambahan"
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full ${allowWardTransfer ? 'bg-amber-400 animate-pulse' : 'bg-slate-500'}`} />
+                        <span>Auto-Pindah Wad {allowWardTransfer ? 'ON' : 'OFF'}</span>
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => setSoundEnabled(!soundEnabled)}
                         className="p-1.5 text-slate-400 hover:text-white rounded-lg transition-colors cursor-pointer"
                         title={soundEnabled ? 'Mute' : 'Unmute'}
@@ -856,21 +1109,109 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                   </div>
                 </div>
 
+                {/* Ward / External Cylinder Action Card */}
+                {pendingActionCylinder && (
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-4 sm:p-5 space-y-3 shadow-md animate-in fade-in zoom-in-95 duration-200">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 bg-amber-100 text-amber-800 rounded-xl shrink-0 mt-0.5 shadow-xs">
+                        <AlertCircle className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-black text-amber-950 uppercase tracking-wide">
+                            Silinder Ditemui di Lokasi Lain
+                          </span>
+                          <span className="text-[10px] font-mono font-black px-2 py-0.5 bg-amber-200 text-amber-900 rounded-md uppercase">
+                            Status: {pendingActionCylinder.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-amber-900 mt-1.5 font-medium leading-relaxed">
+                          Silinder <strong className="font-mono text-amber-950 font-bold bg-white/80 px-1.5 py-0.5 rounded border border-amber-200">{pendingActionCylinder.serial_number || pendingActionCylinder.qr_code}</strong> ({pendingActionCylinder.type_name_display || pendingActionCylinder.size_info?.code || 'P101-F'}) sedang direkodkan di lokasi <strong className="text-amber-950 underline decoration-amber-300 decoration-2 font-bold">{pendingActionCylinder.department?.department_name || (typeof pendingActionCylinder.current_location === 'object' ? (pendingActionCylinder.current_location as any)?.location_name : pendingActionCylinder.current_location) || 'General Ward'}</strong>.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setPendingActionCylinder(null)}
+                        className="text-amber-400 hover:text-amber-700 p-1 cursor-pointer transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-amber-200/80">
+                      <button
+                        type="button"
+                        onClick={() => setPendingActionCylinder(null)}
+                        className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-xl cursor-pointer shadow-2xs"
+                      >
+                        Batal
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isSubmittingAction}
+                        onClick={() => handleCheckInToStoreAndSelect(pendingActionCylinder)}
+                        className="px-3.5 py-1.5 text-xs font-bold text-blue-700 bg-white hover:bg-blue-50 border border-blue-200 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-2xs"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isSubmittingAction ? 'animate-spin' : ''}`} />
+                        <span>Daftar Masuk Stor & Pilih</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isSubmittingAction}
+                        onClick={() => handleConfirmTransferAndSelect(pendingActionCylinder)}
+                        className="px-4 py-1.5 text-xs font-black text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        <span>⚡ Pindahkan & Masukkan ke Borang</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {/* Collapsible Supabase cylinder picker */}
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-4.5 space-y-3 shadow-xs">
-                  <button
-                    type="button"
-                    onClick={() => setShowPicker(!showPicker)}
-                    className="flex items-center justify-between w-full text-[10px] font-bold text-slate-500 uppercase tracking-wider cursor-pointer focus:outline-none"
-                  >
-                    <div className="flex items-center gap-1.5">
+                  <div className="flex items-center justify-between w-full">
+                    <button
+                      type="button"
+                      onClick={() => setShowPicker(!showPicker)}
+                      className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider cursor-pointer focus:outline-none"
+                    >
                       <Database className="w-3.5 h-3.5 text-indigo-600" />
-                      <span>Select Cylinder from Database (Available in Store)</span>
+                      <span>Pilih Silinder dari Pengkalan Data</span>
+                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[9px] font-bold">
+                        <button
+                          type="button"
+                          onClick={() => setPickerScope('store')}
+                          className={`px-2 py-0.5 rounded-md transition-all cursor-pointer ${
+                            pickerScope === 'store'
+                              ? 'bg-white text-indigo-700 shadow-xs'
+                              : 'text-slate-500 hover:text-slate-800'
+                          }`}
+                        >
+                          Stor ({availableCylinders.length})
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPickerScope('wards')}
+                          className={`px-2 py-0.5 rounded-md transition-all cursor-pointer ${
+                            pickerScope === 'wards'
+                              ? 'bg-amber-500 text-white shadow-xs'
+                              : 'text-slate-500 hover:text-slate-800'
+                          }`}
+                        >
+                          Pindah Wad ({wardCylinders.length})
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowPicker(!showPicker)}
+                        className="text-[9px] text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg font-bold border border-indigo-100/50 cursor-pointer"
+                      >
+                        {showPicker ? 'Hide List' : 'Show List'}
+                      </button>
                     </div>
-                    <span className="text-[9px] text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg font-bold border border-indigo-100/50">
-                      {showPicker ? 'Hide List' : 'Show List'}
-                    </span>
-                  </button>
+                  </div>
 
                   {showPicker && (
                     <div className="space-y-4 pt-3 border-t border-slate-200/50">
@@ -878,7 +1219,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       {/* Size & Type Filter Tabs */}
                       <div className="flex flex-wrap gap-1.5 pb-2.5 border-b border-slate-100">
                         {availableTypes.map((tName) => {
-                          const count = availableCylinders.filter(c => c.type_name_display === tName).length;
+                          const count = currentDisplayPool.filter(c => c.type_name_display === tName).length;
                           return (
                             <button
                               key={tName}
@@ -902,7 +1243,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                         </div>
                       ) : Object.keys(groupedCylinders).length === 0 ? (
                         <div className="text-center py-8 text-[11px] text-slate-400 italic">
-                          No cylinders match search filter.
+                          Tiada silinder sepadan penapis carian.
                         </div>
                       ) : (
                         <div className="space-y-3.5 pr-1">
@@ -932,6 +1273,11 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                                       </div>
                                       <span className="font-mono text-[9px] sm:text-[10px] whitespace-nowrap overflow-hidden text-ellipsis flex-1">
                                         {(cyl.serial_number || cyl.qr_code || '').replace(/\s*\(\d+(?:\.\d+)?\s*(?:m3|m┬│)\)/gi, '')}
+                                        {cyl.is_ward_cylinder && (
+                                          <span className="text-[8px] text-amber-700 font-sans block truncate font-bold">
+                                            {cyl.department?.department_name || (typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name : cyl.current_location) || 'Wad'}
+                                          </span>
+                                        )}
                                       </span>
                                     </button>
                                   );
@@ -989,6 +1335,11 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       {selectedCylinders.map(cyl => (
                         <div key={cyl.id} className="inline-flex items-center gap-2 px-2.5 py-1.5 bg-indigo-50/50 border border-indigo-100 rounded-lg text-xs font-bold text-indigo-950 font-mono">
                           <span>{cyl.serial_number}</span>
+                          {cyl.is_transfer && (
+                            <span className="text-[9px] font-sans font-extrabold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200">
+                              Pindah dari {cyl.transfer_from || 'Wad'}
+                            </span>
+                          )}
                           <button
                             type="button"
                             onClick={() => toggleCylinderSelect(cyl)}

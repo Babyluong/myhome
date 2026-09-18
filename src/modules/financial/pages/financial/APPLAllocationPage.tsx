@@ -270,7 +270,7 @@ export const APPLAllocationPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16">
+    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16 text-slate-900">
       {/* Premium Ambient Radial Lights */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-500/[0.04] to-indigo-500/[0.02] rounded-full blur-[140px] pointer-events-none -z-10 animate-pulse-subtle" />
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-sky-500/[0.02] to-teal-500/[0.03] rounded-full blur-[120px] pointer-events-none -z-10" />
@@ -355,7 +355,7 @@ export const APPLAllocationPage: React.FC = () => {
               <Info className="w-5 h-5 text-indigo-600 mt-0.5 shrink-0" />
               <div>
                 <p className="text-xs font-black text-indigo-950 uppercase tracking-wider">Fiscal Year {selectedYear} System Alerts</p>
-                <p className="text-[11px] font-semibold text-indigo-750 mt-1 leading-relaxed">
+                <p className="text-[11px] font-semibold text-indigo-700 mt-1 leading-relaxed">
                   This registry aggregates contract allocation metrics and records real-time procurement deductions. Sync purchase orders regularly to maintain accounting accuracy.
                 </p>
               </div>

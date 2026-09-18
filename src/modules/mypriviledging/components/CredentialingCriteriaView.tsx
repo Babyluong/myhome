@@ -1,6 +1,3 @@
-// src/modules/mypriviledging/components/CredentialingCriteriaView.tsx
-// Interactive Credentialing Criteria Component for Nurses & Assistant Medical Officers
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -16,6 +13,7 @@ import {
   ArrowRight,
   Printer
 } from 'lucide-react';
+import { useLanguage } from '@/shared/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { CREDENTIALING_CRITERIA } from '../data/credentialingCriteriaData';
 
@@ -29,9 +27,21 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
   onLogProcedureClick
 }) => {
   const navigate = useNavigate();
+  const { language } = useLanguage();
+  const isMs = language === 'ms';
   const [selectedRole, setSelectedRole] = useState<'nurses' | 'amos'>(initialRole);
 
-  const criteria = CREDENTIALING_CRITERIA[selectedRole];
+  const criteriaRaw = CREDENTIALING_CRITERIA[selectedRole];
+  const criteria = {
+    roleChip: isMs ? criteriaRaw.roleChip.ms : criteriaRaw.roleChip.en,
+    title: isMs ? criteriaRaw.title.ms : criteriaRaw.title.en,
+    subtitle: isMs ? criteriaRaw.subtitle.ms : criteriaRaw.subtitle.en,
+    minimumRequirements: isMs ? criteriaRaw.minimumRequirements.ms : criteriaRaw.minimumRequirements.en,
+    supportingEvidence: isMs ? criteriaRaw.supportingEvidence.ms : criteriaRaw.supportingEvidence.en,
+    submissionChecklist: isMs ? criteriaRaw.submissionChecklist.ms : criteriaRaw.submissionChecklist.en,
+    kkmGovernanceNotes: isMs ? criteriaRaw.kkmGovernanceNotes.ms : criteriaRaw.kkmGovernanceNotes.en,
+    validityPeriod: isMs ? criteriaRaw.validityPeriod.ms : criteriaRaw.validityPeriod.en,
+  };
 
   return (
     <div className="space-y-6">
@@ -41,10 +51,10 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
           <div>
             <h2 className="text-base md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-              Kriteria & Standard Credentialing KKM
+              MOH Credentialing Criteria & Standards
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Piawaian syarat kelayakan, bukti sokongan, dan senarai semak pentauliahan klinikal
+              Eligibility criteria, required supporting documentation, and clinical credentialing checklists
             </p>
           </div>
 
@@ -60,7 +70,7 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               )}
             >
-              <span>Jururawat (Nurses)</span>
+              <span>Staff Nurses</span>
             </button>
             <button
               type="button"
@@ -72,7 +82,7 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               )}
             >
-              <span>Penolong Pegawai Perubatan (AMO)</span>
+              <span>Assistant Medical Officers (AMO)</span>
             </button>
           </div>
         </div>
@@ -103,7 +113,7 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
               className="px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Cetak Panduan</span>
+              <span>Print Guide</span>
             </button>
             <button
               type="button"
@@ -111,7 +121,7 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
               className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs active:scale-95 transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Buka Katalog Prosedur</span>
+              <span>Open Procedure Catalog</span>
             </button>
           </div>
         </div>
@@ -143,7 +153,7 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
 
           <div className="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800">
             <span className="text-[11px] font-semibold text-slate-500">
-              Tempoh Sahlaku Sijil: <strong className="text-slate-800 dark:text-slate-200">{criteria.validityPeriod}</strong>
+              Certificate Validity: <strong className="text-slate-800 dark:text-slate-200">{criteria.validityPeriod}</strong>
             </span>
           </div>
         </div>
@@ -173,7 +183,7 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
           <div className="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800">
             <span className="text-[11px] font-semibold text-sky-700 dark:text-sky-400 flex items-center gap-1">
               <FileCheck2 className="w-3.5 h-3.5" />
-              Pengesahan Pakar / KPPP Diperlukan
+              Specialist / Chief AMO Endorsement Required
             </span>
           </div>
         </div>
@@ -203,7 +213,7 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
           <div className="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800">
             <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" />
-              Kelulusan Terus Melalui Portal
+              Direct Endorsement via System Portal
             </span>
           </div>
         </div>
@@ -217,7 +227,7 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
           </div>
           <div className="space-y-2">
             <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-              Garis Panduan Governan Klinikal KKM & Pembaharuan Credentialing
+              MOH Clinical Governance Guidelines & Credentialing Renewal
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
               {criteria.kkmGovernanceNotes.map((note, idx) => (
@@ -226,7 +236,7 @@ export const CredentialingCriteriaView: React.FC<CredentialingCriteriaViewProps>
                   className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 text-xs text-slate-700 dark:text-slate-300"
                 >
                   <span className="font-semibold text-emerald-800 dark:text-emerald-300 block mb-1">
-                    Syarat {idx + 1}:
+                    Condition {idx + 1}:
                   </span>
                   {note}
                 </div>

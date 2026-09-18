@@ -1,5 +1,6 @@
 // src/modules/mypriviledging/components/SubmitProcedureModal.tsx
 // Multi-step modal for logging new clinical procedures or revising existing drafts
+// Full English default with seamless language toggle support
 
 import React, { useState, useEffect, useMemo } from 'react';
 import {
@@ -9,14 +10,11 @@ import {
   Building,
   Upload,
   AlertCircle,
-  Sparkles,
-  Stethoscope,
-  Info,
   Paperclip,
-  CheckCircle2,
   Trash2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/shared/contexts/LanguageContext';
 import {
   ALL_PROCEDURE_CATEGORIES,
   getCategoriesForRole,
@@ -51,6 +49,9 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
   editingSubmission,
   activeStaff
 }) => {
+  const { language } = useLanguage();
+  const isMs = language === 'ms';
+
   const [role, setRole] = useState<CredentialRole>(
     editingSubmission?.staffRole || activeStaff?.role || 'nurses'
   );
@@ -64,7 +65,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
     new Date().toISOString().split('T')[0]
   );
   const [department, setDepartment] = useState<string>(
-    activeStaff?.department || 'Jabatan Kecemasan & Trauma (ETD)'
+    activeStaff?.department || 'Operating Theatre (OT)'
   );
   const [patientIdentifier, setPatientIdentifier] = useState<string>('');
   const [clinicalPlan, setClinicalPlan] = useState<string>('');
@@ -113,7 +114,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
       setCustomProcedureName('');
       setSupervisionLevel('level_4_independent');
       setProcedureDate(new Date().toISOString().split('T')[0]);
-      setDepartment(activeStaff?.department || 'Dewan Bedah (Operating Theatre)');
+      setDepartment(activeStaff?.department || 'Operating Theatre (OT)');
       setPatientIdentifier('');
       setClinicalPlan('');
       setEquipmentUsed('');
@@ -130,7 +131,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
       setCustomProcedureName('');
       setSupervisionLevel('level_4_independent');
       setProcedureDate(new Date().toISOString().split('T')[0]);
-      setDepartment(activeStaff?.department || 'Dewan Bedah (Operating Theatre)');
+      setDepartment(activeStaff?.department || 'Operating Theatre (OT)');
       setPatientIdentifier('');
       setClinicalPlan('');
       setEquipmentUsed('');
@@ -145,7 +146,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
   const handleAddMockAttachment = () => {
     const mockAtt: ProcedureAttachment = {
       id: `att-${Date.now()}`,
-      name: `Buku_Log_Pengesahan_${new Date().toISOString().slice(0, 10)}.pdf`,
+      name: `Clinical_Log_Verification_${new Date().toISOString().slice(0, 10)}.pdf`,
       size: Math.floor(250000 + Math.random() * 300000),
       type: 'application/pdf',
       uploadedAt: new Date().toISOString()
@@ -162,15 +163,27 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
 
     if (!isDraft) {
       if (!clinicalPlan.trim() || !equipmentUsed.trim()) {
-        setValidationError('Sila lengkapkan Pelan Klinikal & Rasionale serta Senarai Peralatan sebelum menghantar.');
+        setValidationError(
+          isMs
+            ? 'Sila lengkapkan Pelan Klinikal & Rasionale serta Senarai Peralatan sebelum menghantar.'
+            : 'Please complete Clinical Plan & Rationale as well as Equipment List before submitting.'
+        );
         return;
       }
       if (isCustomProcedure && !customProcedureName.trim()) {
-        setValidationError('Sila masukkan nama prosedur tersuai yang dicadangkan.');
+        setValidationError(
+          isMs
+            ? 'Sila masukkan nama prosedur tersuai yang dicadangkan.'
+            : 'Please enter the proposed custom procedure name.'
+        );
         return;
       }
       if (!isCustomProcedure && !procedureKey) {
-        setValidationError('Sila pilih prosedur dari katalog.');
+        setValidationError(
+          isMs
+            ? 'Sila pilih prosedur dari katalog.'
+            : 'Please select a procedure from the catalog.'
+        );
         return;
       }
     }
@@ -178,13 +191,13 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
     let finalProcedureName = customProcedureName.trim();
     if (!isCustomProcedure) {
       const foundItem = allProceduresInCategory.find((i) => i.id === procedureKey);
-      finalProcedureName = foundItem?.label || 'Prosedur Klinikal';
+      finalProcedureName = foundItem?.label || 'Clinical Procedure';
     }
 
     const payload: Partial<ProcedureSubmission> = {
       id: editingSubmission?.id,
       staffId: activeStaff?.id || editingSubmission?.staffId || 'staff-nurse-01',
-      staffName: activeStaff?.fullName || editingSubmission?.staffName || 'Jururawat Hospital Lawas',
+      staffName: activeStaff?.fullName || editingSubmission?.staffName || 'Hospital Lawas Clinical Staff',
       staffIc: activeStaff?.icNumber || editingSubmission?.staffIc || '940512-13-5682',
       staffGrade: activeStaff?.grade || editingSubmission?.staffGrade || 'U29',
       staffRegistrationNo: activeStaff?.boardRegistrationNo || editingSubmission?.staffRegistrationNo || 'LJM-RN-65432-MY',
@@ -192,7 +205,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
       staffDepartment: department,
       staffRole: role,
       categoryId,
-      categoryName: selectedCategoryObj?.name || 'Kategori Klinikal',
+      categoryName: selectedCategoryObj?.name || 'Clinical Category',
       procedureKey: isCustomProcedure ? `custom-${Date.now()}` : procedureKey,
       procedureName: finalProcedureName,
       isCustomProcedure,
@@ -221,10 +234,14 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
             </div>
             <div>
               <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
-                {editingSubmission ? 'Kemaskini Log Prosedur' : 'Log & Permohonan Prosedur Privileging'}
+                {editingSubmission
+                  ? (isMs ? 'Kemaskini Log Prosedur' : 'Edit Procedure Log')
+                  : (isMs ? 'Log & Permohonan Prosedur Privileging' : 'Log & Request Clinical Privilege')}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Perekodan kompetensi klinikal bagi pengiktirafan Surat Penurunan Kuasa KKM
+                {isMs
+                  ? 'Perekodan kompetensi klinikal bagi pengiktirafan Surat Penurunan Kuasa KKM'
+                  : 'Clinical competency recording for MOH Letter of Credentialing & Clinical Privileging'}
               </p>
             </div>
           </div>
@@ -242,13 +259,17 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
             <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
             <div>
               <h4 className="text-xs font-bold text-amber-900 dark:text-amber-200 uppercase tracking-wider">
-                Catatan Pindaan Dari Penilai JKCP ({editingSubmission.review.reviewerName})
+                {isMs
+                  ? `Catatan Pindaan Dari Penilai JKCP (${editingSubmission.review.reviewerName})`
+                  : `Revision Notes from JKCP Reviewer (${editingSubmission.review.reviewerName})`}
               </h4>
               <p className="text-xs text-amber-800 dark:text-amber-300 mt-1">
                 "{editingSubmission.review.adminNotes}"
               </p>
               <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1 font-medium">
-                Sila buat pembetulan yang diminta dan klik "Hantar untuk Semakan Semula".
+                {isMs
+                  ? 'Sila buat pembetulan yang diminta dan klik "Hantar untuk Semakan Semula".'
+                  : 'Please make requested amendments and click "Resubmit for Review".'}
               </p>
             </div>
           </div>
@@ -267,7 +288,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Peranan Klinikal
+                {isMs ? 'Peranan Klinikal' : 'Clinical Role'}
               </label>
               <select
                 value={role}
@@ -278,17 +299,17 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                   setCategoryId(firstCat?.id || '');
                   setProcedureKey(firstCat?.groups[0]?.items[0]?.id || '');
                 }}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               >
-                <option value="nurses">Jururawat (Nurses)</option>
-                <option value="amos">Penolong Pegawai Perubatan (AMOs)</option>
-                <option value="allied_health">Sains Kesihatan Bersekutu (AHP)</option>
+                <option value="nurses">{isMs ? 'Jururawat (RN)' : 'Registered Nurses (RN)'}</option>
+                <option value="amos">{isMs ? 'Penolong Pegawai Perubatan (AMO)' : 'Assistant Medical Officers (AMO)'}</option>
+                <option value="allied_health">{isMs ? 'Sains Kesihatan Bersekutu (AHP)' : 'Allied Health Professionals (AHP)'}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Kategori Klinikal KKM
+                {isMs ? 'Kategori Klinikal KKM' : 'MOH Clinical Category'}
               </label>
               <select
                 value={categoryId}
@@ -297,11 +318,11 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                   const cat = availableCategories.find((c) => c.id === e.target.value);
                   setProcedureKey(cat?.groups[0]?.items[0]?.id || '');
                 }}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               >
                 {availableCategories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
-                    {cat.name} ({cat.groups.reduce((a, g) => a + g.items.length, 0)} prosedur)
+                    {cat.name} ({cat.groups.reduce((a, g) => a + g.items.length, 0)} {isMs ? 'prosedur' : 'procedures'})
                   </option>
                 ))}
               </select>
@@ -312,14 +333,16 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                Prosedur Klinikal
+                {isMs ? 'Prosedur Klinikal' : 'Clinical Procedure'}
               </label>
               <button
                 type="button"
                 onClick={() => setIsCustomProcedure(!isCustomProcedure)}
-                className="text-xs text-lime-600 dark:text-lime-400 hover:underline font-semibold"
+                className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline font-semibold"
               >
-                {isCustomProcedure ? 'Pilih dari Katalog Standard' : '+ Cadang Prosedur Lain (Custom)'}
+                {isMs
+                  ? (isCustomProcedure ? 'Pilih dari Katalog Standard' : '+ Cadang Prosedur Lain (Custom)')
+                  : (isCustomProcedure ? 'Select from Standard Catalog' : '+ Propose Custom Procedure')}
               </button>
             </div>
 
@@ -328,14 +351,14 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                 type="text"
                 value={customProcedureName}
                 onChange={(e) => setCustomProcedureName(e.target.value)}
-                placeholder="cth: Pemasangan Central Venous Line Lanjutan / Pembedahan Khas..."
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                placeholder={isMs ? 'cth: Pemasangan Central Venous Line Lanjutan / Pembedahan Khas...' : 'e.g. Advanced Central Venous Catheterization / Specialized Surgery...'}
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             ) : (
               <select
                 value={procedureKey}
                 onChange={(e) => setProcedureKey(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               >
                 {selectedCategoryObj?.groups.map((group, gIdx) => (
                   <optgroup key={gIdx} label={`--- ${group.label} ---`}>
@@ -354,39 +377,39 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Tarikh Prosedur
+                {isMs ? 'Tarikh Prosedur' : 'Procedure Date'}
               </label>
               <input
                 type="date"
                 value={procedureDate}
                 onChange={(e) => setProcedureDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Wad / Unit / Lokasi
+                {isMs ? 'Wad / Unit / Lokasi' : 'Ward / Unit / Location'}
               </label>
               <input
                 type="text"
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                placeholder="cth: Dewan Bedah / ETD"
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                placeholder={isMs ? 'cth: Dewan Bedah / ETD / ICU' : 'e.g. Operating Theatre / ETD / ICU'}
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                No. Rujukan Kes / MRN
+                {isMs ? 'No. Rujukan Kes / MRN' : 'Case Reference No. / MRN'}
               </label>
               <input
                 type="text"
                 value={patientIdentifier}
                 onChange={(e) => setPatientIdentifier(e.target.value)}
-                placeholder="cth: OT-2026-099 (Tanpa Nama)"
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                placeholder={isMs ? 'cth: OT-2026-099 (Tanpa Nama)' : 'e.g. OT-2026-099 (Anonymized)'}
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
           </div>
@@ -394,29 +417,29 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           {/* Supervision Level Picker */}
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-              Tahap Pengawasan Dilakukan (Supervision Level)
+              {isMs ? 'Tahap Pengawasan Dilakukan (Supervision Level)' : 'Supervision Level Performed'}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {[
                 {
                   id: 'level_1_observed',
-                  label: 'Tahap 1: Pemerhatian Sahaja (Observed)',
-                  desc: 'Memerhatikan prosedur dilakukan oleh pakar/penyelia'
+                  label: isMs ? 'Tahap 1: Pemerhatian Sahaja (Observed)' : 'Level 1: Observed Only',
+                  desc: isMs ? 'Memerhatikan prosedur dilakukan oleh pakar/penyelia' : 'Observed procedure performed by specialist / supervisor'
                 },
                 {
                   id: 'level_2_direct_supervision',
-                  label: 'Tahap 2: Pengawasan Terus (Direct)',
-                  desc: 'Melakukan prosedur dengan kehadiran penyelia di sisi'
+                  label: isMs ? 'Tahap 2: Pengawasan Terus (Direct)' : 'Level 2: Direct Supervision',
+                  desc: isMs ? 'Melakukan prosedur dengan kehadiran penyelia di sisi' : 'Performed procedure with bedside direct supervisor presence'
                 },
                 {
                   id: 'level_3_indirect_supervision',
-                  label: 'Tahap 3: Pengawasan Tidak Terus (Indirect)',
-                  desc: 'Melakukan prosedur dengan penyelia bersedia dipanggil'
+                  label: isMs ? 'Tahap 3: Pengawasan Tidak Terus (Indirect)' : 'Level 3: Indirect Supervision',
+                  desc: isMs ? 'Melakukan prosedur dengan penyelia bersedia dipanggil' : 'Performed procedure with supervisor immediately available on call'
                 },
                 {
                   id: 'level_4_independent',
-                  label: 'Tahap 4: Kompeten & Berdikari (Independent)',
-                  desc: 'Telah mahir & boleh melakukan prosedur secara mandiri'
+                  label: isMs ? 'Tahap 4: Kompeten & Berdikari (Independent)' : 'Level 4: Competent & Independent',
+                  desc: isMs ? 'Telah mahir & boleh melakukan prosedur secara mandiri' : 'Demonstrated competency to perform procedure independently'
                 }
               ].map((lvl) => (
                 <div
@@ -425,7 +448,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                   className={cn(
                     'p-3 rounded-xl border text-left cursor-pointer transition-all',
                     supervisionLevel === lvl.id
-                      ? 'border-lime-500 bg-lime-50/50 dark:bg-lime-950/30 text-lime-950 dark:text-lime-200 shadow-2xs'
+                      ? 'border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-200 shadow-2xs'
                       : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                   )}
                 >
@@ -440,40 +463,40 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Pelan Klinikal, Indikasi & Rasionale <span className="text-rose-500">*</span>
+                {isMs ? 'Pelan Klinikal, Indikasi & Rasionale' : 'Clinical Plan, Indications & Rationale'} <span className="text-rose-500">*</span>
               </label>
               <textarea
                 rows={2}
                 value={clinicalPlan}
                 onChange={(e) => setClinicalPlan(e.target.value)}
-                placeholder="Nyatakan indikasi klinikal pesakit, langkah persediaan aseptik dan protokol yang dipatuhi..."
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                placeholder={isMs ? 'Nyatakan indikasi klinikal pesakit, langkah persediaan aseptik dan protokol yang dipatuhi...' : 'Specify clinical indications, aseptic preparation steps, and guidelines adhered to...'}
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Peralatan Digunakan & Langkah Keselamatan <span className="text-rose-500">*</span>
+                {isMs ? 'Peralatan Digunakan & Langkah Keselamatan' : 'Equipment Used & Safety Measures'} <span className="text-rose-500">*</span>
               </label>
               <textarea
                 rows={2}
                 value={equipmentUsed}
                 onChange={(e) => setEquipmentUsed(e.target.value)}
-                placeholder="Senaraikan instrumen, set steril, PPE, ubatan atau peranti pemantauan yang digunakan..."
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                placeholder={isMs ? 'Senaraikan instrumen, set steril, PPE, ubatan atau peranti pemantauan yang digunakan...' : 'List instruments, sterile sets, PPE, medications, or monitoring devices used...'}
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Refleksi Klinikal, Komplikasi atau Catatan Tambahan (Pilihan)
+                {isMs ? 'Refleksi Klinikal, Komplikasi atau Catatan Tambahan (Pilihan)' : 'Clinical Reflection, Complications or Additional Notes (Optional)'}
               </label>
               <input
                 type="text"
                 value={complicationsOrNotes}
                 onChange={(e) => setComplicationsOrNotes(e.target.value)}
-                placeholder="cth: Prosedur lancar, hemostasis tercapai, tiada desaturasi..."
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                placeholder={isMs ? 'cth: Prosedur lancar, hemostasis tercapai, tiada desaturasi...' : 'e.g. Procedure uneventful, hemostasis achieved, no desaturation...'}
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
           </div>
@@ -482,15 +505,15 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                Lampiran Bukti Log / Sijil Pengesahan
+                {isMs ? 'Lampiran Bukti Log / Sijil Pengesahan' : 'Logbook Evidence / Verification Attachments'}
               </label>
               <button
                 type="button"
                 onClick={handleAddMockAttachment}
-                className="inline-flex items-center gap-1.5 text-xs text-lime-600 dark:text-lime-400 hover:underline font-semibold"
+                className="inline-flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 hover:underline font-semibold"
               >
                 <Upload className="w-3.5 h-3.5" />
-                <span>+ Muat Naik Fail Bukti</span>
+                <span>{isMs ? '+ Muat Naik Fail Bukti' : '+ Upload Evidence File'}</span>
               </button>
             </div>
 
@@ -498,7 +521,9 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
               <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-center">
                 <Paperclip className="w-5 h-5 text-slate-400 mx-auto mb-1" />
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Tiada lampiran. Klik butang di atas untuk melampirkan salinan log bertandatangan atau borang pengesahan.
+                  {isMs
+                    ? 'Tiada lampiran. Klik butang di atas untuk melampirkan salinan log bertandatangan atau borang pengesahan.'
+                    : 'No attachments. Click above to attach signed log sheet or competency verification.'}
                 </p>
               </div>
             ) : (
@@ -509,7 +534,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                     className="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
                   >
                     <div className="flex items-center gap-2">
-                      <Paperclip className="w-4 h-4 text-lime-600 dark:text-lime-400 shrink-0" />
+                      <Paperclip className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />
                       <span className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate max-w-xs md:max-w-md">
                         {att.name} ({(att.size / 1024).toFixed(0)} KB)
                       </span>
@@ -535,7 +560,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-xs md:text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-colors"
           >
-            Batal
+            {isMs ? 'Batal' : 'Cancel'}
           </button>
 
           <div className="flex items-center gap-2">
@@ -544,7 +569,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
               onClick={() => handleSave(true)}
               className="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs md:text-sm font-semibold rounded-xl transition-all"
             >
-              Simpan sebagai Draf
+              {isMs ? 'Simpan sebagai Draf' : 'Save as Draft'}
             </button>
             <button
               type="button"
@@ -552,8 +577,8 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
               className="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs md:text-sm font-bold rounded-xl shadow-xs hover:shadow-sm transition-all active:scale-95"
             >
               {editingSubmission?.status === 'changes_requested'
-                ? 'Hantar Semakan Semula'
-                : 'Hantar untuk Semakan Admin'}
+                ? (isMs ? 'Hantar Semakan Semula' : 'Resubmit for Review')
+                : (isMs ? 'Hantar untuk Semakan JKCP' : 'Submit for JKCP Review')}
             </button>
           </div>
         </div>

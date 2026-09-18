@@ -109,7 +109,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
   const totalWards = filteredData.length;
   const criticalWards = filteredData.filter(r => r.status === 'Critical').length;
   const lowWards = filteredData.filter(r => r.status === 'Low').length;
-  const totalCylindersInWards = filteredData.reduce((acc, curr) => acc + curr.available, 0);
+  const totalCylindersInWards = filteredData.reduce((acc, curr) => acc + (curr.in_use || curr.total || 0), 0);
   const pendingRequestsCount = filteredData.reduce((acc, curr) => {
     const pending = (curr.requests || []).filter(r => r.status === 'pending').length;
     return acc + pending;
@@ -236,7 +236,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                 }
               });
 
-              const totalAvailable = cylinderTypes.reduce((sum, type) => sum + rowSummary[type].available, 0);
+              const totalAvailable = cylinderTypes.reduce((sum, type) => sum + rowSummary[type].total, 0);
               const hasAnyAllocations = cylinderTypes.some(type => rowSummary[type].total > 0 || (requestItemSummary[type] && (requestItemSummary[type].pending > 0 || requestItemSummary[type].approved > 0)));
 
               return (
@@ -244,7 +244,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                   <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <div className="font-extrabold text-slate-800 text-sm">{row.department_name}</div>
                     <span className="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-xl shadow-sm">
-                      Available Total: {totalAvailable}
+                      Total Allocated: {totalAvailable}
                     </span>
                   </div>
 
@@ -257,7 +257,6 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                         const reqs = requestItemSummary[type];
                         const hasCylinders = stats.total > 0;
                         const hasRequests = reqs && (reqs.pending > 0 || reqs.approved > 0);
-                        const isPersonal = isPersonalCylinder(type);
 
                         if (!hasCylinders && !hasRequests) return null;
 
@@ -267,24 +266,20 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                               <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block leading-tight">{type}</span>
                               <div className="mt-1 font-bold text-xs">
                                 {hasCylinders ? (
-                                  isPersonal ? (
-                                    <button
-                                      onClick={() => setSelectedTagDetails({
-                                        deptId: row.department_id,
-                                        deptName: row.department_name,
-                                        type: type,
-                                        cylinders: row.cylinders.filter(
-                                          (c) => getNormalizedType(c.display_name) === type && c.status === 'available'
-                                        )
-                                      })}
-                                      className="font-bold cursor-pointer hover:bg-blue-50 px-2 py-0.5 rounded-lg transition-all duration-200 text-emerald-600 border border-transparent hover:border-blue-200/50 hover:underline inline-block text-xs"
-                                      title="Click to view asset tagging inside this unit"
-                                    >
-                                      {stats.available} Available
-                                    </button>
-                                  ) : (
-                                    <span className="font-bold text-slate-700">{stats.available} Available</span>
-                                  )
+                                  <button
+                                    onClick={() => setSelectedTagDetails({
+                                      deptId: row.department_id,
+                                      deptName: row.department_name,
+                                      type: type,
+                                      cylinders: row.cylinders.filter(
+                                        (c) => getNormalizedType(c.display_name) === type
+                                      )
+                                    })}
+                                    className="font-bold cursor-pointer hover:bg-blue-50 px-2 py-0.5 rounded-lg transition-all duration-200 text-emerald-600 border border-transparent hover:border-blue-200/50 hover:underline inline-block text-xs"
+                                    title="Click to view cylinder assets inside this unit"
+                                  >
+                                    {stats.total} In Unit
+                                  </button>
                                 ) : (
                                   <span className="text-slate-350">—</span>
                                 )}
@@ -324,12 +319,12 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                 {cylinderTypes.map((type) => (
                   <th key={type} className="py-4 px-4 text-center min-w-[120px] border-l border-slate-200/40">
                     <div>{type}</div>
-                    <div className="text-[9px] text-slate-400 font-bold mt-1">Available</div>
+                    <div className="text-[9px] text-slate-400 font-bold mt-1">In Unit</div>
                   </th>
                 ))}
                 <th className="py-4 px-6 text-center min-w-[130px] border-l border-slate-200/40">
                   <div>Total Allocation</div>
-                  <div className="text-[9px] text-slate-400 font-bold mt-1">Available</div>
+                  <div className="text-[9px] text-slate-400 font-bold mt-1">Total Deployed</div>
                 </th>
               </tr>
             </thead>
@@ -358,7 +353,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                       rowSummary[type].total++;
                       if (cyl.status === 'available') {
                         rowSummary[type].available++;
-                      } else if (cyl.status === 'issued') {
+                      } else if (cyl.status === 'issued' || cyl.status === 'in_use') {
                         rowSummary[type].in_use++;
                       }
                     }
@@ -383,8 +378,8 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                     }
                   });
 
-                  // Calculate Total Available sum for this row
-                  const totalAvailable = cylinderTypes.reduce((sum, type) => sum + rowSummary[type].available, 0);
+                  // Calculate Total Allocated sum for this row
+                  const totalAllocated = cylinderTypes.reduce((sum, type) => sum + rowSummary[type].total, 0);
 
                   return (
                     <tr key={row.department_id} className="hover:bg-slate-50/50 transition-colors duration-150">
@@ -399,32 +394,24 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                         const reqs = requestItemSummary[type];
                         const hasCylinders = stats.total > 0;
                         const hasRequests = reqs && (reqs.pending > 0 || reqs.approved > 0);
-                        const isPersonal = isPersonalCylinder(type);
 
                         return (
                           <td key={type} className="py-4 px-4 text-center border-l border-slate-100">
                             {hasCylinders ? (
-                              isPersonal ? (
-                                <button
-                                  onClick={() => setSelectedTagDetails({
-                                    deptId: row.department_id,
-                                    deptName: row.department_name,
-                                    type: type,
-                                    // Filter for available cylinders to match the displayed count
-                                    cylinders: row.cylinders.filter(
-                                      (c) => getNormalizedType(c.display_name) === type && c.status === 'available'
-                                    )
-                                  })}
-                                  className="font-bold cursor-pointer hover:bg-blue-50 px-3 py-1.5 rounded-xl transition-all duration-200 text-emerald-600 border border-transparent hover:border-blue-200/50 hover:underline animate-fade-in"
-                                  title="Click to view asset tagging inside this unit"
-                                >
-                                  {stats.available}
-                                </button>
-                              ) : (
-                                <div className="font-bold text-slate-700">
-                                  {stats.available}
-                                </div>
-                              )
+                              <button
+                                onClick={() => setSelectedTagDetails({
+                                  deptId: row.department_id,
+                                  deptName: row.department_name,
+                                  type: type,
+                                  cylinders: row.cylinders.filter(
+                                    (c) => getNormalizedType(c.display_name) === type
+                                  )
+                                })}
+                                className="font-bold cursor-pointer hover:bg-blue-50 px-3 py-1.5 rounded-xl transition-all duration-200 text-emerald-600 border border-transparent hover:border-blue-200/50 hover:underline animate-fade-in"
+                                title="Click to view cylinder assets inside this unit"
+                              >
+                                {stats.total}
+                              </button>
                             ) : (
                               <span className="text-slate-300 font-normal">—</span>
                             )}
@@ -450,7 +437,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
 
                       {/* Total Allocation */}
                       <td className="py-4 px-6 text-center border-l border-slate-100 bg-slate-50/20 font-extrabold text-emerald-600">
-                        {totalAvailable}
+                        {totalAllocated}
                       </td>
                     </tr>
                   );

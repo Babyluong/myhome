@@ -1,7 +1,8 @@
 import { DrugEntry, PrescriberCategory, HAMCategory, DrugInteraction } from '../types/formulariTypes'
 import { FORMULARI_DATABASE } from '../data/formulariDatabase'
+import { KKM_LASA_MASTER_REGISTRY, KkmLasaEntry, getLasaCategories } from '../data/lasaDatabase'
 
-const STORAGE_KEY_FORMULARI_V2 = 'myformulari_database_v12.0_comprehensive_storage_infusion_guidelines'
+const STORAGE_KEY_FORMULARI_V2 = 'myformulari_database_v20.0_structured_regimens_2026'
 
 /**
  * Get all drugs with localStorage fallback & cache invalidation support
@@ -158,3 +159,13 @@ export function getFormulariSummaryStats() {
     ivDilutionCount
   }
 }
+
+/**
+ * Get full KKM LASA Master Registry
+ */
+export function getLasaMasterRegistry(): KkmLasaEntry[] {
+  return KKM_LASA_MASTER_REGISTRY
+}
+
+export { KKM_LASA_MASTER_REGISTRY, getLasaCategories, type KkmLasaEntry } from '../data/lasaDatabase'
+

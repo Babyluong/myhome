@@ -43,22 +43,22 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
 
   const tabConfig = {
     shared: {
-      title: 'Kategori Bersama (Kedua-dua Peranan)',
-      subtitle: 'Prosedur asas dan teras yang digunapakai oleh Jururawat dan Penolong Pegawai Perubatan.',
+      title: 'Shared Clinical Categories (Both Roles)',
+      subtitle: 'Core clinical and basic procedures applicable to both Staff Nurses and Assistant Medical Officers.',
       categories: COMMON_CATEGORIES,
-      badge: `${COMMON_CATEGORIES.length} Kategori`
+      badge: `${COMMON_CATEGORIES.length} Categories`
     },
     nurses: {
-      title: 'Kategori Khusus Jururawat',
-      subtitle: 'Kompetensi klinikal dan pos-basik kejururawatan khusus (ICU, Paediatrik, Neonatal).',
+      title: 'Nursing-Specific Categories',
+      subtitle: 'Specialized post-basic and nursing clinical competencies (ICU, Paediatrics, Neonatal).',
       categories: NURSES_ONLY_CATEGORIES,
-      badge: `${NURSES_ONLY_CATEGORIES.length} Kategori`
+      badge: `${NURSES_ONLY_CATEGORIES.length} Categories`
     },
     amos: {
-      title: 'Kategori Khusus Penolong Pegawai Perubatan (PPP)',
-      subtitle: 'Prosedur khusus dan lanjutan bagi Penolong Pegawai Perubatan (Perfusion, Bius, PAC).',
+      title: 'Assistant Medical Officer (AMO) Specific Categories',
+      subtitle: 'Advanced and specialized procedures for Assistant Medical Officers (Perfusion, Anaesthesia, PAC).',
       categories: AMO_ONLY_CATEGORIES,
-      badge: `${AMO_ONLY_CATEGORIES.length} Kategori`
+      badge: `${AMO_ONLY_CATEGORIES.length} Categories`
     }
   };
 
@@ -154,14 +154,14 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
           <div>
             <h2 className="text-base md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-              Katalog Prosedur Klinikal Bertauliah (AHP Logbook)
+              MOH Credentialed Clinical Procedure Catalog (AHP Logbook)
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Rujuk senarai prosedur bertauliah KKM mengikut peranan dan kategori klinikal.
+              Browse official MOH certified procedure catalog by clinical role and department categories.
             </p>
           </div>
           <span className="text-xs text-slate-500 font-semibold px-3 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl self-start md:self-auto">
-            Jumlah Prosedur: <strong className="text-emerald-700 dark:text-emerald-400">{CATALOG_METRICS.totalProcedures}</strong>
+            Total Procedures: <strong className="text-emerald-700 dark:text-emerald-400">{CATALOG_METRICS.totalProcedures}</strong>
           </span>
         </div>
 
@@ -177,7 +177,7 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             )}
           >
-            <span>Kategori Bersama (Kedua-dua Peranan)</span>
+            <span>Shared Categories (Both Roles)</span>
             <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold', activeTab === 'shared' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300')}>
               {COMMON_CATEGORIES.length}
             </span>
@@ -193,7 +193,7 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             )}
           >
-            <span>Khusus Jururawat</span>
+            <span>Staff Nurses Only</span>
             <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold', activeTab === 'nurses' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300')}>
               {NURSES_ONLY_CATEGORIES.length}
             </span>
@@ -209,7 +209,7 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             )}
           >
-            <span>Khusus Penolong Pegawai Perubatan (PPP)</span>
+            <span>Assistant Medical Officers (AMO) Only</span>
             <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold', activeTab === 'amos' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300')}>
               {AMO_ONLY_CATEGORIES.length}
             </span>
@@ -228,11 +228,11 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
           </div>
           <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
             <button onClick={expandAll} className="hover:text-emerald-700 dark:hover:text-emerald-400 hover:underline">
-              Buka Semua
+              Expand All
             </button>
             <span className="text-slate-300 dark:text-slate-600">|</span>
             <button onClick={collapseAll} className="hover:text-emerald-700 dark:hover:text-emerald-400 hover:underline">
-              Tutup Semua
+              Collapse All
             </button>
           </div>
         </div>
@@ -244,7 +244,7 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari nama prosedur, kategori, atau kata kunci klinikal..."
+            placeholder="Search procedure name, category code, or clinical keywords..."
             className="w-full pl-10 pr-10 py-2.5 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-600 focus:outline-hidden transition-all"
           />
           {searchQuery && (
@@ -263,16 +263,16 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center">
           <BookOpen className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
           <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-            Tiada Prosedur Dijumpai
+            No Procedures Found
           </h4>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
-            Tiada hasil carian untuk "{searchQuery}". Sila cuba kata kunci lain.
+            No results matching "{searchQuery}". Please try other clinical keywords.
           </p>
           <button
             onClick={() => setSearchQuery('')}
             className="mt-3 px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 text-xs font-semibold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
           >
-            Kosongkan Carian
+            Clear Search
           </button>
         </div>
       ) : (
@@ -301,10 +301,10 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
                           {cat.name}
                         </h4>
                         <span className="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-full text-[11px] font-bold">
-                          {catTotalProcedures} Prosedur
+                          {catTotalProcedures} Procedures
                         </span>
                         <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-md text-[10px]">
-                          {cat.groups.length} Kumpulan
+                          {cat.groups.length} Groups
                         </span>
                       </div>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -338,7 +338,7 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
                               {group.label}
                             </h5>
                             <span className="text-[11px] font-semibold text-slate-500">
-                              {group.items.length} item
+                              {group.items.length} items
                             </span>
                           </div>
 
@@ -360,7 +360,7 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
                                     type="button"
                                     onClick={() => onLogProcedure(cat, item)}
                                     className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-semibold rounded-lg shadow-2xs transition-all active:scale-95"
-                                    title="Log Prosedur Ini"
+                                    title="Log This Procedure"
                                   >
                                     <Plus className="w-3 h-3" />
                                     <span>Log</span>

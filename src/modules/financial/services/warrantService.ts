@@ -325,7 +325,51 @@ export async function getWarrantSummary(
         console.error('Error fetching POs for summary:', poError)
       }
 
-      const summary = calculateWarrantSummary(warrantsList, purchaseOrders || [])
+      // Fetch medical oxygen / cylinder reception records from MyCylinder module
+      let oxygenExpensesAsOrders: any[] = []
+      const shouldIncludeOxygen = !filters?.category || filters.category === 'medical_oxygen' || filters.category === 'medical_cylinder'
+      const shouldIncludeDept = !filters?.department || (filters.department as string) === 'all' || getSharedDepartments(filters.department as string).includes('pharmacy')
+
+      if (shouldIncludeOxygen && shouldIncludeDept) {
+        let oxygenQuery = supabase
+          .from('pharmacy_oxygen_reception_records')
+          .select('id, vote_code, vote_activity, total_amount, refill_amount, loan_amount, status, reception_date')
+          .eq('hospital_id', hospitalId)
+          .gte('reception_date', startDate)
+          .lte('reception_date', endDate)
+          .in('status', ['completed', 'pending'])
+
+        if (filters?.voteCode) {
+          const cleanVote = String(filters.voteCode).split(' ')[0]
+          oxygenQuery = oxygenQuery.ilike('vote_code', `%${cleanVote}%`)
+        }
+
+        const { data: oxyData, error: oxyError } = await oxygenQuery
+        if (oxyError) {
+          console.error('Error fetching oxygen receptions for warrant summary:', oxyError)
+        } else if (oxyData) {
+          oxygenExpensesAsOrders = oxyData.map((rec: any) => {
+            const rawVote = String(rec.vote_code || '080702').trim()
+            let normalizedCode = rawVote
+            if (rawVote.startsWith('080600')) normalizedCode = '080600 (CC)'
+            else if (rawVote.startsWith('080702')) normalizedCode = '080702'
+
+            return {
+              id: rec.id,
+              total_amount: Number(rec.total_amount || 0),
+              status: rec.status === 'completed' ? 'completed' : 'sent',
+              category: 'medical_oxygen',
+              department: 'pharmacy',
+              vote_code: normalizedCode,
+              vote_activity: rec.vote_activity || '27402',
+              order_date: rec.reception_date,
+            }
+          })
+        }
+      }
+
+      const allExpenses = [...(purchaseOrders || []), ...oxygenExpensesAsOrders]
+      const summary = calculateWarrantSummary(warrantsList, allExpenses)
       return { data: summary, error: null }
     }
 
@@ -426,16 +470,30 @@ function calculateWarrantSummary(
       return
     }
 
-    const normDept = normalize(po.department)
+    let rawDept = po.department
+    if (!rawDept && po.category === 'reagent') {
+      rawDept = 'laboratory_pathology'
+    } else if (!rawDept && (po.category === 'medical_oxygen' || po.category === 'medical_cylinder')) {
+      rawDept = 'pharmacy'
+    }
+
+    const normDept = normalize(rawDept)
     const primary = getPrimaryDepartment(normDept)
     const cat = po.category as WarrantCategory
-    const voteCode = po.vote_code as string
+
+    let voteCode = po.vote_code as string
+    if (voteCode && (po.category === 'medical_oxygen' || po.category === 'medical_cylinder')) {
+      if (voteCode.startsWith('080600')) voteCode = '080600 (CC)'
+      else if (voteCode.startsWith('080702')) voteCode = '080702'
+    }
     const amount = Number(po.total_amount || 0)
 
     // Update group stats (Pooled expenses)
     const gKey = `${cat}:${primary}`
     if (groupStats.has(gKey)) {
       groupStats.get(gKey)!.expenses += amount
+    } else {
+      groupStats.set(gKey, { allocation: 0, expenses: amount })
     }
 
     // Update Category global expenses
@@ -573,6 +631,7 @@ function calculateWarrantSummary(
 // Constants
 export const WARRANT_VOTE_CODES = [
   { value: '080702', label: '080702' },
+  { value: '080600', label: '080600' },
   { value: '990102', label: '990102' },
   { value: '080600 (APPL)', label: '080600 (APPL)' },
   { value: '080600 (CC)', label: '080600 (CC)' },

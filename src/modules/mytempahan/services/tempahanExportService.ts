@@ -8,30 +8,30 @@ export async function exportBookingsToExcel(
   bookings: Booking[],
   rooms: Room[],
   stats: BookingStats,
-  fileName: string = `MyTempahan_Laporan_${new Date().toISOString().slice(0, 10)}.xlsx`
+  fileName: string = `MyTempahan_Report_${new Date().toISOString().slice(0, 10)}.xlsx`
 ): Promise<void> {
   const wb = XLSX.utils.book_new()
 
   // -------------------------------------------------------------
-  // Sheet 1: Ringkasan & Statistik Eksekutif
+  // Sheet 1: Executive Summary & KPIs
   // -------------------------------------------------------------
   const summaryData = [
-    ['HOSPITAL DAERAH LAWAS - SISTEM MYTEMPAHAN'],
-    ['LAPORAN EKSEKUTIF PENGGUNAAN FASILITI & BILIK MESYUARAT'],
-    ['Tarikh Dijana:', new Date().toLocaleString('ms-MY')],
+    ['LAWAS DISTRICT HOSPITAL - MYTEMPAHAN SYSTEM'],
+    ['FACILITY & MEETING ROOM UTILIZATION EXECUTIVE REPORT'],
+    ['Generated Date:', new Date().toLocaleString('en-US')],
     [''],
-    ['METRIK UTAMA', 'NILAI'],
-    ['Jumlah Keseluruhan Tempahan', stats.totalBookings],
-    ['Tempahan Diluluskan', stats.approvedBookings],
-    ['Tempahan Sedang Digunakan Hari Ini', stats.inUseToday],
-    ['Menunggu Kelulusan', stats.pendingApprovals],
-    ['Tempahan Selesai', stats.completedBookings],
-    ['Tempahan Dibatalkan / Ditolak', stats.cancelledBookings],
-    ['Kadar Utilisasi Purata (%)', `${stats.averageUtilizationRate}%`],
-    ['Bilik Paling Kerap Digunakan', stats.busiestRoomName],
-    ['Jumlah Jam Digunakan (Bulan Semasa)', `${stats.totalHoursBooked} Jam`],
+    ['KEY METRICS', 'VALUE'],
+    ['Total Recorded Bookings', stats.totalBookings],
+    ['Approved Bookings', stats.approvedBookings],
+    ['Bookings In Use Today', stats.inUseToday],
+    ['Pending Approvals', stats.pendingApprovals],
+    ['Completed Bookings', stats.completedBookings],
+    ['Cancelled / Rejected Bookings', stats.cancelledBookings],
+    ['Average Utilization Rate (%)', `${stats.averageUtilizationRate}%`],
+    ['Most Frequently Used Facility', stats.busiestRoomName],
+    ['Total Hours Booked (Current Month)', `${stats.totalHoursBooked} Hours`],
     [''],
-    ['PECAHAN MENGIKUT JABATAN / UNIT', 'JUMLAH TEMPAHAN', 'JUMLAH JAM']
+    ['BREAKDOWN BY DEPARTMENT / UNIT', 'TOTAL BOOKINGS', 'TOTAL HOURS BOOKED']
   ]
 
   stats.departmentUtilization.forEach(d => {
@@ -39,58 +39,58 @@ export async function exportBookingsToExcel(
   })
 
   const wsSummary = XLSX.utils.aoa_to_sheet(summaryData)
-  XLSX.utils.book_append_sheet(wb, wsSummary, 'Ringkasan Eksekutif')
+  XLSX.utils.book_append_sheet(wb, wsSummary, 'Executive Summary')
 
   // -------------------------------------------------------------
-  // Sheet 2: Log Senarai Tempahan Lengkap
+  // Sheet 2: Complete Booking Log
   // -------------------------------------------------------------
   const bookingRows = bookings.map((b, idx) => ({
-    'Bil': idx + 1,
-    'No. Rujukan': b.booking_number,
-    'Nama Bilik': b.room?.name || b.room_id,
-    'Kod Bilik': b.room?.room_code || '-',
-    'Lokasi': b.room?.location || '-',
-    'Pemohon': b.pemohon_name || b.user?.full_name || b.user_id,
-    'Jawatan': b.pemohon_jawatan || '-',
-    'Jabatan': b.pemohon_department || b.department?.department_name || '-',
-    'No. Telefon': b.pemohon_phone || '-',
-    'Tujuan Mesyuarat': b.purpose,
-    'Jenis Acara': b.event_type,
-    'Tarikh': b.date,
-    'Masa Mula': b.start_time,
-    'Masa Tamat': b.end_time,
-    'Durasi (Jam)': b.duration_hours,
-    'Bil. Kehadiran': b.attendees_count,
-    'Susunan': b.layout_type,
-    'Jamuan': b.tempahan_makanan?.diperlukan ? `Ya (${b.tempahan_makanan.jenis_hidangan})` : 'Tidak',
-    'VIP': b.tetamu_vip?.ada_vip ? 'Ya' : 'Tidak',
-    'Keutamaan': b.priority,
-    'Status': b.status,
-    'Tarikh Dibuat': b.created_at.slice(0, 10)
+    'No.': idx + 1,
+    'Reference No.': b.booking_number,
+    'Facility Name': b.room?.name || b.room_id,
+    'Room Code': b.room?.room_code || '-',
+    'Location': b.room?.location || '-',
+    'Applicant Name': b.pemohon_name || b.user?.full_name || b.user_id,
+    'Designation': b.pemohon_jawatan || '-',
+    'Department': b.pemohon_department || b.department?.department_name || '-',
+    'Phone Number': b.pemohon_phone || '-',
+    'Meeting Purpose': b.purpose,
+    'Event Category': b.event_type,
+    'Date': b.date,
+    'Start Time': b.start_time,
+    'End Time': b.end_time,
+    'Duration (Hours)': b.duration_hours,
+    'Attendees Count': b.attendees_count,
+    'Layout': b.layout_type,
+    'Catering Provided': b.tempahan_makanan?.diperlukan ? `Yes (${b.tempahan_makanan.jenis_hidangan})` : 'No',
+    'VIP Dignitaries': b.tetamu_vip?.ada_vip ? 'Yes' : 'No',
+    'Priority': b.priority.toUpperCase(),
+    'Status': b.status.toUpperCase(),
+    'Created Date': b.created_at.slice(0, 10)
   }))
 
   const wsBookings = XLSX.utils.json_to_sheet(bookingRows)
-  XLSX.utils.book_append_sheet(wb, wsBookings, 'Log Tempahan')
+  XLSX.utils.book_append_sheet(wb, wsBookings, 'Booking Log')
 
   // -------------------------------------------------------------
-  // Sheet 3: Daftar Bilik & Fasiliti
+  // Sheet 3: Facility & Room Directory
   // -------------------------------------------------------------
   const roomRows = rooms.map((r, idx) => ({
-    'Bil': idx + 1,
-    'Kod Bilik': r.room_code,
-    'Nama Bilik': r.name,
-    'Kategori': r.category,
-    'Kapasiti (Pax)': r.capacity,
-    'Aras': r.floor_level,
-    'Blok': r.building_block,
-    'Status': r.status,
-    'Waktu Operasi': r.operating_hours.is24Hours ? '24 Jam' : `${r.operating_hours.start} - ${r.operating_hours.end}`,
-    'Perlu Kelulusan': r.requires_approval ? 'Ya' : 'Tidak',
-    'Fasiliti Sedia Ada': r.amenities.join(', ')
+    'No.': idx + 1,
+    'Room Code': r.room_code,
+    'Facility Name': r.name,
+    'Category': r.category,
+    'Capacity (Pax)': r.capacity,
+    'Floor Level': r.floor_level,
+    'Building Block': r.building_block,
+    'Status': r.status.toUpperCase(),
+    'Operating Hours': r.operating_hours.is24Hours ? '24 Hours' : `${r.operating_hours.start} - ${r.operating_hours.end}`,
+    'Requires Approval': r.requires_approval ? 'Yes' : 'No',
+    'Available Amenities': r.amenities.join(', ')
   }))
 
   const wsRooms = XLSX.utils.json_to_sheet(roomRows)
-  XLSX.utils.book_append_sheet(wb, wsRooms, 'Daftar Bilik')
+  XLSX.utils.book_append_sheet(wb, wsRooms, 'Facility Directory')
 
   // Write and trigger browser download
   XLSX.writeFile(wb, fileName)

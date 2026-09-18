@@ -7,27 +7,27 @@ import {
   Check, 
   X, 
   Calendar, 
-  FileText,
-  AlertTriangle,
-  MapPin,
-  Clock,
-  User,
-  Shield,
-  ThumbsUp,
-  ThumbsDown,
-  Info,
-  CheckCircle2
+  FileText, 
+  AlertTriangle, 
+  MapPin, 
+  Clock, 
+  User, 
+  Shield, 
+  ThumbsUp, 
+  ThumbsDown, 
+  Info, 
+  CheckCircle2 
 } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
 import { CrossborderDetailsPanel } from '../components/CrossborderDetailsPanel'
 import { useAuthStore } from '@/stores/authStore'
-
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { 
   getRequests, 
   adminApproveRequest, 
-  adminRejectRequest,
-  getInspections
+  adminRejectRequest, 
+  getInspections 
 } from '../services/transporterService'
 import type { TransportRequest, VehicleInspection } from '@/shared/types/mytransporter'
 import { 
@@ -36,13 +36,15 @@ import {
   CardTitle, 
   CardContent, 
   Button, 
-  Badge,
-  SlideOver
+  Badge, 
+  SlideOver 
 } from '@/components/ui'
 
 const TransporterAdminApprovalPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
+  const { language } = useLanguage()
+  const isEn = language !== 'ms'
   const toast = useToast()
 
   const [requests, setRequests] = useState<TransportRequest[]>([])
@@ -69,7 +71,10 @@ const TransporterAdminApprovalPage: React.FC = () => {
       const inspRes = await getInspections()
       if (inspRes.data) setInspections(inspRes.data)
     } catch (err: any) {
-      toast.error('Gagal Memuatkan Data', err.message || 'Sila cuba lagi.')
+      toast.error(
+        isEn ? 'Failed to Load Data' : 'Gagal Memuatkan Data', 
+        err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
+      )
     } finally {
       setLoading(false)
     }
@@ -86,11 +91,17 @@ const TransporterAdminApprovalPage: React.FC = () => {
       const res = await adminApproveRequest(id, adminId, hospitalId)
       if (res.error) throw new Error(res.error)
       
-      toast.success('Permohonan Diluluskan', 'Permohonan pengangkutan berjaya diluluskan.')
+      toast.success(
+        isEn ? 'Requisition Approved' : 'Permohonan Diluluskan', 
+        isEn ? 'Transport request successfully authorized.' : 'Permohonan pengangkutan berjaya diluluskan.'
+      )
       fetchData()
       setIsDetailOpen(false)
     } catch (err: any) {
-      toast.error('Gagal Meluluskan', err.message || 'Sila cuba lagi.')
+      toast.error(
+        isEn ? 'Approval Failed' : 'Gagal Meluluskan', 
+        err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
+      )
     }
   }
 
@@ -102,7 +113,10 @@ const TransporterAdminApprovalPage: React.FC = () => {
 
   const handleRejectSubmit = async () => {
     if (!rejectingReqId || !rejectReason) {
-      toast.error('Sebab Diperlukan', 'Sila nyatakan sebab penolakan permohonan.')
+      toast.error(
+        isEn ? 'Reason Required' : 'Sebab Diperlukan', 
+        isEn ? 'Please state the reason for requisition rejection.' : 'Sila nyatakan sebab penolakan permohonan.'
+      )
       return
     }
 
@@ -112,12 +126,18 @@ const TransporterAdminApprovalPage: React.FC = () => {
       const res = await adminRejectRequest(rejectingReqId, adminId, rejectReason, hospitalId)
       if (res.error) throw new Error(res.error)
 
-      toast.success('Permohonan Ditolak', 'Permohonan pengangkutan ditolak dan dimaklumkan kepada pemohon.')
+      toast.success(
+        isEn ? 'Requisition Rejected' : 'Permohonan Ditolak', 
+        isEn ? 'Transport requisition rejected and applicant notified.' : 'Permohonan pengangkutan ditolak dan dimaklumkan kepada pemohon.'
+      )
       setIsRejectOpen(false)
       fetchData()
       setIsDetailOpen(false)
     } catch (err: any) {
-      toast.error('Gagal Menolak', err.message || 'Sila cuba lagi.')
+      toast.error(
+        isEn ? 'Rejection Failed' : 'Gagal Menolak', 
+        err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
+      )
     }
   }
 
@@ -140,15 +160,15 @@ const TransporterAdminApprovalPage: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
-        return <Badge variant="success">Diluluskan</Badge>
+        return <Badge variant="success">{isEn ? 'Approved' : 'Diluluskan'}</Badge>
       case 'rejected':
-        return <Badge variant="error">Ditolak Pentadbir</Badge>
+        return <Badge variant="error">{isEn ? 'Rejected by Admin' : 'Ditolak Pentadbir'}</Badge>
       case 'in_transit':
-        return <Badge variant="warning">Dalam Perjalanan</Badge>
+        return <Badge variant="warning">{isEn ? 'In Transit' : 'Dalam Perjalanan'}</Badge>
       case 'completed':
-        return <Badge variant="success">Selesai</Badge>
+        return <Badge variant="success">{isEn ? 'Completed' : 'Selesai'}</Badge>
       case 'cancelled':
-        return <Badge variant="gray">Dibatalkan</Badge>
+        return <Badge variant="gray">{isEn ? 'Cancelled' : 'Dibatalkan'}</Badge>
       default:
         return <Badge variant="gray">{status}</Badge>
     }
@@ -160,17 +180,21 @@ const TransporterAdminApprovalPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Papan Pemuka</span>
+        <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
       </button>
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Senarai Kelulusan Pentadbir</h1>
+        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+          {isEn ? 'Administrator Approval Queue' : 'Senarai Kelulusan Pentadbir'}
+        </h1>
         <p className="text-slate-500 text-sm">
-          Semak butiran perjalanan, diagnosis pesakit, dan laporan pemeriksaan pre-trip pemandu sebelum meluluskan pelepasan kenderaan.
+          {isEn 
+            ? 'Review travel itinerary, clinical diagnosis, and driver pre-trip safety inspections before issuing final vehicle dispatch approval.' 
+            : 'Semak butiran perjalanan, diagnosis pesakit, dan laporan pemeriksaan pre-trip pemandu sebelum meluluskan pelepasan kenderaan.'}
         </p>
       </div>
 
@@ -178,23 +202,27 @@ const TransporterAdminApprovalPage: React.FC = () => {
       <div className="flex border-b border-slate-200 gap-6">
         <button
           onClick={() => setActiveTab('pending')}
-          className={`py-3 text-sm font-bold border-b-2 transition-all ${
+          className={`py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
             activeTab === 'pending' 
               ? 'border-emerald-600 text-emerald-700' 
               : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
-          Queue Permohonan Menunggu Kelulusan ({pendingApprovals.length})
+          {isEn 
+            ? `Pending Approval Queue (${pendingApprovals.length})` 
+            : `Queue Permohonan Menunggu Kelulusan (${pendingApprovals.length})`}
         </button>
         <button
           onClick={() => setActiveTab('history')}
-          className={`py-3 text-sm font-bold border-b-2 transition-all ${
+          className={`py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
             activeTab === 'history' 
               ? 'border-emerald-600 text-emerald-700' 
               : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
-          Tindakan Kelulusan Lampau ({processedRequests.length})
+          {isEn 
+            ? `Historical Approvals Log (${processedRequests.length})` 
+            : `Tindakan Kelulusan Lampau (${processedRequests.length})`}
         </button>
       </div>
 
@@ -204,27 +232,31 @@ const TransporterAdminApprovalPage: React.FC = () => {
           <Card className="border border-slate-200 shadow-sm overflow-hidden w-full">
             <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-4">
               <CardTitle className="text-md font-bold text-slate-800 flex items-center justify-between">
-                <span>Senarai Menunggu Tindakan</span>
+                <span>{isEn ? 'Pending Action Queue' : 'Senarai Menunggu Tindakan'}</span>
                 <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full font-bold">
-                  {pendingApprovals.length} Tertunda
+                  {pendingApprovals.length} {isEn ? 'Pending' : 'Tertunda'}
                 </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               {loading ? (
-                <div className="p-12 text-center text-slate-500 animate-pulse">Memuatkan permohonan...</div>
+                <div className="p-12 text-center text-slate-500 animate-pulse">
+                  {isEn ? 'Loading pending requisitions...' : 'Memuatkan permohonan...'}
+                </div>
               ) : pendingApprovals.length === 0 ? (
-                <div className="p-12 text-center text-slate-500">Tiada permohonan menunggu kelulusan ketika ini.</div>
+                <div className="p-12 text-center text-slate-500">
+                  {isEn ? 'No requisitions currently awaiting approval.' : 'Tiada permohonan menunggu kelulusan ketika ini.'}
+                </div>
               ) : (
                 <div className="overflow-x-auto w-full">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="border-b border-slate-200 text-xxs font-extrabold text-slate-400 uppercase tracking-wider bg-slate-50/75">
-                        <th className="p-4 pl-6">No. Rujukan & Jenis</th>
-                        <th className="p-4">Destinasi & Tujuan</th>
-                        <th className="p-4">Pemandu & Pesakit</th>
-                        <th className="p-4">Tarikh & Masa</th>
-                        <th className="p-4 pr-6 text-right">Tindakan</th>
+                        <th className="p-4 pl-6">{isEn ? 'Ref No & Category' : 'No. Rujukan & Jenis'}</th>
+                        <th className="p-4">{isEn ? 'Destination & Purpose' : 'Destinasi & Tujuan'}</th>
+                        <th className="p-4">{isEn ? 'Driver & Patient' : 'Pemandu & Pesakit'}</th>
+                        <th className="p-4">{isEn ? 'Date & Time' : 'Tarikh & Masa'}</th>
+                        <th className="p-4 pr-6 text-right">{isEn ? 'Action' : 'Tindakan'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 text-sm">
@@ -241,11 +273,11 @@ const TransporterAdminApprovalPage: React.FC = () => {
                               </span>
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 {req.jenis_permohonan === 'ambulance' ? (
-                                  <Badge variant="error" className="text-[10px] py-0 px-1.5">Ambulans</Badge>
+                                  <Badge variant="error" className="text-[10px] py-0 px-1.5">{isEn ? 'Ambulance' : 'Ambulans'}</Badge>
                                 ) : req.jenis_permohonan === 'van_jenazah' ? (
-                                  <Badge variant="gray" className="text-[10px] py-0 px-1.5">Van Jenazah</Badge>
+                                  <Badge variant="gray" className="text-[10px] py-0 px-1.5">{isEn ? 'Hearse Van' : 'Van Jenazah'}</Badge>
                                 ) : (
-                                  <Badge variant="info" className="text-[10px] py-0 px-1.5">SG (Kereta Jabatan)</Badge>
+                                  <Badge variant="info" className="text-[10px] py-0 px-1.5">{isEn ? 'SG (Official Vehicle)' : 'SG (Kereta Jabatan)'}</Badge>
                                 )}
                                 {req.kenderaan?.no_kenderaan && (
                                   <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50/80 px-1.5 py-0.2 rounded border border-blue-200/50">
@@ -262,7 +294,7 @@ const TransporterAdminApprovalPage: React.FC = () => {
                                 <span className="truncate">{req.destinasi}</span>
                                 {req.is_crossborder && (
                                   <span className="bg-blue-50 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-blue-100 flex items-center gap-0.5 ml-1">
-                                    🌐 Sempadan
+                                    🌐 {isEn ? 'Cross-Border' : 'Sempadan'}
                                   </span>
                                 )}
                               </div>
@@ -274,37 +306,37 @@ const TransporterAdminApprovalPage: React.FC = () => {
                           <td className="p-4">
                             <div className="flex flex-col gap-0.5 text-xs">
                               <span className="font-semibold text-slate-650">
-                                Pemandu: {req.pemandu?.full_name || 'Driver'}
+                                {isEn ? 'Driver' : 'Pemandu'}: {req.pemandu?.full_name || (isEn ? 'Assigned Driver' : 'Pemandu')}
                               </span>
                               {req.jenis_permohonan === 'van_jenazah' ? (
-                                <span className="text-slate-600 font-medium">Jenazah: {req.nama_pesakit}</span>
+                                <span className="text-slate-600 font-medium">{isEn ? 'Deceased' : 'Jenazah'}: {req.nama_pesakit}</span>
                               ) : (req.jenis_permohonan === 'ambulance' || req.bawa_pesakit) ? (
-                                <span className="text-rose-700 font-semibold">Pesakit: {req.nama_pesakit}</span>
+                                <span className="text-rose-700 font-semibold">{isEn ? 'Patient' : 'Pesakit'}: {req.nama_pesakit}</span>
                               ) : null}
                             </div>
                           </td>
                           <td className="p-4">
                             <span className="font-medium text-slate-700 text-xs font-mono">
-                              {new Date(req.tarikh_masa_diperlukan).toLocaleString('ms-MY')}
+                              {new Date(req.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY')}
                             </span>
                           </td>
                           <td className="p-4 pr-6 text-right">
                             <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                               <Button 
                                 onClick={() => handleApprove(req.id)}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-8 px-3"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-8 px-3 cursor-pointer"
                               >
                                 <Check className="w-3.5 h-3.5 mr-1 inline" />
-                                Lulus
+                                {isEn ? 'Approve' : 'Lulus'}
                               </Button>
                               
                               <Button 
                                 onClick={() => handleOpenReject(req.id)}
-                                className="bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs border border-rose-100 font-bold h-8 px-3"
+                                className="bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs border border-rose-100 font-bold h-8 px-3 cursor-pointer"
                                 variant="ghost"
                               >
                                 <X className="w-3.5 h-3.5 mr-1 inline" />
-                                Tolak
+                                {isEn ? 'Reject' : 'Tolak'}
                               </Button>
                             </div>
                           </td>
@@ -319,23 +351,29 @@ const TransporterAdminApprovalPage: React.FC = () => {
         ) : (
           <Card className="border border-slate-200 shadow-sm overflow-hidden w-full">
             <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-4">
-              <CardTitle className="text-md font-bold text-slate-800">Rekod Tindakan Kelulusan Lampau</CardTitle>
+              <CardTitle className="text-md font-bold text-slate-800">
+                {isEn ? 'Historical Approval Actions Log' : 'Rekod Tindakan Kelulusan Lampau'}
+              </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               {loading ? (
-                <div className="p-12 text-center text-slate-500 animate-pulse">Memuatkan rekod tindakan lampau...</div>
+                <div className="p-12 text-center text-slate-500 animate-pulse">
+                  {isEn ? 'Loading historical log...' : 'Memuatkan rekod tindakan lampau...'}
+                </div>
               ) : processedRequests.length === 0 ? (
-                <div className="p-12 text-center text-slate-500">Tiada rekod tindakan lampau.</div>
+                <div className="p-12 text-center text-slate-500">
+                  {isEn ? 'No historical records found.' : 'Tiada rekod tindakan lampau.'}
+                </div>
               ) : (
                 <div className="overflow-x-auto w-full">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="border-b border-slate-200 text-xxs font-extrabold text-slate-400 uppercase tracking-wider bg-slate-50/75">
-                        <th className="p-4 pl-6">No. Rujukan & Jenis</th>
-                        <th className="p-4">Destinasi & Tujuan</th>
-                        <th className="p-4">Pemandu & Pesakit</th>
-                        <th className="p-4">Tarikh & Masa</th>
-                        <th className="p-4 pr-6 text-right">Status</th>
+                        <th className="p-4 pl-6">{isEn ? 'Ref No & Category' : 'No. Rujukan & Jenis'}</th>
+                        <th className="p-4">{isEn ? 'Destination & Purpose' : 'Destinasi & Tujuan'}</th>
+                        <th className="p-4">{isEn ? 'Driver & Patient' : 'Pemandu & Pesakit'}</th>
+                        <th className="p-4">{isEn ? 'Date & Time' : 'Tarikh & Masa'}</th>
+                        <th className="p-4 pr-6 text-right">{isEn ? 'Status' : 'Status'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 text-sm">
@@ -352,11 +390,11 @@ const TransporterAdminApprovalPage: React.FC = () => {
                               </span>
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 {req.jenis_permohonan === 'ambulance' ? (
-                                  <Badge variant="error" className="text-[10px] py-0 px-1.5">Ambulans</Badge>
+                                  <Badge variant="error" className="text-[10px] py-0 px-1.5">{isEn ? 'Ambulance' : 'Ambulans'}</Badge>
                                 ) : req.jenis_permohonan === 'van_jenazah' ? (
-                                  <Badge variant="gray" className="text-[10px] py-0 px-1.5">Van Jenazah</Badge>
+                                  <Badge variant="gray" className="text-[10px] py-0 px-1.5">{isEn ? 'Hearse Van' : 'Van Jenazah'}</Badge>
                                 ) : (
-                                  <Badge variant="info" className="text-[10px] py-0 px-1.5">SG (Kereta Jabatan)</Badge>
+                                  <Badge variant="info" className="text-[10px] py-0 px-1.5">{isEn ? 'SG (Official Vehicle)' : 'SG (Kereta Jabatan)'}</Badge>
                                 )}
                                 {req.kenderaan?.no_kenderaan && (
                                   <span className="text-[10px] font-mono font-bold text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
@@ -373,7 +411,7 @@ const TransporterAdminApprovalPage: React.FC = () => {
                                 <span className="truncate">{req.destinasi}</span>
                                 {req.is_crossborder && (
                                   <span className="bg-blue-50 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-blue-100 flex items-center gap-0.5 ml-1">
-                                    🌐 Sempadan
+                                    🌐 {isEn ? 'Cross-Border' : 'Sempadan'}
                                   </span>
                                 )}
                               </div>
@@ -385,18 +423,18 @@ const TransporterAdminApprovalPage: React.FC = () => {
                           <td className="p-4">
                             <div className="flex flex-col gap-0.5 text-xs">
                               <span className="font-semibold text-slate-650">
-                                Pemandu: {req.pemandu?.full_name || '-'}
+                                {isEn ? 'Driver' : 'Pemandu'}: {req.pemandu?.full_name || '-'}
                               </span>
                               {req.jenis_permohonan === 'van_jenazah' ? (
-                                <span className="text-slate-600 font-medium">Jenazah: {req.nama_pesakit}</span>
+                                <span className="text-slate-600 font-medium">{isEn ? 'Deceased' : 'Jenazah'}: {req.nama_pesakit}</span>
                               ) : (req.jenis_permohonan === 'ambulance' || req.bawa_pesakit) ? (
-                                <span className="text-rose-700 font-semibold">Pesakit: {req.nama_pesakit}</span>
+                                <span className="text-rose-700 font-semibold">{isEn ? 'Patient' : 'Pesakit'}: {req.nama_pesakit}</span>
                               ) : null}
                             </div>
                           </td>
                           <td className="p-4">
                             <span className="font-medium text-slate-700 text-xs font-mono">
-                              {new Date(req.tarikh_masa_diperlukan).toLocaleString('ms-MY')}
+                              {new Date(req.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY')}
                             </span>
                           </td>
                           <td className="p-4 pr-6 text-right">
@@ -417,8 +455,8 @@ const TransporterAdminApprovalPage: React.FC = () => {
       <SlideOver
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
-        title={`Semakan Kelulusan: ${selectedReq?.no_rujukan}`}
-        description="Semak permohonan trip berserta laporan pre-trip pemandu bertugas."
+        title={isEn ? `Approval Review: ${selectedReq?.no_rujukan}` : `Semakan Kelulusan: ${selectedReq?.no_rujukan}`}
+        description={isEn ? 'Review trip details and driver pre-trip vehicle safety inspection report.' : 'Semak permohonan trip berserta laporan pre-trip pemandu bertugas.'}
         size="3xl"
       >
         {selectedReq && (
@@ -426,7 +464,9 @@ const TransporterAdminApprovalPage: React.FC = () => {
             
              {/* Trip Summary Card */}
              <div className="bg-gradient-to-r from-slate-50 to-slate-100/50 border border-slate-200/60 p-5 rounded-2xl shadow-sm">
-               <span className="text-[10px] uppercase tracking-wider font-extrabold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md mb-2 inline-block">Destinasi Perjalanan</span>
+               <span className="text-[10px] uppercase tracking-wider font-extrabold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md mb-2 inline-block">
+                 {isEn ? 'Journey Destination' : 'Destinasi Perjalanan'}
+               </span>
                <h3 className="text-base font-black text-slate-900 tracking-tight flex items-center gap-1.5 mt-1">
                  <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                  {selectedReq.destinasi}
@@ -438,39 +478,49 @@ const TransporterAdminApprovalPage: React.FC = () => {
              <div className="space-y-4">
                <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
                  <FileText className="w-4 h-4 text-slate-500" />
-                 <h4 className="text-xs font-black text-slate-600 uppercase tracking-wider">Maklumat Trip Pengangkutan</h4>
+                 <h4 className="text-xs font-black text-slate-600 uppercase tracking-wider">
+                   {isEn ? 'Transport Requisition Details' : 'Maklumat Trip Pengangkutan'}
+                 </h4>
                </div>
                <div className="bg-white border border-slate-150 rounded-2xl p-5 shadow-xs grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
                  <div>
-                   <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Jenis Perkhidmatan</span>
+                   <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
+                     {isEn ? 'Transport Category' : 'Jenis Perkhidmatan'}
+                   </span>
                    <span className="font-bold text-slate-800 capitalize flex items-center gap-1.5">
                      {selectedReq.jenis_permohonan === 'ambulance' ? (
-                       <Badge variant="error" className="py-0.5 px-2">Ambulans</Badge>
+                       <Badge variant="error" className="py-0.5 px-2">{isEn ? 'Ambulance' : 'Ambulans'}</Badge>
                      ) : selectedReq.jenis_permohonan === 'van_jenazah' ? (
-                       <Badge variant="gray" className="py-0.5 px-2">Van Jenazah</Badge>
+                       <Badge variant="gray" className="py-0.5 px-2">{isEn ? 'Hearse Van' : 'Van Jenazah'}</Badge>
                      ) : (
-                       <Badge variant="info" className="py-0.5 px-2">Kereta Jabatan (SG)</Badge>
+                       <Badge variant="info" className="py-0.5 px-2">{isEn ? 'Official Vehicle (SG)' : 'Kereta Jabatan (SG)'}</Badge>
                      )}
                    </span>
                  </div>
                  <div>
-                   <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Unit Pemohon</span>
+                   <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
+                     {isEn ? 'Applicant Unit / Ward' : 'Unit Pemohon'}
+                   </span>
                    <span className="font-semibold text-slate-800">{selectedReq.unit_pemohon}</span>
                  </div>
                  {selectedReq.nama_pemohon && (
                    <div>
-                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Nama Pemohon</span>
+                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
+                       {isEn ? 'Applicant Name' : 'Nama Pemohon'}
+                     </span>
                      <span className="font-semibold text-slate-800">{selectedReq.nama_pemohon}</span>
                    </div>
                  )}
                  <div>
-                   <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Tarikh & Masa Bertolak</span>
+                   <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
+                     {isEn ? 'Required Departure Time' : 'Tarikh & Masa Bertolak'}
+                   </span>
                    <span className="font-bold text-slate-850 font-mono">
-                     {new Date(selectedReq.tarikh_masa_diperlukan).toLocaleString('ms-MY')}
+                     {new Date(selectedReq.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY')}
                      {selectedReq.tarikh_masa_sehingga && (
                        <>
-                         <span className="text-slate-400 font-normal font-sans text-xs"> hingga </span>
-                         {new Date(selectedReq.tarikh_masa_sehingga).toLocaleString('ms-MY')}
+                         <span className="text-slate-400 font-normal font-sans text-xs"> {isEn ? 'to' : 'hingga'} </span>
+                         {new Date(selectedReq.tarikh_masa_sehingga).toLocaleString(isEn ? 'en-US' : 'ms-MY')}
                        </>
                      )}
                    </span>
@@ -478,14 +528,20 @@ const TransporterAdminApprovalPage: React.FC = () => {
                  {selectedReq.jenis_permohonan === 'sg' && (
                    <>
                      <div>
-                       <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Keperluan Perkhidmatan</span>
+                       <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
+                         {isEn ? 'Service Requirement' : 'Keperluan Perkhidmatan'}
+                       </span>
                        <span className="font-semibold text-slate-800 text-sm">
-                         {selectedReq.pemandu_diperlukan ? 'Pemandu & Kereta' : 'Kereta Sahaja (Tanpa Pemandu)'}
+                         {selectedReq.pemandu_diperlukan 
+                           ? (isEn ? 'Driver & Vehicle' : 'Pemandu & Kereta') 
+                           : (isEn ? 'Vehicle Only (Self-Drive)' : 'Kereta Sahaja (Tanpa Pemandu)')}
                        </span>
                      </div>
                      {selectedReq.senarai_penumpang && selectedReq.senarai_penumpang.length > 0 && (
                        <div className="col-span-2 border-t border-slate-100 pt-3">
-                         <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">Senarai Penumpang (Staf/Pengikut)</span>
+                         <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+                           {isEn ? 'Passenger Roster (Staff/Accompanying)' : 'Senarai Penumpang (Staf/Pengikut)'}
+                         </span>
                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
                            {selectedReq.senarai_penumpang.map((passenger, idx) => (
                              <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-150 rounded-lg text-xs">
@@ -499,7 +555,9 @@ const TransporterAdminApprovalPage: React.FC = () => {
                    </>
                  )}
                  <div className="col-span-2 border-t border-slate-100 pt-3">
-                   <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">Kakitangan Pengiring</span>
+                   <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+                     {isEn ? 'Escort Personnel' : 'Kakitangan Pengiring'}
+                   </span>
                    <div className="font-semibold text-slate-850">
                      {selectedReq.pengiring_list && selectedReq.pengiring_list.length > 0 ? (
                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
@@ -514,18 +572,20 @@ const TransporterAdminApprovalPage: React.FC = () => {
                        </div>
                      ) : (
                        <span className="text-slate-500 text-xs italic">
-                         {selectedReq.pengiring ? selectedReq.pengiring.replace(/_/g, ' ') : 'Tiada Pengiring'}
+                         {selectedReq.pengiring ? selectedReq.pengiring.replace(/_/g, ' ') : (isEn ? 'No Escort Staff' : 'Tiada Pengiring')}
                        </span>
                      )}
                    </div>
                  </div>
                  {selectedReq.medical_officer_referring && (
                    <div className="col-span-2 pt-3 border-t border-slate-100">
-                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">Pegawai Perubatan Merujuk (Referring MO)</span>
+                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+                       {isEn ? 'Referring Medical Officer (MO)' : 'Pegawai Perubatan Merujuk (Referring MO)'}
+                     </span>
                      <span className="font-semibold text-slate-850 text-xs flex items-center gap-1.5 p-2.5 bg-slate-50/50 border border-slate-100 rounded-lg">
                        <span className="font-bold text-slate-800">Dr. {selectedReq.medical_officer_referring.name}</span>
                        <span className="text-slate-300">|</span>
-                       <span className="text-slate-500">Jabatan: {selectedReq.medical_officer_referring.department}</span>
+                       <span className="text-slate-500">{isEn ? 'Department' : 'Jabatan'}: {selectedReq.medical_officer_referring.department}</span>
                      </span>
                    </div>
                  )}
@@ -538,8 +598,10 @@ const TransporterAdminApprovalPage: React.FC = () => {
                  {selectedReq.is_crossborder ? (
                    <>
                      <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-                       <User className="w-4 h-4 text-blue-650" />
-                       <h4 className="text-xs font-black uppercase tracking-wider text-blue-700">Butiran Rentasi Sempadan</h4>
+                       <User className="w-4 h-4 text-blue-600" />
+                       <h4 className="text-xs font-black uppercase tracking-wider text-blue-700">
+                         {isEn ? 'Cross-Border Clearance Details' : 'Butiran Rentasi Sempadan'}
+                       </h4>
                      </div>
                      <CrossborderDetailsPanel data={selectedReq.crossborder_data} />
                    </>
@@ -550,7 +612,9 @@ const TransporterAdminApprovalPage: React.FC = () => {
                        <h4 className={`text-xs font-black uppercase tracking-wider ${
                          selectedReq.jenis_permohonan === 'van_jenazah' ? 'text-slate-700' : 'text-rose-700'
                        }`}>
-                         {selectedReq.jenis_permohonan === 'van_jenazah' ? 'Butiran Jenazah' : 'Butiran Pesakit'}
+                         {selectedReq.jenis_permohonan === 'van_jenazah' 
+                           ? (isEn ? 'Deceased Details' : 'Butiran Jenazah') 
+                           : (isEn ? 'Patient Clinical Details' : 'Butiran Pesakit')}
                        </h4>
                      </div>
                      <div className={`grid grid-cols-2 gap-x-6 gap-y-4 text-sm p-5 rounded-2xl border shadow-xs bg-white ${
@@ -560,25 +624,31 @@ const TransporterAdminApprovalPage: React.FC = () => {
                      }`}>
                        <div className="col-span-2">
                          <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
-                           {selectedReq.jenis_permohonan === 'van_jenazah' ? 'Nama Penuh Jenazah' : 'Nama Penuh Pesakit'}
+                           {selectedReq.jenis_permohonan === 'van_jenazah' 
+                             ? (isEn ? 'Deceased Full Name' : 'Nama Penuh Jenazah') 
+                             : (isEn ? 'Patient Full Name' : 'Nama Penuh Pesakit')}
                          </span>
                          <span className="font-extrabold text-slate-850 text-base">{selectedReq.nama_pesakit || '-'}</span>
                        </div>
                        <div>
                          <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
-                           {selectedReq.jenis_permohonan === 'van_jenazah' ? 'No RN Jenazah' : 'No RN Pesakit'}
+                           {selectedReq.jenis_permohonan === 'van_jenazah' 
+                             ? (isEn ? 'Deceased RN No.' : 'No RN Jenazah') 
+                             : (isEn ? 'Patient RN No.' : 'No RN Pesakit')}
                          </span>
                          <span className="font-bold font-mono text-slate-800 text-sm bg-slate-50 px-2 py-0.5 rounded border border-slate-150/60 inline-block">{selectedReq.rn_pesakit || '-'}</span>
                        </div>
                        <div>
                          <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
-                           Jantina
+                           {isEn ? 'Gender' : 'Jantina'}
                          </span>
                          <span className="font-semibold text-slate-800">{selectedReq.jantina_pesakit || '-'}</span>
                        </div>
                        <div className="col-span-2 border-t border-slate-100 pt-3">
                          <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
-                           {selectedReq.jenis_permohonan === 'van_jenazah' ? 'Sebab Kematian / Butiran' : 'Diagnosis Pesakit'}
+                           {selectedReq.jenis_permohonan === 'van_jenazah' 
+                             ? (isEn ? 'Cause of Death / Details' : 'Sebab Kematian / Butiran') 
+                             : (isEn ? 'Clinical Diagnosis' : 'Diagnosis Pesakit')}
                          </span>
                          <span className="font-semibold text-slate-700 leading-relaxed block">{selectedReq.diagnosis_pesakit || '-'}</span>
                        </div>
@@ -592,11 +662,20 @@ const TransporterAdminApprovalPage: React.FC = () => {
                          }`}>
                            <div className="flex items-center gap-2">
                              <Info className={`w-4 h-4 ${selectedReq.patient_mobility === 'stretcher' ? 'text-amber-600' : 'text-slate-500'}`} />
-                             <span>Mobiliti Pesakit: <span className="capitalize font-bold">{selectedReq.patient_mobility === 'stretcher' ? 'Stretcher / Usungan' : selectedReq.patient_mobility}</span></span>
+                             <span>
+                               {isEn ? 'Patient Mobility:' : 'Mobiliti Pesakit:'}{' '}
+                               <span className="capitalize font-bold">
+                                 {selectedReq.patient_mobility === 'stretcher' 
+                                   ? (isEn ? 'Stretcher Required' : 'Stretcher / Usungan') 
+                                   : selectedReq.patient_mobility}
+                               </span>
+                             </span>
                            </div>
                            {selectedReq.patient_mobility === 'stretcher' && (
                              <p className="text-[10px] text-amber-700 font-medium leading-normal pl-6 mt-0.5">
-                               ⚠️ Pemandu WAJIB naik ke wad untuk mengambil pesakit secara berpasangan.
+                               {isEn 
+                                 ? '⚠️ Driver is MANDATED to proceed to the ward and assist escort staff with patient transfer.' 
+                                 : '⚠️ Pemandu WAJIB naik ke wad untuk mengambil pesakit secara berpasangan.'}
                              </p>
                            )}
                          </div>
@@ -605,18 +684,23 @@ const TransporterAdminApprovalPage: React.FC = () => {
                          <div className="col-span-2 p-3 bg-rose-50 border border-rose-150 rounded-xl text-xs font-semibold text-rose-950 flex flex-col gap-1 shadow-xxs">
                            <div className="flex items-center gap-2">
                              <Shield className="w-4 h-4 text-rose-600" />
-                             <span className="font-bold">Sokongan Oksigen Berterusan Diperlukan</span>
+                             <span className="font-bold">
+                               {isEn ? 'Continuous Oxygen Support Required' : 'Sokongan Oksigen Berterusan Diperlukan'}
+                             </span>
                            </div>
                            {selectedReq.jenis_oksigen && (
                              <div className="text-[10px] text-rose-800 font-medium pl-6">
-                               Alat Oksigen: <span className="text-rose-900 font-bold">{selectedReq.jenis_oksigen}</span>
+                               {isEn ? 'Oxygen Apparatus:' : 'Alat Oksigen:'}{' '}
+                               <span className="text-rose-900 font-bold">{selectedReq.jenis_oksigen}</span>
                              </div>
                            )}
                          </div>
                        )}
                        {selectedReq.mesin_diperlukan && selectedReq.mesin_diperlukan.length > 0 && (
                          <div className="col-span-2 pt-3 border-t border-slate-100">
-                           <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">Peralatan / Mesin Diperlukan</span>
+                           <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+                             {isEn ? 'Special Equipment / Devices Required' : 'Peralatan / Mesin Diperlukan'}
+                           </span>
                            <div className="flex flex-wrap gap-1.5">
                              {selectedReq.mesin_diperlukan.map((machine, mIdx) => (
                                <span key={mIdx} className="text-xxs font-bold bg-rose-50/50 text-rose-800 border border-rose-100 rounded-md px-2 py-1">{machine}</span>
@@ -635,24 +719,34 @@ const TransporterAdminApprovalPage: React.FC = () => {
                <div className="space-y-4 pt-4 border-t border-slate-100">
                  <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                   <h4 className="text-xs font-black text-slate-650 uppercase tracking-wider">Laporan Pemeriksaan Pre-Trip Pemandu</h4>
+                   <h4 className="text-xs font-black text-slate-650 uppercase tracking-wider">
+                     {isEn ? 'Driver Pre-Trip Inspection Report' : 'Laporan Pemeriksaan Pre-Trip Pemandu'}
+                   </h4>
                  </div>
                  
                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm bg-slate-50/50 p-5 rounded-2xl border border-slate-200 shadow-xs">
                    <div>
-                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Pemandu Bertugas</span>
-                     <span className="font-bold text-slate-800">{selectedReq.pemandu?.full_name || 'Driver'}</span>
+                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
+                       {isEn ? 'Assigned Duty Driver' : 'Pemandu Bertugas'}
+                     </span>
+                     <span className="font-bold text-slate-800">{selectedReq.pemandu?.full_name || (isEn ? 'Assigned Driver' : 'Driver')}</span>
                    </div>
                    <div>
-                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Kenderaan Diperiksa</span>
+                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
+                       {isEn ? 'Inspected Vehicle' : 'Kenderaan Diperiksa'}
+                     </span>
                      <span className="font-bold text-blue-600 font-mono text-xs bg-blue-50 px-2 py-0.5 rounded border border-blue-150/40 inline-block">{selectedReq.kenderaan?.no_kenderaan}</span>
                    </div>
                    <div>
-                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Odometer Terkini</span>
-                     <span className="font-extrabold text-slate-850 font-mono tabular-nums">{selectedInspection.bacaan_odometer.toLocaleString('ms-MY')} km</span>
+                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
+                       {isEn ? 'Latest Odometer' : 'Odometer Terkini'}
+                     </span>
+                     <span className="font-extrabold text-slate-850 font-mono tabular-nums">{selectedInspection.bacaan_odometer.toLocaleString(isEn ? 'en-US' : 'ms-MY')} km</span>
                    </div>
                    <div>
-                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Keputusan Semakan</span>
+                     <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
+                       {isEn ? 'Inspection Outcome' : 'Keputusan Semakan'}
+                     </span>
                      <Badge variant="success" className="py-0.5 px-2 font-bold bg-emerald-50 text-emerald-700 border border-emerald-250">Cleared / Good</Badge>
                    </div>
                  </div>
@@ -662,82 +756,92 @@ const TransporterAdminApprovalPage: React.FC = () => {
                    <div className="flex justify-between items-center p-3.5 px-4 text-xs hover:bg-slate-50/30 transition-colors">
                      <span className="font-bold text-slate-650 flex items-center gap-2">
                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                       Tayar & Rim
+                       {isEn ? 'Tyres & Rims' : 'Tayar & Rim'}
                      </span>
-                     <Badge variant="success" className="py-0.5 px-2 bg-emerald-50 text-emerald-700 border border-emerald-150/60 font-semibold">Baik (Cleared)</Badge>
+                     <Badge variant="success" className="py-0.5 px-2 bg-emerald-50 text-emerald-700 border border-emerald-150/60 font-semibold">{isEn ? 'Good (Cleared)' : 'Baik (Cleared)'}</Badge>
                    </div>
                    <div className="flex justify-between items-center p-3.5 px-4 text-xs hover:bg-slate-50/30 transition-colors">
                      <span className="font-bold text-slate-655 flex items-center gap-2">
                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                       Paras Gas / Petrol
+                       {isEn ? 'Fuel / Gas Level' : 'Paras Gas / Petrol'}
                      </span>
-                     <Badge variant="success" className="py-0.5 px-2 bg-emerald-50 text-emerald-700 border border-emerald-150/60 font-semibold">Baik (Cleared)</Badge>
+                     <Badge variant="success" className="py-0.5 px-2 bg-emerald-50 text-emerald-700 border border-emerald-150/60 font-semibold">{isEn ? 'Good (Cleared)' : 'Baik (Cleared)'}</Badge>
                    </div>
                    <div className="flex justify-between items-center p-3.5 px-4 text-xs hover:bg-slate-50/30 transition-colors">
                      <span className="font-bold text-slate-655 flex items-center gap-2">
                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                       Minyak Enjin
+                       {isEn ? 'Engine Oil Level' : 'Minyak Enjin'}
                      </span>
-                     <Badge variant="success" className="py-0.5 px-2 bg-emerald-50 text-emerald-700 border border-emerald-150/60 font-semibold">Baik (Cleared)</Badge>
+                     <Badge variant="success" className="py-0.5 px-2 bg-emerald-50 text-emerald-700 border border-emerald-150/60 font-semibold">{isEn ? 'Good (Cleared)' : 'Baik (Cleared)'}</Badge>
                    </div>
                  </div>      
 
                   {/* Inspections Photo Gallery */}
                   <div className="mt-4 pt-3 border-t border-slate-100">
-                    <span className="block text-xs font-bold text-slate-500 mb-2">Lampiran Bukti Foto Pemeriksaan</span>
+                    <span className="block text-xs font-bold text-slate-500 mb-2">
+                      {isEn ? 'Inspection Photo Evidences' : 'Lampiran Bukti Foto Pemeriksaan'}
+                    </span>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {/* Tyre Photo */}
                       <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-100 flex flex-col">
                         <div className="aspect-square w-full flex items-center justify-center overflow-hidden">
                           {selectedInspection.foto_tayar && (selectedInspection.foto_tayar.startsWith('data:') || selectedInspection.foto_tayar.startsWith('http') || selectedInspection.foto_tayar.startsWith('/')) ? (
-                            <img src={selectedInspection.foto_tayar} className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform" alt="Foto Tayar" onClick={() => window.open(selectedInspection.foto_tayar, '_blank')} />
+                            <img src={selectedInspection.foto_tayar} className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform" alt="Tyres" onClick={() => window.open(selectedInspection.foto_tayar, '_blank')} />
                           ) : (
-                            <span className="text-slate-400 text-xxs p-2 text-center">Tiada Foto Tayar</span>
+                            <span className="text-slate-400 text-xxs p-2 text-center">{isEn ? 'No Tyre Photo' : 'Tiada Foto Tayar'}</span>
                           )}
                         </div>
-                        <div className="p-1.5 bg-slate-50 border-t border-slate-150 text-center font-bold text-[10px] text-slate-600">Tayar & Rim</div>
+                        <div className="p-1.5 bg-slate-50 border-t border-slate-150 text-center font-bold text-[10px] text-slate-600">
+                          {isEn ? 'Tyres & Rims' : 'Tayar & Rim'}
+                        </div>
                       </div>
 
                       {/* Gas Photo */}
                       <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-100 flex flex-col">
                         <div className="aspect-square w-full flex items-center justify-center overflow-hidden">
                           {selectedInspection.foto_minyak_gas && (selectedInspection.foto_minyak_gas.startsWith('data:') || selectedInspection.foto_minyak_gas.startsWith('http') || selectedInspection.foto_minyak_gas.startsWith('/')) ? (
-                            <img src={selectedInspection.foto_minyak_gas} className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform" alt="Foto Petrol" onClick={() => window.open(selectedInspection.foto_minyak_gas, '_blank')} />
+                            <img src={selectedInspection.foto_minyak_gas} className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform" alt="Fuel" onClick={() => window.open(selectedInspection.foto_minyak_gas, '_blank')} />
                           ) : (
-                            <span className="text-slate-400 text-xxs p-2 text-center">Tiada Foto Petrol</span>
+                            <span className="text-slate-400 text-xxs p-2 text-center">{isEn ? 'No Fuel Photo' : 'Tiada Foto Petrol'}</span>
                           )}
                         </div>
-                        <div className="p-1.5 bg-slate-50 border-t border-slate-150 text-center font-bold text-[10px] text-slate-600">Gas / Petrol</div>
+                        <div className="p-1.5 bg-slate-50 border-t border-slate-150 text-center font-bold text-[10px] text-slate-600">
+                          {isEn ? 'Fuel / Gas' : 'Gas / Petrol'}
+                        </div>
                       </div>
 
                       {/* Engine Oil Photo */}
                       <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-100 flex flex-col">
                         <div className="aspect-square w-full flex items-center justify-center overflow-hidden">
                           {selectedInspection.foto_minyak_hitam && (selectedInspection.foto_minyak_hitam.startsWith('data:') || selectedInspection.foto_minyak_hitam.startsWith('http') || selectedInspection.foto_minyak_hitam.startsWith('/')) ? (
-                            <img src={selectedInspection.foto_minyak_hitam} className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform" alt="Foto Enjin" onClick={() => window.open(selectedInspection.foto_minyak_hitam, '_blank')} />
+                            <img src={selectedInspection.foto_minyak_hitam} className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform" alt="Engine Oil" onClick={() => window.open(selectedInspection.foto_minyak_hitam, '_blank')} />
                           ) : (
-                            <span className="text-slate-400 text-xxs p-2 text-center">Tiada Foto Enjin</span>
+                            <span className="text-slate-400 text-xxs p-2 text-center">{isEn ? 'No Engine Photo' : 'Tiada Foto Enjin'}</span>
                           )}
                         </div>
-                        <div className="p-1.5 bg-slate-50 border-t border-slate-150 text-center font-bold text-[10px] text-slate-600">Minyak Enjin</div>
+                        <div className="p-1.5 bg-slate-50 border-t border-slate-150 text-center font-bold text-[10px] text-slate-600">
+                          {isEn ? 'Engine Oil' : 'Minyak Enjin'}
+                        </div>
                       </div>
 
                       {/* Odometer Photo */}
                       <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-100 flex flex-col">
                         <div className="aspect-square w-full flex items-center justify-center overflow-hidden">
                           {selectedInspection.foto_odometer && (selectedInspection.foto_odometer.startsWith('data:') || selectedInspection.foto_odometer.startsWith('http') || selectedInspection.foto_odometer.startsWith('/')) ? (
-                            <img src={selectedInspection.foto_odometer} className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform" alt="Foto Odometer" onClick={() => window.open(selectedInspection.foto_odometer, '_blank')} />
+                            <img src={selectedInspection.foto_odometer} className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform" alt="Odometer" onClick={() => window.open(selectedInspection.foto_odometer, '_blank')} />
                           ) : (
-                            <span className="text-slate-400 text-xxs p-2 text-center">Tiada Foto Odometer</span>
+                            <span className="text-slate-400 text-xxs p-2 text-center">{isEn ? 'No Odometer Photo' : 'Tiada Foto Odometer'}</span>
                           )}
                         </div>
-                        <div className="p-1.5 bg-slate-50 border-t border-slate-150 text-center font-bold text-[10px] text-slate-650">Odometer</div>
+                        <div className="p-1.5 bg-slate-50 border-t border-slate-150 text-center font-bold text-[10px] text-slate-650">
+                          {isEn ? 'Odometer' : 'Odometer'}
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-xxs text-slate-500 italic mt-3">
-                    * Sila klik pada foto untuk melihat/membuka imej bersaiz penuh di tab baharu.
+                    {isEn ? '* Click on any image thumbnail to view full-resolution photo in a new tab.' : '* Sila klik pada foto untuk melihat/membuka imej bersaiz penuh di tab baharu.'}
                   </div>
                 </div>
             )}
@@ -747,29 +851,32 @@ const TransporterAdminApprovalPage: React.FC = () => {
               <div className="pt-6 border-t border-slate-100 flex gap-3">
                 <Button 
                   onClick={() => handleApprove(selectedReq.id)}
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer"
                 >
                   <Check className="w-4 h-4 mr-2 inline" />
-                  Luluskan Trip
+                  {isEn ? 'Approve Requisition' : 'Luluskan Trip'}
                 </Button>
                 <Button 
                   onClick={() => handleOpenReject(selectedReq.id)}
-                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold"
+                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold cursor-pointer"
                 >
                   <X className="w-4 h-4 mr-2 inline" />
-                  Tolak Trip
+                  {isEn ? 'Reject Requisition' : 'Tolak Trip'}
                 </Button>
               </div>
             ) : (
               <div className="pt-6 border-t border-slate-100 space-y-3">
                 {selectedReq.sebab_tolak && (
                   <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-sm">
-                    <span className="block text-xs font-extrabold text-rose-800 uppercase tracking-wider mb-1">Sebab Penolakan</span>
+                    <span className="block text-xs font-extrabold text-rose-800 uppercase tracking-wider mb-1">
+                      {isEn ? 'Rejection Reason' : 'Sebab Penolakan'}
+                    </span>
                     <span className="font-semibold text-rose-950">{selectedReq.sebab_tolak}</span>
                   </div>
                 )}
                 <div className="text-center text-xs font-semibold text-slate-500">
-                  Permohonan ini telah diproses dengan status: <span className="capitalize font-bold text-slate-800">{selectedReq.status_semasa}</span>
+                  {isEn ? 'This requisition has been processed with status:' : 'Permohonan ini telah diproses dengan status:'}{' '}
+                  <span className="capitalize font-bold text-slate-800">{selectedReq.status_semasa}</span>
                 </div>
               </div>
             )}
@@ -784,16 +891,18 @@ const TransporterAdminApprovalPage: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 max-w-md w-full mx-4 space-y-4">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-rose-600" />
-              Tolak Kelulusan Perjalanan
+              {isEn ? 'Reject Requisition Approval' : 'Tolak Kelulusan Perjalanan'}
             </h3>
             
             <p className="text-xs text-slate-500">
-              Sila nyatakan sebab permohonan trip pengangkutan ditolak. Pemohon akan dapat melihat sebab penolakan dalam sejarah portal mereka.
+              {isEn 
+                ? 'Please specify the rationale for rejecting this transport requisition. The requester will view this in their portal history.' 
+                : 'Sila nyatakan sebab permohonan trip pengangkutan ditolak. Pemohon akan dapat melihat sebab penolakan dalam sejarah portal mereka.'}
             </p>
 
             <textarea 
               rows={3}
-              placeholder="Contoh: Tiada kelulusan ketua unit / Butiran pesakit tidak sah..."
+              placeholder={isEn ? 'E.g., Missing HOD endorsement / Incomplete patient data...' : 'Contoh: Tiada kelulusan ketua unit / Butiran pesakit tidak sah...'}
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-500 focus:bg-white transition-colors font-medium shadow-xs"
@@ -804,15 +913,15 @@ const TransporterAdminApprovalPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setIsRejectOpen(false)}
-                className="border-slate-200 text-slate-700"
+                className="border-slate-200 text-slate-700 cursor-pointer"
               >
-                Batal
+                {isEn ? 'Cancel' : 'Batal'}
               </Button>
               <Button 
                 onClick={handleRejectSubmit}
-                className="bg-rose-600 hover:bg-rose-700 text-white font-bold"
+                className="bg-rose-600 hover:bg-rose-700 text-white font-bold cursor-pointer"
               >
-                Hantar & Tolak Kelulusan
+                {isEn ? 'Submit & Reject' : 'Hantar & Tolak Kelulusan'}
               </Button>
             </div>
           </div>

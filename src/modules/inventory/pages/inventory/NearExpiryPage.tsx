@@ -706,7 +706,7 @@ export const NearExpiryPage: React.FC = () => {
         </div>
 
         {/* Status Filter Tab Pills */}
-        <div className="flex items-center gap-2 border-t border-slate-100 pt-3 overflow-x-auto">
+        <div className="flex items-center gap-2 border-t border-slate-100 pt-3 flex-wrap">
           <span className="text-xs font-medium text-slate-400 mr-1 flex-shrink-0">Status Penapis:</span>
           <button
             onClick={() => setStatusFilter('all')}

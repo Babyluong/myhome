@@ -144,10 +144,10 @@ export const FormulariDashboardPage: React.FC = () => {
           </div>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-              <span>Carian & Senarai Formulari Ubat (FUKKM)</span>
+              <span>Drug Formulary Search & Registry (FUKKM)</span>
             </h1>
             <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              Pangkalan Data Rasmi Formulari Ubat KKM (Edisi Ke-4) & Panduan Klinikal Hospital Lawas
+              Official MOH Drug Formulary Database (4th Edition) & Lawas Hospital Clinical Guidelines
             </p>
           </div>
         </div>
@@ -159,10 +159,10 @@ export const FormulariDashboardPage: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all"
-            title="Buka Portal MyFormulary Rasmi KKM"
+            title="Open Official MOH MyFormulary Portal"
           >
             <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-            <span>Portal KKM</span>
+            <span>MOH Portal</span>
           </a>
 
           <button
@@ -170,7 +170,7 @@ export const FormulariDashboardPage: React.FC = () => {
             className="px-4 py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4" />
-            <span>Semak Interaksi Ubat</span>
+            <span>Check Drug Interactions</span>
           </button>
         </div>
       </div>
@@ -181,9 +181,9 @@ export const FormulariDashboardPage: React.FC = () => {
           onClick={() => { handleResetFilters(); }}
           className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs cursor-pointer hover:border-violet-300 transition-all"
         >
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Jumlah Ubat</span>
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Total Drugs</span>
           <strong className="text-2xl font-extrabold text-slate-900">{stats.totalDrugs}</strong>
-          <span className="text-[10px] text-slate-400 block mt-0.5">Tersenarai dlm FUKKM</span>
+          <span className="text-[10px] text-slate-400 block mt-0.5">Listed in FUKKM</span>
         </div>
 
         <div
@@ -222,7 +222,7 @@ export const FormulariDashboardPage: React.FC = () => {
             <ShieldCheck className="w-3 h-3 text-emerald-600" /> NAG 2024
           </span>
           <strong className="text-2xl font-extrabold text-emerald-700">{stats.antimicrobialCount}</strong>
-          <span className="text-[10px] text-emerald-600 block mt-0.5">Antimikrobial KKM</span>
+          <span className="text-[10px] text-emerald-600 block mt-0.5">MOH Antimicrobial</span>
         </div>
 
         <div
@@ -230,10 +230,10 @@ export const FormulariDashboardPage: React.FC = () => {
           className="p-4 bg-white rounded-2xl border border-teal-200 shadow-xs cursor-pointer hover:border-teal-400 transition-all"
         >
           <span className="text-[11px] font-bold text-teal-700 uppercase tracking-wider block flex items-center gap-1">
-            <Droplets className="w-3 h-3 text-teal-600" /> Dilusi IV
+            <Droplets className="w-3 h-3 text-teal-600" /> IV Dilution
           </span>
           <strong className="text-2xl font-extrabold text-teal-700">{stats.ivDilutionCount}</strong>
-          <span className="text-[10px] text-teal-600 block mt-0.5">Protokol Rekonstitusi</span>
+          <span className="text-[10px] text-teal-600 block mt-0.5">Reconstitution Protocols</span>
         </div>
 
         <div
@@ -243,10 +243,10 @@ export const FormulariDashboardPage: React.FC = () => {
           }`}
         >
           <span className="text-[11px] font-bold text-rose-700 uppercase tracking-wider block flex items-center gap-1">
-            <TrendingDown className="w-3 h-3 text-rose-600" /> Amaran Kuota
+            <TrendingDown className="w-3 h-3 text-rose-600" /> Quota Alert
           </span>
           <strong className="text-2xl font-extrabold text-rose-700">{stats.lowStockCount}</strong>
-          <span className="text-[10px] text-rose-500 block mt-0.5">Stok Rendah / Habis</span>
+          <span className="text-[10px] text-rose-500 block mt-0.5">Low / Critical Stock</span>
         </div>
       </div>
 
@@ -258,7 +258,7 @@ export const FormulariDashboardPage: React.FC = () => {
             <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Cari mengikut Nama Generik (INN), Jenama Dagang, Kod ATC, Indikasi, atau Kelas Terapi..."
+              placeholder="Search by Generic Name (INN), Brand Name, ATC Code, Indication, or Therapeutic Class..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-violet-500 focus:bg-white focus:ring-4 focus:ring-violet-500/10 transition-all"
@@ -279,12 +279,12 @@ export const FormulariDashboardPage: React.FC = () => {
             onChange={e => setSelectedPrescriber(e.target.value as PrescriberCategory | 'ALL')}
             className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:border-violet-500 focus:bg-white"
           >
-            <option value="ALL">Semua Kategori Preskriber</option>
-            <option value="A*">Kategori A* (Pakar Sahaja)</option>
-            <option value="A">Kategori A (Pegawai Perubatan Hospital)</option>
-            <option value="A/KK">Kategori A/KK (Hospital & KK)</option>
-            <option value="B">Kategori B (Semua Pegawai)</option>
-            <option value="C">Kategori C (Komuniti)</option>
+            <option value="ALL">All Prescriber Categories</option>
+            <option value="A*">Category A* (Consultant/Specialist Only)</option>
+            <option value="A">Category A (Hospital Medical Officer)</option>
+            <option value="A/KK">Category A/KK (Hospital & Health Clinic)</option>
+            <option value="B">Category B (All Medical Officers)</option>
+            <option value="C">Category C (Community Clinics)</option>
           </select>
 
           {/* View Mode Toggle: Table List (default) vs Card Grid */}
@@ -296,7 +296,7 @@ export const FormulariDashboardPage: React.FC = () => {
               }`}
             >
               <List className="w-4 h-4" />
-              <span>Senarai Jadual (List)</span>
+              <span>Table List</span>
             </button>
             <button
               onClick={() => setViewMode('grid')}
@@ -305,7 +305,7 @@ export const FormulariDashboardPage: React.FC = () => {
               }`}
             >
               <Grid className="w-4 h-4" />
-              <span>Kad Grid</span>
+              <span>Card Grid</span>
             </button>
           </div>
         </div>
@@ -314,7 +314,7 @@ export const FormulariDashboardPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs">
           <span className="text-slate-400 font-semibold flex items-center gap-1">
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>Penapis Pantas:</span>
+            <span>Quick Filters:</span>
           </span>
 
           <button
@@ -324,7 +324,7 @@ export const FormulariDashboardPage: React.FC = () => {
             }`}
           >
             <Flame className="w-3.5 h-3.5" />
-            <span>High Alert (HAM) Sahaja</span>
+            <span>High Alert (HAM) Only</span>
           </button>
 
           <button
@@ -334,7 +334,7 @@ export const FormulariDashboardPage: React.FC = () => {
             }`}
           >
             <AlertTriangle className="w-3.5 h-3.5" />
-            <span>Ubat LASA Sahaja</span>
+            <span>LASA Drugs Only</span>
           </button>
 
           <button
@@ -344,7 +344,7 @@ export const FormulariDashboardPage: React.FC = () => {
             }`}
           >
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Antimikrobial (NAG)</span>
+            <span>Antimicrobial (NAG)</span>
           </button>
 
           <button
@@ -354,7 +354,7 @@ export const FormulariDashboardPage: React.FC = () => {
             }`}
           >
             <TrendingDown className="w-3.5 h-3.5" />
-            <span>Kuota Rendah / Habis</span>
+            <span>Low / Critical Quota</span>
           </button>
 
           {hasActiveFilters && (
@@ -363,7 +363,7 @@ export const FormulariDashboardPage: React.FC = () => {
               className="px-3 py-1.5 rounded-xl font-semibold text-violet-700 hover:text-violet-900 hover:bg-violet-50 transition-colors ml-auto flex items-center gap-1"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>Set Semula Penapis</span>
+              <span>Reset Filters</span>
             </button>
           )}
         </div>
@@ -371,8 +371,8 @@ export const FormulariDashboardPage: React.FC = () => {
 
       {/* Results Header */}
       <div className="flex items-center justify-between text-xs text-slate-500 px-1">
-        <span>Menunjukkan <strong className="text-slate-900">{filteredDrugs.length}</strong> daripada <strong className="text-slate-900">{allDrugs.length}</strong> ubat formulari</span>
-        {hasActiveFilters && <span className="bg-violet-50 text-violet-700 px-2 py-0.5 rounded-md font-semibold">Penapis aktif digunakan</span>}
+        <span>Showing <strong className="text-slate-900">{filteredDrugs.length}</strong> of <strong className="text-slate-900">{allDrugs.length}</strong> formulary drugs</span>
+        {hasActiveFilters && <span className="bg-violet-50 text-violet-700 px-2 py-0.5 rounded-md font-semibold">Active filters applied</span>}
       </div>
 
       {/* PRIMARY VIEW: Full-Width Clinical Table List with Rich Columns */}
@@ -382,30 +382,30 @@ export const FormulariDashboardPage: React.FC = () => {
             <table className="w-full text-left text-xs border-collapse">
               <thead className="bg-slate-50/90 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider select-none">
                 <tr>
-                  <th className="p-4 text-center w-12 text-slate-400">Bil</th>
+                  <th className="p-4 text-center w-12 text-slate-400">No.</th>
                   <th
                     onClick={() => handleSort('genericName')}
                     className="p-4 cursor-pointer hover:bg-slate-100 transition-colors min-w-[240px]"
                   >
-                    <span>Nama Generik (INN) & Jenama</span>
+                    <span>Generic Name (INN) & Brands</span>
                     {renderSortIcon('genericName')}
                   </th>
                   <th
                     onClick={() => handleSort('prescriberCategory')}
                     className="p-4 cursor-pointer hover:bg-slate-100 transition-colors min-w-[150px]"
                   >
-                    <span>Kategori Preskriber & Racun</span>
+                    <span>Prescriber & Poison Category</span>
                     {renderSortIcon('prescriberCategory')}
                   </th>
-                  <th className="p-4 min-w-[170px]">Kekuatan & Bentuk Dos</th>
+                  <th className="p-4 min-w-[170px]">Strength & Dosage Form</th>
                   <th
                     onClick={() => handleSort('atcCode')}
                     className="p-4 cursor-pointer hover:bg-slate-100 transition-colors min-w-[200px]"
                   >
-                    <span>Kelas Terapi & ATC</span>
+                    <span>Therapeutic Class & ATC</span>
                     {renderSortIcon('atcCode')}
                   </th>
-                  <th className="p-4 min-w-[260px]">Indikasi Klinikal Utama (FUKKM)</th>
+                  <th className="p-4 min-w-[260px]">Main Clinical Indications (FUKKM)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -422,21 +422,17 @@ export const FormulariDashboardPage: React.FC = () => {
                         {globalIndex}
                       </td>
 
-                      {/* 2. Generic Name (with TALL-Man) & Brands */}
+                      {/* 2. Generic Name & Brands */}
                       <td className="p-4">
                         <div className="space-y-1">
                           <div className="font-bold text-slate-900 text-sm leading-snug group-hover:text-violet-700 transition-colors">
-                            {drug.isLASA && drug.tallManName ? (
-                              <TallManLettering name={drug.tallManName} />
-                            ) : (
-                              drug.genericName
-                            )}
+                            {drug.genericName}
                           </div>
                           <div className="text-[11px] text-slate-500 font-normal">
                             {drug.brandNames.join(' • ')}
                           </div>
                           <div className="text-[10px] text-slate-400 font-mono">
-                            Kod: {drug.mohDrugCode}
+                            Code: {drug.mohDrugCode}
                           </div>
                         </div>
                       </td>
@@ -448,7 +444,7 @@ export const FormulariDashboardPage: React.FC = () => {
                           {drug.poisonCategory}
                         </div>
                         <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-mono block w-fit">
-                          Skim: {drug.skimPerolehan}
+                          Scheme: {drug.skimPerolehan}
                         </span>
                       </td>
 
@@ -482,7 +478,7 @@ export const FormulariDashboardPage: React.FC = () => {
                           ))}
                           {drug.indications.length > 2 && (
                             <span className="text-[10px] text-violet-600 font-medium pl-3">
-                              +{drug.indications.length - 2} indikasi lagi...
+                              +{drug.indications.length - 2} more indications...
                             </span>
                           )}
                         </ul>
@@ -510,10 +506,10 @@ export const FormulariDashboardPage: React.FC = () => {
         <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 text-xs select-none">
           <div className="flex items-center gap-3 text-slate-600">
             <span>
-              Menunjukkan <strong className="text-slate-900 font-bold">{(currentPage - 1) * pageSize + 1}</strong> - <strong className="text-slate-900 font-bold">{Math.min(currentPage * pageSize, filteredDrugs.length)}</strong> daripada <strong className="text-slate-900 font-bold">{filteredDrugs.length.toLocaleString()}</strong> rekod formulari
+              Showing <strong className="text-slate-900 font-bold">{(currentPage - 1) * pageSize + 1}</strong> - <strong className="text-slate-900 font-bold">{Math.min(currentPage * pageSize, filteredDrugs.length)}</strong> of <strong className="text-slate-900 font-bold">{filteredDrugs.length.toLocaleString()}</strong> formulary records
             </span>
             <div className="flex items-center gap-1.5 ml-2 border-l border-slate-200 pl-3">
-              <span className="text-slate-500">Papar:</span>
+              <span className="text-slate-500">Show:</span>
               <select
                 value={pageSize}
                 onChange={e => setPageSize(Number(e.target.value))}
@@ -534,7 +530,7 @@ export const FormulariDashboardPage: React.FC = () => {
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
               className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700"
-              title="Halaman Pertama"
+              title="First Page"
             >
               <ChevronsLeft className="w-4 h-4" />
             </button>
@@ -544,11 +540,11 @@ export const FormulariDashboardPage: React.FC = () => {
               className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 flex items-center gap-1"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Sebelumnya</span>
+              <span className="hidden sm:inline">Previous</span>
             </button>
 
             <span className="px-3 py-1.5 bg-violet-50 text-violet-700 font-bold rounded-xl border border-violet-200 mx-1">
-              Halaman {currentPage} daripada {totalPages}
+              Page {currentPage} of {totalPages}
             </span>
 
             <button
@@ -556,14 +552,14 @@ export const FormulariDashboardPage: React.FC = () => {
               disabled={currentPage === totalPages}
               className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 flex items-center gap-1"
             >
-              <span className="hidden sm:inline">Seterusnya</span>
+              <span className="hidden sm:inline">Next</span>
               <ChevronRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
               className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700"
-              title="Halaman Terakhir"
+              title="Last Page"
             >
               <ChevronsRight className="w-4 h-4" />
             </button>
@@ -575,15 +571,15 @@ export const FormulariDashboardPage: React.FC = () => {
       {filteredDrugs.length === 0 && (
         <div className="p-12 text-center bg-white rounded-3xl border border-dashed border-slate-300 space-y-3">
           <Search className="w-10 h-10 mx-auto text-slate-300" />
-          <h3 className="text-base font-bold text-slate-700">Tiada ubat formulari dijumpai</h3>
+          <h3 className="text-base font-bold text-slate-700">No formulary drugs found</h3>
           <p className="text-xs text-slate-500 max-w-md mx-auto">
-            Tiada ubat sepadan dengan carian "{searchTerm}" atau penapis yang dipilih. Sila semak ejaan atau tetapkan semula penapis.
+            No drugs match your search "{searchTerm}" or selected filters. Please check your spelling or reset filters.
           </p>
           <button
             onClick={handleResetFilters}
             className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-xs"
           >
-            Tetapkan Semula Semua Penapis
+            Reset All Filters
           </button>
         </div>
       )}

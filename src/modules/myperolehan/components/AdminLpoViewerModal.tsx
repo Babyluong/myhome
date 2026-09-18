@@ -51,7 +51,7 @@ export const AdminLpoViewerModal: React.FC<AdminLpoViewerModalProps> = ({
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-slate-900">Pesanan Tempatan Rasmi (LPO)</h3>
+              <h3 className="text-lg font-black text-slate-900">Official Local Purchase Order (LPO)</h3>
               <p className="text-xs text-slate-500 font-mono">{lpo.lpo_number}</p>
             </div>
           </div>
@@ -64,7 +64,7 @@ export const AdminLpoViewerModal: React.FC<AdminLpoViewerModalProps> = ({
               className="border-slate-200 hover:bg-slate-50 text-slate-700 font-bold flex items-center gap-1.5 rounded-xl shadow-xs"
             >
               <Printer className="w-4 h-4" />
-              <span>Cetak LPO</span>
+              <span>Print LPO</span>
             </Button>
             <button
               onClick={onClose}
@@ -84,19 +84,19 @@ export const AdminLpoViewerModal: React.FC<AdminLpoViewerModalProps> = ({
           <div className="flex items-start justify-between border-b-2 border-slate-900 pb-4">
             <div className="space-y-1">
               <h2 className="text-base font-black uppercase tracking-wider text-slate-900">
-                KEMENTERIAN KESIHATAN MALAYSIA
+                MINISTRY OF HEALTH MALAYSIA
               </h2>
-              <p className="font-bold text-sm text-slate-800">HOSPITAL LAWAS, SARAWAK</p>
+              <p className="font-bold text-sm text-slate-800">LAWAS HOSPITAL, SARAWAK</p>
               <p className="text-slate-600 text-[11px]">
                 Jalan Hospital, 98850 Lawas, Sarawak | Tel: 085-283333
               </p>
             </div>
             <div className="text-right space-y-1 font-mono">
               <span className="px-3 py-1 bg-slate-900 text-white font-black rounded text-[11px] uppercase tracking-widest inline-block">
-                PESANAN TEMPATAN (LPO)
+                LOCAL PURCHASE ORDER (LPO)
               </span>
               <p className="font-bold text-slate-800 text-sm mt-1">{lpo.lpo_number}</p>
-              <p className="text-slate-600">Tarikh: {lpo.lpo_date}</p>
+              <p className="text-slate-600">Date: {lpo.lpo_date}</p>
             </div>
           </div>
 
@@ -104,28 +104,28 @@ export const AdminLpoViewerModal: React.FC<AdminLpoViewerModalProps> = ({
           <div className="grid grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
             <div className="space-y-1">
               <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                KEPADA PEMBEKAL:
+                TO SUPPLIER:
               </span>
-              <p className="font-bold text-slate-900 text-sm">{supplier?.company_name || 'PEMBEKAL BERDAFTAR'}</p>
-              <p className="text-slate-600">{supplier?.address || 'Alamat dalam rekod sistem'}</p>
+              <p className="font-bold text-slate-900 text-sm">{supplier?.company_name || 'REGISTERED SUPPLIER'}</p>
+              <p className="text-slate-600">{supplier?.address || 'System registered address'}</p>
               <p className="text-slate-600 font-mono">
-                Tel: {supplier?.contact_person_phone || '-'} | Emel: {supplier?.email || '-'}
+                Tel: {supplier?.contact_person_phone || '-'} | Email: {supplier?.email || '-'}
               </p>
             </div>
 
             <div className="space-y-1">
               <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                MAKLUMAT PERUNTUKAN & PESANAN:
+                ALLOCATION & ORDER DETAILS:
               </span>
               <p className="text-slate-700">
-                <span className="font-bold">No. Pesanan (PO):</span> {po?.order_number}
+                <span className="font-bold">Order No. (PO):</span> {po?.order_number}
               </p>
               <p className="text-slate-700 font-mono">
-                <span className="font-bold">Kod Vote / Program:</span> {po?.program_code} - {po?.objek_code} ({po?.kategori_code})
+                <span className="font-bold">Vote / Program Code:</span> {po?.program_code} - {po?.objek_code} ({po?.kategori_code})
               </p>
               <p className="text-slate-700">
-                <span className="font-bold">Jenis Bajet:</span>{' '}
-                {po?.budget_type === 'pembangunan' ? 'Pembangunan (P42)' : 'Pengurusan (Waran KKM)'}
+                <span className="font-bold">Budget Type:</span>{' '}
+                {po?.budget_type === 'pembangunan' ? 'Development (P42)' : 'Operating (MOH Warrant)'}
               </p>
             </div>
           </div>
@@ -135,12 +135,12 @@ export const AdminLpoViewerModal: React.FC<AdminLpoViewerModalProps> = ({
             <table className="w-full border-collapse border border-slate-300">
               <thead>
                 <tr className="bg-slate-100 text-slate-800 font-black text-[11px] uppercase tracking-wider border-b border-slate-300">
-                  <th className="border border-slate-300 px-3 py-2 text-center w-12">Bil</th>
-                  <th className="border border-slate-300 px-3 py-2 text-left">Perihal Bekalan / Perkhidmatan</th>
-                  <th className="border border-slate-300 px-3 py-2 text-center w-20">Kuantiti</th>
+                  <th className="border border-slate-300 px-3 py-2 text-center w-12">No.</th>
+                  <th className="border border-slate-300 px-3 py-2 text-left">Supply / Service Description</th>
+                  <th className="border border-slate-300 px-3 py-2 text-center w-20">Quantity</th>
                   <th className="border border-slate-300 px-3 py-2 text-center w-24">Unit</th>
-                  <th className="border border-slate-300 px-3 py-2 text-right w-28">Harga/Unit (RM)</th>
-                  <th className="border border-slate-300 px-3 py-2 text-right w-32">Jumlah (RM)</th>
+                  <th className="border border-slate-300 px-3 py-2 text-right w-28">Unit Price (RM)</th>
+                  <th className="border border-slate-300 px-3 py-2 text-right w-32">Total (RM)</th>
                 </tr>
               </thead>
               <tbody>
@@ -160,7 +160,7 @@ export const AdminLpoViewerModal: React.FC<AdminLpoViewerModalProps> = ({
                 ) : (
                   <tr>
                     <td colSpan={6} className="text-center py-4 text-slate-500 italic">
-                      Tiada item tersenarai
+                      No items listed
                     </td>
                   </tr>
                 )}
@@ -168,7 +168,7 @@ export const AdminLpoViewerModal: React.FC<AdminLpoViewerModalProps> = ({
               <tfoot>
                 <tr className="bg-slate-50 font-black">
                   <td colSpan={5} className="border border-slate-300 px-4 py-2.5 text-right uppercase tracking-wider text-slate-800">
-                    JUMLAH BESAR KESELURUHAN (RM)
+                    GRAND TOTAL AMOUNT (RM)
                   </td>
                   <td className="border border-slate-300 px-3 py-2.5 text-right font-mono text-sm text-slate-950">
                     {formatCurrency(Number(po?.total_amount) || 0)}
@@ -182,21 +182,21 @@ export const AdminLpoViewerModal: React.FC<AdminLpoViewerModalProps> = ({
           <div className="grid grid-cols-2 gap-8 pt-8 border-t border-slate-300 text-center">
             <div className="space-y-12">
               <p className="text-slate-600 text-[10px] uppercase font-bold tracking-wider">
-                Disediakan Oleh (Pegawai Perolehan)
+                Prepared By (Procurement Officer)
               </p>
               <div className="border-t border-slate-400 w-3/4 mx-auto pt-1">
-                <p className="font-bold text-slate-800">Tandatangan & Cop Jawatan</p>
-                <p className="text-[10px] text-slate-500">Tarikh: {lpo.lpo_date}</p>
+                <p className="font-bold text-slate-800">Signature & Official Stamp</p>
+                <p className="text-[10px] text-slate-500">Date: {lpo.lpo_date}</p>
               </div>
             </div>
 
             <div className="space-y-12">
               <p className="text-slate-600 text-[10px] uppercase font-bold tracking-wider">
-                Diluluskan Oleh (Pentadbir Hospital / Pengarah)
+                Approved By (Hospital Administrator / Director)
               </p>
               <div className="border-t border-slate-400 w-3/4 mx-auto pt-1">
-                <p className="font-bold text-slate-800">Tandatangan & Cop Rasmi</p>
-                <p className="text-[10px] text-slate-500">Hospital Lawas, KKM</p>
+                <p className="font-bold text-slate-800">Official Signature & Seal</p>
+                <p className="text-[10px] text-slate-500">Lawas Hospital, MOH</p>
               </div>
             </div>
           </div>

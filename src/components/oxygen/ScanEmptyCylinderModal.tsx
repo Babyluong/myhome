@@ -1,8 +1,8 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 import jsQR from 'jsqr';
-import { X, QrCode, AlertCircle, AlertTriangle, RefreshCw, CheckCircle2, Trash2, Camera, Keyboard, Check, Volume2, VolumeX, Search, Database } from 'lucide-react';
-import { getCylinderByQrOrSerial, markCylinderAsEmpty, markMultipleCylindersAsEmpty } from '@/services/pharmacy/oxygenService';
+import { X, QrCode, AlertCircle, AlertTriangle, RefreshCw, CheckCircle2, Trash2, Camera, Keyboard, Check, Volume2, VolumeX, Search, Database, Wrench, ChevronDown } from 'lucide-react';
+import { getCylinderByQrOrSerial, markCylinderAsEmpty, markMultipleCylindersAsEmpty, updateCylinderValveType } from '@/services/pharmacy/oxygenService';
 import { useAuthStore } from '@/stores/authStore';
 import { supabase } from '@/services/supabase';
 import type { OxygenCylinderWithRelations } from '@/types/pharmacy';
@@ -44,6 +44,11 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [matchedCylinder, setMatchedCylinder] = useState<OxygenCylinderWithRelations | null>(null);
+
+  // Valve type correction state — tracks the last successfully scanned cylinder so staff can
+  // fix wrong BN/PI classification on the spot (QR labels do NOT encode valve type)
+  const [lastScannedCylinder, setLastScannedCylinder] = useState<OxygenCylinderWithRelations | null>(null);
+  const [isCorrectingValveType, setIsCorrectingValveType] = useState(false);
   
   // Cylinder Quick Picker pagination page state
   const [pickerPage, setPickerPage] = useState(1);
@@ -316,18 +321,21 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
       }
     }
 
-    // Reject loan cylinders starting with 101-N or 101-F (case insensitive)
+    // Reject untracked loan category codes (e.g. bare "101-N", "101-F" without a serial suffix)
+    // Real serial numbers like "101-F-0139" or "P101-F-0139" must be allowed through for lookup.
     const upperInput = cleanedInput.toUpperCase();
-    if (
-      upperInput.startsWith('101-N') || 
-      upperInput.startsWith('101-F') || 
-      upperInput.startsWith('101N') || 
-      upperInput.startsWith('101F')
-    ) {
+    const isBareLoanCategory = 
+      upperInput === '101-N' || 
+      upperInput === '101-F' || 
+      upperInput === '101N' || 
+      upperInput === '101F';
+    const isUntrackedLoanSerial = upperInput.startsWith('LOAN-') && !upperInput.includes('P101');
+
+    if (isBareLoanCategory || isUntrackedLoanSerial) {
       playBeep('error');
       setStatusMessage({ 
         type: 'error', 
-        text: `Cylinder "${cleanedInput}" is a loan item (101-N/101-F) and does not need tracking. Please add the quantity directly inside the Create Return Document modal instead.` 
+        text: `"${cleanedInput}" is an untracked loan cylinder category. Please record loan cylinder counts directly in the Create Return Document modal instead.` 
       });
       return;
     }
@@ -443,6 +451,8 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           });
           // Remove from active list
           setActiveCylinders(prev => prev.filter(c => c.id !== targetCylinder.id));
+          // Track for valve type correction (QR codes don't embed valve type)
+          setLastScannedCylinder(targetCylinder);
           playBeep('success');
           setSuccessFlash(true);
           setTimeout(() => setSuccessFlash(false), 500);
@@ -541,6 +551,38 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
       playBeep('error');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Corrects valve type (BN/PI) for the last scanned cylinder.
+  // Needed because QR labels on MOH cylinders only encode the serial number —
+  // the valve type (Bullnose vs Pin Index) is only visible on the physical label sticker.
+  const handleCorrectValveType = async (targetCode: 'BN' | 'PI') => {
+    if (!lastScannedCylinder || isCorrectingValveType) return;
+    setIsCorrectingValveType(true);
+    try {
+      const userId = user?.id || localStorage.getItem('userId') || undefined;
+      const res = await updateCylinderValveType(hospitalId, lastScannedCylinder.id, targetCode, userId);
+      if (res.error) {
+        setStatusMessage({ type: 'error', text: `Valve type correction failed: ${res.error}` });
+      } else {
+        const valveLabel = targetCode === 'BN' ? 'Bullnose (BN)' : 'Pin Index (PI)';
+        setStatusMessage({
+          type: 'success',
+          text: `✓ Valve type corrected → ${valveLabel} for ${lastScannedCylinder.serial_number}`
+        });
+        // Update the cylinder in both lists
+        const corrected = { ...lastScannedCylinder, type_info: { ...lastScannedCylinder.type_info, code: targetCode } };
+        setSessionScannedCylinders(prev =>
+          prev.map(c => c.id === corrected.id ? corrected : c)
+        );
+        setLastScannedCylinder(null);
+      }
+    } catch (err) {
+      console.error('Valve type correction error:', err);
+      setStatusMessage({ type: 'error', text: 'Failed to correct valve type. Try again.' });
+    } finally {
+      setIsCorrectingValveType(false);
     }
   };
 
@@ -1078,6 +1120,92 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
               </div>
             )}
 
+            {/* ── VALVE TYPE CORRECTION PANEL ──────────────────────────────────────
+                QR labels on MOH cylinders (e.g. "P101-F-0114") do NOT encode the
+                valve type (Bullnose vs Pin Index). Both BN and PI cylinders share
+                the identical QR format. The correct valve type MUST be confirmed by
+                looking at the physical label sticker on the cylinder.
+                This panel appears after each scan so staff can immediately correct
+                any mis-classified cylinders without leaving the scan screen. */}
+            {lastScannedCylinder && (
+              <div className="p-4 rounded-2xl border-2 border-amber-300 bg-amber-50 space-y-3 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0">
+                    <Wrench className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-black text-amber-900">Verify Valve Type</span>
+                      <span className="font-mono text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-md truncate">
+                        {lastScannedCylinder.serial_number}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-amber-700 font-semibold mt-0.5 leading-snug">
+                      QR labels do <strong>not</strong> encode valve type. Check the physical label — is this cylinder Bullnose or Pin Index?
+                    </p>
+                    {/* Current detected valve type */}
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-[9px] text-amber-600 font-bold uppercase tracking-wider">Recorded as:</span>
+                      <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${
+                        lastScannedCylinder.type_info?.code === 'BN'
+                          ? 'bg-blue-100 text-blue-800 border-blue-200'
+                          : lastScannedCylinder.type_info?.code === 'PI'
+                          ? 'bg-purple-100 text-purple-800 border-purple-200'
+                          : 'bg-slate-100 text-slate-600 border-slate-200'
+                      }`}>
+                        {lastScannedCylinder.type_info?.code === 'BN'
+                          ? '🔵 Bullnose (BN)'
+                          : lastScannedCylinder.type_info?.code === 'PI'
+                          ? '🟣 Pin Index (PI)'
+                          : '⚪ Unknown'}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setLastScannedCylinder(null)}
+                    className="text-amber-400 hover:text-amber-600 p-1 rounded cursor-pointer"
+                    title="Dismiss"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Correction buttons */}
+                <div className="flex items-center gap-2 pt-1">
+                  <span className="text-[9px] text-amber-600 font-bold uppercase tracking-wider shrink-0">Fix to →</span>
+                  <button
+                    type="button"
+                    onClick={() => handleCorrectValveType('BN')}
+                    disabled={isCorrectingValveType}
+                    className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer border-2 flex items-center justify-center gap-1.5 ${
+                      lastScannedCylinder.type_info?.code === 'BN'
+                        ? 'bg-blue-100 border-blue-300 text-blue-700 opacity-60 cursor-default'
+                        : 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50 shadow-xs'
+                    }`}
+                    title={lastScannedCylinder.type_info?.code === 'BN' ? 'Already Bullnose' : 'Change to Bullnose'}
+                  >
+                    🔵 Bullnose (BN)
+                    {lastScannedCylinder.type_info?.code === 'BN' && <Check className="w-3 h-3 ml-1 text-blue-500" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleCorrectValveType('PI')}
+                    disabled={isCorrectingValveType}
+                    className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer border-2 flex items-center justify-center gap-1.5 ${
+                      lastScannedCylinder.type_info?.code === 'PI'
+                        ? 'bg-purple-100 border-purple-300 text-purple-700 opacity-60 cursor-default'
+                        : 'bg-white border-purple-300 text-purple-700 hover:bg-purple-50 shadow-xs'
+                    }`}
+                    title={lastScannedCylinder.type_info?.code === 'PI' ? 'Already Pin Index' : 'Change to Pin Index'}
+                  >
+                    {isCorrectingValveType ? <RefreshCw className="w-3 h-3 animate-spin" /> : '🟣 Pin Index (PI)'}
+                    {lastScannedCylinder.type_info?.code === 'PI' && <Check className="w-3 h-3 ml-1 text-purple-500" />}
+                  </button>
+                </div>
+              </div>
+            )}
+
             {sessionScannedCylinders.length > 0 ? (() => {
               const sizeGroups: { [key: string]: OxygenCylinderWithRelations[] } = {};
               
@@ -1110,6 +1238,16 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                             className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 hover:border-rose-350 hover:bg-rose-50/15 rounded-lg text-xs font-bold text-slate-700 font-mono transition-all duration-150 group"
                           >
                             <span>{cyl.serial_number}</span>
+                            {/* Valve type badge — always show BN/PI so staff can spot mis-classified cylinders */}
+                            {cyl.type_info?.code && (
+                              <span className={`text-[8px] font-extrabold px-1.5 py-0.5 rounded-full border non-mono ${
+                                cyl.type_info.code === 'BN'
+                                  ? 'bg-blue-100 text-blue-700 border-blue-200'
+                                  : 'bg-purple-100 text-purple-700 border-purple-200'
+                              }`}>
+                                {cyl.type_info.code}
+                              </span>
+                            )}
                             <button
                               type="button"
                               onClick={() => setSessionScannedCylinders(prev => prev.filter(c => c.id !== cyl.id))}

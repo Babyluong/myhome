@@ -385,6 +385,32 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     }
                   }
                 }
+
+                // D. Upgrade synthetic 'CC-' code to genuine MDC/KKM item code if available in master catalog
+                const resolvedInitialCode = (stdData ? (stdData[codeCol] || stdData.drug_code || stdData.item_code) : item.item_code) || '';
+                if (resolvedInitialCode.toUpperCase().startsWith('CC-') && item.item_name) {
+                  try {
+                    const normTargetName = item.item_name.replace(/\+/g, 'dan').toLowerCase().trim();
+                    const { data: realCandidates } = await supabase
+                      .from(table)
+                      .select('*')
+                      .not(codeCol, 'ilike', 'CC-%')
+                      .limit(250);
+
+                    if (realCandidates && realCandidates.length > 0) {
+                      const realMatch = realCandidates.find((c: any) => {
+                        const cName = (c[nameCol] || c.drug_name || c.item_name || '').replace(/\+/g, 'dan').toLowerCase().trim();
+                        return cName === normTargetName || cName.includes(normTargetName) || normTargetName.includes(cName);
+                      });
+                      if (realMatch && (realMatch[codeCol] || realMatch.drug_code || realMatch.item_code)) {
+                        const genuineCode = realMatch[codeCol] || realMatch.drug_code || realMatch.item_code;
+                        stdData = { ...(stdData || {}), ...realMatch };
+                        stdData[codeCol] = genuineCode;
+                        if (isDrug) stdData.drug_code = genuineCode; else stdData.item_code = genuineCode;
+                      }
+                    }
+                  } catch (_err) {}
+                }
                 
                 let cNo = stdData ? (stdData.cc_contract_number || stdData.kkm_contract_number || stdData.contract_number) : null
                 let lTime = stdData ? (stdData.delivery_period || null) : null // NOTE: do NOT fall back to lead_time_days here — that is the inventory reorder lead time (defaults to 7), not the contract delivery period
@@ -946,7 +972,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
   )
 
   const renderPage1Content = (pageItems: typeof items, isLastPage: boolean, pageNum: number = 1) => (
-    <div className="po-print-page bg-white border border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif", minHeight: '268mm' }}>
+    <div className="po-print-page bg-white text-gray-900 border border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif", minHeight: '268mm' }}>
       {renderWatermark()}
 
       {/* Government Document Header */}
@@ -1102,21 +1128,21 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       </div>
 
       {/* Items Table */}
-      <div className="px-4 py-1.5 flex-1 overflow-hidden">
+      <div className="px-4 py-1.5 flex-1 overflow-hidden text-gray-900">
         <h4 className="text-[11pt] font-bold text-gray-900 uppercase mb-1.5">Butir-butir Barang / Items Purchased {!isLastPage && '(Sambungan)'}</h4>
-        <table className="w-full border-collapse border-2 border-gray-800">
+        <table className="w-full border-collapse border-2 border-gray-800 text-gray-900">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[4%]">Bil</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[37%]">Nama Item / Item Name</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[12%]">Kod Item / Item Code</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[9%]">Kuantiti / Quantity</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[11%]">Harga Unit / Unit Price</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[16%]">Pembungkusan / Packaging</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[11%]">Jumlah / Total</th>
+            <tr className="bg-gray-100 text-gray-900">
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[4%] text-gray-900">Bil</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[37%] text-gray-900">Nama Item / Item Name</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[12%] text-gray-900">Kod Item / Item Code</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[9%] text-gray-900">Kuantiti / Quantity</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[11%] text-gray-900">Harga Unit / Unit Price</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[16%] text-gray-900">Pembungkusan / Packaging</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[11%] text-gray-900">Jumlah / Total</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-gray-900">
             {pageItems.map((item, index) => {
               const contractNo = (item as any).contract_number || order?.kkm_contract_number || order?.supplier?.contract_number;
               const rawDeliveryPeriod = (item as any).delivery_period || order?.supplier?.delivery_period;
@@ -1126,41 +1152,41 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
               const purchasedUnderSQ = !!(order?.inv_sq_number && order?.po_type !== 'sq');
               const contractIsExpired = purchasedUnderSQ || isContractExpired(item, refD);
               return (
-                <tr key={item.id} className="align-top">
-                  <td className="border border-gray-800 px-1 py-1 text-center font-bold text-[9pt]">{index + 1}</td>
-                  <td className="border border-gray-800 px-2 py-1">
-                    <div className="font-bold text-[9.5pt] mb-0.5">{item.item_name}</div>
+                <tr key={item.id} className="align-top text-gray-900">
+                  <td className="border border-gray-800 px-1 py-1 text-center font-bold text-[9pt] text-gray-900">{index + 1}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-gray-900">
+                    <div className="font-bold text-[9.5pt] mb-0.5 text-gray-900">{item.item_name}</div>
                     {!isApplOrder(order) && order?.po_type !== 'manual' && order?.po_type !== 'sq' && contractNo && !contractIsExpired && (
                       <div className="space-y-0 text-[7.5pt] leading-tight text-gray-700 italic">
-                        <p><span className="font-bold not-italic">No. Kontrak:</span> {contractNo}</p>
-                        <p><span className="font-bold not-italic">Tempoh Serahan:</span> {deliveryPeriod}</p>
-                        <p><span className="font-bold not-italic">Tamat Kontrak:</span> {contractEndDate ? formatDate(contractEndDate) : '-'}</p>
+                        <p><span className="font-bold not-italic text-gray-900">No. Kontrak:</span> {contractNo}</p>
+                        <p><span className="font-bold not-italic text-gray-900">Tempoh Serahan:</span> {deliveryPeriod}</p>
+                        <p><span className="font-bold not-italic text-gray-900">Tamat Kontrak:</span> {contractEndDate ? formatDate(contractEndDate) : '-'}</p>
                       </div>
                     )}
                   </td>
-                <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] font-medium">
+                <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] font-medium text-gray-900">
                   {(!item.item_code || item.item_code === contractNo || item.item_code === order?.kkm_contract_number || item.item_code === order?.supplier?.contract_number) ? '-' : item.item_code}
                 </td>
-                <td className="border border-gray-800 px-2 py-1 text-center font-bold text-[9.5pt]">{item.quantity_ordered}</td>
-                <td className="border border-gray-800 px-2 py-1 text-right font-medium text-[9pt]">{formatCurrency(item.unit_price)}</td>
-                <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt]">{item.packaging_description}</td>
-                <td className="border border-gray-800 px-2 py-1 text-right font-bold text-[9.5pt]">{formatCurrency(item.quantity_ordered * item.unit_price)}</td>
+                <td className="border border-gray-800 px-2 py-1 text-center font-bold text-[9.5pt] text-gray-900">{item.quantity_ordered}</td>
+                <td className="border border-gray-800 px-2 py-1 text-right font-medium text-[9pt] text-gray-900">{formatCurrency(item.unit_price)}</td>
+                <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] text-gray-900">{item.packaging_description}</td>
+                <td className="border border-gray-800 px-2 py-1 text-right font-bold text-[9.5pt] text-gray-900">{formatCurrency(item.quantity_ordered * item.unit_price)}</td>
                 </tr>
               );
             })}
             {isLastPage && (
-              <tr className="bg-gray-100 font-bold border-t-2 border-gray-800">
-                <td colSpan={6} className="border border-gray-800 px-2 py-1 text-[9.5pt] uppercase text-right">
+              <tr className="bg-gray-100 font-bold border-t-2 border-gray-800 text-gray-900">
+                <td colSpan={6} className="border border-gray-800 px-2 py-1 text-[9.5pt] uppercase text-right text-gray-900">
                   JUMLAH KESELURUHAN / TOTAL AMOUNT:
                 </td>
-                <td className="border border-gray-800 px-2 py-1 text-[10.5pt] text-right">
+                <td className="border border-gray-800 px-2 py-1 text-[10.5pt] text-right text-gray-900">
                   {formatCurrency(items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0))}
                 </td>
               </tr>
             )}
             {!isLastPage && (
-              <tr>
-                <td colSpan={7} className="border border-gray-800 px-4 py-2 text-[10pt] italic text-center bg-gray-50 font-bold">
+              <tr className="text-gray-900">
+                <td colSpan={7} className="border border-gray-800 px-4 py-2 text-[10pt] italic text-center bg-gray-50 font-bold text-gray-900">
                   *** Bersambung ke halaman sebelah / Continued on next page ***
                 </td>
               </tr>
@@ -1170,37 +1196,37 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       </div>
 
       {/* Footer Area - Anchored to bottom */}
-      <div className="mt-auto">
+      <div className="mt-auto text-gray-900">
         {/* Financial Summary and Signature - Only on last page */}
         {isLastPage && (
-          <div className="px-6 py-2 bg-white border-t border-gray-800 w-full mb-0 break-inside-avoid">
-            <div className="flex gap-6 items-end">
-              <div className="w-[55%] flex flex-col justify-end items-center pb-2">
-                <div className="text-center w-full">
+          <div className="px-6 py-2 bg-white border-t border-gray-800 w-full mb-0 break-inside-avoid text-gray-900">
+            <div className="flex gap-6 items-end text-gray-900">
+              <div className="w-[55%] flex flex-col justify-end items-center pb-2 text-gray-900">
+                <div className="text-center w-full text-gray-900">
                   <div className="border-b-2 border-gray-800 w-[80%] mx-auto mb-2"></div>
                   <p className="text-[11pt] font-bold text-gray-900 mb-1 leading-tight">(Tandatangan)</p>
                   <p className="text-[10pt] font-bold text-gray-800 mb-1 leading-tight">Pegawai Yang Mengesahkan Peruntukan</p>
                   <p className="text-[10pt] font-bold text-gray-800 leading-tight">Pengarah Hospital Lawas</p>
                 </div>
               </div>
-              <div className="w-[45%] flex flex-col justify-end">
-                <table className="w-full border-collapse border border-gray-800 bg-white" style={{ tableLayout: 'fixed' }}>
-                  <tbody>
-                    <tr className="border-b border-gray-800">
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight">BAKI SEBELUM /<br />BALANCE BEFORE:</td>
-                      <td className="px-2 py-1.5 text-[10.5pt] font-bold text-right">
+              <div className="w-[45%] flex flex-col justify-end text-gray-900">
+                <table className="w-full border-collapse border border-gray-800 bg-white text-gray-900" style={{ tableLayout: 'fixed' }}>
+                  <tbody className="text-gray-900">
+                    <tr className="border-b border-gray-800 text-gray-900">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">BAKI SEBELUM /<br />BALANCE BEFORE:</td>
+                      <td className="px-2 py-1.5 text-[10.5pt] font-bold text-right text-gray-900">
                         {balance !== null ? `RM ${balance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : '-'}
                       </td>
                     </tr>
-                    <tr className="border-b border-gray-800 bg-gray-50">
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight">JUMLAH /<br />TOTAL AMOUNT:</td>
-                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right">
+                    <tr className="border-b border-gray-800 bg-gray-50 text-gray-900">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">JUMLAH /<br />TOTAL AMOUNT:</td>
+                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-gray-900">
                         {formatCurrency(items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0))}
                       </td>
                     </tr>
-                    <tr>
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight">BAKI SELEPAS /<br />BALANCE AFTER:</td>
-                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right">
+                    <tr className="text-gray-900">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">BAKI SELEPAS /<br />BALANCE AFTER:</td>
+                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-gray-900">
                         {balance !== null ? `RM ${(balance - items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : '-'}
                       </td>
                     </tr>
@@ -1212,7 +1238,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         )}
 
         {/* Official Footer */}
-        <div className="px-8 py-1 w-full text-center border-t border-gray-800">
+        <div className="px-8 py-1 w-full text-center border-t border-gray-800 text-gray-900">
           <p className="text-[8pt] font-bold text-gray-800 uppercase tracking-tight">
             Dokumen Rasmi Kerajaan Malaysia / Official Government Document of Malaysia
           </p>
@@ -1225,10 +1251,10 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
   )
 
   const renderContinuationPage = (pageItems: typeof items, pageNum: number, isLastPage: boolean) => (
-    <div className="po-print-page bg-white border border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif", minHeight: '268mm' }}>
+    <div className="po-print-page bg-white text-gray-900 border border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif", minHeight: '268mm' }}>
       {renderWatermark()}
       {/* Header Section */}
-      <div className="border-b border-gray-800 border bg-white pt-1 pb-1 px-4 flex justify-between items-center">
+      <div className="border-b border-gray-800 border bg-white pt-1 pb-1 px-4 flex justify-between items-center text-gray-900">
         <div className="flex items-center gap-4">
           <img
             src="/512px-Jata_MalaysiaV2.svg.png"
@@ -1237,63 +1263,63 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
           />
           <h1 className="text-[12pt] font-bold text-gray-900 uppercase">KEMENTERIAN KESIHATAN MALAYSIA</h1>
         </div>
-        <div className="text-right">
-          <p className="text-[10pt] font-bold">No. Pesanan: {order?.po_number}</p>
+        <div className="text-right text-gray-900">
+          <p className="text-[10pt] font-bold text-gray-900">No. Pesanan: {order?.po_number}</p>
           <p className="text-[9pt] font-bold italic text-gray-600">Halaman {pageNum} (Sambungan)</p>
         </div>
       </div>
 
       {/* Items Table Section */}
-      <div className="px-6 py-2">
-        <table className="w-full border-collapse border border-gray-800">
+      <div className="px-6 py-2 flex-1 overflow-hidden text-gray-900">
+        <table className="w-full border-collapse border border-gray-800 text-gray-900">
           <thead>
-            <tr className="bg-gray-50">
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[4%]">BIL</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[38%]">NAMA ITEM / ITEM NAME</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[12%]">KOD ITEM / ITEM CODE</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[8%]">KUANTITI / QUANTITY</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[12%]">HARGA UNIT / UNIT PRICE</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[13%]">JUMLAH / TOTAL</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[13%]">PEMBUNGKUSAN / PACKAGING</th>
+            <tr className="bg-gray-50 text-gray-900">
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[4%] text-gray-900">BIL</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[38%] text-gray-900">NAMA ITEM / ITEM NAME</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[12%] text-gray-900">KOD ITEM / ITEM CODE</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[8%] text-gray-900">KUANTITI / QUANTITY</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[12%] text-gray-900">HARGA UNIT / UNIT PRICE</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[13%] text-gray-900">JUMLAH / TOTAL</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[13%] text-gray-900">PEMBUNGKUSAN / PACKAGING</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-gray-900">
             {pageItems.map((item, index) => {
               // Calculate global index
               const globalIdx = ITEMS_PER_PAGE_1 + (pageNum - 2) * ITEMS_PER_PAGE_CONT + index;
               return (
-                <tr key={item.id} className="align-top">
-                  <td className="border border-gray-800 px-1 py-1 text-center font-bold text-[9pt]">{globalIdx + 1}</td>
-                  <td className="border border-gray-800 px-2 py-1">
-                    <div className="font-bold text-[9.5pt] mb-1">{item.item_name}</div>
+                <tr key={item.id} className="align-top text-gray-900">
+                  <td className="border border-gray-800 px-1 py-1 text-center font-bold text-[9pt] text-gray-900">{globalIdx + 1}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-gray-900">
+                    <div className="font-bold text-[9.5pt] mb-1 text-gray-900">{item.item_name}</div>
                   </td>
-                  <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] font-medium">
+                  <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] font-medium text-gray-900">
                     {(!item.item_code || 
                       item.item_code === (item as any).contract_number || 
                       item.item_code === order?.kkm_contract_number || 
                       item.item_code === order?.supplier?.contract_number) ? '-' : item.item_code}
                   </td>
-                  <td className="border border-gray-800 px-2 py-1 text-center font-bold text-[9.5pt]">{item.quantity_ordered}</td>
-                  <td className="border border-gray-800 px-2 py-1 text-right font-medium text-[9pt]">{formatCurrency(item.unit_price)}</td>
-                  <td className="border border-gray-800 px-2 py-1 text-right font-bold text-[9.5pt]">{formatCurrency(item.quantity_ordered * item.unit_price)}</td>
-                  <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt]">{item.packaging_description}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-center font-bold text-[9.5pt] text-gray-900">{item.quantity_ordered}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-right font-medium text-[9pt] text-gray-900">{formatCurrency(item.unit_price)}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-right font-bold text-[9.5pt] text-gray-900">{formatCurrency(item.quantity_ordered * item.unit_price)}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] text-gray-900">{item.packaging_description}</td>
                 </tr>
               )
             })}
             {isLastPage && (
-              <tr className="bg-gray-100 font-bold border-t-2 border-gray-800">
-                <td colSpan={5} className="border border-gray-800 px-2 py-2 text-[10pt] uppercase text-right">
+              <tr className="bg-gray-100 font-bold border-t-2 border-gray-800 text-gray-900">
+                <td colSpan={5} className="border border-gray-800 px-2 py-2 text-[10pt] uppercase text-right text-gray-900">
                   JUMLAH KESELURUHAN / TOTAL AMOUNT:
                 </td>
-                <td className="border border-gray-800 px-2 py-2 text-[11pt] text-right">
+                <td className="border border-gray-800 px-2 py-2 text-[11pt] text-right text-gray-900">
                   {formatCurrency(items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0))}
                 </td>
                 <td className="border border-gray-800"></td>
               </tr>
             )}
             {!isLastPage && (
-              <tr>
-                <td colSpan={7} className="border border-gray-800 px-4 py-2 text-[10pt] italic text-center bg-gray-50 font-bold">
+              <tr className="text-gray-900">
+                <td colSpan={7} className="border border-gray-800 px-4 py-2 text-[10pt] italic text-center bg-gray-50 font-bold text-gray-900">
                   *** Bersambung ke halaman sebelah / Continued on next page ***
                 </td>
               </tr>
@@ -1303,37 +1329,37 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       </div>
 
       {/* Footer Area - Anchored to bottom */}
-      <div className="mt-auto">
+      <div className="mt-auto text-gray-900">
         {/* Financial Summary and Signature - Positioned at bottom of LAST Page of items */}
         {isLastPage && (
-          <div className="px-8 py-2 bg-white border-t-2 border-gray-800 w-full mb-1 break-inside-avoid">
-            <div className="flex gap-6 items-end">
-              <div className="w-[55%] flex flex-col justify-end items-center pb-2">
-                <div className="text-center w-full">
+          <div className="px-8 py-2 bg-white border-t-2 border-gray-800 w-full mb-1 break-inside-avoid text-gray-900">
+            <div className="flex gap-6 items-end text-gray-900">
+              <div className="w-[55%] flex flex-col justify-end items-center pb-2 text-gray-900">
+                <div className="text-center w-full text-gray-900">
                   <div className="border-b-2 border-gray-800 w-[80%] mx-auto mb-2"></div>
                   <p className="text-[11pt] font-bold text-gray-900 mb-1 leading-tight">(Tandatangan)</p>
                   <p className="text-[10pt] font-bold text-gray-800 mb-1 leading-tight">Pegawai Yang Mengesahkan Peruntukan</p>
                   <p className="text-[10pt] font-bold text-gray-800 leading-tight">Pengarah Hospital Lawas</p>
                 </div>
               </div>
-              <div className="w-[45%] flex flex-col justify-end">
-                <table className="w-full border-collapse border-2 border-gray-800 bg-white" style={{ tableLayout: 'fixed' }}>
-                  <tbody>
-                    <tr className="border-b border-gray-800">
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight">BAKI SEBELUM /<br />BALANCE BEFORE:</td>
-                      <td className="px-2 py-1.5 text-[10.5pt] font-bold text-right">
+              <div className="w-[45%] flex flex-col justify-end text-gray-900">
+                <table className="w-full border-collapse border-2 border-gray-800 bg-white text-gray-900" style={{ tableLayout: 'fixed' }}>
+                  <tbody className="text-gray-900">
+                    <tr className="border-b border-gray-800 text-gray-900">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">BAKI SEBELUM /<br />BALANCE BEFORE:</td>
+                      <td className="px-2 py-1.5 text-[10.5pt] font-bold text-right text-gray-900">
                         {balance !== null ? `RM ${balance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : '-'}
                       </td>
                     </tr>
-                    <tr className="border-b border-gray-800 bg-gray-50">
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight">JUMLAH /<br />TOTAL AMOUNT:</td>
-                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right">
+                    <tr className="border-b border-gray-800 bg-gray-50 text-gray-900">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">JUMLAH /<br />TOTAL AMOUNT:</td>
+                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-gray-900">
                         {formatCurrency(items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0))}
                       </td>
                     </tr>
-                    <tr>
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight">BAKI SELEPAS /<br />BALANCE AFTER:</td>
-                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right">
+                    <tr className="text-gray-900">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">BAKI SELEPAS /<br />BALANCE AFTER:</td>
+                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-gray-900">
                         {balance !== null ? `RM ${(balance - items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : '-'}
                       </td>
                     </tr>
@@ -1345,7 +1371,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         )}
 
         {/* Official Footer */}
-        <div className="px-8 py-1 w-full text-center border-t border-gray-800">
+        <div className="px-8 py-1 w-full text-center border-t border-gray-800 text-gray-900">
           <p className="text-[8pt] font-bold text-gray-800 uppercase tracking-tight">
             Dokumen Rasmi Kerajaan Malaysia / Official Government Document of Malaysia
           </p>
@@ -1358,21 +1384,21 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
   )
 
   const renderPage2Content = (pageNum: number) => (
-    <div className="po-print-page bg-white border-2 border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif" }}>
+    <div className="po-print-page bg-white text-gray-900 border-2 border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif" }}>
       {renderWatermark()}
       {/* Section 3: Supplier Details */}
-      <div className="px-8 pt-8 pb-4 border-b-2 border-gray-800">
+      <div className="px-8 pt-8 pb-4 border-b-2 border-gray-800 text-gray-900">
         <h4 className="text-[11pt] font-bold text-gray-900 uppercase mb-4 text-center underline">MAKLUMAT PEMBEKAL (SAMBUNGAN)</h4>
         <div className="flex justify-center">
-          <table className="w-full max-w-2xl border-collapse border-2 border-gray-800">
-            <tbody>
-              <tr>
-                <td className="border border-gray-800 px-4 py-3 font-bold bg-gray-100 text-[10pt] w-[30%]">Nama Pembekal :</td>
-                <td className="border border-gray-800 px-4 py-3 font-bold text-[11pt] uppercase">
+          <table className="w-full max-w-2xl border-collapse border-2 border-gray-800 text-gray-900">
+            <tbody className="text-gray-900">
+              <tr className="text-gray-900">
+                <td className="border border-gray-800 px-4 py-3 font-bold bg-gray-100 text-[10pt] w-[30%] text-gray-900">Nama Pembekal :</td>
+                <td className="border border-gray-800 px-4 py-3 font-bold text-[11pt] uppercase text-gray-900">
                   {order?.po_type === 'sq' ? (
-                    <div className="space-y-1">
+                    <div className="space-y-1 text-gray-900">
                       {invitedSuppliers.map((s, i) => (
-                        <div key={i} className="flex gap-2">
+                        <div key={i} className="flex gap-2 text-gray-900">
                           <span>{i + 1}.</span>
                           <span>{s}</span>
                         </div>
@@ -1380,16 +1406,16 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     </div>
                   ) : (
                     <>
-                      {order?.manual_supplier_name || order?.supplier?.company_name}
+                      <span className="text-gray-900">{order?.manual_supplier_name || order?.supplier?.company_name}</span>
                       <br />
-                      <span className="font-normal text-[9pt] normal-case">{order?.manual_supplier_address || order?.supplier?.address}</span>
+                      <span className="font-normal text-[9pt] normal-case text-gray-700">{order?.manual_supplier_address || order?.supplier?.address}</span>
                     </>
                   )}
                 </td>
               </tr>
-              <tr>
-                <td className="border border-gray-800 px-4 py-3 font-bold bg-gray-100 text-[10pt]">No. Telefon :</td>
-                <td className="border border-gray-800 px-4 py-3 font-bold text-[11pt]">{order?.supplier?.phone || '-'}</td>
+              <tr className="text-gray-900">
+                <td className="border border-gray-800 px-4 py-3 font-bold bg-gray-100 text-[10pt] text-gray-900">No. Telefon :</td>
+                <td className="border border-gray-800 px-4 py-3 font-bold text-[11pt] text-gray-900">{order?.supplier?.phone || '-'}</td>
               </tr>
             </tbody>
           </table>
@@ -1397,32 +1423,32 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       </div>
 
       {/* Federal Treasury Registration */}
-      <div className="px-8 py-4 border-b-2 border-gray-800">
-        <p className="text-[11pt] mb-3">Berdaftar dengan Pejabat Kewangan Persekutuan Sarawak ( Ya / Tidak )</p>
+      <div className="px-8 py-4 border-b-2 border-gray-800 text-gray-900">
+        <p className="text-[11pt] mb-3 text-gray-900">Berdaftar dengan Pejabat Kewangan Persekutuan Sarawak ( Ya / Tidak )</p>
         <div className="border-b border-black w-full h-4 mb-4"></div>
-        <p className="text-[11pt] mb-3">No. Rujukan Pendaftaran :</p>
+        <p className="text-[11pt] mb-3 text-gray-900">No. Rujukan Pendaftaran :</p>
         <div className="border-b border-black w-full h-4"></div>
       </div>
 
       {/* Section 4: Purchase Order Details */}
-      <div className="px-8 py-4 border-b-2 border-gray-800">
+      <div className="px-8 py-4 border-b-2 border-gray-800 text-gray-900">
         <p className="text-[11pt] font-bold text-gray-900 mb-4">Bersama-sama ini dinyatakan (Penuhkan mana yang sesuai).</p>
-        <div className="ml-6 space-y-4">
+        <div className="ml-6 space-y-4 text-gray-900">
           <div className="flex items-baseline gap-4">
-            <span className="text-[11pt] w-8">(i)</span>
-            <div className="flex-1 text-[11pt]">
+            <span className="text-[11pt] w-8 text-gray-900">(i)</span>
+            <div className="flex-1 text-[11pt] text-gray-900">
               No. rujukan surat mampu : <span className="border-b border-dotted border-black px-12 ml-2"></span>
             </div>
           </div>
           <div className="flex items-baseline gap-4">
-            <span className="text-[11pt] w-8">(ii)</span>
-            <div className="flex-1 text-[11pt]">
-              No. rujukan kontrak : <span className="font-bold underline decoration-dotted underline-offset-4 ml-2">{order?.kkm_contract_number || '...................................................'}</span>
+            <span className="text-[11pt] w-8 text-gray-900">(ii)</span>
+            <div className="flex-1 text-[11pt] text-gray-900">
+              No. rujukan kontrak : <span className="font-bold underline decoration-dotted underline-offset-4 ml-2 text-gray-900">{order?.kkm_contract_number || '...................................................'}</span>
             </div>
           </div>
           <div className="flex items-baseline gap-4">
-            <span className="text-[11pt] w-8">(iii)</span>
-            <div className="flex-1 text-[11pt]">
+            <span className="text-[11pt] w-8 text-gray-900">(iii)</span>
+            <div className="flex-1 text-[11pt] text-gray-900">
               Salinan surat kelulusan Pejabat Kewangan Persekutuan Bil.: <span className="border-b border-dotted border-black px-20 ml-2"></span>
             </div>
           </div>
@@ -1430,105 +1456,105 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       </div>
 
       {/* Section 4 Signature */}
-      <div className="px-8 py-4 border-b-2 border-gray-800">
-        <div className="flex justify-between items-end">
-          <div className="pb-2">
-            <p className="text-[11pt] font-bold">Tarikh : <span className="font-serif ml-2 underline decoration-dotted">{order?.order_date ? formatDate(order.order_date) : '-'}</span></p>
+      <div className="px-8 py-4 border-b-2 border-gray-800 text-gray-900">
+        <div className="flex justify-between items-end text-gray-900">
+          <div className="pb-2 text-gray-900">
+            <p className="text-[11pt] font-bold text-gray-900">Tarikh : <span className="font-serif ml-2 underline decoration-dotted text-gray-900">{order?.order_date ? formatDate(order.order_date) : '-'}</span></p>
           </div>
-          <div className="text-center">
+          <div className="text-center text-gray-900">
             <div className="w-64 border-b border-dotted border-black mb-2 mx-auto"></div>
-            <p className="text-[10pt] font-bold mb-1">(Tandatangan Pegawai yang Memohon)</p>
-            <div className="text-left space-y-0.5">
-              <p className="text-[10pt] font-bold">Nama : {signatures.applicantName}</p>
-              <p className="text-[10pt] font-bold">Jawatan : {signatures.applicantPosition}</p>
+            <p className="text-[10pt] font-bold mb-1 text-gray-900">(Tandatangan Pegawai yang Memohon)</p>
+            <div className="text-left space-y-0.5 text-gray-900">
+              <p className="text-[10pt] font-bold text-gray-900">Nama : {signatures.applicantName}</p>
+              <p className="text-[10pt] font-bold text-gray-900">Jawatan : {signatures.applicantPosition}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Section 5: Approval */}
-      <div className="px-8 py-4 border-b-2 border-gray-800">
-        <h4 className="text-[11pt] font-bold mb-2 uppercase">5. Akaun Ketua Bahagian.</h4>
-        <div className="ml-6 space-y-1 mb-4">
+      <div className="px-8 py-4 border-b-2 border-gray-800 text-gray-900">
+        <h4 className="text-[11pt] font-bold mb-2 uppercase text-gray-900">5. Akaun Ketua Bahagian.</h4>
+        <div className="ml-6 space-y-1 mb-4 text-gray-900">
           <div className="flex gap-4">
-            <span className="text-[11pt]">(i)</span>
-            <p className="text-[11pt]">Adalah disahkan pembelian ini telah dimasukkan dalam cadangan anggaran Belanjawan tahunan.</p>
+            <span className="text-[11pt] text-gray-900">(i)</span>
+            <p className="text-[11pt] text-gray-900">Adalah disahkan pembelian ini telah dimasukkan dalam cadangan anggaran Belanjawan tahunan.</p>
           </div>
           <div className="flex gap-4">
-            <span className="text-[11pt]">(ii)</span>
-            <p className="text-[11pt]">Pembelian ini adalah diperlukan.</p>
+            <span className="text-[11pt] text-gray-900">(ii)</span>
+            <p className="text-[11pt] text-gray-900">Pembelian ini adalah diperlukan.</p>
           </div>
         </div>
         
-        <div className="flex justify-between items-end mb-4">
-          <div className="pb-2">
-            <p className="text-[11pt] font-bold">Tarikh : <span className="font-serif ml-2 underline decoration-dotted">{order?.order_date ? formatDate(order.order_date) : '-'}</span></p>
+        <div className="flex justify-between items-end mb-4 text-gray-900">
+          <div className="pb-2 text-gray-900">
+            <p className="text-[11pt] font-bold text-gray-900">Tarikh : <span className="font-serif ml-2 underline decoration-dotted text-gray-900">{order?.order_date ? formatDate(order.order_date) : '-'}</span></p>
           </div>
-          <div className="text-center">
+          <div className="text-center text-gray-900">
             <div className="w-72 border-b border-dotted border-black mb-2 mx-auto"></div>
-            <p className="text-[10pt] font-bold mb-1">(Tandatangan Ketua Bahagian)</p>
-            <p className="text-[10pt] font-bold uppercase">{signatures.headName}</p>
-            <p className="text-[10pt] font-bold uppercase">{signatures.headPosition}</p>
+            <p className="text-[10pt] font-bold mb-1 text-gray-900">(Tandatangan Ketua Bahagian)</p>
+            <p className="text-[10pt] font-bold uppercase text-gray-900">{signatures.headName}</p>
+            <p className="text-[10pt] font-bold uppercase text-gray-900">{signatures.headPosition}</p>
           </div>
         </div>
 
-        <div className="text-center mb-4">
-          <p className="text-[11pt] font-bold uppercase">Permohonan diluluskan/tidak diluluskan</p>
+        <div className="text-center mb-4 text-gray-900">
+          <p className="text-[11pt] font-bold uppercase text-gray-900">Permohonan diluluskan/tidak diluluskan</p>
         </div>
 
-        <div className="flex justify-between items-end">
-          <div className="pb-2">
-            <p className="text-[11pt] font-bold">Tarikh : <span className="border-b border-dotted border-black px-24 ml-2"></span></p>
+        <div className="flex justify-between items-end text-gray-900">
+          <div className="pb-2 text-gray-900">
+            <p className="text-[11pt] font-bold text-gray-900">Tarikh : <span className="border-b border-dotted border-black px-24 ml-2"></span></p>
           </div>
-          <div className="text-center">
+          <div className="text-center text-gray-900">
             <div className="w-72 border-b border-dotted border-black mb-2 mx-auto"></div>
-            <p className="text-[10pt] font-bold mb-1">(Tandatangan Pegawai Yang Meluluskan)</p>
-            <p className="text-[10pt] font-bold">Pengarah Hospital Daerah, Lawas.</p>
+            <p className="text-[10pt] font-bold mb-1 text-gray-900">(Tandatangan Pegawai Yang Meluluskan)</p>
+            <p className="text-[10pt] font-bold text-gray-900">Pengarah Hospital Daerah, Lawas.</p>
           </div>
         </div>
       </div>
 
       {/* Section 6: Financial Department Use */}
-      <div className="px-8 py-2">
-        <h4 className="text-[11pt] font-bold mb-2 text-center uppercase">UNTUK KEGUNAAN BAHAGIAN KEWANGAN</h4>
+      <div className="px-8 py-2 text-gray-900">
+        <h4 className="text-[11pt] font-bold mb-2 text-center uppercase text-gray-900">UNTUK KEGUNAAN BAHAGIAN KEWANGAN</h4>
         
-        <div className="flex justify-between items-start mb-4">
-          <div className="space-y-1 flex-1">
-            <h5 className="text-[11pt] font-bold">6. Kerani Kewangan</h5>
-            <div className="ml-6 space-y-1">
-              <p className="text-[10pt]">(iii) Sila Keluarkan Pesanan Kerajaan</p>
-              <p className="text-[10pt]">(iv) Sila dapatkan Sebut harga.</p>
+        <div className="flex justify-between items-start mb-4 text-gray-900">
+          <div className="space-y-1 flex-1 text-gray-900">
+            <h5 className="text-[11pt] font-bold text-gray-900">6. Kerani Kewangan</h5>
+            <div className="ml-6 space-y-1 text-gray-900">
+              <p className="text-[10pt] text-gray-900">(iii) Sila Keluarkan Pesanan Kerajaan</p>
+              <p className="text-[10pt] text-gray-900">(iv) Sila dapatkan Sebut harga.</p>
             </div>
           </div>
           
-          <div className="text-center shrink-0 pt-4">
+          <div className="text-center shrink-0 pt-4 text-gray-900">
             <div className="w-72 border-b border-dotted border-black mb-2 mx-auto"></div>
-            <p className="text-[10pt] font-bold mb-1">(Bahagian Kewangan)</p>
-            <p className="text-[10pt] font-bold">B.P. Pengarah Hospital Daerah, Lawas.</p>
+            <p className="text-[10pt] font-bold mb-1 text-gray-900">(Bahagian Kewangan)</p>
+            <p className="text-[10pt] font-bold text-gray-900">B.P. Pengarah Hospital Daerah, Lawas.</p>
           </div>
         </div>
 
-        <div className="space-y-4 max-w-xl mt-4">
-          <div className="flex items-baseline gap-2">
-            <span className="text-[11pt] font-bold whitespace-nowrap">Catatan :</span>
+        <div className="space-y-4 max-w-xl mt-4 text-gray-900">
+          <div className="flex items-baseline gap-2 text-gray-900">
+            <span className="text-[11pt] font-bold whitespace-nowrap text-gray-900">Catatan :</span>
             <div className="flex-1 border-b border-dotted border-black h-4"></div>
           </div>
           
-          <div className="flex items-baseline gap-2">
-            <span className="text-[11pt] font-bold whitespace-nowrap">No. Rujukan Pesanan Kerajaan:</span>
+          <div className="flex items-baseline gap-2 text-gray-900">
+            <span className="text-[11pt] font-bold whitespace-nowrap text-gray-900">No. Rujukan Pesanan Kerajaan:</span>
             <div className="flex-1 border-b border-dotted border-black h-4"></div>
           </div>
 
-          <div className="flex items-baseline gap-2">
-            <span className="text-[11pt] font-bold whitespace-nowrap">Tarikh:</span>
+          <div className="flex items-baseline gap-2 text-gray-900">
+            <span className="text-[11pt] font-bold whitespace-nowrap text-gray-900">Tarikh:</span>
             <div className="flex-1 border-b border-dotted border-black h-4 w-48"></div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="mt-auto px-8 py-4 bg-slate-50 border-t-2 border-slate-900 w-full">
-        <div className="text-center">
+      <div className="mt-auto px-8 py-4 bg-slate-50 border-t-2 border-slate-900 w-full text-gray-900">
+        <div className="text-center text-gray-900">
           <p className="text-[9pt] font-bold text-slate-800">
             Dokumen Rasmi Kerajaan Malaysia / Official Government Document of Malaysia
           </p>
@@ -1584,6 +1610,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
           min-height: 297mm;
           padding: 2mm;
           background: white;
+          color: #0f172a;
           box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
           margin-bottom: 2.5rem;
           box-sizing: border-box;
@@ -1602,9 +1629,16 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
           display: flex;
           flex-direction: column;
           background: white;
+          color: #0f172a !important;
           border: 1px solid #e2e8f0;
           box-sizing: border-box;
           position: relative;
+        }
+        .po-print-page table,
+        .po-print-page th,
+        .po-print-page td,
+        .po-print-page tr {
+          color: #0f172a;
         }
       `}</style>
       {/* Header Controls - Hidden during print */}

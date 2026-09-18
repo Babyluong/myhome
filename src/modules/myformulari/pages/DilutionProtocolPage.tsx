@@ -3,206 +3,264 @@ import { useNavigate } from 'react-router-dom'
 import {
   Droplets,
   Search,
-  ArrowLeft,
-  Filter,
   Activity,
   Printer,
-  ChevronRight,
-  Sparkles,
+  FileText,
+  ExternalLink,
+  ShieldCheck,
+  AlertTriangle,
+  Syringe,
+  Filter,
   Layers,
-  Clock,
+  Sparkles,
+  BookOpen,
   CheckCircle2,
-  SlidersHorizontal
+  XCircle,
+  Clock,
+  Thermometer,
+  SlidersHorizontal,
+  X
 } from 'lucide-react'
-import { getAllFormulariDrugs } from '../services/formulariService'
+import { KKM_DILUTION_MASTER_DATABASE, KkmDilutionMonograph } from '../data/kkmDilutionMasterDatabase'
 import { DilutionCard } from '../components/DilutionCard'
-import { ROUTES } from '@/lib/constants'
 
 export const DilutionProtocolPage: React.FC = () => {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedClass, setSelectedClass] = useState<string>('ALL')
-  const [selectedRoute, setSelectedRoute] = useState<string>('ALL')
+  const [diluentFilter, setDiluentFilter] = useState<string>('ALL')
+  const [reconFilter, setReconFilter] = useState<'ALL' | 'RECON_REQUIRED' | 'LIQUID_ONLY'>('ALL')
   const [fluidRestrictedOnly, setFluidRestrictedOnly] = useState(false)
 
-  const allDrugs = useMemo(() => getAllFormulariDrugs(), [])
-  const ivDrugs = useMemo(() => {
-    return allDrugs.filter(d => d.dilution?.isApplicable || d.reconstitution?.isApplicable)
-  }, [allDrugs])
+  const allMonographs = useMemo(() => KKM_DILUTION_MASTER_DATABASE, [])
 
-  const therapeuticClasses = useMemo(() => {
-    const classes = new Set<string>()
-    ivDrugs.forEach(d => {
-      if (d.therapeuticClass) classes.add(d.therapeuticClass)
-    })
-    return Array.from(classes)
-  }, [ivDrugs])
+  // Statistical metrics
+  const stats = useMemo(() => {
+    const total = allMonographs.length
+    const liquidCount = allMonographs.filter(m => !m.isReconstitutionRequired).length
+    const powderCount = allMonographs.filter(m => m.isReconstitutionRequired).length
+    const fluidRestrictedCount = allMonographs.filter(m => {
+      const s = m.suggestedMinimumDilutions.toLowerCase()
+      return s.includes('central') || s.includes('peripheral') || s.includes('maximum concentration') || s.includes('not less than')
+    }).length
 
-  const filteredDrugs = useMemo(() => {
-    return ivDrugs.filter(drug => {
+    return { total, liquidCount, powderCount, fluidRestrictedCount }
+  }, [allMonographs])
+
+  const filteredMonographs = useMemo(() => {
+    return allMonographs.filter(mono => {
       if (searchTerm) {
-        const q = searchTerm.toLowerCase()
-        const matchName = drug.genericName.toLowerCase().includes(q)
-        const matchBrand = drug.brandNames.some(b => b.toLowerCase().includes(q))
-        if (!matchName && !matchBrand) return false
+        const q = searchTerm.toLowerCase().trim()
+        const matchTitle = mono.rawTitle.toLowerCase().includes(q)
+        const matchGeneric = mono.genericName.toLowerCase().includes(q)
+        const matchBrand = mono.brandText.toLowerCase().includes(q) || mono.brandNames.some(b => b.toLowerCase().includes(q))
+        const matchDiluent = mono.diluentText.toLowerCase().includes(q)
+        const matchAdmin = mono.administrationText.toLowerCase().includes(q)
+        const matchComments = mono.comments.some(c => c.toLowerCase().includes(q))
+        if (!matchTitle && !matchGeneric && !matchBrand && !matchDiluent && !matchAdmin && !matchComments) {
+          return false
+        }
       }
 
-      if (selectedClass !== 'ALL' && drug.therapeuticClass !== selectedClass) return false
-
-      if (selectedRoute !== 'ALL') {
-        if (drug.dilution?.standardDilution.route !== selectedRoute) return false
+      if (diluentFilter !== 'ALL') {
+        const d = mono.diluentText.toLowerCase()
+        if (diluentFilter === 'NS' && !d.includes('ns') && !d.includes('saline') && !d.includes('sodium chloride')) return false
+        if (diluentFilter === 'D5' && !d.includes('d5') && !d.includes('dextrose') && !d.includes('glucose')) return false
+        if (diluentFilter === 'WFI' && !d.includes('wfi') && !d.includes('water')) return false
       }
+
+      if (reconFilter === 'RECON_REQUIRED' && !mono.isReconstitutionRequired) return false
+      if (reconFilter === 'LIQUID_ONLY' && mono.isReconstitutionRequired) return false
 
       if (fluidRestrictedOnly) {
-        if (!drug.dilution?.standardDilution.maxConcentrationFluidRestricted) return false
+        const s = mono.suggestedMinimumDilutions.toLowerCase()
+        if (!s.includes('central') && !s.includes('peripheral') && !s.includes('maximum concentration') && !s.includes('not less than')) {
+          return false
+        }
       }
 
       return true
     })
-  }, [ivDrugs, searchTerm, selectedClass, selectedRoute, fluidRestrictedOnly])
+  }, [allMonographs, searchTerm, diluentFilter, reconFilter, fluidRestrictedOnly])
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-8">
-      {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-teal-500 to-cyan-600" />
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-gradient-to-br from-teal-600 to-cyan-700 text-white rounded-2xl shadow-md flex-shrink-0">
-            <Droplets className="w-7 h-7" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-              <span>Protokol Rekonstitusi & Pelarutan IV</span>
-            </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              Garis Panduan Bancuhan Aseptik, Cecair Pembawa, Keserasian Y-Site & Tempoh Infusi Hospital Lawas
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => window.print()}
-          className="px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 transition-all self-start md:self-auto cursor-pointer"
-        >
-          <Printer className="w-4 h-4" />
-          <span>Cetak Panduan IV Wad</span>
-        </button>
-      </div>
-
-      {/* Info Banner */}
-      <div className="bg-gradient-to-r from-teal-800 to-cyan-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl space-y-3">
-        <div className="flex items-center gap-2 text-teal-200 text-xs font-bold uppercase tracking-wider">
-          <Activity className="w-4 h-4" />
-          <span>Standard Amalan Farmasi Klinikal KKM</span>
-        </div>
-
-        <h2 className="text-lg sm:text-xl font-bold leading-snug">
-          Semakan 7 'Rights' Pentadbiran Ubat Parenteral & Pencegahan Pemendakan IV:
-        </h2>
-
-        <p className="text-xs sm:text-sm text-teal-100 leading-relaxed max-w-4xl">
-          Sentiasa pastikan keserasian larutan pembawa (0.9% NaCl vs 5% Dextrose) dan elakkan mencampur ubat tanpa rujukan Y-Site. Sediaan pekat seperti Kalium Klorida dilarang sama sekali diberi secara IV bolus terus.
-        </p>
-      </div>
-
-      {/* Filter Bar */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 space-y-4">
-        <div className="flex flex-col md:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Cari ubat suntikan IV (cth: Meropenem, Vancomycin, Dobutamine, KCl)..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-teal-500 focus:bg-white"
-            />
-          </div>
-
-          <select
-            value={selectedClass}
-            onChange={e => setSelectedClass(e.target.value)}
-            className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-700"
-          >
-            <option value="ALL">Semua Kelas Terapi</option>
-            {therapeuticClasses.map(cls => (
-              <option key={cls} value={cls}>{cls}</option>
-            ))}
-          </select>
-
-          <select
-            value={selectedRoute}
-            onChange={e => setSelectedRoute(e.target.value)}
-            className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-700"
-          >
-            <option value="ALL">Semua Laluan Infusi</option>
-            <option value="Continuous Infusion">Continuous Infusion (Infusi Berterusan)</option>
-            <option value="IV Infusion">IV Infusion (Infusi Berkala)</option>
-            <option value="IV Slow Push">IV Slow Push (Tolakan Perlahan)</option>
-          </select>
-        </div>
-
-        {/* Checkbox Chips */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs">
-          <button
-            onClick={() => setFluidRestrictedOnly(!fluidRestrictedOnly)}
-            className={`px-3 py-1.5 rounded-xl font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
-              fluidRestrictedOnly ? 'bg-teal-600 text-white border-teal-700 shadow-xs' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-            }`}
-          >
-            <Droplets className="w-3.5 h-3.5" />
-            <span>Pesakit Sekatan Cecair (Fluid-Restricted Protocols)</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Protocols Listing */}
-      <div className="space-y-8">
-        {filteredDrugs.map(drug => (
-          <div
-            key={drug.id}
-            className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-5"
-          >
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-slate-100 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-bold bg-teal-100 text-teal-800 px-2.5 py-0.5 rounded-full font-mono">
-                    ATC: {drug.atcCode}
+    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6">
+      {/* Executive Header Card */}
+        <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-500 via-cyan-500 to-indigo-600" />
+          
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="flex items-start sm:items-center gap-4">
+              <div className="p-3.5 bg-gradient-to-br from-teal-600 to-cyan-700 text-white rounded-2xl shadow-md flex-shrink-0">
+                <Droplets className="w-8 h-8" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider bg-teal-100/90 text-teal-900 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-teal-700" />
+                    <span>MOH Clinical Practice Standard</span>
                   </span>
-                  <span className="text-xs text-slate-500 font-semibold">{drug.therapeuticClass}</span>
+                  <span className="text-xs text-slate-400 font-medium">Edisi Rasmi 2024 / 2025</span>
                 </div>
-
-                <h3 className="text-xl font-extrabold text-slate-900">
-                  {drug.genericName}
-                </h3>
-                <p className="text-xs text-slate-500 font-medium">
-                  {drug.brandNames.join(' • ')} — Kekuatan: {drug.strengths.join(', ')}
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+                  IV Reconstitution &amp; Dilution Protocols
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                  Panduan Pelarutan Parenteral &amp; Sekatan Cecair ICU/Wad Hospital Lawas
                 </p>
               </div>
-
-              <button
-                onClick={() => navigate(`/formulari/drug/${drug.id}`)}
-                className="text-xs font-bold text-teal-700 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 px-4 py-2 rounded-xl transition-colors shrink-0"
-              >
-                Kad Penuh &rarr;
-              </button>
             </div>
 
-            {/* Render Dilution Card Component */}
-            <DilutionCard
-              reconstitution={drug.reconstitution}
-              dilution={drug.dilution}
-              drugName={drug.genericName}
-            />
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => window.print()}
+                className="px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-2xs flex items-center gap-2 transition-all cursor-pointer active:scale-95"
+              >
+                <Printer className="w-4 h-4" />
+                <span>Cetak Garis Panduan</span>
+              </button>
+            </div>
           </div>
-        ))}
 
-        {filteredDrugs.length === 0 && (
-          <div className="p-12 text-center bg-white rounded-3xl border border-dashed border-slate-300 text-slate-500 text-xs">
-            Tiada protokol pelarutan parenteral ditemui bagi carian ini.
+          {/* Quick Metrics Counter Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-slate-100 text-slate-800">
+            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Jumlah Monograf KKM</p>
+              <p className="text-xl font-black text-slate-900 mt-0.5">{stats.total}</p>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-teal-50/60 border border-teal-200/70">
+              <p className="text-[10px] uppercase font-bold tracking-wider text-teal-700">Sekatan Cecair (ICU)</p>
+              <p className="text-xl font-black text-teal-900 mt-0.5">{stats.fluidRestrictedCount}</p>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-emerald-50/60 border border-emerald-200/70">
+              <p className="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Sediaan Cecair (Ready)</p>
+              <p className="text-xl font-black text-emerald-900 mt-0.5">{stats.liquidCount}</p>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-amber-50/60 border border-amber-200/70">
+              <p className="text-[10px] uppercase font-bold tracking-wider text-amber-700">Serbuk Rekonstitusi</p>
+              <p className="text-xl font-black text-amber-900 mt-0.5">{stats.powderCount}</p>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+
+        {/* Official Reference Document Links Banner */}
+        <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-cyan-950 text-white rounded-3xl p-5 sm:p-6 shadow-md border border-teal-800/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-teal-300 text-xs font-bold uppercase tracking-wider">
+              <Activity className="w-4 h-4 text-teal-400" />
+              <span>Dokumen Rujukan Rasmi KKM (Official MOH Guidelines)</span>
+            </div>
+            <p className="text-xs text-teal-100/80 max-w-2xl leading-relaxed">
+              Semua protokol diekstrak terus daripada Bahagian Perkhidmatan Farmasi KKM tanpa sebarang data sintetik bagi menjamin keselamatan pesakit.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <a
+              href="https://pharmacy.moh.gov.my/sites/default/files/document-upload/update-dec-2025-april-2024-dilution-guide-fluid-restricted-critically-ill-adults.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-800/70 hover:bg-teal-700/90 text-teal-100 hover:text-white border border-teal-600/50 transition-all flex items-center gap-1.5 shadow-2xs"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Fluid-Restricted Guide (PDF)</span>
+            </a>
+            <a
+              href="https://pharmacy.moh.gov.my/sites/default/files/document-upload/dilution-guideline-injectable-drugs-part-i-antimicrobial-april-2021-pdf.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-cyan-800/70 hover:bg-cyan-700/90 text-cyan-100 hover:text-white border border-cyan-600/50 transition-all flex items-center gap-1.5 shadow-2xs"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Antimicrobial Guide (PDF)</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Modern Search & Filter Controls */}
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-xs p-5 space-y-4">
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Cari nama generik, jenama KKM (cth: Ainiron, Injecsol, Meropenem, Vancomycin, Dobutamine)..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                className="w-full pl-11 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-teal-500 focus:bg-white transition-all font-medium"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            <select
+              value={diluentFilter}
+              onChange={e => setDiluentFilter(e.target.value)}
+              className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden focus:border-teal-500"
+            >
+              <option value="ALL">Semua Pelarut (Diluents)</option>
+              <option value="NS">Normal Saline (0.9% NaCl)</option>
+              <option value="D5">Dextrose 5% (D5W)</option>
+              <option value="WFI">Water for Injection (WFI)</option>
+            </select>
+
+            <select
+              value={reconFilter}
+              onChange={e => setReconFilter(e.target.value as any)}
+              className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden focus:border-teal-500"
+            >
+              <option value="ALL">Semua Sediaan (Cecair &amp; Serbuk)</option>
+              <option value="LIQUID_ONLY">Sediaan Cecair Sahaja (Ready-to-Use)</option>
+              <option value="RECON_REQUIRED">Serbuk Sahaja (Rekonstitusi)</option>
+            </select>
+          </div>
+
+          {/* Quick Filter Badges */}
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs">
+            <button
+              onClick={() => setFluidRestrictedOnly(!fluidRestrictedOnly)}
+              className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 border transition-all cursor-pointer ${
+                fluidRestrictedOnly
+                  ? 'bg-teal-600 text-white border-teal-700 shadow-xs'
+                  : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+              }`}
+            >
+              <Droplets className="w-3.5 h-3.5" />
+              <span>Sekatan Cecair (Fluid-Restricted Protocols)</span>
+            </button>
+
+            <span className="ml-auto text-xs text-slate-500 font-semibold">
+              Menunjukkan <strong>{filteredMonographs.length}</strong> daripada <strong>{allMonographs.length}</strong> monograf rasmi KKM
+            </span>
+          </div>
+        </div>
+
+        {/* Monograph Cards Feed */}
+        <div className="space-y-6">
+          {filteredMonographs.map(mono => (
+            <DilutionCard
+              key={mono.id}
+              drugName={mono.genericName}
+              monograph={mono}
+            />
+          ))}
+
+          {filteredMonographs.length === 0 && (
+            <div className="p-12 text-center bg-white rounded-3xl border border-dashed border-slate-300 text-slate-500 text-xs space-y-2">
+              <Droplets className="w-8 h-8 mx-auto text-slate-400 opacity-60" />
+              <p className="font-bold text-slate-700 text-sm">Tiada protokol pelarutan KKM ditemui</p>
+              <p className="text-slate-500">Cuba ubah kata kunci carian atau tetapkan semula pilihan tapisan.</p>
+            </div>
+          )}
+        </div>
     </div>
   )
 }

@@ -130,6 +130,7 @@ const REAL_PHARMACY_STAFF: ColleagueOption[] = [
 export const StaffMovementPage: React.FC = () => {
   const navigate = useNavigate()
   const { language } = useLanguage()
+  const isMs = language === 'ms'
   const toast = useToast()
   const user = useAuthStore(state => state.user)
 
@@ -177,7 +178,7 @@ export const StaffMovementPage: React.FC = () => {
 
     // 15MB limit check
     if (file.size > 15 * 1024 * 1024) {
-      toast.error('Saiz fail melebihi had maksimum 15MB.')
+      toast.error(isMs ? 'Saiz fail melebihi had maksimum 15MB.' : 'File size exceeds maximum limit of 15MB.')
       return
     }
 
@@ -185,7 +186,7 @@ export const StaffMovementPage: React.FC = () => {
     const reader = new FileReader()
     reader.onload = () => {
       setFormDocUrl(reader.result as string)
-      toast.success(`Fail "${file.name}" sedia dilampirkan.`)
+      toast.success(isMs ? `Fail "${file.name}" sedia dilampirkan.` : `File "${file.name}" ready to attach.`)
     }
     reader.readAsDataURL(file)
   }
@@ -206,7 +207,7 @@ export const StaffMovementPage: React.FC = () => {
       if (res.data) setMovements(res.data)
     } catch (e) {
       console.error(e)
-      toast.error('Ralat memuatkan rekod pergerakan')
+      toast.error(isMs ? 'Ralat memuatkan rekod pergerakan' : 'Error loading movement records')
     } finally {
       setIsLoading(false)
     }
@@ -354,9 +355,9 @@ export const StaffMovementPage: React.FC = () => {
     if (isManualOfficer) {
       return {
         id: 'custom-' + Date.now(),
-        full_name: manualOfficerName.trim() || 'Pegawai Farmasi Khas',
-        jawatan: manualOfficerRole.trim() || 'Pegawai Farmasi',
-        department_name: 'Jabatan Farmasi'
+        full_name: manualOfficerName.trim() || (isMs ? 'Pegawai Farmasi Khas' : 'Special Officer'),
+        jawatan: manualOfficerRole.trim() || (isMs ? 'Pegawai Farmasi' : 'Pharmacy Officer'),
+        department_name: isMs ? 'Jabatan Farmasi' : 'Pharmacy Department'
       }
     }
 
@@ -370,7 +371,7 @@ export const StaffMovementPage: React.FC = () => {
         department_name: 'Jabatan Farmasi (Logistik)'
       }
     )
-  }, [logTarget, user, isManualOfficer, manualOfficerName, manualOfficerRole, selectedColleagueId, colleagues])
+  }, [logTarget, user, isManualOfficer, manualOfficerName, manualOfficerRole, selectedColleagueId, colleagues, isMs])
 
   const handleOpenCreate = () => {
     setEditingMovement(null)
@@ -435,29 +436,29 @@ export const StaffMovementPage: React.FC = () => {
         actor_role: user?.jawatan || 'Pegawai Farmasi',
         record_title: deletingMovement.tajuk
       })
-      toast.success('Rekod pergerakan telah dipadam dan jejak audit rasmi disimpan.')
+      toast.success(isMs ? 'Rekod pergerakan telah dipadam dan jejak audit rasmi disimpan.' : 'Movement record deleted and official audit trail saved.')
       setMovements(prev => prev.filter(m => m.id !== deletingMovement.id))
       setIsDeleteModalOpen(false)
       setDeletingMovement(null)
     } catch {
-      toast.error('Gagal memadam rekod pergerakan.')
+      toast.error(isMs ? 'Gagal memadam rekod pergerakan.' : 'Failed to delete movement record.')
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formTitle.trim() || !formDestination.trim() || !formPurpose.trim()) {
-      toast.error('Sila lengkapkan tajuk, destinasi dan tujuan pergerakan.')
+      toast.error(isMs ? 'Sila lengkapkan tajuk, destinasi dan tujuan pergerakan.' : 'Please complete the title, destination, and purpose of movement.')
       return
     }
 
     if (editingMovement && !editReason.trim()) {
-      toast.error('Sila nyatakan sebab / justifikasi pindaan (Wajib untuk rekod audit).')
+      toast.error(isMs ? 'Sila nyatakan sebab / justifikasi pindaan (Wajib untuk rekod audit).' : 'Please state the reason / justification for amendment (Mandatory for audit trail).')
       return
     }
 
     if (logTarget === 'other' && isManualOfficer && (!manualOfficerName.trim() || !manualOfficerRole.trim())) {
-      toast.error('Sila masukkan nama dan jawatan pegawai farmasi terlibat.')
+      toast.error(isMs ? 'Sila masukkan nama dan jawatan pegawai farmasi terlibat.' : 'Please enter the name and role of the officer involved.')
       return
     }
 
@@ -500,11 +501,11 @@ export const StaffMovementPage: React.FC = () => {
             reason: editReason.trim(),
             actor_id: user?.id || 'user-amri',
             actor_name: user?.full_name || 'AMRI AMIT',
-            actor_role: user?.jawatan || 'Pegawai Bertugas'
+            actor_role: user?.jawatan || (isMs ? 'Pegawai Bertugas' : 'Duty Officer')
           }
         )
         if (res.error) throw new Error(res.error)
-        toast.success('Rekod pergerakan berjaya dikemaskini dan jejak audit disimpan!')
+        toast.success(isMs ? 'Rekod pergerakan berjaya dikemaskini dan jejak audit disimpan!' : 'Movement record updated and audit trail logged!')
       } else {
         // CREATE new record
         const res = await submitStaffMovement({
@@ -531,8 +532,10 @@ export const StaffMovementPage: React.FC = () => {
         if (res.error) throw new Error(res.error)
         toast.success(
           logTarget === 'self'
-            ? 'Borang Pergerakan Pegawai berjaya direkodkan!'
-            : `Pergerakan bagi ${activeTargetOfficer.full_name} berjaya direkodkan oleh ${user?.full_name || 'anda'}!`
+            ? (isMs ? 'Borang Pergerakan Pegawai berjaya direkodkan!' : 'Officer Movement Form successfully recorded!')
+            : isMs
+            ? `Pergerakan bagi ${activeTargetOfficer.full_name} berjaya direkodkan oleh ${user?.full_name || 'anda'}!`
+            : `Movement for ${activeTargetOfficer.full_name} successfully recorded by ${user?.full_name || 'you'}!`
         )
       }
 
@@ -541,7 +544,7 @@ export const StaffMovementPage: React.FC = () => {
       setEditReason('')
       await loadMovements()
     } catch (err: any) {
-      toast.error(err.message || 'Gagal menyimpan rekod pergerakan')
+      toast.error(err.message || (isMs ? 'Gagal menyimpan rekod pergerakan' : 'Failed to save movement record'))
     } finally {
       setSubmitting(false)
     }
@@ -550,50 +553,50 @@ export const StaffMovementPage: React.FC = () => {
   const movementTypeOptions = [
     {
       id: 'MEETING' as MovementType,
-      label: 'Mesyuarat / Perbincangan',
-      desc: 'Mesyuarat jawatankuasa ubat, penyelarasan & perbincangan rasmi',
+      label: isMs ? 'Mesyuarat / Perbincangan' : 'Meeting / Discussion',
+      desc: isMs ? 'Mesyuarat jawatankuasa ubat, penyelarasan & perbincangan rasmi' : 'Drug committee meetings, coordination & official discussions',
       icon: Briefcase
     },
     {
       id: 'COURSE' as MovementType,
-      label: 'Kursus / Latihan / Bengkel',
-      desc: 'Kursus ILKKM, latihan kepakaran klinikal & bengkel farmasi',
+      label: isMs ? 'Kursus / Latihan / Bengkel' : 'Course / Training / Workshop',
+      desc: isMs ? 'Kursus ILKKM, latihan kepakaran klinikal & bengkel farmasi' : 'ILKKM courses, clinical skills training & department workshops',
       icon: GraduationCap
     },
     {
       id: 'CME' as MovementType,
-      label: 'CME / CPD Pembelajaran',
-      desc: 'Sesi Continuing Medical Education & pembelajaran farmakoterapi',
+      label: isMs ? 'CME / CPD Pembelajaran' : 'CME / CPD Learning Session',
+      desc: isMs ? 'Sesi Continuing Medical Education & pembelajaran farmakoterapi' : 'Continuing Medical Education & pharmacotherapy learning sessions',
       icon: Stethoscope
     },
     {
       id: 'PRESENTATION' as MovementType,
-      label: 'Pembentangan / Speaker',
-      desc: 'Pembentangan penyelidikan ubat, penceramah jemputan',
+      label: isMs ? 'Pembentangan / Speaker' : 'Presentation / Guest Speaker',
+      desc: isMs ? 'Pembentangan penyelidikan ubat, penceramah jemputan' : 'Drug research presentation, invited guest speaker',
       icon: Presentation
     },
     {
       id: 'SITE_VISIT' as MovementType,
-      label: 'Lawatan Tapak / Audit',
-      desc: 'Pemeriksaan stor ubat, verifikasi keselamatan DDA & audit fasiliti',
+      label: isMs ? 'Lawatan Tapak / Audit' : 'Site Visit / Facility Audit',
+      desc: isMs ? 'Pemeriksaan stor ubat, verifikasi keselamatan DDA & audit fasiliti' : 'Medicine store inspection, DDA safety check & facility audit',
       icon: MapPin
     },
     {
       id: 'OFFICIAL_DUTY' as MovementType,
-      label: 'Tugas Rasmi Luar',
-      desc: 'Penugasan bekalan logistik ubat di luar kawasan hospital/stesen',
+      label: isMs ? 'Tugas Rasmi Luar' : 'Outstation Official Duty',
+      desc: isMs ? 'Penugasan bekalan logistik ubat di luar kawasan hospital/stesen' : 'Logistics supply distribution & official duty outside hospital/station',
       icon: FileText
     },
     {
       id: 'ANNUAL_LEAVE' as MovementType,
-      label: 'Cuti Rehat / Annual Leave',
-      desc: 'Cuti tahunan yang diluluskan, pelepasan am & rehat pegawai',
+      label: isMs ? 'Cuti Rehat / Annual Leave' : 'Annual Leave / Rest Day',
+      desc: isMs ? 'Cuti tahunan yang diluluskan, pelepasan am & rehat pegawai' : 'Approved annual leave, public release & officer leave',
       icon: Palmtree
     },
     {
       id: 'TIME_OFF' as MovementType,
-      label: 'Time Off / Keluar Seketika',
-      desc: 'Pelepasan waktu bertugas (< 4 jam), urusan kecemasan / peribadi',
+      label: isMs ? 'Time Off / Keluar Seketika' : 'Time Off / Short Absence',
+      desc: isMs ? 'Pelepasan waktu bertugas (< 4 jam), urusan kecemasan / peribadi' : 'Official short absence (< 4 hours), emergency / personal matter',
       icon: Timer
     }
   ]
@@ -614,14 +617,16 @@ export const StaffMovementPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-black tracking-tight text-slate-800">
-                Log Pergerakan Staf & Rekod Keluar Pejabat
+                {isMs ? 'Log Pergerakan Staf & Rekod Keluar Pejabat' : 'Staff Movement & Out of Station Log'}
               </h1>
               <Badge variant="gray" className="font-mono text-[10px] font-bold py-0.5 px-2 text-emerald-700 bg-emerald-50 border-emerald-200">
-                JABATAN FARMASI
+                {isMs ? 'JABATAN FARMASI' : 'PHARMACY DEPARTMENT'}
               </Badge>
             </div>
             <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              Borang Pergerakan Pegawai Farmasi (Mesyuarat, Kursus, Lawatan Tapak, CME & Tugasan Rasmi)
+              {isMs
+                ? 'Borang Pergerakan Pegawai Farmasi (Mesyuarat, Kursus, Lawatan Tapak, CME & Tugasan Rasmi)'
+                : 'Officer Movement Log (Meetings, Courses, Site Visits, CME & Official Duties)'}
             </p>
           </div>
         </div>
@@ -633,7 +638,7 @@ export const StaffMovementPage: React.FC = () => {
             className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 text-slate-700 font-bold text-xs flex items-center gap-2 transition-all shadow-xs"
           >
             <History className="w-4 h-4 text-emerald-600" />
-            <span>Log Audit & Pindaan</span>
+            <span>{isMs ? 'Log Audit & Pindaan' : 'Audit Trail & History'}</span>
           </button>
 
           <Button
@@ -641,7 +646,7 @@ export const StaffMovementPage: React.FC = () => {
             className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl shadow-md hover:shadow-lg font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm"
           >
             <Plus className="w-4 h-4" />
-            <span>Catat Pergerakan Baharu</span>
+            <span>{isMs ? 'Catat Pergerakan Baharu' : 'Record New Movement'}</span>
           </Button>
         </div>
       </div>
@@ -653,7 +658,7 @@ export const StaffMovementPage: React.FC = () => {
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Cari tajuk, destinasi, pegawai farmasi atau pelapor..."
+            placeholder={isMs ? "Cari tajuk, destinasi, pegawai farmasi atau pelapor..." : "Search title, destination, officer or submitter..."}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 font-medium placeholder:text-slate-400"
@@ -663,15 +668,15 @@ export const StaffMovementPage: React.FC = () => {
         {/* Category Filters */}
         <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
           {[
-            { id: 'ALL', label: 'Semua Kategori' },
-            { id: 'MEETING', label: 'Mesyuarat' },
-            { id: 'COURSE', label: 'Kursus/Latihan' },
-            { id: 'CME', label: 'CME/CPD' },
-            { id: 'PRESENTATION', label: 'Pembentangan' },
-            { id: 'SITE_VISIT', label: 'Lawatan Tapak' },
-            { id: 'OFFICIAL_DUTY', label: 'Tugas Rasmi' },
-            { id: 'ANNUAL_LEAVE', label: 'Cuti Rehat (Annual Leave)' },
-            { id: 'TIME_OFF', label: 'Time Off' }
+            { id: 'ALL', label: isMs ? 'Semua Kategori' : 'All Categories' },
+            { id: 'MEETING', label: isMs ? 'Mesyuarat' : 'Meetings' },
+            { id: 'COURSE', label: isMs ? 'Kursus/Latihan' : 'Courses/Training' },
+            { id: 'CME', label: isMs ? 'CME/CPD' : 'CME/CPD' },
+            { id: 'PRESENTATION', label: isMs ? 'Pembentangan' : 'Presentations' },
+            { id: 'SITE_VISIT', label: isMs ? 'Lawatan Tapak' : 'Site Visits' },
+            { id: 'OFFICIAL_DUTY', label: isMs ? 'Tugas Rasmi' : 'Official Duty' },
+            { id: 'ANNUAL_LEAVE', label: isMs ? 'Cuti Rehat (Annual Leave)' : 'Annual Leave' },
+            { id: 'TIME_OFF', label: isMs ? 'Time Off' : 'Time Off' }
           ].map(cat => (
             <button
               key={cat.id}
@@ -694,15 +699,15 @@ export const StaffMovementPage: React.FC = () => {
           <table className="w-full text-left text-sm text-slate-700">
             <thead className="bg-slate-50/80 border-b border-slate-100 text-xs uppercase font-black text-slate-600 tracking-wider font-mono">
               <tr>
-                <th className="px-6 py-4">Pegawai Terlibat (Farmasi)</th>
-                <th className="px-6 py-4">Kategori & Tajuk Pergerakan</th>
-                <th className="px-6 py-4">Destinasi</th>
-                <th className="px-6 py-4">Tarikh & Masa Keluar</th>
-                <th className="px-6 py-4">Tujuan / Skop</th>
-                <th className="px-6 py-4">Dokumen Lampiran (1-Click)</th>
-                <th className="px-6 py-4">Didaftarkan Oleh</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Tindakan</th>
+                <th className="px-6 py-4">{isMs ? 'Pegawai Terlibat (Farmasi)' : 'Involved Officer'}</th>
+                <th className="px-6 py-4">{isMs ? 'Kategori & Tajuk Pergerakan' : 'Category & Movement Title'}</th>
+                <th className="px-6 py-4">{isMs ? 'Destinasi' : 'Destination'}</th>
+                <th className="px-6 py-4">{isMs ? 'Tarikh & Masa Keluar' : 'Date & Departure Time'}</th>
+                <th className="px-6 py-4">{isMs ? 'Tujuan / Skop' : 'Purpose / Scope'}</th>
+                <th className="px-6 py-4">{isMs ? 'Dokumen Lampiran (1-Click)' : 'Attached Document (1-Click)'}</th>
+                <th className="px-6 py-4">{isMs ? 'Didaftarkan Oleh' : 'Submitted By'}</th>
+                <th className="px-6 py-4">{isMs ? 'Status' : 'Status'}</th>
+                <th className="px-6 py-4 text-right">{isMs ? 'Tindakan' : 'Actions'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
@@ -710,8 +715,14 @@ export const StaffMovementPage: React.FC = () => {
                 <tr>
                   <td colSpan={9} className="text-center py-16 text-slate-400">
                     <Briefcase className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                    <p className="font-bold text-slate-600">Tiada rekod pergerakan dijumpai</p>
-                    <p className="text-xs text-slate-400 mt-0.5">Semua pegawai farmasi berada di stesen atau belum ada pergerakan direkodkan.</p>
+                    <p className="font-bold text-slate-600">
+                      {isMs ? 'Tiada rekod pergerakan dijumpai' : 'No movement records found'}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      {isMs
+                        ? 'Semua pegawai farmasi berada di stesen atau belum ada pergerakan direkodkan.'
+                        : 'All officers are currently on station or no movement has been recorded.'}
+                    </p>
                   </td>
                 </tr>
               ) : (
@@ -726,8 +737,8 @@ export const StaffMovementPage: React.FC = () => {
                             {m.user?.full_name?.charAt(0) || 'P'}
                           </div>
                           <div>
-                            <div className="font-bold text-slate-900">{m.user?.full_name || 'Pegawai Farmasi'}</div>
-                            <div className="text-xs text-slate-500">{m.user?.jawatan || 'Pegawai Farmasi UF9'}</div>
+                            <div className="font-bold text-slate-900">{m.user?.full_name || (isMs ? 'Pegawai Farmasi' : 'Pharmacy Officer')}</div>
+                            <div className="text-xs text-slate-500">{m.user?.jawatan || (isMs ? 'Pegawai Farmasi UF9' : 'Pharmacy Officer')}</div>
                           </div>
                         </div>
                       </td>
@@ -739,9 +750,9 @@ export const StaffMovementPage: React.FC = () => {
                             {m.jenis_pergerakan}
                           </span>
                           {m.last_edited_by_name && (
-                            <span className="text-[10px] text-amber-900 font-bold bg-amber-100/80 border border-amber-300 px-2 py-0.5 rounded flex items-center gap-1" title={m.last_edit_reason || 'Pindaan data'}>
+                            <span className="text-[10px] text-amber-900 font-bold bg-amber-100/80 border border-amber-300 px-2 py-0.5 rounded flex items-center gap-1" title={m.last_edit_reason || (isMs ? 'Pindaan data' : 'Data modification')}>
                               <Edit3 className="w-3 h-3 text-amber-700 shrink-0" />
-                              <span>Dipinda: {m.last_edited_by_name}</span>
+                              <span>{isMs ? `Dipinda: ${m.last_edited_by_name}` : `Modified: ${m.last_edited_by_name}`}</span>
                             </span>
                           )}
                         </div>
@@ -772,20 +783,20 @@ export const StaffMovementPage: React.FC = () => {
                         {m.attachment_url || m.attachment_name ? (
                           <a
                             href={m.attachment_url || '#'}
-                            download={m.attachment_name || 'Dokumen_Pergerakan'}
+                            download={m.attachment_name || 'Document_Attachment'}
                             target="_blank"
                             rel="noreferrer"
                             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-600 hover:text-white transition-all shadow-xs text-xs font-bold max-w-[180px] group/doc"
                           >
                             <FileText className="w-3.5 h-3.5 text-emerald-600 group-hover/doc:text-white shrink-0" />
                             <span className="truncate">
-                              {m.attachment_name || 'Surat / Memo'}
+                              {m.attachment_name || (isMs ? 'Surat / Memo' : 'Letter / Memo')}
                             </span>
                             <Download className="w-3 h-3 group-hover/doc:translate-y-0.5 transition-transform shrink-0" />
                           </a>
                         ) : (
                           <span className="text-xs text-slate-400 font-normal italic">
-                            Tiada dokumen
+                            {isMs ? 'Tiada dokumen' : 'No document'}
                           </span>
                         )}
                       </td>
@@ -798,7 +809,7 @@ export const StaffMovementPage: React.FC = () => {
                             <span>{m.logged_by_name || m.user?.full_name || user?.full_name || 'AMRI AMIT'}</span>
                           </span>
                           <span className="text-[10px] text-slate-400 font-medium">
-                            {isLoggedByOther ? 'Bagi pihak pegawai' : 'Didaftar sendiri'}
+                            {isLoggedByOther ? (isMs ? 'Bagi pihak pegawai' : 'On behalf of officer') : (isMs ? 'Didaftar sendiri' : 'Self-registered')}
                           </span>
                         </div>
                       </td>
@@ -806,7 +817,7 @@ export const StaffMovementPage: React.FC = () => {
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                           <CheckCircle2 className="w-3 h-3" />
-                          Disahkan
+                          {isMs ? 'Disahkan' : 'Confirmed'}
                         </span>
                       </td>
 
@@ -815,14 +826,14 @@ export const StaffMovementPage: React.FC = () => {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={(e) => handleOpenEdit(m, e)}
-                            title="Kemaskini Rekod & Rekod Log Pindaan"
+                            title={isMs ? "Kemaskini Rekod & Rekod Log Pindaan" : "Edit Record & Log Modification"}
                             className="p-2 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all border border-slate-200 shadow-2xs hover:shadow-xs"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={(e) => handleOpenDelete(m, e)}
-                            title="Padam Pergerakan & Rekod Sebab Pemadaman"
+                            title={isMs ? "Padam Pergerakan & Rekod Sebab Pemadaman" : "Delete Movement & Log Reason"}
                             className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-200 shadow-2xs hover:shadow-xs"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -846,14 +857,22 @@ export const StaffMovementPage: React.FC = () => {
           setEditingMovement(null)
         }}
         size="3xl"
-        title={editingMovement ? 'Kemaskini Borang Pergerakan Pegawai' : 'Borang Pergerakan Pegawai'}
-        description={editingMovement ? 'Pindaan rasmi rekod pergerakan pegawai dengan catatan jejak audit mandatori' : 'Rekod rasmi urusan pergerakan keluar pejabat, mesyuarat luar, kursus dan tugasan stesen'}
+        title={
+          editingMovement
+            ? isMs ? 'Kemaskini Borang Pergerakan Pegawai' : 'Update Officer Movement Record'
+            : isMs ? 'Borang Pergerakan Pegawai' : 'Officer Movement Form'
+        }
+        description={
+          editingMovement
+            ? isMs ? 'Pindaan rasmi rekod pergerakan pegawai dengan catatan jejak audit mandatori' : 'Official modification of movement record with mandatory audit trail logging'
+            : isMs ? 'Rekod rasmi urusan pergerakan keluar pejabat, mesyuarat luar, kursus dan tugasan stesen' : 'Official registration for out-of-office travel, external meetings, courses, and station duties'
+        }
       >
         <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6 pb-24 text-slate-800">
           {/* Target Selection Switcher: Diri Sendiri vs Pegawai Lain di Jabatan Farmasi */}
           <div className="space-y-3">
             <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
-              Pilihan Pegawai / Sasaran Pendaftaran
+              {isMs ? 'Pilihan Pegawai / Sasaran Pendaftaran' : 'Target Officer Selection'}
             </label>
 
             <div className="grid grid-cols-2 gap-3 p-1.5 bg-slate-100 rounded-2xl border border-slate-200/80">
@@ -867,7 +886,7 @@ export const StaffMovementPage: React.FC = () => {
                 }`}
               >
                 <User className="w-4 h-4 text-emerald-600" />
-                <span>Diri Sendiri ({user?.full_name?.split(' ')[0] || 'AMRI'})</span>
+                <span>{isMs ? `Diri Sendiri (${user?.full_name?.split(' ')[0] || 'AMRI'})` : `Self (${user?.full_name?.split(' ')[0] || 'AMRI'})`}</span>
               </button>
 
               <button
@@ -880,7 +899,7 @@ export const StaffMovementPage: React.FC = () => {
                 }`}
               >
                 <Users className="w-4 h-4 text-emerald-600" />
-                <span>Pegawai Lain di Jabatan Farmasi</span>
+                <span>{isMs ? 'Pegawai Lain di Jabatan' : 'Other Department Officer'}</span>
               </button>
             </div>
           </div>
@@ -891,14 +910,18 @@ export const StaffMovementPage: React.FC = () => {
             <div className="flex items-center justify-between border-b border-emerald-100/80 pb-2.5">
               <div className="flex items-center gap-2 text-xs">
                 <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">
-                  {editingMovement ? 'Pegawai Yang Meminda:' : 'Didaftarkan Oleh (Pelapor):'}
+                  {editingMovement
+                    ? isMs ? 'Pegawai Yang Meminda:' : 'Amended By:'
+                    : isMs ? 'Didaftarkan Oleh (Pelapor):' : 'Submitted By (Reporter):'}
                 </span>
                 <span className="font-extrabold text-slate-900">
-                  {user?.full_name || 'AMRI AMIT'} ({user?.jawatan || 'Penolong Pegawai Farmasi U5'})
+                  {user?.full_name || 'AMRI AMIT'} ({user?.jawatan || (isMs ? 'Penolong Pegawai Farmasi U5' : 'Assistant Pharmacy Officer U5')})
                 </span>
               </div>
               <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-white border border-emerald-300 text-emerald-700 shadow-xs">
-                {editingMovement ? 'MOD PINDAAN' : 'JABATAN FARMASI'}
+                {editingMovement
+                  ? isMs ? 'MOD PINDAAN' : 'EDIT MODE'
+                  : isMs ? 'JABATAN FARMASI' : 'PHARMACY DEPT'}
               </span>
             </div>
 
@@ -910,13 +933,13 @@ export const StaffMovementPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">
-                    Pegawai Yang Keluar Stesen
+                    {isMs ? 'Pegawai Yang Keluar Stesen' : 'Officer Leaving Station'}
                   </p>
                   <h4 className="text-base font-extrabold text-slate-900 leading-snug">
                     {user?.full_name || 'AMRI AMIT'}
                   </h4>
                   <p className="text-xs text-slate-600 font-medium mt-0.5">
-                    {user?.jawatan || 'Penolong Pegawai Farmasi U5'} • Jabatan Farmasi
+                    {user?.jawatan || (isMs ? 'Penolong Pegawai Farmasi U5' : 'Assistant Pharmacy Officer U5')} • {isMs ? 'Jabatan Farmasi' : 'Pharmacy Department'}
                   </p>
                 </div>
               </div>
@@ -924,14 +947,16 @@ export const StaffMovementPage: React.FC = () => {
               <div className="space-y-3 pt-1">
                 <div className="flex items-center justify-between">
                   <p className="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">
-                    Pilih Pegawai Farmasi Terlibat:
+                    {isMs ? 'Pilih Pegawai Farmasi Terlibat:' : 'Select Involved Officer:'}
                   </p>
                   <button
                     type="button"
                     onClick={() => setIsManualOfficer(!isManualOfficer)}
                     className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 underline"
                   >
-                    {isManualOfficer ? 'Pilih Dari Senarai Farmasi' : '+ Masukkan Manual'}
+                    {isManualOfficer
+                      ? isMs ? 'Pilih Dari Senarai Farmasi' : 'Select from List'
+                      : isMs ? '+ Masukkan Manual' : '+ Manual Entry'}
                   </button>
                 </div>
 
@@ -951,11 +976,11 @@ export const StaffMovementPage: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white p-3.5 rounded-2xl border border-emerald-300 shadow-sm">
                     <div>
                       <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block mb-1">
-                        Nama Pegawai Farmasi
+                        {isMs ? 'Nama Pegawai' : 'Officer Name'}
                       </label>
                       <input
                         type="text"
-                        placeholder="cth. Mohamad Aiman bin Mat Zaki"
+                        placeholder={isMs ? "cth. Mohamad Aiman bin Mat Zaki" : "e.g. Mohamad Aiman bin Mat Zaki"}
                         value={manualOfficerName}
                         onChange={e => setManualOfficerName(e.target.value)}
                         className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -963,11 +988,11 @@ export const StaffMovementPage: React.FC = () => {
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block mb-1">
-                        Jawatan / Gred Farmasi
+                        {isMs ? 'Jawatan / Gred' : 'Designation / Grade'}
                       </label>
                       <input
                         type="text"
-                        placeholder="cth. Pegawai Farmasi UF9"
+                        placeholder={isMs ? "cth. Pegawai Farmasi UF9" : "e.g. Pharmacy Officer UF9"}
                         value={manualOfficerRole}
                         onChange={e => setManualOfficerRole(e.target.value)}
                         className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -985,7 +1010,10 @@ export const StaffMovementPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <label className="text-xs font-black text-amber-950 uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-amber-700" />
-                  <span>Sebab / Justifikasi Pindaan (Mandatori Rekod Audit) <span className="text-rose-600">*</span></span>
+                  <span>
+                    {isMs ? 'Sebab / Justifikasi Pindaan (Mandatori Rekod Audit)' : 'Reason / Justification for Amendment (Mandatory Audit Trail)'}{' '}
+                    <span className="text-rose-600">*</span>
+                  </span>
                 </label>
                 <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded">
                   AUDIT LOG
@@ -994,13 +1022,22 @@ export const StaffMovementPage: React.FC = () => {
 
               {/* Quick Preset Chips for Edit Reason */}
               <div className="flex flex-wrap gap-1.5">
-                {[
-                  'Perubahan Tarikh / Masa Pergerakan',
-                  'Pertukaran Destinasi / Lokasi',
-                  'Kemaskini Surat / Memo Panggilan',
-                  'Pembetulan Maklumat Pegawai',
-                  'Penukaran Pengangkutan / Urusan'
-                ].map((chip, idx) => (
+                {(isMs
+                  ? [
+                      'Perubahan Tarikh / Masa Pergerakan',
+                      'Pertukaran Destinasi / Lokasi',
+                      'Kemaskini Surat / Memo Panggilan',
+                      'Pembetulan Maklumat Pegawai',
+                      'Penukaran Pengangkutan / Urusan'
+                    ]
+                  : [
+                      'Change of Date / Time',
+                      'Change of Destination / Venue',
+                      'Updated Memo / Official Letter',
+                      'Correction of Officer Details',
+                      'Adjustment of Assignment / Duty'
+                    ]
+                ).map((chip, idx) => (
                   <button
                     type="button"
                     key={idx}
@@ -1021,7 +1058,11 @@ export const StaffMovementPage: React.FC = () => {
                 required
                 value={editReason}
                 onChange={e => setEditReason(e.target.value)}
-                placeholder="Cth: Dipinda atas pertukaran jadual mesyuarat oleh pihak penganjur..."
+                placeholder={
+                  isMs
+                    ? 'Cth: Dipinda atas pertukaran jadual mesyuarat oleh pihak penganjur...'
+                    : 'E.g., Modified due to organizer rescheduling the meeting time...'
+                }
                 className="w-full p-3 rounded-xl border border-amber-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
               />
             </div>
@@ -1030,7 +1071,7 @@ export const StaffMovementPage: React.FC = () => {
           {/* Movement Type Grid */}
           <div className="space-y-2.5">
             <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
-              Kategori Pergerakan <span className="text-rose-500">*</span>
+              {isMs ? 'Kategori Pergerakan' : 'Movement Category'} <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {movementTypeOptions.map(cat => {
@@ -1073,12 +1114,12 @@ export const StaffMovementPage: React.FC = () => {
           <div className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
-                Tajuk / Ringkasan Pergerakan <span className="text-rose-500">*</span>
+                {isMs ? 'Tajuk / Ringkasan Pergerakan' : 'Movement Title / Subject'} <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 required
-                placeholder="cth. Mesyuarat Jawatankuasa Ubat Negeri Bil. 2/2026"
+                placeholder={isMs ? "cth. Mesyuarat Jawatankuasa Ubat Negeri Bil. 2/2026" : "e.g. State Drug Committee Meeting No. 2/2026"}
                 value={formTitle}
                 onChange={e => setFormTitle(e.target.value)}
                 className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition-all shadow-2xs"
@@ -1087,14 +1128,14 @@ export const StaffMovementPage: React.FC = () => {
 
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
-                Destinasi / Lokasi Lawatan <span className="text-rose-500">*</span>
+                {isMs ? 'Destinasi / Lokasi Lawatan' : 'Destination / Venue'} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <MapPin className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
                   required
-                  placeholder="cth. Bilik Mesyuarat Utama, Hospital Miri / Dewan Sri Lawas"
+                  placeholder={isMs ? "cth. Bilik Mesyuarat Utama, Hospital Miri / Dewan Sri Lawas" : "e.g. Main Conference Room, Hospital Miri / Sri Lawas Hall"}
                   value={formDestination}
                   onChange={e => setFormDestination(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition-all shadow-2xs"
@@ -1108,7 +1149,7 @@ export const StaffMovementPage: React.FC = () => {
             <div className="space-y-3">
               <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Tarikh & Masa Keluar</span>
+                <span>{isMs ? 'Tarikh & Masa Keluar' : 'Departure Date & Time'}</span>
               </h5>
               <div className="grid grid-cols-2 gap-2">
                 <input
@@ -1131,7 +1172,7 @@ export const StaffMovementPage: React.FC = () => {
             <div className="space-y-3">
               <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Tarikh & Jangkaan Balik</span>
+                <span>{isMs ? 'Tarikh & Jangkaan Balik' : 'Expected Return Date & Time'}</span>
               </h5>
               <div className="grid grid-cols-2 gap-2">
                 <input
@@ -1155,12 +1196,12 @@ export const StaffMovementPage: React.FC = () => {
           {/* Purpose / Scope */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
-              Tujuan Terperinci / Catatan Tambahan <span className="text-rose-500">*</span>
+              {isMs ? 'Tujuan Terperinci / Catatan Tambahan' : 'Purpose / Additional Notes'} <span className="text-rose-500">*</span>
             </label>
             <textarea
               rows={3}
               required
-              placeholder="cth. Menghadiri bengkel persediaan audit farmasi hospital dan semakan stok logistik..."
+              placeholder={isMs ? "cth. Menghadiri bengkel persediaan audit farmasi hospital dan semakan stok logistik..." : "e.g. Attending hospital pharmacy audit workshop and reviewing logistics stock..."}
               value={formPurpose}
               onChange={e => setFormPurpose(e.target.value)}
               className="w-full p-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition-all shadow-2xs resize-none"
@@ -1172,7 +1213,7 @@ export const StaffMovementPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <Paperclip className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Dokumen Rujukan / Surat Panggilan / Slaid (Pilihan)</span>
+                <span>{isMs ? 'Dokumen Rujukan / Surat Panggilan / Slaid (Pilihan)' : 'Reference Document / Invitation Letter / Slides (Optional)'}</span>
               </label>
               <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 text-[10px] font-bold">
                 <button
@@ -1180,14 +1221,14 @@ export const StaffMovementPage: React.FC = () => {
                   onClick={() => setDocInputMode('upload')}
                   className={`px-2 py-0.5 rounded ${docInputMode === 'upload' ? 'bg-emerald-600 text-white' : 'text-slate-600'}`}
                 >
-                  Muat Naik
+                  {isMs ? 'Muat Naik' : 'Upload File'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setDocInputMode('url')}
                   className={`px-2 py-0.5 rounded ${docInputMode === 'url' ? 'bg-emerald-600 text-white' : 'text-slate-600'}`}
                 >
-                  Pautan
+                  {isMs ? 'Pautan' : 'Link URL'}
                 </button>
               </div>
             </div>
@@ -1210,10 +1251,10 @@ export const StaffMovementPage: React.FC = () => {
                   >
                     <UploadCloud className="w-7 h-7 text-slate-400 group-hover:text-emerald-600 mx-auto mb-1.5 transition-colors" />
                     <p className="text-xs font-bold text-slate-700 group-hover:text-emerald-900">
-                      Klik untuk Pilih Dokumen / Surat Panggilan Tugas / Slaid
+                      {isMs ? 'Klik untuk Pilih Dokumen / Surat Panggilan Tugas / Slaid' : 'Click to Upload Document / Letter / Slides'}
                     </p>
                     <p className="text-[10px] text-slate-400 mt-0.5">
-                      Menyokong fail PDF, Word, PowerPoint & Gambar (Maks. 15MB)
+                      {isMs ? 'Menyokong fail PDF, Word, PowerPoint & Gambar (Maks. 15MB)' : 'Supports PDF, Word, PowerPoint & Image files (Max 15MB)'}
                     </p>
                   </button>
                 ) : (
@@ -1224,7 +1265,9 @@ export const StaffMovementPage: React.FC = () => {
                       </div>
                       <div className="min-w-0">
                         <p className="text-xs font-bold text-slate-900 truncate">{formDocName}</p>
-                        <p className="text-[10px] text-emerald-700 font-medium">Dokumen sedia untuk akses segera</p>
+                        <p className="text-[10px] text-emerald-700 font-medium">
+                          {isMs ? 'Dokumen sedia untuk akses segera' : 'Document ready for direct access'}
+                        </p>
                       </div>
                     </div>
                     <button
@@ -1241,14 +1284,14 @@ export const StaffMovementPage: React.FC = () => {
               <div className="space-y-2">
                 <input
                   type="text"
-                  placeholder="Nama Dokumen (cth. Surat Panggilan Mesyuarat MTC Bil 3.pdf)"
+                  placeholder={isMs ? "Nama Dokumen (cth. Surat Panggilan Mesyuarat MTC Bil 3.pdf)" : "Document Name (e.g. Official Meeting Invitation Letter.pdf)"}
                   value={formDocName}
                   onChange={e => setFormDocName(e.target.value)}
                   className="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
                 <input
                   type="url"
-                  placeholder="URL Dokumen Google Drive / Portal KKM (cth. https://drive.google.com/...)"
+                  placeholder={isMs ? "URL Dokumen Google Drive / Portal KKM (cth. https://drive.google.com/...)" : "Document URL Google Drive / Portal (e.g. https://drive.google.com/...)"}
                   value={formDocUrl}
                   onChange={e => setFormDocUrl(e.target.value)}
                   className="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -1259,7 +1302,9 @@ export const StaffMovementPage: React.FC = () => {
             <p className="text-xs text-slate-600 font-medium flex items-center gap-1.5 pt-1">
               <Info className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>
-                Dokumen yang dilampirkan boleh dibuka dan dimuat turun secara terus daripada jadual pergerakan.
+                {isMs
+                  ? 'Dokumen yang dilampirkan boleh dibuka dan dimuat turun secara terus daripada jadual pergerakan.'
+                  : 'Attached documents can be viewed and downloaded directly from the movement table.'}
               </span>
             </p>
           </div>
@@ -1275,7 +1320,7 @@ export const StaffMovementPage: React.FC = () => {
               }}
               className="border-slate-300 hover:bg-slate-100 text-slate-700 font-bold rounded-2xl px-5 py-2.5 shadow-sm"
             >
-              Batal
+              {isMs ? 'Batal' : 'Cancel'}
             </Button>
             <Button
               type="submit"
@@ -1283,7 +1328,13 @@ export const StaffMovementPage: React.FC = () => {
               className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-2xl px-6 py-2.5 shadow-md hover:shadow-lg transition-all flex items-center gap-2"
             >
               {submitting && <Spinner size="sm" className="text-white" />}
-              <span>{submitting ? 'Merekodkan...' : editingMovement ? 'Simpan Pindaan & Log Audit' : 'Hantar Borang Pergerakan'}</span>
+              <span>
+                {submitting
+                  ? isMs ? 'Merekodkan...' : 'Saving...'
+                  : editingMovement
+                  ? isMs ? 'Simpan Pindaan & Log Audit' : 'Save Changes & Log Audit'
+                  : isMs ? 'Hantar Borang Pergerakan' : 'Submit Movement Form'}
+              </span>
             </Button>
           </div>
         </form>
@@ -1297,18 +1348,28 @@ export const StaffMovementPage: React.FC = () => {
           setDeletingMovement(null)
         }}
         onConfirm={handleConfirmDelete}
-        title="Sahkan Pemadaman Rekod Pergerakan"
+        title={isMs ? "Sahkan Pemadaman Rekod Pergerakan" : "Confirm Deletion of Movement Record"}
         recordTitle={deletingMovement?.tajuk || ''}
         actionType="DELETE"
         actorName={user?.full_name || 'AMRI AMIT'}
-        actorRole={user?.jawatan || 'Pegawai Farmasi'}
-        presetReasons={[
-          'Pergerakan Keluar Dibatalkan',
-          'Pertukaran Pegawai Terlibat',
-          'Tersilap Pilihan Tarikh & Masa',
-          'Urusan Selesai di Stesen Sendiri',
-          'Tersilap Masuk Rekod Berganda'
-        ]}
+        actorRole={user?.jawatan || (isMs ? 'Pegawai Farmasi' : 'Pharmacy Officer')}
+        presetReasons={
+          isMs
+            ? [
+                'Pergerakan Keluar Dibatalkan',
+                'Pertukaran Pegawai Terlibat',
+                'Tersilap Pilihan Tarikh & Masa',
+                'Urusan Selesai di Stesen Sendiri',
+                'Tersilap Masuk Rekod Berganda'
+              ]
+            : [
+                'Out of Station Travel Cancelled',
+                'Change of Assigned Officer',
+                'Incorrect Date & Time Selection',
+                'Matter Resolved at Home Station',
+                'Duplicate Entry'
+              ]
+        }
       />
 
       {/* Audit Log Drawer */}
@@ -1316,7 +1377,7 @@ export const StaffMovementPage: React.FC = () => {
         isOpen={isAuditDrawerOpen}
         onClose={() => setIsAuditDrawerOpen(false)}
         defaultModule="MOVEMENT"
-        title="Log Audit & Sejarah Pindaan Pergerakan Staf"
+        title={isMs ? "Log Audit & Sejarah Pindaan Pergerakan Staf" : "Staff Movement Audit Trail & Modification History"}
       />
     </div>
   )

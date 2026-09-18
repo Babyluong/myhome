@@ -93,7 +93,7 @@ export function TableHead({
   
   return (
     <th 
-      className={`px-6 py-4 text-sm font-bold text-gray-700 tracking-wide uppercase ${alignClass} ${sortableClass} ${className}`}
+      className={`px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-bold text-gray-700 tracking-wide uppercase break-words ${alignClass} ${sortableClass} ${className}`}
       onClick={sortable ? onSort : undefined}
     >
       <div className="flex items-center gap-2">
@@ -132,8 +132,8 @@ interface TableCellProps {
 export function TableCell({ children, className = '', align = 'left', colSpan, as: Component = 'td' }: TableCellProps) {
   const alignClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : 'text-left';
   const baseClass = Component === 'th' 
-    ? 'px-6 py-4 text-sm font-bold text-gray-700 tracking-wide uppercase'
-    : 'px-6 py-4 text-sm text-gray-700';
+    ? 'px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-bold text-gray-700 tracking-wide uppercase break-words'
+    : 'px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-700 break-words';
 
   return (
     <Component 

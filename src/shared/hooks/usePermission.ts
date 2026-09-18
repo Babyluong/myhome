@@ -1,26 +1,37 @@
 import { useMemo } from 'react'
 import { useAuthStore } from '@/stores/authStore'
+import { useRbacStore } from '@/stores/rbacStore'
 import { SYSTEM_MODULE_REGISTRY, ActionType } from '@/shared/constants/moduleRegistry'
 import { SYSTEM_ROLES } from '@/shared/constants/roles'
+import { isCylinderAuthorizedOfficer } from '@/shared/utils/cylinderRbac'
 
 export interface UserPermissionContext {
   isSuperAdmin: boolean
   isHospitalAdmin: boolean
   userRoleCode: string
   userDepartmentId?: string
+  isRbacLoading: boolean
+  isRbacLoaded: boolean
   canAccessModule: (moduleCode: string) => boolean
   hasPermission: (moduleCode: string, action: ActionType, featureCode?: string) => boolean
   getAccessibleModules: () => string[]
+  canApproveCylinder: boolean
+  canIssueCylinder: boolean
 }
 
 /**
  * Hook for fine-grained Role-Based and Action-Based Access Control (RBAC & PBAC)
+ * Reactively subscribes to useRbacStore for live database sync across devices.
  */
 export function usePermission(): UserPermissionContext {
   const { user } = useAuthStore()
+  const rbacMatrix = useRbacStore((state) => state.matrix)
+  const isRbacLoading = useRbacStore((state) => state.isLoading)
+  const isRbacLoaded = useRbacStore((state) => state.isLoaded)
+  const getRoleMatrix = useRbacStore((state) => state.getRoleMatrix)
 
   const userRoleCode = useMemo(() => {
-    return (user?.role?.role_code || (user as any)?.role_code || 'staff').toLowerCase()
+    return (user?.role?.role_code || (user as any)?.role_code || 'staff').toLowerCase().trim()
   }, [user])
 
   const isSuperAdmin = useMemo(() => {
@@ -44,7 +55,8 @@ export function usePermission(): UserPermissionContext {
       isSuperAdmin ||
       role === SYSTEM_ROLES.HOSPITAL_ADMIN ||
       role === SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR ||
-      role === 'hospital_admin'
+      role === 'hospital_admin' ||
+      role === 'hospital_administrator'
     )
   }, [user, userRoleCode, isSuperAdmin])
 
@@ -56,39 +68,52 @@ export function usePermission(): UserPermissionContext {
       if (!user) return false
       if (isSuperAdmin) return true
 
-      const normalizedCode = moduleCode.toLowerCase()
-      const moduleDef = SYSTEM_MODULE_REGISTRY.find(
-        (m) => m.code.toLowerCase() === normalizedCode || m.name.toLowerCase() === normalizedCode
-      )
+      const normalizedCode = (moduleCode || '').toLowerCase().trim().replace(/\/$/, '')
+      const moduleDef = SYSTEM_MODULE_REGISTRY.find((m) => {
+        const mCode = m.code.toLowerCase()
+        const mName = m.name.toLowerCase()
+        const mPath = (m.routePath || '').toLowerCase().replace(/\/$/, '')
+        return (
+          mCode === normalizedCode ||
+          mName === normalizedCode ||
+          mPath === normalizedCode ||
+          (mPath && (normalizedCode.startsWith(mPath + '/') || normalizedCode === mPath))
+        )
+      })
 
       if (!moduleDef) {
-        // Fallback for submenus or dynamic future modules
+        // Fallback for dynamic future routes
         return true
       }
 
-      // Check default assigned roles
-      const hasDefaultRole = moduleDef.defaultRoles.some(
-        (r) => r.toLowerCase() === userRoleCode
-      )
+      const modKey = moduleDef.code.toLowerCase()
+
+      // 1. Check stored custom permissions from Supabase database / local cache via rbacStore
+      const roleMatrix = getRoleMatrix(userRoleCode) || (user?.role_id ? getRoleMatrix(user.role_id) : null)
+      if (roleMatrix && roleMatrix[modKey]) {
+        const modSetting = roleMatrix[modKey]
+        if (typeof modSetting.view === 'boolean') {
+          return modSetting.view
+        }
+      }
+
+      // 2. Check default assigned roles from SYSTEM_MODULE_REGISTRY (with alias tolerance)
+      const hasDefaultRole = moduleDef.defaultRoles.some((r) => {
+        const nr = r.toLowerCase().trim()
+        return (
+          nr === userRoleCode ||
+          (userRoleCode === 'assistant_pharmacist' && nr === 'pharmacy_assistant') ||
+          (userRoleCode === 'pharmacy_assistant' && nr === 'assistant_pharmacist') ||
+          (userRoleCode === 'hospital_admin' && nr === 'hospital_administrator') ||
+          (userRoleCode === 'hospital_administrator' && nr === 'hospital_admin')
+        )
+      })
 
       if (hasDefaultRole) return true
 
-      // Check stored custom permissions or overrides from localStorage
-      try {
-        const storedOverrides = localStorage.getItem(`home_rbac_overrides_${userRoleCode}`)
-        if (storedOverrides) {
-          const parsed = JSON.parse(storedOverrides)
-          if (parsed[normalizedCode] && parsed[normalizedCode].view) {
-            return true
-          }
-        }
-      } catch (e) {
-        // Ignore JSON parse error
-      }
-
       return false
     }
-  }, [user, isSuperAdmin, userRoleCode])
+  }, [user, isSuperAdmin, userRoleCode, rbacMatrix, getRoleMatrix])
 
   /**
    * Check whether the user has a specific granular capability (e.g. approve, edit, export, delete)
@@ -98,7 +123,7 @@ export function usePermission(): UserPermissionContext {
       if (!user) return false
       if (isSuperAdmin) return true
 
-      const normalizedModule = moduleCode.toLowerCase()
+      const normalizedModule = moduleCode.toLowerCase().trim()
 
       // First check if user can access the module at all
       if (!canAccessModule(normalizedModule)) {
@@ -124,20 +149,29 @@ export function usePermission(): UserPermissionContext {
         return true
       }
 
-      // Check saved custom role matrix overrides in localStorage if available
-      try {
-        const storedOverrides = localStorage.getItem(`home_rbac_overrides_${userRoleCode}`)
-        if (storedOverrides) {
-          const parsed = JSON.parse(storedOverrides)
-          if (parsed[normalizedModule]) {
-            if (featureCode && parsed[normalizedModule].features?.[featureCode]) {
-              return !!parsed[normalizedModule].features[featureCode][action]
-            }
-            return !!parsed[normalizedModule][action]
-          }
+      // Strict RBAC Mandate: Only Pegawai Farmasi and Penolong Pegawai Farmasi can approve or issue/edit cylinders
+      if (normalizedModule === 'cylinder') {
+        const isAuthorizedCylinderOfficer = isCylinderAuthorizedOfficer(user)
+        if (action === 'approve' || action === 'edit') {
+          return isAuthorizedCylinderOfficer
         }
-      } catch (e) {
-        // Ignore parse error
+        if (action === 'delete') {
+          return isHospitalAdmin || (isAuthorizedCylinderOfficer && userRoleCode.includes('director'))
+        }
+        if (action === 'create' || action === 'view') {
+          return true
+        }
+      }
+
+      // Check custom role matrix from database cache / local overrides
+      const roleMatrix = getRoleMatrix(userRoleCode) || (user?.role_id ? getRoleMatrix(user.role_id) : null)
+      if (roleMatrix && roleMatrix[normalizedModule]) {
+        if (featureCode && roleMatrix[normalizedModule].features?.[featureCode]) {
+          const featAction = roleMatrix[normalizedModule].features?.[featureCode]?.[action]
+          if (typeof featAction === 'boolean') return featAction
+        }
+        const modAction = roleMatrix[normalizedModule][action]
+        if (typeof modAction === 'boolean') return modAction
       }
 
       // Default baseline capabilities per action
@@ -161,7 +195,11 @@ export function usePermission(): UserPermissionContext {
           return false
       }
     }
-  }, [user, isSuperAdmin, isHospitalAdmin, userRoleCode, canAccessModule])
+  }, [user, isSuperAdmin, isHospitalAdmin, userRoleCode, canAccessModule, rbacMatrix, getRoleMatrix])
+
+  const canCylinderOfficer = useMemo(() => {
+    return isCylinderAuthorizedOfficer(user)
+  }, [user])
 
   const getAccessibleModules = useMemo(() => {
     return (): string[] => {
@@ -174,9 +212,13 @@ export function usePermission(): UserPermissionContext {
     isHospitalAdmin,
     userRoleCode,
     userDepartmentId: user?.department_id,
+    isRbacLoading,
+    isRbacLoaded,
     canAccessModule,
     hasPermission,
     getAccessibleModules,
+    canApproveCylinder: canCylinderOfficer,
+    canIssueCylinder: canCylinderOfficer,
   }
 }
 

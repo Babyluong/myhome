@@ -32,6 +32,11 @@ import {
   updateRolePermissions,
 } from '@/services/roleService'
 import {
+  fetchRbacMatrix,
+  saveRbacMatrix,
+  buildDefaultMatrixForRole,
+} from '@/services/rbacService'
+import {
   SYSTEM_MODULE_REGISTRY,
   ACTION_DEFINITIONS,
   ROLE_CAPABILITY_PRESETS,
@@ -87,9 +92,10 @@ export const AdminRbacTab: React.FC = () => {
     const fetchInitialData = async () => {
       setIsLoading(true)
       try {
-        const [rolesList, permissionsList] = await Promise.all([
+        const [rolesList, permissionsList, dbMatrix] = await Promise.all([
           getAllRoles(),
           getAllPermissions(),
+          fetchRbacMatrix(),
         ])
 
         // Exclude system_admin from modification for security reasons
@@ -101,10 +107,22 @@ export const AdminRbacTab: React.FC = () => {
           setSelectedRoleId(filteredRoles[0].id)
         }
 
-        // Initialize matrix state from localStorage cache if present or default seeds
+        // Initialize matrix state: Priority 1: Supabase DB matrix -> Priority 2: local cache -> Priority 3: system defaults
         const initialMatrix: MatrixState = {}
         filteredRoles.forEach((role) => {
           const roleCode = role.role_code.toLowerCase()
+          const roleId = role.id
+
+          // Priority 1: Supabase database master matrix
+          if (dbMatrix && (dbMatrix[roleCode] || dbMatrix[roleId])) {
+            const fromDb = dbMatrix[roleCode] || dbMatrix[roleId]
+            if (fromDb && Object.keys(fromDb).length > 0) {
+              initialMatrix[roleId] = fromDb
+              return
+            }
+          }
+
+          // Priority 2: Local storage per-role cache
           let stored: any = null
           try {
             const raw = localStorage.getItem(`home_rbac_overrides_${roleCode}`)
@@ -113,57 +131,19 @@ export const AdminRbacTab: React.FC = () => {
             // ignore
           }
 
-          initialMatrix[role.id] = {}
+          if (stored && Object.keys(stored).length > 0) {
+            initialMatrix[roleId] = stored
+            return
+          }
 
-          SYSTEM_MODULE_REGISTRY.forEach((mod) => {
-            const modCode = mod.code.toLowerCase()
-            const isDefaultAssigned = mod.defaultRoles.some(
-              (r) => r.toLowerCase() === roleCode
-            )
-
-            if (stored && stored[modCode]) {
-              initialMatrix[role.id][modCode] = stored[modCode]
-            } else {
-              // Default baseline according to role tier
-              const isManagerOrAdmin =
-                roleCode.includes('director') ||
-                roleCode.includes('manager') ||
-                roleCode.includes('admin') ||
-                roleCode === 'hospital_admin'
-
-              initialMatrix[role.id][modCode] = {
-                view: isDefaultAssigned,
-                create: isDefaultAssigned,
-                edit: isDefaultAssigned,
-                approve: isDefaultAssigned && isManagerOrAdmin,
-                delete: isDefaultAssigned && isManagerOrAdmin,
-                export: isDefaultAssigned,
-                admin: isDefaultAssigned && isManagerOrAdmin && modCode === 'admin',
-                features: {},
-              }
-
-              mod.features.forEach((feat) => {
-                if (!initialMatrix[role.id][modCode].features) {
-                  initialMatrix[role.id][modCode].features = {}
-                }
-                initialMatrix[role.id][modCode].features![feat.code] = {
-                  view: isDefaultAssigned,
-                  create: isDefaultAssigned && feat.supportedActions.includes('create'),
-                  edit: isDefaultAssigned && feat.supportedActions.includes('edit'),
-                  approve: isDefaultAssigned && isManagerOrAdmin && feat.supportedActions.includes('approve'),
-                  delete: isDefaultAssigned && isManagerOrAdmin && feat.supportedActions.includes('delete'),
-                  export: isDefaultAssigned && feat.supportedActions.includes('export'),
-                  admin: isDefaultAssigned && isManagerOrAdmin && feat.supportedActions.includes('admin'),
-                }
-              })
-            }
-          })
+          // Priority 3: Comprehensive default baseline from SYSTEM_MODULE_REGISTRY
+          initialMatrix[roleId] = buildDefaultMatrixForRole(roleCode)
         })
 
         setMatrixState(initialMatrix)
         setSavedMatrixState(JSON.parse(JSON.stringify(initialMatrix)))
       } catch (err) {
-        showError('Ralat', 'Gagal memuat tetapan RBAC')
+        showError('Ralat', 'Gagal memuat tetapan RBAC dari pangkalan data')
         console.error(err)
       } finally {
         setIsLoading(false)
@@ -387,16 +367,30 @@ export const AdminRbacTab: React.FC = () => {
     })
   }
 
-  // Save changes to database and local store
+  // Save changes to database and local store for selected role
   const handleSave = async () => {
     if (!selectedRoleId || !selectedRoleObj) return
 
     setIsSaving(true)
     try {
-      // 1. Persist matrix state in localStorage cache for instant zero-lag authorization checks
       const roleCode = selectedRoleObj.role_code.toLowerCase()
       const currentRoleConfig = matrixState[selectedRoleId] || {}
-      localStorage.setItem(`home_rbac_overrides_${roleCode}`, JSON.stringify(currentRoleConfig))
+
+      // Prepare master payload for Supabase database
+      const masterToSave: Record<string, any> = {}
+      roles.forEach((r) => {
+        const rCode = r.role_code.toLowerCase()
+        const cfg = r.id === selectedRoleId ? currentRoleConfig : (matrixState[r.id] || {})
+        masterToSave[rCode] = cfg
+        masterToSave[r.id] = cfg
+        if (rCode === 'assistant_pharmacist') masterToSave['pharmacy_assistant'] = cfg
+        if (rCode === 'pharmacy_assistant') masterToSave['assistant_pharmacist'] = cfg
+        if (rCode === 'hospital_admin') masterToSave['hospital_administrator'] = cfg
+        if (rCode === 'hospital_administrator') masterToSave['hospital_admin'] = cfg
+      })
+
+      // 1. Persist master matrix in Supabase system_settings and local storage
+      await saveRbacMatrix(masterToSave)
 
       // 2. Persist to Supabase role_permissions table
       const permissionsToSync: string[] = []
@@ -412,15 +406,25 @@ export const AdminRbacTab: React.FC = () => {
       })
 
       if (permissionsToSync.length > 0) {
-        await updateRolePermissions(
-          selectedRoleId,
-          permissionsToSync,
-          currentUser?.id || ''
-        )
+        try {
+          await updateRolePermissions(
+            selectedRoleId,
+            permissionsToSync,
+            currentUser?.id || ''
+          )
+        } catch (e) {
+          // Ignore
+        }
       }
 
-      setSavedMatrixState(JSON.parse(JSON.stringify(matrixState)))
-      showSuccess('Had Kuasa Disimpan', `Matriks kebenaran bagi peranan "${selectedRoleObj.role_name}" telah dikemaskini.`)
+      setSavedMatrixState((prev) => ({
+        ...prev,
+        [selectedRoleId]: JSON.parse(JSON.stringify(currentRoleConfig)),
+      }))
+      showSuccess(
+        'Had Kuasa Disimpan',
+        `Matriks kebenaran bagi peranan "${selectedRoleObj.role_name}" telah dikemaskini dan disimpan ke pangkalan data.`
+      )
     } catch (err: any) {
       showError('Ralat', err.message || 'Gagal menyimpan perubahan had kuasa')
     } finally {
@@ -428,13 +432,75 @@ export const AdminRbacTab: React.FC = () => {
     }
   }
 
-  // Detect unsaved changes
-  const hasChanges = useMemo(() => {
-    if (!selectedRoleId) return false
-    const current = matrixState[selectedRoleId]
-    const saved = savedMatrixState[selectedRoleId]
-    return JSON.stringify(current) !== JSON.stringify(saved)
-  }, [matrixState, savedMatrixState, selectedRoleId])
+  // Save ALL roles across the entire matrix directly to Supabase and local storage
+  const handleSaveAll = async () => {
+    setIsSaving(true)
+    try {
+      const masterToSave: Record<string, any> = {}
+      roles.forEach((r) => {
+        const rCode = r.role_code.toLowerCase()
+        const config = matrixState[r.id] || {}
+        masterToSave[rCode] = config
+        masterToSave[r.id] = config
+        if (rCode === 'assistant_pharmacist') masterToSave['pharmacy_assistant'] = config
+        if (rCode === 'pharmacy_assistant') masterToSave['assistant_pharmacist'] = config
+        if (rCode === 'hospital_admin') masterToSave['hospital_administrator'] = config
+        if (rCode === 'hospital_administrator') masterToSave['hospital_admin'] = config
+      })
+
+      // 1. Save to Supabase system_settings and local storage
+      await saveRbacMatrix(masterToSave)
+
+      // 2. Sync role_permissions table in Supabase
+      for (const r of roles) {
+        const currentRoleConfig = matrixState[r.id] || {}
+        const permissionsToSync: string[] = []
+        Object.entries(currentRoleConfig).forEach(([modCode, modConfig]) => {
+          if (modConfig.view) {
+            const viewPerm = dbPermissions.find(
+              (p) => p.module.toLowerCase() === modCode.toLowerCase()
+            )
+            if (viewPerm && !permissionsToSync.includes(viewPerm.id)) {
+              permissionsToSync.push(viewPerm.id)
+            }
+          }
+        })
+        if (permissionsToSync.length > 0) {
+          try {
+            await updateRolePermissions(r.id, permissionsToSync, currentUser?.id || '')
+          } catch (e) {
+            // Ignore non-critical
+          }
+        }
+      }
+
+      setSavedMatrixState(JSON.parse(JSON.stringify(matrixState)))
+      showSuccess(
+        'Semua Had Kuasa Disimpan',
+        `Berjaya menyimpan konfigurasi bagi semua peranan hospital ke pangkalan data.`
+      )
+    } catch (err: any) {
+      showError('Ralat', err.message || 'Gagal menyimpan perubahan had kuasa')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  // Detect dirty roles across the entire matrix
+  const dirtyRoleIds = useMemo(() => {
+    return roles
+      .filter((r) => {
+        const cur = matrixState[r.id]
+        const saved = savedMatrixState[r.id]
+        if (!cur && !saved) return false
+        return JSON.stringify(cur) !== JSON.stringify(saved)
+      })
+      .map((r) => r.id)
+  }, [roles, matrixState, savedMatrixState])
+
+  const hasAnyChanges = dirtyRoleIds.length > 0
+  const hasChanges = dirtyRoleIds.includes(selectedRoleId)
+
 
   // Filter modules by search & category
   const filteredModules = useMemo(() => {
@@ -494,9 +560,21 @@ export const AdminRbacTab: React.FC = () => {
           <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
             <Shield className="w-4 h-4 text-teal-400" /> Senarai Peranan
           </h3>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">
-            {roles.length}
-          </span>
+          <div className="flex items-center gap-1.5">
+            {hasAnyChanges && (
+              <button
+                onClick={handleSaveAll}
+                disabled={isSaving}
+                className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 font-bold transition-all disabled:opacity-50"
+                title="Simpan semua peranan yang diubah"
+              >
+                Simpan Semua ({dirtyRoleIds.length})
+              </button>
+            )}
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">
+              {roles.length}
+            </span>
+          </div>
         </div>
 
         <div className="space-y-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
@@ -505,6 +583,7 @@ export const AdminRbacTab: React.FC = () => {
             const roleCode = r.role_code.toLowerCase()
             const modMatrix = matrixState[r.id] || {}
             const enabledCount = Object.values(modMatrix).filter((m) => m.view).length
+            const isRoleDirty = dirtyRoleIds.includes(r.id)
 
             return (
               <button
@@ -518,11 +597,20 @@ export const AdminRbacTab: React.FC = () => {
               >
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-bold truncate">{r.role_name}</span>
-                  {isSelected && <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />}
+                  <div className="flex items-center gap-1">
+                    {isRoleDirty && (
+                      <span className="px-1.5 py-0.5 rounded text-[9px] bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
+                        Ubah
+                      </span>
+                    )}
+                    {isSelected && <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
                   <span className="uppercase">{roleCode}</span>
-                  <span className="text-slate-400">{enabledCount} modul aktif</span>
+                  <span className={enabledCount > 0 ? 'text-teal-400 font-bold' : 'text-slate-500'}>
+                    {enabledCount} modul aktif
+                  </span>
                 </div>
               </button>
             )
@@ -554,17 +642,30 @@ export const AdminRbacTab: React.FC = () => {
                 </div>
               </div>
 
-              {/* Action Save Button */}
-              {hasChanges && (
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white flex items-center gap-1.5 shadow-lg shadow-teal-500/20 transition-all disabled:opacity-50"
-                >
-                  <Save className="w-4 h-4" />
-                  {isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}
-                </button>
-              )}
+              {/* Action Save Buttons */}
+              <div className="flex items-center gap-2">
+                {hasAnyChanges && (
+                  <button
+                    onClick={handleSaveAll}
+                    disabled={isSaving}
+                    className="px-4 py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
+                    title="Simpan semua peranan ke pangkalan data Supabase"
+                  >
+                    <Save className="w-4 h-4" />
+                    {isSaving ? 'Menyimpan...' : `Simpan Semua (${dirtyRoleIds.length})`}
+                  </button>
+                )}
+                {hasChanges && (
+                  <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white flex items-center gap-1.5 shadow-lg shadow-teal-500/20 transition-all disabled:opacity-50"
+                  >
+                    <Save className="w-4 h-4" />
+                    {isSaving ? 'Menyimpan...' : 'Simpan Peranan Ini'}
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Capability Presets Selector */}
@@ -784,39 +885,53 @@ export const AdminRbacTab: React.FC = () => {
 
       {/* Floating Save Bar */}
       <AnimatePresence>
-        {hasChanges && (
+        {hasAnyChanges && (
           <motion.div
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
-            className="fixed bottom-6 right-6 left-6 lg:left-80 z-40 bg-slate-900/95 backdrop-blur-2xl border border-teal-500/40 shadow-2xl p-4 rounded-2xl max-w-4xl mx-auto flex items-center justify-between gap-4"
+            className="fixed bottom-6 right-6 left-6 lg:left-80 z-40 bg-slate-900/95 backdrop-blur-2xl border border-teal-500/40 shadow-2xl p-4 rounded-2xl max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 bg-teal-500/10 text-teal-400 rounded-xl border border-teal-500/20">
                 <Info className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-white">Perubahan Had Kuasa Dikesan</p>
+                <p className="text-sm font-bold text-white">
+                  Perubahan Had Kuasa Dikesan ({dirtyRoleIds.length} peranan)
+                </p>
                 <p className="text-xs text-slate-400">
-                  Perubahan matriks keselamatan bagi "{selectedRoleObj?.role_name}". Sila simpan untuk menguatkuasakan polisi.
+                  {hasChanges
+                    ? `Perubahan dikesan bagi "${selectedRoleObj?.role_name}". Sila simpan untuk menyelaraskan ke pangkalan data Supabase.`
+                    : `${dirtyRoleIds.length} peranan hospital mempunyai perubahan belum disimpan.`}
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2 self-end sm:self-auto">
               <button
                 onClick={() => setMatrixState(JSON.parse(JSON.stringify(savedMatrixState)))}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-colors"
               >
                 Set Semula
               </button>
+              {hasChanges && (
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-teal-300 border border-teal-500/30 transition-all disabled:opacity-50 flex items-center gap-1.5"
+                >
+                  <Save className="w-4 h-4" />
+                  {isSaving ? 'Menyimpan...' : 'Simpan Peranan Ini'}
+                </button>
+              )}
               <button
-                onClick={handleSave}
+                onClick={handleSaveAll}
                 disabled={isSaving}
                 className="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white shadow-lg shadow-teal-500/20 disabled:opacity-50 transition-all flex items-center gap-1.5"
               >
                 <Save className="w-4 h-4" />
-                {isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}
+                {isSaving ? 'Menyimpan...' : `Simpan Semua (${dirtyRoleIds.length})`}
               </button>
             </div>
           </motion.div>

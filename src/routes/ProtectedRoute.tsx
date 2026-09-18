@@ -21,11 +21,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const location = useLocation()
   const { isAuthenticated, isLoading, user } = useAuthStore()
-  const { isSuperAdmin, canAccessModule, hasPermission } = usePermission()
+  const { isSuperAdmin, canAccessModule, hasPermission, isRbacLoading, isRbacLoaded } = usePermission()
 
-  // Show loading while checking auth
-  if (isLoading) {
-    return <LoadingOverlay fullScreen message="Memeriksa pengesahan pengguna..." />
+  // Show loading while checking auth or waiting for initial database RBAC matrix sync
+  if (isLoading || (isRbacLoading && !isRbacLoaded)) {
+    return <LoadingOverlay fullScreen message="Memeriksa pengesahan dan kebenaran capaian..." />
   }
 
   // Redirect to login if not authenticated
@@ -38,58 +38,68 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <>{children}</>
   }
 
-  const userRoleCode = (user?.role?.role_code || (user as any)?.role_code || '').toLowerCase()
+  const userRoleCode = (user?.role?.role_code || (user as any)?.role_code || '').toLowerCase().trim()
 
-  // 1. Check explicit allowedRoles if specified
-  if (allowedRoles && allowedRoles.length > 0) {
-    const isRoleAllowed = allowedRoles.some((r) => r.toLowerCase() === userRoleCode)
-    if (!isRoleAllowed) {
+  // Target module is either explicitly passed or inferred from the current URL path
+  const targetModule = requiredModule || location.pathname
+
+  // 1. Check dynamic module accessibility via RBAC (which checks Supabase DB matrix & central module registry)
+  const isModuleAllowed = canAccessModule(targetModule)
+
+  // 2. Check explicit allowedRoles whitelist if provided
+  const isRoleExplicitlyAllowed = allowedRoles && allowedRoles.length > 0
+    ? allowedRoles.some((r) => {
+        const nr = r.toLowerCase().trim()
+        return (
+          nr === userRoleCode ||
+          (userRoleCode === 'assistant_pharmacist' && nr === 'pharmacy_assistant') ||
+          (userRoleCode === 'pharmacy_assistant' && nr === 'assistant_pharmacist') ||
+          (userRoleCode === 'hospital_admin' && nr === 'hospital_administrator') ||
+          (userRoleCode === 'hospital_administrator' && nr === 'hospital_admin')
+        )
+      })
+    : undefined
+
+  // 3. Fine-grained action check if requiredAction is not default 'view'
+  if (requiredAction !== 'view') {
+    if (!hasPermission(targetModule, requiredAction)) {
       return (
         <Navigate
           to={ROUTES.UNAUTHORIZED}
           state={{
             attemptedPath: location.pathname,
-            requiredRole: allowedRoles.join(', '),
+            moduleName: targetModule,
+            requiredRole: allowedRoles?.join(', '),
           }}
           replace
         />
       )
     }
+    return <>{children}</>
   }
 
-  // 2. Check required module accessibility if specified
-  if (requiredModule) {
-    if (requiredAction === 'view') {
-      if (!canAccessModule(requiredModule)) {
-        return (
-          <Navigate
-            to={ROUTES.UNAUTHORIZED}
-            state={{
-              attemptedPath: location.pathname,
-              moduleName: requiredModule,
-            }}
-            replace
-          />
-        )
-      }
-    } else {
-      if (!hasPermission(requiredModule, requiredAction)) {
-        return (
-          <Navigate
-            to={ROUTES.UNAUTHORIZED}
-            state={{
-              attemptedPath: location.pathname,
-              moduleName: requiredModule,
-            }}
-            replace
-          />
-        )
-      }
-    }
+  // 4. Determine overall view authorization:
+  // - If allowedRoles was specified, grant access if either the role is in allowedRoles OR dynamic RBAC grants module access
+  // - If allowedRoles was not specified, enforce dynamic RBAC module access
+  const hasAccess = isRoleExplicitlyAllowed !== undefined
+    ? (isRoleExplicitlyAllowed || isModuleAllowed)
+    : isModuleAllowed
+
+  if (!hasAccess) {
+    return (
+      <Navigate
+        to={ROUTES.UNAUTHORIZED}
+        state={{
+          attemptedPath: location.pathname,
+          requiredRole: allowedRoles?.join(', ') || 'Had Kuasa Peranan Diperlukan',
+          moduleName: targetModule,
+        }}
+        replace
+      />
+    )
   }
 
   return <>{children}</>
 }
 
 export default ProtectedRoute
-

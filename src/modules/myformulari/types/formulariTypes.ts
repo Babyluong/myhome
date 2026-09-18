@@ -57,16 +57,26 @@ export interface DilutionProtocol {
     doseRange: string
     volume: string
     finalConcentration: string
-    route: 'IV Infusion' | 'IV Bolus' | 'IV Slow Push' | 'IM' | 'SC' | 'Continuous Infusion'
+    route: 'IV Infusion' | 'IV Bolus' | 'IV Slow Push' | 'IM' | 'SC' | 'Continuous Infusion' | 'Deep IM' | string
     infusionDuration: string
     maxConcentrationFluidRestricted?: string
     syringePumpCompatible?: boolean
+  }
+  fluidRestrictedGuidelines?: {
+    peripheralMaxConc?: string
+    centralMaxConc?: string
+    syringePump?: string
+    recommendedDoseVolume?: string
+    notes?: string
   }
   ySiteCompatibility: {
     compatible: string[]
     incompatible: string[]
     requiresSeparateLine: boolean
   }
+  sourceGuideline?: string
+  clinicalRemarks?: string[]
+  references?: string[]
   filtrationRequired?: boolean
   lightProtectionRequired?: boolean
   paediatricConsiderations?: string
@@ -229,33 +239,121 @@ export interface DrugEntry {
   verifiedBy: string
 }
 
+export type DrugRoleInGuideline = 'FIRST_LINE' | 'SECOND_LINE' | 'PENICILLIN_ALLERGY' | 'STEP_DOWN' | 'ADJUNCT'
+
+export type NAGPopulation = 'Adult' | 'Paediatric' | 'Neonatal' | 'All'
+
+export type NAGBodySystem = 
+  | 'Cardiovascular Infections'
+  | 'Central Nervous Infections'
+  | 'Chemoprophylaxis'
+  | 'Gastrointestinal Infections'
+  | 'Infections In Immunocompromised Patients'
+  | 'Obstetrics & Gynaecological Infections'
+  | 'Ocular Infections'
+  | 'Oral / Dental Infections'
+  | 'Orthopaedic Infections'
+  | 'Otorhinolaryngology Infections'
+  | 'Respiratory Infections'
+  | 'Sepsis'
+  | 'Sexually Transmitted Infections'
+  | 'Skin & Soft Tissue Infections'
+  | 'Trauma Related Infections'
+  | 'Tropical Infections'
+  | 'Urinary Tract Infections'
+  // Legacy & Paediatric Compatibility Aliases
+  | 'Respiratory'
+  | 'Skin & Soft Tissue'
+  | 'Urinary'
+  | 'Intra-abdominal'
+  | 'Central Nervous System (CNS)'
+  | 'Bone & Joint'
+  | 'Cardiovascular / Sepsis'
+  | 'Ophthalmology'
+  | 'Ear, Nose & Throat (ENT)'
+  | 'Obstetrics & Gynaecology (O&G)'
+  | 'Sexually Transmitted Infections (STI)'
+  | 'Odontogenic / Dental'
+  | 'Surgical Prophylaxis (SAP)'
+  | 'Neonatal & Paediatric Syndromes'
+  | 'Ophthalmology & ENT'
+
+export type NAGSetting = 
+  | 'Community-Acquired'
+  | 'Hospital-Acquired (HAP/VAP)'
+  | 'ICU / Severe'
+  | 'Surgical Prophylaxis'
+  | 'Outpatient (OPD/KK)'
+
+export interface NAGSubTopic {
+  number: number
+  title: string
+  description?: string
+}
+
+export interface NAGCategoryMetadata {
+  code: string // e.g. 'A1', 'A2', 'P1'
+  title: string // e.g. 'Cardiovascular Infections'
+  fullLabel: string // e.g. 'A1 : Cardiovascular Infections'
+  icon: string
+  population: NAGPopulation
+  topics: NAGSubTopic[]
+}
+
 export interface NAGInfectionGuideline {
   id: string
-  bodySystem: 'Respiratory' | 'Urinary' | 'Skin & Soft Tissue' | 'Central Nervous System (CNS)' | 'Intra-abdominal' | 'Bone & Joint' | 'Cardiovascular / Sepsis' | 'Surgical Prophylaxis (SAP)'
+  targetPopulation: NAGPopulation
+  categoryCode?: string // e.g. 'A1', 'A2' ... 'A17', 'P1'
+  categoryTitle?: string // e.g. 'A1 : Cardiovascular Infections'
+  topic?: string // e.g. '1. INFECTIVE ENDOCARDITIS', '2. CATHETER RELATED INFECTIONS'
+  topicNumber?: number // e.g. 1, 2, 3
+  bodySystem: NAGBodySystem
   conditionName: string
-  setting: 'Community-Acquired' | 'Hospital-Acquired (HAP/VAP)' | 'ICU / Severe' | 'Surgical Prophylaxis'
+  setting: NAGSetting
   primaryPathogens: string[]
+  firstLineDrugs: string[]
   firstLineTherapy: {
     regimen: string
     routeAndDose: string
     durationDays: string
     remarks: string
   }
+  secondLineDrugs: string[]
   secondLineTherapy: {
     regimen: string
     routeAndDose: string
     durationDays: string
     remarks: string
   }
+  allergyDrugs?: string[]
   penicillinAllergyOption?: {
     regimen: string
     routeAndDose: string
     remarks: string
   }
+  stepDownDrugs?: string[]
   oralStepDownOption?: {
     regimen: string
     criteria: string
   }
+  adjunctDrugs?: string[]
   amsNotes: string[]
   evidenceLevel: string
+  pediatricWeightDoseHint?: string
+  maxDailyDose?: string
+  lastSyncDate?: string
+  sourceVersion?: string
 }
+
+export interface NAGSyncMetadata {
+  version: string
+  edition: string
+  lastSyncedAt: string
+  totalGuidelines: number
+  sourceUrl: string
+  status: 'ONLINE' | 'OFFLINE_CACHE' | 'CUSTOM_IMPORTED'
+  recentChanges?: string[]
+}
+
+
+

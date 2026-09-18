@@ -51,9 +51,9 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
             <CreditCard className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-black text-slate-900">Terimaan Barangan & Baucar Bayaran (EFT)</h2>
+            <h2 className="text-xl font-black text-slate-900">Goods Receiving & Payment Vouchers (EFT)</h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Rekod pengesahan nota hantaran (DO) dan kemasukan baucar bayaran ke atas waran
+              Verification of delivery orders (DO) and payment voucher disbursements against warrants
             </p>
           </div>
         </div>
@@ -70,7 +70,7 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
           }`}
         >
           <DollarSign className="w-4 h-4" />
-          <span>Lejar Baucar Bayaran EFT ({payments.length})</span>
+          <span>EFT Payment Vouchers Ledger ({payments.length})</span>
         </button>
 
         <button
@@ -82,7 +82,7 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
           }`}
         >
           <Truck className="w-4 h-4" />
-          <span>Rekod Terimaan DO ({receivingRecords.length})</span>
+          <span>DO Receiving Records ({receivingRecords.length})</span>
         </button>
       </div>
 
@@ -92,19 +92,20 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
           {/* Active LPOs awaiting payment recording */}
           <div className="rounded-[2rem] bg-white border-2 border-slate-100 p-6 shadow-sm space-y-4">
             <h3 className="text-sm font-black uppercase tracking-wider text-slate-400">
-              Senarai Pesanan Tempatan (LPO) Bersedia Untuk Bayaran
+              Local Purchase Orders (LPO) Ready for Payment
             </h3>
 
-            <div className="overflow-x-auto">
+            {/* Desktop View: Full Table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-slate-50/80 border-y border-slate-100 text-slate-500 font-bold uppercase text-[10px]">
-                    <th className="py-3 px-3">No. LPO</th>
-                    <th className="py-3 px-3">No. PO</th>
-                    <th className="py-3 px-3">Pembekal</th>
-                    <th className="py-3 px-3">Program / Objek</th>
-                    <th className="py-3 px-3 text-right">Jumlah Nilai (RM)</th>
-                    <th className="py-3 px-3 text-center">Tindakan</th>
+                    <th className="py-3 px-3">LPO No.</th>
+                    <th className="py-3 px-3">PO No.</th>
+                    <th className="py-3 px-3">Supplier</th>
+                    <th className="py-3 px-3">Program / Object</th>
+                    <th className="py-3 px-3 text-right">Total Value (RM)</th>
+                    <th className="py-3 px-3 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -116,7 +117,7 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
                           <td className="py-3 px-3 font-mono font-bold text-slate-900">{lpo.lpo_number}</td>
                           <td className="py-3 px-3 font-mono text-slate-500">{lpo.purchase_order?.order_number}</td>
                           <td className="py-3 px-3 text-slate-800 font-medium">
-                            {lpo.purchase_order?.supplier?.company_name || 'Pembekal'}
+                            {lpo.purchase_order?.supplier?.company_name || 'Supplier'}
                           </td>
                           <td className="py-3 px-3 font-mono text-slate-700 font-semibold">
                             {lpo.purchase_order?.program_code} - {lpo.purchase_order?.objek_code}
@@ -127,7 +128,7 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
                           <td className="py-3 px-3 text-center">
                             {isPaid ? (
                               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Telah Dibayar
+                                Paid
                               </span>
                             ) : (
                               <Button
@@ -135,7 +136,7 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
                                 onClick={() => onOpenRecordPayment(lpo)}
                                 className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1 text-xs rounded-xl shadow-xs"
                               >
-                                Rekod Bayaran EFT
+                                Record EFT Payment
                               </Button>
                             )}
                           </td>
@@ -145,30 +146,88 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
                   ) : (
                     <tr>
                       <td colSpan={6} className="py-8 text-center text-slate-400 italic">
-                        Tiada LPO aktif yang memerlukan bayaran.
+                        No active LPOs requiring payment.
                       </td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile View: High-End LPO Cards (Zero Horizontal Scroll!) */}
+            <div className="md:hidden space-y-3">
+              {payableLPOs.length > 0 ? (
+                payableLPOs.map((lpo) => {
+                  const isPaid = payments.some((p) => p.lpo_id === lpo.id)
+                  return (
+                    <div key={lpo.id} className="p-4 bg-slate-50/70 border border-slate-200/80 rounded-2xl space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="font-mono font-black text-slate-900 text-sm block">
+                            {lpo.lpo_number}
+                          </span>
+                          <span className="font-mono text-xs text-slate-500">
+                            PO: {lpo.purchase_order?.order_number || '-'}
+                          </span>
+                        </div>
+                        <span className="font-mono font-bold text-indigo-600 text-sm">
+                          {formatCurrency(Number(lpo.purchase_order?.total_amount) || 0)}
+                        </span>
+                      </div>
+
+                      <div className="text-xs space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400 font-bold uppercase text-[9px]">Supplier:</span>
+                          <span className="font-semibold text-slate-800">{lpo.purchase_order?.supplier?.company_name || 'Supplier'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400 font-bold uppercase text-[9px]">Prog/Obj:</span>
+                          <span className="font-mono text-slate-700">{lpo.purchase_order?.program_code} - {lpo.purchase_order?.objek_code}</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-200/60">
+                        {isPaid ? (
+                          <span className="w-full inline-flex justify-center py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            Paid
+                          </span>
+                        ) : (
+                          <Button
+                            size="sm"
+                            onClick={() => onOpenRecordPayment(lpo)}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 text-xs rounded-xl"
+                          >
+                            Record EFT Payment
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="p-8 text-center text-slate-400 text-xs italic">
+                  No active LPOs requiring payment.
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Payment History Ledger */}
           <div className="rounded-[2rem] bg-white border-2 border-slate-100 p-6 shadow-sm space-y-4">
             <h3 className="text-sm font-black uppercase tracking-wider text-slate-400">
-              Lejar Transaksi Bayaran Selesai (EFT / Baucar)
+              Completed Payment Transactions Ledger (EFT / Voucher)
             </h3>
 
-            <div className="overflow-x-auto">
+            {/* Desktop View: Full Table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-slate-50/80 border-y border-slate-100 text-slate-500 font-bold uppercase text-[10px]">
-                    <th className="py-3 px-3">No. Rujukan EFT</th>
-                    <th className="py-3 px-3">Tarikh Bayaran</th>
-                    <th className="py-3 px-3">No. LPO</th>
-                    <th className="py-3 px-3">Pembekal Penerima</th>
-                    <th className="py-3 px-3 text-right">Jumlah Dibayar (RM)</th>
+                    <th className="py-3 px-3">EFT Reference No.</th>
+                    <th className="py-3 px-3">Payment Date</th>
+                    <th className="py-3 px-3">LPO No.</th>
+                    <th className="py-3 px-3">Payee Supplier</th>
+                    <th className="py-3 px-3 text-right">Amount Paid (RM)</th>
                     <th className="py-3 px-3 text-center">Status</th>
                   </tr>
                 </thead>
@@ -180,14 +239,14 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
                         <td className="py-3 px-3 text-slate-500">{p.payment_date}</td>
                         <td className="py-3 px-3 font-mono text-slate-700 font-semibold">{p.lpo?.lpo_number || '-'}</td>
                         <td className="py-3 px-3 text-slate-800">
-                          {p.lpo?.purchase_order?.supplier?.company_name || 'Pembekal'}
+                          {p.lpo?.purchase_order?.supplier?.company_name || 'Supplier'}
                         </td>
                         <td className="py-3 px-3 text-right font-mono font-bold text-slate-900">
                           {formatCurrency(Number(p.amount) || 0)}
                         </td>
                         <td className="py-3 px-3 text-center">
                           <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            SELESAI
+                            COMPLETED
                           </span>
                         </td>
                       </tr>
@@ -195,12 +254,48 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
                   ) : (
                     <tr>
                       <td colSpan={6} className="py-8 text-center text-slate-400 italic">
-                        Tiada rekod bayaran EFT lagi.
+                        No EFT payment records found.
                       </td>
                     </tr>
                   )}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile View: High-End Payment Cards (Zero Horizontal Scroll!) */}
+            <div className="md:hidden space-y-3">
+              {payments.length > 0 ? (
+                payments.map((p) => (
+                  <div key={p.id} className="p-4 bg-slate-50/70 border border-slate-200/80 rounded-2xl space-y-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="font-mono font-bold text-emerald-700 text-sm block">
+                          {p.payment_reference}
+                        </span>
+                        <span className="font-mono text-xs text-slate-500">
+                          LPO: {p.lpo?.lpo_number || '-'}
+                        </span>
+                      </div>
+                      <span className="font-mono font-extrabold text-slate-900 text-sm">
+                        {formatCurrency(Number(p.amount) || 0)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200/60">
+                      <span className="font-medium text-slate-700 truncate">
+                        {p.lpo?.purchase_order?.supplier?.company_name || 'Supplier'}
+                      </span>
+                      <span className="font-mono text-slate-500 text-[11px] flex-shrink-0">
+                        {p.payment_date}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-slate-400 text-xs italic">
+                  No EFT payment records found.
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -210,18 +305,19 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
       {subTab === 'receiving' && (
         <div className="rounded-[2rem] bg-white border-2 border-slate-100 p-6 shadow-sm space-y-4">
           <h3 className="text-sm font-black uppercase tracking-wider text-slate-400">
-            Log Terimaan Barangan & Nota Hantaran (DO)
+            Goods Receiving & Delivery Order (DO) Log
           </h3>
 
-          <div className="overflow-x-auto">
+          {/* Desktop View: Full Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-50/80 border-y border-slate-100 text-slate-500 font-bold uppercase text-[10px]">
-                  <th className="py-3 px-3">No. DO (Delivery Order)</th>
-                  <th className="py-3 px-3">Tarikh Terima</th>
-                  <th className="py-3 px-3">No. LPO</th>
-                  <th className="py-3 px-3">Pembekal</th>
-                  <th className="py-3 px-3">Catatan</th>
+                  <th className="py-3 px-3">DO No. (Delivery Order)</th>
+                  <th className="py-3 px-3">Received Date</th>
+                  <th className="py-3 px-3">LPO No.</th>
+                  <th className="py-3 px-3">Supplier</th>
+                  <th className="py-3 px-3">Notes</th>
                   <th className="py-3 px-3 text-center">Status</th>
                 </tr>
               </thead>
@@ -233,12 +329,12 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
                       <td className="py-3 px-3 text-slate-500">{r.received_date}</td>
                       <td className="py-3 px-3 font-mono text-slate-700 font-semibold">{r.lpo?.lpo_number || '-'}</td>
                       <td className="py-3 px-3 text-slate-800 font-medium">
-                        {r.lpo?.purchase_order?.supplier?.company_name || 'Pembekal'}
+                        {r.lpo?.purchase_order?.supplier?.company_name || 'Supplier'}
                       </td>
                       <td className="py-3 px-3 text-slate-500">{r.notes || '-'}</td>
                       <td className="py-3 px-3 text-center">
                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          Diterima Lengkap
+                          Fully Received
                         </span>
                       </td>
                     </tr>
@@ -246,12 +342,53 @@ export const ReceivingPaymentsTab: React.FC<ReceivingPaymentsTabProps> = ({
                 ) : (
                   <tr>
                     <td colSpan={6} className="py-8 text-center text-slate-400 italic">
-                      Tiada rekod penerimaan barangan DO lagi.
+                      No DO receiving records found.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile View: High-End Receiving Cards (Zero Horizontal Scroll!) */}
+          <div className="md:hidden space-y-3">
+            {receivingRecords.length > 0 ? (
+              receivingRecords.map((r) => (
+                <div key={r.id} className="p-4 bg-slate-50/70 border border-slate-200/80 rounded-2xl space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="font-mono font-bold text-indigo-700 text-sm block">
+                        {r.do_number}
+                      </span>
+                      <span className="font-mono text-xs text-slate-500">
+                        LPO: {r.lpo?.lpo_number || '-'}
+                      </span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      Received
+                    </span>
+                  </div>
+
+                  <div className="text-xs space-y-1">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400 font-bold uppercase text-[9px]">Supplier:</span>
+                      <span className="font-medium text-slate-800">{r.lpo?.purchase_order?.supplier?.company_name || 'Supplier'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400 font-bold uppercase text-[9px]">Date:</span>
+                      <span className="font-mono text-slate-600">{r.received_date}</span>
+                    </div>
+                    {r.notes && (
+                      <p className="text-slate-500 italic text-[11px] pt-1">"{r.notes}"</p>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-8 text-center text-slate-400 text-xs italic">
+                No DO receiving records found.
+              </div>
+            )}
           </div>
         </div>
       )}

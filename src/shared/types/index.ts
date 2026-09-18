@@ -72,6 +72,9 @@ export type {
   OxygenRequestDocument,
   OxygenRequestDocumentItem,
   OxygenRequestDocumentWithRelations,
+  OxygenReceiveDocument,
+  OxygenReceiveDocumentItem,
+  OxygenReceiveDocumentWithRelations,
   CylinderDispatchRequestType,
   CylinderDispatchStatus,
   CylinderDispatchPriority,
@@ -97,6 +100,4 @@ export * from './mytransporter'
 export * from './mycrossborder'
 export * from './mystaff'
 export * from './myporter'
-
-
-
+export * from './mytimeoff'

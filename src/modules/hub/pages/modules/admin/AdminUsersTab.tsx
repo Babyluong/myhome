@@ -30,6 +30,7 @@ import { getUsers, updateUser, adminResetUserPassword } from '@/services/userSer
 import { sendPasswordResetEmail } from '@/services/emailService'
 import { getAllRoles } from '@/services/roleService'
 import { getDepartments } from '@/services/departmentService'
+import { recordAuditLog } from '@/services/auditLogService'
 import { useToastStore } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'
 import type { UserWithRelations, Role, Department } from '@/types'
@@ -192,6 +193,20 @@ export const AdminUsersTab: React.FC = () => {
       const result = await adminResetUserPassword(editingUser.id, emailToUse, newPassword)
 
       if (result.success) {
+        // Record password reset audit log
+        try {
+          recordAuditLog({
+            userId: currentUser?.id,
+            action: 'UPDATE',
+            module: 'myadmin',
+            entityType: 'user_password',
+            entityId: editingUser.id,
+            details: `Tetapan semula kata laluan pengguna ${editFullName || editingUser.full_name} (${editingUser.employee_id || editingUser.id}).`,
+          })
+        } catch (auditErr) {
+          console.warn('Failed to record password reset audit:', auditErr)
+        }
+
         showSuccess(
           'Kata Laluan Berjaya Dikemaskini',
           result.message || `Kata laluan bagi ${editFullName || editingUser.full_name} berjaya dikemaskini.`
@@ -254,6 +269,34 @@ export const AdminUsersTab: React.FC = () => {
         department_id: assignedDept || undefined,
         status: assignedStatus
       })
+
+      // Record profile update audit log
+      try {
+        recordAuditLog({
+          userId: currentUser?.id,
+          action: 'UPDATE',
+          module: 'myadmin',
+          entityType: 'user_profile',
+          entityId: editingUser.id,
+          oldValues: {
+            full_name: editingUser.full_name,
+            email: editingUser.email,
+            role_id: editingUser.role_id,
+            department_id: editingUser.department_id,
+            status: editingUser.status,
+          },
+          newValues: {
+            full_name: editFullName,
+            email: editEmail,
+            role_id: assignedRole,
+            department_id: assignedDept,
+            status: assignedStatus,
+          },
+          details: `Mengemaskini maklumat profil pengguna: ${editFullName} (${editEmployeeId || editingUser.id}).`,
+        })
+      } catch (auditErr) {
+        console.warn('Failed to record user update audit:', auditErr)
+      }
 
       showSuccess('Kejayaan', `Maklumat akaun bagi ${editFullName} berjaya dikemaskini.`)
       setEditingUser(null)

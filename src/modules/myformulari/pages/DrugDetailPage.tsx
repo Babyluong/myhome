@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import {
   ArrowLeft,
   Flame,
@@ -35,7 +35,7 @@ import {
   HeartPulse
 } from 'lucide-react'
 import { getDrugById, getAllFormulariDrugs } from '../services/formulariService'
-import { getGuidelinesForDrug, NAG_GUIDELINES } from '../data/antimicrobialData'
+import { getGuidelinesForDrug, getDrugRolesInGuideline, NAG_GUIDELINES } from '../data/antimicrobialData'
 import { PrescriberBadge, HAMBadge, LASABadge, PoisonBadge, NAGBadge, PregnancyBadge, LactationBadge } from '../components/DrugBadge'
 import { TallManLettering } from '../components/TallManLettering'
 import { HamPrecautionsPanel } from '../components/HamPrecautionsPanel'
@@ -43,12 +43,26 @@ import { DilutionCard } from '../components/DilutionCard'
 import { ShelfLifeWidget } from '../components/ShelfLifeWidget'
 import { QuotaProgressBar } from '../components/QuotaProgressBar'
 import { DrugInteractionModal } from '../components/DrugInteractionModal'
+import { PaediatricDoseCalculatorModal } from '../components/PaediatricDoseCalculatorModal'
+import { ArtemetherScheduleCalculator } from '../components/ArtemetherScheduleCalculator'
+import { getKkmDilutionProtocol } from '../data/kkmDilutionMasterDatabase'
+
+import { findBestFukkmMatch, synthesizeDrugEntryFromFacility } from '../services/fukkmMatcher'
 
 export const DrugDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
+  const navState = location.state as {
+    fromLawasFormulary?: boolean
+    facilityDrug?: any
+    fukkmMatch?: any
+    backLabel?: string
+    backPath?: string
+  } | null
   const [activeTab, setActiveTab] = useState<'overview' | 'dosing' | 'pregnancy' | 'safety' | 'dilution' | 'shelflife' | 'antimicrobial' | 'alternatives'>('overview')
   const [isInteractionModalOpen, setIsInteractionModalOpen] = useState(false)
+  const [isPaediatricModalOpen, setIsPaediatricModalOpen] = useState(false)
 
   // Cockcroft-Gault CrCl Calculator State
   const [calcAge, setCalcAge] = useState<string>('')
@@ -57,11 +71,24 @@ export const DrugDetailPage: React.FC = () => {
   const [calcSerumCr, setCalcSerumCr] = useState<string>('')
   const [showCrClCalculator, setShowCrClCalculator] = useState(false)
 
-  // Paediatric Quick Weight Estimator
-  const [paedWeight, setPaedWeight] = useState<string>('')
+  // Paediatric Quick Weight Estimator State
+  const [paedWeight, setPaedWeight] = useState<string>('12')
+  const [showPaedCalculator, setShowPaedCalculator] = useState(true)
 
-  const drug = id ? getDrugById(id) : undefined
   const allDrugs = getAllFormulariDrugs()
+
+  // Resolve drug: 1. By ID in database, 2. From fukkmMatch state, 3. Matched from facilityDrug, 4. Synthesized
+  let drug = id ? getDrugById(id) : undefined
+  if (!drug && navState?.fukkmMatch) {
+    drug = navState.fukkmMatch
+  }
+  if (!drug && navState?.facilityDrug) {
+    drug = findBestFukkmMatch(navState.facilityDrug, allDrugs) || synthesizeDrugEntryFromFacility(navState.facilityDrug)
+  }
+  if (!drug && id) {
+    const q = id.toLowerCase()
+    drug = allDrugs.find(d => d.genericName.toLowerCase().includes(q) || (d.mohDrugCode && d.mohDrugCode.toLowerCase() === q))
+  }
 
   // Calculate Cockcroft-Gault CrCl
   const calculateCrCl = (): { crcl: number; bracket: string; color: string } | null => {
@@ -74,16 +101,16 @@ export const DrugDetailPage: React.FC = () => {
     const raw = ((140 - age) * weight) / (0.814 * scr)
     const crcl = Math.round((calcGender === 'FEMALE' ? raw * 0.85 : raw) * 10) / 10
 
-    let bracket = 'Fungsi Ginjal Normal / Gangguan Ringan (CrCl > 50 mL/min)'
+    let bracket = 'Normal Renal Function / Mild Impairment (CrCl > 50 mL/min)'
     let color = 'bg-emerald-50 text-emerald-800 border-emerald-200'
     if (crcl < 10) {
-      bracket = 'Penyakit Buah Pinggang Peringkat Akhir / ESRD (CrCl < 10 mL/min)'
+      bracket = 'End-Stage Renal Disease / ESRD (CrCl < 10 mL/min)'
       color = 'bg-rose-50 text-rose-900 border-rose-200'
     } else if (crcl < 30) {
-      bracket = 'Gangguan Renal Teruk (CrCl 10 - 30 mL/min)'
+      bracket = 'Severe Renal Impairment (CrCl 10 - 30 mL/min)'
       color = 'bg-orange-50 text-orange-900 border-orange-200'
     } else if (crcl <= 50) {
-      bracket = 'Gangguan Renal Sederhana (CrCl 30 - 50 mL/min)'
+      bracket = 'Moderate Renal Impairment (CrCl 30 - 50 mL/min)'
       color = 'bg-amber-50 text-amber-900 border-amber-200'
     }
 
@@ -92,6 +119,84 @@ export const DrugDetailPage: React.FC = () => {
 
   const crclResult = calculateCrCl()
 
+  // Evaluate Paediatric Quick Dose & Weight Brackets
+  const evaluatePaediatricDose = (weightStr: string, text: string) => {
+    const wt = parseFloat(weightStr)
+    if (!wt || wt <= 0 || !text) return null
+
+    // Check weight bracket for Artemether/Lumefantrine & other antimalarials
+    if (text.includes('5 hingga < 15 kg') || text.includes('15 hingga < 25 kg')) {
+      if (wt < 5) {
+        return {
+          type: 'warning',
+          title: 'KONTRAINDIKASI / Tidak Disyorkan (Berat < 5 kg)',
+          detail: 'Keselamatan dan keberkesanan klinikal belum dibuktikan pada bayi bawah 5 kg.',
+          badge: 'Berat < 5 kg',
+          isWarning: true
+        }
+      } else if (wt < 15) {
+        return {
+          type: 'bracket',
+          title: 'Dos Padanan: 1 Tablet Per Dos (Jumlah: 6 Tablet)',
+          detail: 'Jadual 6-dos dalam 60 jam: Berikan pada jam 0, 8, 24, 36, 48, dan 60 bersama susu/makanan berlemak.',
+          badge: '5 hingga < 15 kg',
+          isWarning: false
+        }
+      } else if (wt < 25) {
+        return {
+          type: 'bracket',
+          title: 'Dos Padanan: 2 Tablet Per Dos (Jumlah: 12 Tablet)',
+          detail: 'Jadual 6-dos dalam 60 jam: Berikan pada jam 0, 8, 24, 36, 48, dan 60 bersama susu/makanan berlemak.',
+          badge: '15 hingga < 25 kg',
+          isWarning: false
+        }
+      } else if (wt < 35) {
+        return {
+          type: 'bracket',
+          title: 'Dos Padanan: 3 Tablet Per Dos (Jumlah: 18 Tablet)',
+          detail: 'Jadual 6-dos dalam 60 jam: Berikan pada jam 0, 8, 24, 36, 48, dan 60 bersama susu/makanan berlemak.',
+          badge: '25 hingga < 35 kg',
+          isWarning: false
+        }
+      } else {
+        return {
+          type: 'bracket',
+          title: 'Dos Padanan: 4 Tablet Per Dos (Jumlah: 24 Tablet - Dos Dewasa Penuh)',
+          detail: 'Jadual 6-dos dalam 60 jam: Berikan pada jam 0, 8, 24, 36, 48, dan 60 bersama susu/makanan berlemak.',
+          badge: '≥ 35 kg / Dewasa',
+          isWarning: false
+        }
+      }
+    }
+
+    // Check for mg/kg pattern
+    const match = text.match(/(\d+(?:\.\d+)?)\s*(?:-|hingga|\s+to\s+)?\s*(\d+(?:\.\d+)?)?\s*mg\/kg/i)
+    if (match) {
+      const low = parseFloat(match[1])
+      const high = match[2] ? parseFloat(match[2]) : low
+      const isDaily = text.toLowerCase().includes('/hari') || text.toLowerCase().includes('/day')
+      
+      const calcLow = Math.round(wt * low * 10) / 10
+      const calcHigh = Math.round(wt * high * 10) / 10
+      
+      return {
+        type: 'mgPerKg',
+        title: low === high ? `Dos Anggaran: ${calcLow} mg` : `Dos Anggaran: ${calcLow} - ${calcHigh} mg`,
+        detail: isDaily ? `Berdasarkan formula ${low === high ? low : `${low}-${high}`} mg/kg/hari (Jumlah dos sehari dibahagikan mengikut kekerapan).` : `Berdasarkan formula ${low === high ? low : `${low}-${high}`} mg/kg/dos.`,
+        badge: `${wt} kg x ${low === high ? low : `${low}-${high}`} mg/kg`,
+        isWarning: false
+      }
+    }
+
+    return {
+      type: 'general',
+      title: `Pesakit Pediatrik (${wt} kg)`,
+      detail: 'Sila semak perincian protokol dos mg/kg atau peringkat umur di bawah.',
+      badge: `${wt} kg`,
+      isWarning: false
+    }
+  }
+
   if (!drug) {
     return (
       <div className="p-8 w-full max-w-2xl mx-auto text-center space-y-5 bg-white rounded-3xl border border-slate-200 shadow-sm mt-10">
@@ -99,45 +204,62 @@ export const DrugDetailPage: React.FC = () => {
           <AlertOctagon className="w-8 h-8" />
         </div>
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-slate-900">Ubat Tidak Dijumpai</h2>
+          <h2 className="text-xl font-bold text-slate-900">Drug Not Found</h2>
           <p className="text-sm text-slate-500">
-            Rekod ubat ID <code className="font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-800">{id}</code> tidak wujud dalam pangkalan data Formulari Hospital.
+            Drug record ID <code className="font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-800">{id}</code> does not exist in the Hospital Formulary database.
           </p>
         </div>
         <button
           onClick={() => navigate('/formulari/dashboard')}
           className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs"
         >
-          Kembali ke Senarai Formulari
+          Back to Formulary List
         </button>
       </div>
     )
   }
 
+  const kkmDilutionMono = drug ? (getKkmDilutionProtocol(drug.genericName) || (drug.brandNames?.length ? getKkmDilutionProtocol(drug.brandNames[0]) : undefined)) : undefined
+  const hasDilutionTab = Boolean(kkmDilutionMono || drug?.dilution?.isApplicable || drug?.reconstitution?.isApplicable)
+
   const tabs = [
-    { id: 'overview', label: 'Ringkasan & Indikasi', icon: BookOpen },
-    { id: 'dosing', label: 'Dos & Pentadbiran', icon: Activity },
-    { id: 'pregnancy', label: 'Kehamilan & Penyusuan', icon: HeartPulse, badge: drug.pregnancyAndLactation?.fdaCategory ? `Kat ${drug.pregnancyAndLactation.fdaCategory}` : undefined },
-    { id: 'safety', label: 'Amaran & Keselamatan', icon: ShieldCheck, badge: drug.isHAM ? 'HAM' : drug.isLASA ? 'LASA' : undefined },
-    { id: 'dilution', label: 'Pelarutan IV & Bancuhan', icon: Droplets, disabled: !drug.dilution?.isApplicable && !drug.reconstitution?.isApplicable },
-    { id: 'shelflife', label: 'Jangka Hayat & Storan', icon: Clock },
-    { id: 'antimicrobial', label: 'Panduan NAG (Antimikrobial)', icon: Stethoscope, disabled: !drug.antimicrobial?.isAntimicrobial },
-    { id: 'alternatives', label: 'Ubat Alternatif', icon: Layers, count: drug.alternativeDrugs?.length }
+    { id: 'overview', label: 'Summary & Indications', icon: BookOpen },
+    { id: 'dosing', label: 'Dosing & Administration', icon: Activity },
+    { id: 'pregnancy', label: 'Pregnancy & Lactation', icon: HeartPulse, badge: drug.pregnancyAndLactation?.fdaCategory ? `Cat ${drug.pregnancyAndLactation.fdaCategory}` : undefined },
+    { id: 'safety', label: 'Safety & Warnings', icon: ShieldCheck, badge: drug.isHAM ? 'HAM' : drug.isLASA ? 'LASA' : undefined },
+    { id: 'dilution', label: 'IV Dilution & Reconstitution', icon: Droplets, disabled: !hasDilutionTab },
+    { id: 'shelflife', label: 'Shelf Life & Storage', icon: Clock },
+    { id: 'antimicrobial', label: 'NAG Guidelines (Antimicrobial)', icon: Stethoscope, disabled: !drug.antimicrobial?.isAntimicrobial },
+    { id: 'alternatives', label: 'Alternative Drugs', icon: Layers, count: drug.alternativeDrugs?.length }
   ]
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6 max-w-full">
       {/* Top Breadcrumb & Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
-        <button
-          onClick={() => navigate('/formulari/dashboard')}
-          className="flex items-center gap-2 text-slate-600 hover:text-violet-700 transition-colors text-xs font-bold w-fit group"
-        >
-          <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center group-hover:border-violet-300 group-hover:bg-violet-50 transition-colors">
-            <ArrowLeft className="w-4 h-4 text-slate-600 group-hover:text-violet-700" />
-          </div>
-          <span>Kembali ke Senarai Formulari (FUKKM)</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate(navState?.backPath || '/formulari/dashboard')}
+            className="flex items-center gap-2 text-slate-600 hover:text-violet-700 transition-colors text-xs font-bold w-fit group"
+          >
+            <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center group-hover:border-violet-300 group-hover:bg-violet-50 transition-colors">
+              <ArrowLeft className="w-4 h-4 text-slate-600 group-hover:text-violet-700" />
+            </div>
+            <span>{navState?.backLabel || 'Back to Formulary List (FUKKM)'}</span>
+          </button>
+          {navState?.fromLawasFormulary && navState.facilityDrug && (
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border ${
+              (navState.facilityDrug.facility_stock ?? 0) <= 0
+                ? 'bg-rose-50 border-rose-200 text-rose-700'
+                : (navState.facilityDrug.facility_stock ?? 0) < 20
+                ? 'bg-amber-50 border-amber-200 text-amber-700'
+                : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+            }`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-current" />
+              Stok Fasiliti: {(navState.facilityDrug.facility_stock ?? 0) <= 0 ? 'NIL' : `${navState.facilityDrug.facility_stock} unit`}
+            </span>
+          )}
+        </div>
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-2">
@@ -146,10 +268,10 @@ export const DrugDetailPage: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="px-3.5 py-2 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs"
-            title="Buka Laman Rasmi KKM MyFormulary"
+            title="Open Official MOH MyFormulary Portal"
           >
             <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-            <span>Portal KKM</span>
+            <span>MOH Portal</span>
           </a>
 
           <button
@@ -157,7 +279,7 @@ export const DrugDetailPage: React.FC = () => {
             className="px-3.5 py-2 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs"
           >
             <Printer className="w-3.5 h-3.5 text-slate-400" />
-            <span>Cetak Monograf</span>
+            <span>Print Monograph</span>
           </button>
           
           <button
@@ -165,7 +287,7 @@ export const DrugDetailPage: React.FC = () => {
             className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
           >
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Semak Interaksi Ubat</span>
+            <span>Check Drug Interactions</span>
           </button>
         </div>
       </div>
@@ -182,7 +304,7 @@ export const DrugDetailPage: React.FC = () => {
               <PoisonBadge poison={drug.poisonCategory} />
               
               <span className="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg font-semibold border border-slate-200">
-                Skim: {drug.skimPerolehan}
+                Scheme: {drug.skimPerolehan}
               </span>
 
               {drug.pregnancyAndLactation && (
@@ -200,7 +322,7 @@ export const DrugDetailPage: React.FC = () => {
               {drug.neml === 'Y' && (
                 <span className="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg font-bold border border-emerald-200 flex items-center gap-1">
                   <BookmarkCheck className="w-3.5 h-3.5" />
-                  <span>NEML (Ubat Penting)</span>
+                  <span>NEML (Essential Medicine)</span>
                 </span>
               )}
 
@@ -214,7 +336,7 @@ export const DrugDetailPage: React.FC = () => {
               {drug.isLASA && (
                 <span className="text-xs bg-amber-50 text-amber-800 px-2.5 py-1 rounded-lg font-bold border border-amber-200 flex items-center gap-1">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                  <span>LASA (Keliru Bunyi/Rupa)</span>
+                  <span>LASA (Sound-Alike/Look-Alike)</span>
                 </span>
               )}
 
@@ -229,17 +351,20 @@ export const DrugDetailPage: React.FC = () => {
             {/* Drug Title & Brands */}
             <div className="space-y-1.5">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                {drug.isLASA && drug.tallManName ? (
-                  <TallManLettering name={drug.tallManName} className="text-2xl sm:text-3xl lg:text-4xl" />
-                ) : (
-                  drug.genericName
-                )}
+                {drug.genericName}
               </h1>
+              
+              {drug.isLASA && drug.tallManName && (
+                <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-900 px-3 py-1 rounded-xl text-xs font-bold">
+                  <span>MOH TALL-MAN Standard:</span>
+                  <TallManLettering name={drug.tallManName} />
+                </div>
+              )}
               
               {drug.brandNames && drug.brandNames.length > 0 && (
                 <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 font-medium">
                   <Pill className="w-3.5 h-3.5 text-violet-500 shrink-0" />
-                  <span>Jenama / Nama Dagang: <strong className="text-slate-700 font-semibold">{drug.brandNames.join(' • ')}</strong></span>
+                  <span>Brand / Trade Names: <strong className="text-slate-700 font-semibold">{drug.brandNames.join(' • ')}</strong></span>
                 </div>
               )}
             </div>
@@ -247,19 +372,19 @@ export const DrugDetailPage: React.FC = () => {
             {/* Metadata Inset Metric Chips */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
               <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/80">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Kod ATC</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">ATC Code</span>
                 <span className="text-xs font-mono font-bold text-slate-800">{drug.atcCode}</span>
               </div>
 
               <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/80">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Kod Ubat KKM (MDC)</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">MOH Drug Code (MDC)</span>
                 <span className="text-xs font-mono font-bold text-slate-800 truncate block" title={drug.mohDrugCode}>
                   {drug.mohDrugCode || 'N/A'}
                 </span>
               </div>
 
               <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 col-span-2">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Kelas Terapi (Therapeutic Class)</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Therapeutic Class</span>
                 <span className="text-xs font-semibold text-slate-800 truncate block" title={drug.therapeuticClass}>
                   {drug.therapeuticClass}
                 </span>
@@ -276,7 +401,7 @@ export const DrugDetailPage: React.FC = () => {
             </div>
             <div className="space-y-0.5 text-xs">
               <strong className="font-bold text-amber-950 block uppercase tracking-wider text-[11px]">
-                Sekatan Preskripsi & Kriteria Khas (KKM FUKKM):
+                Prescription Restrictions & Special Criteria (MOH FUKKM):
               </strong>
               <p className="leading-relaxed whitespace-pre-line font-medium text-amber-900">
                 {drug.psxRestrictions}
@@ -333,9 +458,9 @@ export const DrugDetailPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                    Indikasi Klinikal Diluluskan (FUKKM Ed. 4)
+                    Approved Clinical Indications (FUKKM Ed. 4)
                   </h3>
-                  <span className="text-[11px] text-slate-400 font-medium">Kegunaan terapeutik berdaftar Kementerian Kesihatan Malaysia</span>
+                  <span className="text-[11px] text-slate-400 font-medium">Registered therapeutic uses by Ministry of Health Malaysia</span>
                 </div>
               </div>
 
@@ -359,9 +484,9 @@ export const DrugDetailPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                    Kontraindikasi (Contraindications)
+                    Contraindications
                   </h3>
-                  <span className="text-[11px] text-slate-400 font-medium">Keadaan klinikal di mana ubat ini dilarang diberikan</span>
+                  <span className="text-[11px] text-slate-400 font-medium">Clinical conditions where this medication is strictly contraindicated</span>
                 </div>
               </div>
 
@@ -386,25 +511,25 @@ export const DrugDetailPage: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Bentuk Sediaan & Kekuatan di Hospital / Klinik KKM
+                  Dosage Forms & Strengths in Hospital / MOH Clinics
                 </h3>
-                <span className="text-[11px] text-slate-400 font-medium">Spesifikasi formulasi sediaan farmaseutikal</span>
+                <span className="text-[11px] text-slate-400 font-medium">Pharmaceutical preparation specifications</span>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
-                <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Bentuk Dos (Dosage Form)</span>
+                <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Dosage Form</span>
                 <strong className="text-sm text-slate-800 block">{drug.dosageForms.join(', ')}</strong>
               </div>
 
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
-                <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Kekuatan Sediaan (Strengths)</span>
+                <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Strengths</span>
                 <strong className="text-sm text-slate-800 block">{drug.strengths.join(', ')}</strong>
               </div>
 
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
-                <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Laluan Pentadbiran (Routes)</span>
+                <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Routes of Administration</span>
                 <strong className="text-sm text-slate-800 block">{drug.administrationRoutes.join(', ')}</strong>
               </div>
             </div>
@@ -420,9 +545,9 @@ export const DrugDetailPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                    Amaran & Langkah Berjaga-Jaga (Precautions)
+                    Precautions & Warnings
                   </h3>
-                  <span className="text-[11px] text-slate-400 font-medium">Pemantauan klinikal dan amaran keselamatan pesakit</span>
+                  <span className="text-[11px] text-slate-400 font-medium">Clinical monitoring and patient safety alerts</span>
                 </div>
               </div>
 
@@ -443,9 +568,9 @@ export const DrugDetailPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                    Kesan Sampingan Utama (Adverse Effects)
+                    Adverse Drug Reactions
                   </h3>
-                  <span className="text-[11px] text-slate-400 font-medium">Reaksi ubat yang berpotensi berlaku</span>
+                  <span className="text-[11px] text-slate-400 font-medium">Potential side effects and drug reactions</span>
                 </div>
               </div>
 
@@ -463,6 +588,12 @@ export const DrugDetailPage: React.FC = () => {
 
       {/* ================= TAB 2: DOSING & ADMINISTRATION ================= */}
       {activeTab === 'dosing' && (() => {
+        const isArtemetherLumefantrine =
+          (drug.genericName?.toLowerCase().includes('artemether') && drug.genericName?.toLowerCase().includes('lumefantrine')) ||
+          drug.mohDrugCode?.includes('P01BE52') ||
+          drug.atcCode === 'P01BE52' ||
+          drug.id === 'DRUG-KKM-0115'
+
         const elderlyOrRenalVal = drug.standardDosage?.elderlyOrRenal || ''
         const hasSplitRenalElderly = elderlyOrRenalVal.includes('[PELARASAN GANGGUAN BUAH PINGGANG')
         let renalText = ''
@@ -486,13 +617,13 @@ export const DrugDetailPage: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
-                      Dos Dewasa Standard (Adult Clinical Regimen)
+                      Adult Clinical Regimen
                     </h3>
-                    <span className="text-[11px] text-slate-400 font-medium">Rejimen terapeutik standard diluluskan Formulari Ubat KKM</span>
+                    <span className="text-[11px] text-slate-400 font-medium">Standard therapeutic regimen approved by MOH Drug Formulary</span>
                   </div>
                 </div>
                 <span className="text-[11px] font-bold bg-violet-50 text-violet-700 px-3 py-1 rounded-xl border border-violet-200/60 hidden sm:inline-block">
-                  Laluan: {drug.administrationRoutes.join(', ') || 'Oral'}
+                  Route: {drug.administrationRoutes.join(', ') || 'Oral'}
                 </span>
               </div>
               <div className="p-4 sm:p-5 bg-violet-50/50 rounded-2xl border border-violet-100 text-xs sm:text-sm text-slate-800 leading-relaxed font-medium whitespace-pre-line">
@@ -501,67 +632,229 @@ export const DrugDetailPage: React.FC = () => {
             </div>
 
             {/* Administration & Patient Intake Instructions Card */}
-            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-3.5">
-              <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-                <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
-                  <Info className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
-                    Arahan Kaedah Pentadbiran & Pengambilan Ubat (Administration Guide)
-                  </h3>
-                  <span className="text-[11px] text-slate-400 font-medium">Panduan praktikal cara pengambilan, masa dos, dan laluan pemberian</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
-                  <span className="font-bold text-slate-900 block">Laluan & Cara Pengambilan:</span>
-                  <p className="text-slate-700 leading-relaxed font-medium">
-                    {drug.administrationRoutes?.includes('Oral')
-                      ? 'Ambil bersama segelas air penuh. Boleh diambil bersama atau selepas makan bagi mengurangkan ketidakselesaan perut/loya. Telan utuh tanpa menghancurkan tablet jika bersalut filem.'
-                      : drug.administrationRoutes?.includes('Intravenous')
-                      ? 'Diberikan secara suntikan IV bolus perlahan (>10-15 min) atau infusi titisan berterusan (30-60 min). Rujuk Tab Pelarutan & Bancuhan untuk protokol lengkap.'
-                      : drug.administrationRoutes?.includes('Inhalation')
-                      ? 'Gunakan mengikut teknik sedutan yang betul. Kumur mulut dengan air selepas sedutan ubat kortikosteroid.'
-                      : 'Gunakan mengikut teknik pentadbiran klinikal yang disyorkan oleh pakar farmasi / perubatan.'}
-                  </p>
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 flex-wrap gap-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
+                    <Info className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                      <span>Administration Guide & Patient Intake Instructions</span>
+                      {isArtemetherLumefantrine && (
+                        <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-300/80 px-2 py-0.5 rounded-md font-bold uppercase">
+                          Khas: Jadual 6-Dos STAT/8H/BD
+                        </span>
+                      )}
+                    </h3>
+                    <span className="text-[11px] text-slate-400 font-medium">
+                      {isArtemetherLumefantrine
+                        ? 'Panduan penyerapan lemak/susu, protokol muntah, dan kalkulator interaktif selang masa dos (60 Jam)'
+                        : 'Practical guidance for intake method, dosing times, and administration routes'}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
-                  <span className="font-bold text-slate-900 block">Jadual & Ketepatan Masa Dos:</span>
-                  <p className="text-slate-700 leading-relaxed font-medium">
-                    Kekalkan selang masa yang sekata antara dos (cth: setiap 12 jam untuk dos 2 kali sehari / BD; setiap 8 jam untuk dos 3 kali sehari / TDS). Jangan gandakan dos jika terlupa.
-                  </p>
-                </div>
+                {isArtemetherLumefantrine && (
+                  <span className="text-[11px] font-bold bg-teal-50 text-teal-700 border border-teal-200/80 px-3 py-1 rounded-xl">
+                    6 Dos / 60 Jam (MOH Malaria Regimen)
+                  </span>
+                )}
               </div>
+
+              {/* Special Artemether + Lumefantrine 6-Dose Scheduler & Administration Calculator */}
+              {isArtemetherLumefantrine ? (
+                <ArtemetherScheduleCalculator drugName={drug.genericName} />
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
+                    <span className="font-bold text-slate-900 block">Administration Method & Route:</span>
+                    <p className="text-slate-700 leading-relaxed font-medium">
+                      {drug.administrationRoutes?.some(r => r.includes('Oral'))
+                        ? 'Take with a full glass of water. May be taken with or after food to minimize stomach upset/nausea. Swallow whole without crushing if film-coated or modified release.'
+                        : drug.administrationRoutes?.some(r => r.includes('Sublingual'))
+                        ? 'Place under the tongue and allow to dissolve completely. Do not chew or swallow tablet.'
+                        : drug.administrationRoutes?.some(r => r.includes('Topical'))
+                        ? 'Apply a thin layer to affected skin areas after cleaning and drying. Wash hands before and after application.'
+                        : drug.administrationRoutes?.some(r => r.includes('Ophthalmic'))
+                        ? 'Instill into the conjunctival sac of the affected eye. Press the inner corner of the eye (nasolacrimal duct) for 1-2 minutes to reduce systemic absorption.'
+                        : drug.administrationRoutes?.some(r => r.includes('Otic'))
+                        ? 'Instill into the ear canal with the head tilted. Maintain position for 2-3 minutes.'
+                        : drug.administrationRoutes?.some(r => r.includes('Nasal'))
+                        ? 'Blow nose gently before use. Spray into nostril while breathing in gently according to proper nasal spray technique.'
+                        : drug.administrationRoutes?.some(r => r.includes('Inhalation'))
+                        ? 'Use according to proper inhaler device technique (MDI / DPI). Rinse mouth with water after inhaling corticosteroid medication.'
+                        : drug.administrationRoutes?.some(r => r.includes('Transdermal'))
+                        ? 'Apply to clean, dry, hairless skin. Rotate application sites periodically to prevent skin irritation.'
+                        : drug.administrationRoutes?.some(r => r.includes('Rectal'))
+                        ? 'Insert into rectum as directed. Lie on side for several minutes after insertion.'
+                        : drug.administrationRoutes?.some(r => r.includes('Vaginal'))
+                        ? 'Insert into vagina preferably at bedtime using a clean applicator or clean fingers.'
+                        : drug.administrationRoutes?.some(r => r.includes('Intradermal') || r.includes('ID'))
+                        ? 'Administer via strict Intradermal (ID) injection (0.1 mL per site into bilateral deltoid) using a 1 mL tuberculin/insulin syringe with 27G-30G needle, raising a visible wheal (peau d\'orange). NEVER inject into gluteal tissue.'
+                        : drug.administrationRoutes?.some(r => r.includes('Subcutaneous'))
+                        ? 'Inject subcutaneously (SC) at a 45-90 degree angle into abdomen, thigh, or upper arm. Rotate injection sites.'
+                        : drug.administrationRoutes?.some(r => r.includes('Intramuscular'))
+                        ? (drug.genericName?.toLowerCase().includes('rabies')
+                            ? 'Inject deep intramuscularly (deep IM) into deltoid muscle (adults/children) or anterolateral thigh (infants). STRICTLY PROHIBITED IN GLUTEAL REGION (buttock) as gluteal adipose tissue severely reduces antibody seroconversion.'
+                            : 'Inject deep intramuscularly (deep IM) into deltoid or anterolateral thigh muscle by trained healthcare personnel.')
+                        : drug.administrationRoutes?.some(r => r.includes('IV') || r.includes('Intravenous') || r.includes('Infusion'))
+                        ? 'Administer via slow IV bolus injection or continuous infusion. Refer to IV Dilution & Reconstitution tab for complete protocol.'
+                        : 'Use in accordance with clinical administration techniques recommended by pharmacist / medical specialist.'}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
+                    <span className="font-bold text-slate-900 block">Dosing Schedule & Regularity:</span>
+                    <p className="text-slate-700 leading-relaxed font-medium">
+                      Maintain evenly spaced intervals between doses (e.g. every 12 hours for twice-daily / BD dosing; every 8 hours for three-times-daily / TDS dosing). Do not double up doses if missed.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Paediatric Dosing Card */}
-            {drug.standardDosage.pediatric && (
-              <div className="bg-white p-6 sm:p-8 rounded-3xl border border-blue-200/80 shadow-xs space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-blue-100">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-                      <Baby className="w-4 h-4" />
+            {drug.standardDosage.pediatric && (() => {
+              const evaluated = evaluatePaediatricDose(paedWeight, drug.standardDosage.pediatric)
+              const weightPresets = [
+                { label: '3 bln', wt: '6' },
+                { label: '6 bln', wt: '7.5' },
+                { label: '1 thn', wt: '10' },
+                { label: '2 thn', wt: '12' },
+                { label: '5 thn', wt: '18' },
+                { label: '7 thn', wt: '23' },
+                { label: '10 thn', wt: '32' },
+                { label: '12 thn', wt: '40' }
+              ]
+
+              return (
+                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-blue-200/80 shadow-xs space-y-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-blue-100">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                        <Baby className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                          <span>Paediatric, Infant & Child Dosing</span>
+                          <span className="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md font-bold">
+                            MOH Protocols (Ed. 5)
+                          </span>
+                        </h3>
+                        <span className="text-[11px] text-blue-600 font-medium">Standard Regimens, Weight Bands & Safety Protocols</span>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
-                        Dos Pediatrik, Bayi & Kanak-Kanak (Protokol Pediatrik KKM)
-                      </h3>
-                      <span className="text-[11px] text-blue-600 font-medium">Paediatric Protocols for Malaysian Hospitals (Ed. 4 & 5)</span>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowPaedCalculator(!showPaedCalculator)}
+                        className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                      >
+                        <Scale className="w-3.5 h-3.5" />
+                        <span>{showPaedCalculator ? 'Tutup Pengira Berat' : 'Kira Dos Berat (mg/kg)'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsPaediatricModalOpen(true)}
+                        className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
+                      >
+                        <Calculator className="w-3.5 h-3.5" />
+                        <span>Kalkulator Sirap/Suspensi (mL)</span>
+                      </button>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-xl border border-blue-200 w-fit">
-                    Pengiraan Berat Badan (mg/kg)
-                  </span>
-                </div>
 
-                <div className="p-4 sm:p-5 bg-blue-50/40 rounded-2xl border border-blue-100 text-xs sm:text-sm text-slate-800 leading-relaxed font-medium whitespace-pre-line">
-                  {drug.standardDosage.pediatric}
+                  {/* Interactive Quick Weight Dose Estimator */}
+                  {showPaedCalculator && (
+                    <div className="p-4 sm:p-5 bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-2xl border border-blue-200/80 space-y-3.5">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 text-xs font-bold text-blue-950">
+                          <Scale className="w-4 h-4 text-blue-600" />
+                          <span>Pengira Pantas Dos Berasaskan Berat Pesakit Kanak-kanak:</span>
+                        </div>
+                        <span className="text-[11px] text-blue-700 font-semibold">
+                          Formula APLS: Weight = (Age + 4) x 2
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                        <div className="sm:col-span-4 flex items-center gap-2">
+                          <label className="text-xs font-bold text-slate-700 whitespace-nowrap">Berat (kg):</label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="100"
+                            step="0.5"
+                            value={paedWeight}
+                            onChange={e => setPaedWeight(e.target.value)}
+                            placeholder="Contoh: 12"
+                            className="w-full bg-white border border-blue-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        {/* Quick Age Weight Presets */}
+                        <div className="sm:col-span-8 flex flex-wrap items-center gap-1.5">
+                          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mr-1">Pilihan Cepat:</span>
+                          {weightPresets.map(p => (
+                            <button
+                              key={p.label}
+                              type="button"
+                              onClick={() => setPaedWeight(p.wt)}
+                              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                                paedWeight === p.wt
+                                  ? 'bg-blue-600 text-white shadow-2xs'
+                                  : 'bg-white border border-blue-200 text-slate-700 hover:bg-blue-100/60'
+                              }`}
+                            >
+                              {p.label} ({p.wt}kg)
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Evaluated Live Result Banner */}
+                      {evaluated && (
+                        <div className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                          evaluated.isWarning
+                            ? 'bg-rose-50 border-rose-200 text-rose-900'
+                            : 'bg-white border-blue-200 text-slate-900 shadow-2xs'
+                        }`}>
+                          <div className="space-y-0.5">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-100 text-blue-800">
+                                {evaluated.badge}
+                              </span>
+                              <strong className="text-sm font-extrabold block text-blue-950">
+                                {evaluated.title}
+                              </strong>
+                            </div>
+                            <p className="text-xs font-medium text-slate-600 leading-relaxed">
+                              {evaluated.detail}
+                            </p>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setIsPaediatricModalOpen(true)}
+                            className="px-3.5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-xs font-bold shrink-0 transition-all shadow-2xs cursor-pointer"
+                          >
+                            Kira Isipadu Cecair (mL)
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Monograph Text Display */}
+                  <div className="p-4 sm:p-5 bg-blue-50/40 rounded-2xl border border-blue-100 text-xs sm:text-sm text-slate-800 leading-relaxed font-medium whitespace-pre-line">
+                    {drug.standardDosage.pediatric}
+                  </div>
                 </div>
-              </div>
-            )}
+              )
+            })()}
 
             {/* Renal Clearance & Dose Adjustment Card */}
             {renalText && (
@@ -573,9 +866,9 @@ export const DrugDetailPage: React.FC = () => {
                     </div>
                     <div>
                       <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
-                        Pelarasan Dos Gangguan Buah Pinggang (Renal Dosing Tiers)
+                        Renal Clearance & Dose Adjustment (Renal Dosing Tiers)
                       </h3>
-                      <span className="text-[11px] text-amber-700 font-medium">Berdasarkan Pelepasan Kreatinin (CrCl / eGFR mL/min) & Dialisis</span>
+                      <span className="text-[11px] text-amber-700 font-medium">Based on Creatinine Clearance (CrCl / eGFR mL/min) & Dialysis</span>
                     </div>
                   </div>
 
@@ -585,7 +878,7 @@ export const DrugDetailPage: React.FC = () => {
                     className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs w-fit"
                   >
                     <Calculator className="w-3.5 h-3.5" />
-                    <span>{showCrClCalculator ? 'Tutup Kalkulator CrCl' : 'Kalkulator CrCl Cockcroft-Gault'}</span>
+                    <span>{showCrClCalculator ? 'Close CrCl Calculator' : 'Cockcroft-Gault CrCl Calculator'}</span>
                   </button>
                 </div>
 
@@ -596,7 +889,7 @@ export const DrugDetailPage: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <Calculator className="w-4 h-4 text-amber-700" />
                         <h4 className="text-xs font-bold text-amber-950 uppercase tracking-wider">
-                          Kalkulator Pelepasan Kreatinin (Cockcroft-Gault Equation)
+                          Creatinine Clearance Calculator (Cockcroft-Gault Equation)
                         </h4>
                       </div>
                       <button
@@ -615,11 +908,11 @@ export const DrugDetailPage: React.FC = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       <div>
                         <label className="text-[10px] font-bold uppercase tracking-wider text-slate-600 block mb-1">
-                          Umur (Tahun)
+                          Age (Years)
                         </label>
                         <input
                           type="number"
-                          placeholder="cth: 65"
+                          placeholder="e.g. 65"
                           value={calcAge}
                           onChange={e => setCalcAge(e.target.value)}
                           className="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -628,25 +921,25 @@ export const DrugDetailPage: React.FC = () => {
 
                       <div>
                         <label className="text-[10px] font-bold uppercase tracking-wider text-slate-600 block mb-1">
-                          Jantina
+                          Gender
                         </label>
                         <select
                           value={calcGender}
                           onChange={e => setCalcGender(e.target.value as 'MALE' | 'FEMALE')}
                           className="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
                         >
-                          <option value="MALE">Lelaki (x 1.0)</option>
-                          <option value="FEMALE">Perempuan (x 0.85)</option>
+                          <option value="MALE">Male (x 1.0)</option>
+                          <option value="FEMALE">Female (x 0.85)</option>
                         </select>
                       </div>
 
                       <div>
                         <label className="text-[10px] font-bold uppercase tracking-wider text-slate-600 block mb-1">
-                          Berat Badan (kg)
+                          Body Weight (kg)
                         </label>
                         <input
                           type="number"
-                          placeholder="cth: 60"
+                          placeholder="e.g. 60"
                           value={calcWeight}
                           onChange={e => setCalcWeight(e.target.value)}
                           className="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -655,11 +948,11 @@ export const DrugDetailPage: React.FC = () => {
 
                       <div>
                         <label className="text-[10px] font-bold uppercase tracking-wider text-slate-600 block mb-1">
-                          Kreatinin Serum (µmol/L)
+                          Serum Creatinine (µmol/L)
                         </label>
                         <input
                           type="number"
-                          placeholder="cth: 150"
+                          placeholder="e.g. 150"
                           value={calcSerumCr}
                           onChange={e => setCalcSerumCr(e.target.value)}
                           className="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -671,7 +964,7 @@ export const DrugDetailPage: React.FC = () => {
                       <div className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${crclResult.color}`}>
                         <div className="space-y-0.5">
                           <span className="text-[10px] font-bold uppercase tracking-wider block opacity-75">
-                            Hasil Pelepasan Kreatinin Anggaran (eCrCl):
+                            Estimated Creatinine Clearance (eCrCl):
                           </span>
                           <span className="text-lg sm:text-xl font-extrabold block">
                             {crclResult.crcl} <span className="text-xs font-semibold">mL/min</span>
@@ -700,9 +993,9 @@ export const DrugDetailPage: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
-                      Panduan Warga Emas (Geriatrik) & Gangguan Fungsi Hati
+                      Geriatric & Hepatic Impairment Guidelines
                     </h3>
-                    <span className="text-[11px] text-slate-400 font-medium">Langkah keselamatan Beers Criteria & Klasifikasi Child-Pugh</span>
+                    <span className="text-[11px] text-slate-400 font-medium">Beers Criteria safety precautions & Child-Pugh Classification</span>
                   </div>
                 </div>
 
@@ -729,9 +1022,9 @@ export const DrugDetailPage: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
-                      Keselamatan Semasa Kehamilan (Pregnancy Safety)
+                      Pregnancy Safety
                     </h3>
-                    <span className="text-[11px] text-slate-400 font-medium">Klasifikasi KKM & Garis Panduan Klinikal</span>
+                    <span className="text-[11px] text-slate-400 font-medium">MOH Classification & Clinical Guidelines</span>
                   </div>
                 </div>
 
@@ -746,7 +1039,7 @@ export const DrugDetailPage: React.FC = () => {
               {/* Definitive Verdict Banner */}
               {(() => {
                 const status = drug.pregnancyAndLactation?.pregnancyStatus || (drug.pregnancyAndLactation?.isContraindicatedInPregnancy ? 'DILARANG' : 'WASPADA')
-                const verdict = drug.pregnancyAndLactation?.pregnancyVerdict || (status === 'BOLEH' ? 'BOLEH DIGUNAKAN SEMASA HAMIL' : status === 'DILARANG' ? 'DILARANG / KONTRAINDIKASI' : 'PENGGUNAAN BERSYARAT (FAEDAH > RISIKO)')
+                const verdict = drug.pregnancyAndLactation?.pregnancyVerdict || (status === 'BOLEH' ? 'SAFE TO USE DURING PREGNANCY' : status === 'DILARANG' ? 'PROHIBITED / CONTRAINDICATED' : 'CONDITIONAL USE (BENEFITS > RISKS)')
                 
                 if (status === 'BOLEH') {
                   return (
@@ -757,7 +1050,7 @@ export const DrugDetailPage: React.FC = () => {
                           {verdict}
                         </strong>
                         <p className="font-semibold text-emerald-800 leading-relaxed">
-                          Status: Selamat digunakan mengikut dos klinikal yang disyorkan.
+                          Status: Safe to use according to recommended clinical dosing.
                         </p>
                       </div>
                     </div>
@@ -771,7 +1064,7 @@ export const DrugDetailPage: React.FC = () => {
                           {verdict}
                         </strong>
                         <p className="font-semibold text-rose-800 leading-relaxed">
-                          Status: Bahaya / Teratogenik. Elakkan penggunaan dan gunakan alternatif selamat.
+                          Status: Hazardous / Teratogenic risk. Avoid use and prescribe safe alternatives.
                         </p>
                       </div>
                     </div>
@@ -785,7 +1078,7 @@ export const DrugDetailPage: React.FC = () => {
                           {verdict}
                         </strong>
                         <p className="font-semibold text-amber-800 leading-relaxed">
-                          Status: Gunakan hanya jika tiada pilihan ubat lain dan faedah melebihi risiko.
+                          Status: Use only when no safer alternatives exist and clinical benefit outweighs risk.
                         </p>
                       </div>
                     </div>
@@ -796,7 +1089,7 @@ export const DrugDetailPage: React.FC = () => {
               {/* Exact Clinical Reason */}
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1 text-xs">
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
-                  Sebab Klinikal / Rasional Penggunaan Semasa Hamil:
+                  Clinical Rationale for Use in Pregnancy:
                 </span>
                 <p className="text-xs text-slate-800 font-semibold leading-relaxed">
                   {drug.pregnancyAndLactation?.pregnancyReason || drug.pregnancyAndLactation?.pregnancySummary}
@@ -807,7 +1100,7 @@ export const DrugDetailPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 <div className="p-3.5 bg-pink-50/40 rounded-2xl border border-pink-100 space-y-1">
                   <span className="text-[10px] text-pink-700 font-bold uppercase tracking-wider block">
-                    Trimester Pertama (1 - 12 Minggu)
+                    First Trimester (Weeks 1 - 12)
                   </span>
                   <p className="text-xs text-slate-700 font-medium leading-relaxed">
                     {drug.pregnancyAndLactation?.trimester1}
@@ -816,7 +1109,7 @@ export const DrugDetailPage: React.FC = () => {
 
                 <div className="p-3.5 bg-pink-50/40 rounded-2xl border border-pink-100 space-y-1">
                   <span className="text-[10px] text-pink-700 font-bold uppercase tracking-wider block">
-                    Trimester Ke-2 & Ke-3 (13 - 40 Minggu)
+                    2nd & 3rd Trimester (Weeks 13 - 40)
                   </span>
                   <p className="text-xs text-slate-700 font-medium leading-relaxed">
                     {drug.pregnancyAndLactation?.trimester2_3}
@@ -830,7 +1123,7 @@ export const DrugDetailPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-700" />
                     <span className="text-xs font-bold text-emerald-950 uppercase tracking-wider">
-                      Ubat Alternatif Selamat Semasa Mengandung:
+                      Safe Alternative Drugs in Pregnancy:
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -853,9 +1146,9 @@ export const DrugDetailPage: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
-                      Penyusuan Susu Ibu (Lactation & Breastfeeding)
+                      Lactation & Breastfeeding
                     </h3>
-                    <span className="text-[11px] text-slate-400 font-medium">Perkumuhan Susu & Keselamatan Bayi</span>
+                    <span className="text-[11px] text-slate-400 font-medium">Milk Excretion & Infant Safety</span>
                   </div>
                 </div>
 
@@ -867,7 +1160,7 @@ export const DrugDetailPage: React.FC = () => {
               {/* Definitive Lactation Verdict Banner */}
               {(() => {
                 const status = drug.pregnancyAndLactation?.lactationStatus || (drug.pregnancyAndLactation?.isContraindicatedInLactation ? 'DILARANG' : 'BOLEH')
-                const verdict = drug.pregnancyAndLactation?.lactationVerdict || (status === 'BOLEH' ? 'BOLEH MENYUSU (SERASI)' : status === 'DILARANG' ? 'DILARANG MENYUSU' : 'WASPADA & PANTAU BAYI')
+                const verdict = drug.pregnancyAndLactation?.lactationVerdict || (status === 'BOLEH' ? 'SAFE IN BREASTFEEDING (COMPATIBLE)' : status === 'DILARANG' ? 'PROHIBITED IN BREASTFEEDING' : 'CAUTION & MONITOR INFANT')
                 
                 if (status === 'BOLEH') {
                   return (
@@ -878,7 +1171,7 @@ export const DrugDetailPage: React.FC = () => {
                           {verdict}
                         </strong>
                         <p className="font-semibold text-teal-800 leading-relaxed">
-                          Status: Serasi dengan penyusuan susu ibu.
+                          Status: Compatible with maternal breastfeeding.
                         </p>
                       </div>
                     </div>
@@ -892,7 +1185,7 @@ export const DrugDetailPage: React.FC = () => {
                           {verdict}
                         </strong>
                         <p className="font-semibold text-rose-800 leading-relaxed">
-                          Status: Dilarang menyusu. Gunakan susu formula gantian mengikut Garis Panduan KKM.
+                          Status: Breastfeeding contraindicated. Use alternative feeding options per MOH guidelines.
                         </p>
                       </div>
                     </div>
@@ -906,7 +1199,7 @@ export const DrugDetailPage: React.FC = () => {
                           {verdict}
                         </strong>
                         <p className="font-semibold text-amber-800 leading-relaxed">
-                          Status: Ambil dos sejurus selepas menyusu dan pantau bayi dengan teliti.
+                          Status: Administer dose immediately following breastfeeding and monitor infant closely.
                         </p>
                       </div>
                     </div>
@@ -917,7 +1210,7 @@ export const DrugDetailPage: React.FC = () => {
               {/* Exact Lactation Reason */}
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1 text-xs">
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
-                  Sebab Klinikal / Rasional Penyusuan:
+                  Clinical Rationale for Breastfeeding:
                 </span>
                 <p className="text-xs text-slate-800 font-semibold leading-relaxed">
                   {drug.pregnancyAndLactation?.lactationReason || drug.pregnancyAndLactation?.lactationSummary}
@@ -927,10 +1220,10 @@ export const DrugDetailPage: React.FC = () => {
               {/* Infant Monitoring Advice */}
               <div className="p-4 bg-teal-50/40 rounded-2xl border border-teal-100 space-y-2 text-xs">
                 <strong className="font-bold text-teal-950 block uppercase tracking-wider text-[10px]">
-                  Panduan Pemantauan Bayi Menyusu:
+                  Infant Monitoring Guidance:
                 </strong>
                 <p className="text-xs text-slate-700 font-medium leading-relaxed">
-                  {drug.pregnancyAndLactation?.infantMonitoringAdvice || 'Pantau tanda-tanda sedasi, perubahan corak penyusuan, atau kesukaran bangun untuk menyusu.'}
+                  {drug.pregnancyAndLactation?.infantMonitoringAdvice || 'Monitor for signs of sedation, feeding pattern alterations, or difficulty waking.'}
                 </p>
               </div>
             </div>
@@ -957,7 +1250,7 @@ export const DrugDetailPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-amber-600" />
                 <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Pasangan Ubat LASA (Look-Alike Sound-Alike) Berisiko Kekeliruan:
+                  Look-Alike Sound-Alike (LASA) Pairs at Risk of Confusion:
                 </h3>
               </div>
 
@@ -965,17 +1258,17 @@ export const DrugDetailPage: React.FC = () => {
                 {drug.lasaPairs.map((pair, idx) => (
                   <div key={idx} className="p-4 bg-amber-50/60 rounded-2xl border border-amber-200 space-y-2">
                     <div className="flex flex-wrap items-center gap-3 text-sm">
-                      <span className="font-bold">Ubat Ini: <TallManLettering name={pair.tallManThis} /></span>
-                      <span className="text-slate-400 font-bold">KELIRU DENGAN</span>
-                      <span className="font-bold">Ubat Lain: <TallManLettering name={pair.tallManOther} /></span>
+                      <span className="font-bold">This Drug: <TallManLettering name={pair.tallManThis} /></span>
+                      <span className="text-slate-400 font-bold">CONFUSED WITH</span>
+                      <span className="font-bold">Other Drug: <TallManLettering name={pair.tallManOther} /></span>
                     </div>
 
                     <p className="text-xs text-slate-700 leading-relaxed">
-                      <strong className="text-slate-900">Risiko Klinikal: </strong>{pair.clinicalRiskWarning}
+                      <strong className="text-slate-900">Clinical Risk: </strong>{pair.clinicalRiskWarning}
                     </p>
 
                     <div className="text-xs text-amber-900 bg-white/80 p-2.5 rounded-xl border border-amber-200">
-                      <strong>Strategi Pengasingan Wad: </strong>{pair.separationStrategy}
+                      <strong>Ward Separation Strategy: </strong>{pair.separationStrategy}
                     </div>
                   </div>
                 ))}
@@ -988,15 +1281,15 @@ export const DrugDetailPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Interaksi Ubat Utama ({drug.interactions.length}):
+                  Key Drug Interactions ({drug.interactions.length}):
                 </h3>
-                <span className="text-[11px] text-slate-400 font-medium">Kesan tindak balas farmakodinamik / farmakokinetik</span>
+                <span className="text-[11px] text-slate-400 font-medium">Pharmacodynamic & pharmacokinetic interaction alerts</span>
               </div>
               <button
                 onClick={() => setIsInteractionModalOpen(true)}
                 className="px-3 py-1.5 bg-violet-50 text-violet-700 hover:bg-violet-100 font-bold rounded-xl text-xs flex items-center gap-1 transition-all"
               >
-                <span>+ Buka Pemeriksa Interaksi</span>
+                <span>+ Open Interaction Checker</span>
               </button>
             </div>
 
@@ -1004,16 +1297,16 @@ export const DrugDetailPage: React.FC = () => {
               {drug.interactions.map((inter, idx) => (
                 <div key={idx} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 text-xs">
                   <div className="flex items-center justify-between">
-                    <strong className="text-sm text-slate-900">Interaksi dengan: {inter.interactingDrug}</strong>
+                    <strong className="text-sm text-slate-900">Interaction with: {inter.interactingDrug}</strong>
                     <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full ${
                       inter.severity === 'CRITICAL' ? 'bg-rose-600 text-white' : inter.severity === 'MAJOR' ? 'bg-amber-600 text-white' : 'bg-slate-600 text-white'
                     }`}>
                       {inter.severity}
                     </span>
                   </div>
-                  <p className="text-slate-700"><strong>Kesan: </strong>{inter.effect}</p>
+                  <p className="text-slate-700"><strong>Effect: </strong>{inter.effect}</p>
                   <p className="text-violet-900 bg-violet-50 p-2.5 rounded-xl border border-violet-100">
-                    <strong>Tindakan Pengurusan: </strong>{inter.management}
+                    <strong>Management Action: </strong>{inter.management}
                   </p>
                 </div>
               ))}
@@ -1028,6 +1321,7 @@ export const DrugDetailPage: React.FC = () => {
           reconstitution={drug.reconstitution}
           dilution={drug.dilution}
           drugName={drug.genericName}
+          monograph={kkmDilutionMono}
         />
       )}
 
@@ -1039,7 +1333,6 @@ export const DrugDetailPage: React.FC = () => {
       {/* ================= TAB 6: ANTIMICROBIAL (NAG 2024) ================= */}
       {activeTab === 'antimicrobial' && drug.antimicrobial && (() => {
         const relevantGuidelines = getGuidelinesForDrug(drug.genericName, drug.antimicrobial.antimicrobialClass)
-        const guidelinesToDisplay = relevantGuidelines.length > 0 ? relevantGuidelines : NAG_GUIDELINES.slice(0, 3)
 
         return (
           <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
@@ -1049,186 +1342,242 @@ export const DrugDetailPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <Stethoscope className="w-5 h-5 text-emerald-600" />
                   <h3 className="text-base font-bold text-slate-900">
-                    Garis Panduan Antimikrobial Kebangsaan (NAG 2024 Edisi Ke-4)
+                    National Antimicrobial Guidelines (NAG 2024 4th Edition)
                   </h3>
                 </div>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Kelas Farmakologi: <strong className="text-slate-800">{drug.antimicrobial.antimicrobialClass}</strong>
+                  Pharmacological Class: <strong className="text-slate-800">{drug.antimicrobial.antimicrobialClass}</strong>
                 </p>
               </div>
               <NAGBadge tier={drug.antimicrobial.nagRestrictionTier} size="md" />
             </div>
 
-            {/* CLINICAL INDICATION TREATMENT PLANS (PELAN RAWATAN MENGIKUT INDIKASI) */}
+            {/* CLINICAL INDICATION TREATMENT PLANS */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                    <span>Pelan Rawatan Klinikal Mengikut Indikasi NAG 2024</span>
+                    <span>Clinical Treatment Plans by NAG 2024 Indication</span>
                     <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
-                      {guidelinesToDisplay.length} Indikasi Disyorkan
+                      {relevantGuidelines.length} Recommended Indications
                     </span>
                   </h4>
                   <p className="text-xs text-slate-500">
-                    Rejimen dos tepat, tempoh terapi, dan kriteria penukaran oral (*Step-down*) berasaskan bukti KKM
+                    Precise dosage regimens, duration of therapy, and evidence-based MOH oral step-down criteria
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-5">
-                {guidelinesToDisplay.map((gl) => (
-                  <div key={gl.id} className="bg-slate-50/80 rounded-2xl border-2 border-slate-200/80 p-5 space-y-4 shadow-2xs">
-                    {/* Header: Body system and Condition Name */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-violet-100 text-violet-800 border border-violet-200">
-                          {gl.bodySystem}
-                        </span>
-                        <h5 className="text-sm font-black text-slate-900">
-                          {gl.conditionName}
-                        </h5>
-                      </div>
-                      <span className="text-[11px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
-                        {gl.evidenceLevel}
-                      </span>
-                    </div>
+              {relevantGuidelines.length === 0 ? (
+                <div className="p-8 text-center bg-slate-50/80 rounded-2xl border border-slate-200 space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center mx-auto">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-slate-900">
+                      No Specific Syndromic Empiric Regimen in NAG 2024
+                    </h4>
+                    <p className="text-xs text-slate-500 max-w-xl mx-auto leading-relaxed">
+                      This medication (<strong className="text-slate-800">{drug.genericName}</strong>) is not listed as a routine syndromic empiric regimen in the National Antimicrobial Guidelines (NAG 2024 4th Edition). Use is subject to targeted therapy based on culture &amp; sensitivity (C&amp;S) results, specialized departmental protocols, or designated therapeutic reserves.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/formulari/nag-guidelines')}
+                    className="mt-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs inline-flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <BookOpen className="w-3.5 h-3.5" />
+                    <span>Open Full MOH NAG 2024 Directory</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  {relevantGuidelines.map((gl) => {
+                    const rolesInGuideline = getDrugRolesInGuideline(drug.genericName, gl)
 
-                    {/* First Line & Second Line Regimens */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 text-xs">
-                      {/* First-line therapy */}
-                      <div className="bg-emerald-50/70 border-2 border-emerald-200/80 rounded-xl p-3.5 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded bg-emerald-600 text-white">
-                            ★ Rawatan Barisan Pertama (1st-Line)
-                          </span>
-                          <span className="font-bold text-emerald-900 text-[11px]">
-                            Tempoh: {gl.firstLineTherapy.durationDays}
-                          </span>
-                        </div>
-                        <div className="text-sm font-black text-emerald-950">
-                          {gl.firstLineTherapy.regimen}
-                        </div>
-                        <p className="text-emerald-900 font-medium leading-relaxed bg-white/70 p-2 rounded border border-emerald-100">
-                          <strong>Dos & Cara Pemberian: </strong>{gl.firstLineTherapy.routeAndDose}
-                        </p>
-                        {gl.firstLineTherapy.remarks && (
-                          <p className="text-[11px] text-emerald-800 italic">
-                            * {gl.firstLineTherapy.remarks}
-                          </p>
-                        )}
-                      </div>
+                    return (
+                      <div key={gl.id} className="bg-slate-50/80 rounded-2xl border-2 border-slate-200/80 p-5 space-y-4 shadow-2xs">
+                        {/* Header: Body system, Condition Name and Specific Drug Role Badges */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              {gl.targetPopulation && (
+                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                                  gl.targetPopulation === 'Paediatric' || gl.targetPopulation === 'Neonatal'
+                                    ? 'bg-cyan-100 text-cyan-800 border border-cyan-200'
+                                    : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                }`}>
+                                  {gl.targetPopulation === 'Paediatric' || gl.targetPopulation === 'Neonatal' ? '👶 Paediatric' : '👤 Adult'}
+                                </span>
+                              )}
+                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-violet-100 text-violet-800 border border-violet-200">
+                                {gl.bodySystem}
+                              </span>
+                              <span className="text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
+                                {gl.setting}
+                              </span>
+                              <span className="text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
+                                {gl.evidenceLevel}
+                              </span>
+                            </div>
+                            <h5 className="text-sm sm:text-base font-black text-slate-900">
+                              {gl.conditionName}
+                            </h5>
+                          </div>
 
-                      {/* Second-line */}
-                      {gl.secondLineTherapy && (
-                        <div className="bg-amber-50/60 border-2 border-amber-200/80 rounded-xl p-3.5 space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded bg-amber-600 text-white">
-                              Rawatan Barisan Kedua (2nd-Line)
-                            </span>
-                            <span className="font-bold text-amber-900 text-[11px]">
-                              Tempoh: {gl.secondLineTherapy.durationDays}
-                            </span>
-                          </div>
-                          <div className="text-sm font-black text-amber-950">
-                            {gl.secondLineTherapy.regimen}
-                          </div>
-                          <p className="text-amber-900 font-medium leading-relaxed bg-white/70 p-2 rounded border border-amber-100">
-                            <strong>Dos & Cara Pemberian: </strong>{gl.secondLineTherapy.routeAndDose}
-                          </p>
-                          {gl.secondLineTherapy.remarks && (
-                            <p className="text-[11px] text-amber-800 italic">
-                              * {gl.secondLineTherapy.remarks}
-                            </p>
+                          {/* Drug Role Badges for this condition */}
+                          {rolesInGuideline.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-1.5 self-start sm:self-auto">
+                              {rolesInGuideline.map((r, rIdx) => (
+                                <span
+                                  key={rIdx}
+                                  className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-xl shadow-2xs ${r.badgeColor}`}
+                                >
+                                  {r.label}
+                                </span>
+                              ))}
+                            </div>
                           )}
                         </div>
-                      )}
-                    </div>
 
-                    {/* Penicillin Allergy Option if present */}
-                    {gl.penicillinAllergyOption && (
-                      <div className="p-3 bg-rose-50/60 border border-rose-200 rounded-xl text-xs space-y-1">
-                        <div className="flex items-center gap-1.5 font-bold text-rose-900">
-                          <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
-                          <span>Pilihan Sekiranya Alahan Penicillin (Penicillin Allergy Option):</span>
+                        {/* First Line & Second Line Regimens */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 text-xs">
+                          {/* First-line therapy */}
+                          <div className="bg-emerald-50/70 border-2 border-emerald-200/80 rounded-xl p-3.5 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded bg-emerald-600 text-white">
+                                ★ 1st-Line Therapy
+                              </span>
+                              <span className="font-bold text-emerald-900 text-[11px]">
+                                Duration: {gl.firstLineTherapy.durationDays}
+                              </span>
+                            </div>
+                            <div className="text-sm font-black text-emerald-950">
+                              {gl.firstLineTherapy.regimen}
+                            </div>
+                            <p className="text-emerald-900 font-medium leading-relaxed bg-white/70 p-2 rounded border border-emerald-100">
+                              <strong>Dose &amp; Administration: </strong>{gl.firstLineTherapy.routeAndDose}
+                            </p>
+                            {gl.firstLineTherapy.remarks && (
+                              <p className="text-[11px] text-emerald-800 italic">
+                                * {gl.firstLineTherapy.remarks}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Second-line */}
+                          {gl.secondLineTherapy && (
+                            <div className="bg-amber-50/60 border-2 border-amber-200/80 rounded-xl p-3.5 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded bg-amber-600 text-white">
+                                  2nd-Line Therapy
+                                </span>
+                                <span className="font-bold text-amber-900 text-[11px]">
+                                  Duration: {gl.secondLineTherapy.durationDays}
+                                </span>
+                              </div>
+                              <div className="text-sm font-black text-amber-950">
+                                {gl.secondLineTherapy.regimen}
+                              </div>
+                              <p className="text-amber-900 font-medium leading-relaxed bg-white/70 p-2 rounded border border-amber-100">
+                                <strong>Dose &amp; Administration: </strong>{gl.secondLineTherapy.routeAndDose}
+                              </p>
+                              {gl.secondLineTherapy.remarks && (
+                                <p className="text-[11px] text-amber-800 italic">
+                                * {gl.secondLineTherapy.remarks}
+                                </p>
+                              )}
+                            </div>
+                          )}
                         </div>
-                        <p className="text-rose-950 font-bold">{gl.penicillinAllergyOption.regimen}</p>
-                        <p className="text-rose-800 text-[11px]">{gl.penicillinAllergyOption.routeAndDose}</p>
-                      </div>
-                    )}
 
-                    {/* Oral Step-Down Option (KKM AMS Step-down Protocol) */}
-                    {gl.oralStepDownOption && (
-                      <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl text-xs space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-blue-950 flex items-center gap-1.5">
-                            <RotateCcw className="w-3.5 h-3.5 text-blue-600" />
-                            Protokol Penukaran Rawatan Oral KKM (Oral Step-Down):
-                          </span>
-                          <span className="text-[10px] bg-blue-200/80 text-blue-900 px-2 py-0.5 rounded font-bold">
-                            Klinikal Stabil & Afebrile
-                          </span>
-                        </div>
-                        <p className="text-blue-950 font-black text-xs">
-                          {gl.oralStepDownOption.regimen}
-                        </p>
-                        <p className="text-blue-800 text-[11px] leading-relaxed">
-                          <strong>Kriteria Penukaran: </strong>{gl.oralStepDownOption.criteria}
-                        </p>
-                      </div>
-                    )}
+                        {/* Penicillin Allergy Option if present */}
+                        {gl.penicillinAllergyOption && (
+                          <div className="p-3 bg-rose-50/60 border border-rose-200 rounded-xl text-xs space-y-1">
+                            <div className="flex items-center gap-1.5 font-bold text-rose-900">
+                              <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+                              <span>Penicillin Allergy Alternative:</span>
+                            </div>
+                            <p className="text-rose-950 font-bold">{gl.penicillinAllergyOption.regimen}</p>
+                            <p className="text-rose-800 text-[11px]">{gl.penicillinAllergyOption.routeAndDose}</p>
+                          </div>
+                        )}
 
-                    {/* Pathogens & AMS Notes */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-xs">
-                      <div className="bg-white p-3 rounded-xl border border-slate-200 space-y-1.5">
-                        <span className="font-bold text-slate-800 block text-[11px] uppercase tracking-wider">
-                          Patogen Utama Sasaran:
-                        </span>
-                        <div className="flex flex-wrap gap-1">
-                          {gl.primaryPathogens.map((pathogen, pIdx) => (
-                            <span key={pIdx} className="bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded text-[11px]">
-                              {pathogen}
+                        {/* Oral Step-Down Option (MOH AMS Step-down Protocol) */}
+                        {gl.oralStepDownOption && (
+                          <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl text-xs space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-blue-950 flex items-center gap-1.5">
+                                <RotateCcw className="w-3.5 h-3.5 text-blue-600" />
+                                MOH Oral Step-Down Protocol:
+                              </span>
+                              <span className="text-[10px] bg-blue-200/80 text-blue-900 px-2 py-0.5 rounded font-bold">
+                                Clinically Stable &amp; Afebrile
+                              </span>
+                            </div>
+                            <p className="text-blue-950 font-black text-xs">
+                              {gl.oralStepDownOption.regimen}
+                            </p>
+                            <p className="text-blue-800 text-[11px] leading-relaxed">
+                              <strong>Step-Down Criteria: </strong>{gl.oralStepDownOption.criteria}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Pathogens & AMS Notes */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-xs">
+                          <div className="bg-white p-3 rounded-xl border border-slate-200 space-y-1.5">
+                            <span className="font-bold text-slate-800 block text-[11px] uppercase tracking-wider">
+                              Target Primary Pathogens:
                             </span>
-                          ))}
+                            <div className="flex flex-wrap gap-1">
+                              {gl.primaryPathogens.map((pathogen, pIdx) => (
+                                <span key={pIdx} className="bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded text-[11px]">
+                                  {pathogen}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="bg-white p-3 rounded-xl border border-slate-200 space-y-1.5">
+                            <span className="font-bold text-slate-800 block text-[11px] uppercase tracking-wider">
+                              Antimicrobial Stewardship (AMS) Notes:
+                            </span>
+                            <ul className="space-y-1 text-[11px] text-slate-600 font-medium">
+                              {gl.amsNotes.map((note, nIdx) => (
+                                <li key={nIdx}>• {note}</li>
+                              ))}
+                            </ul>
+                          </div>
                         </div>
                       </div>
-
-                      <div className="bg-white p-3 rounded-xl border border-slate-200 space-y-1.5">
-                        <span className="font-bold text-slate-800 block text-[11px] uppercase tracking-wider">
-                          Nota Kawalan Antimikrobial (AMS):
-                        </span>
-                        <ul className="space-y-1 text-[11px] text-slate-600 font-medium">
-                          {gl.amsNotes.map((note, nIdx) => (
-                            <li key={nIdx}>• {note}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
 
             {/* SPECTRUM & STEP-DOWN CRITERIA */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 bg-emerald-50/60 rounded-2xl border border-emerald-100">
                 <h4 className="text-xs font-bold text-emerald-950 uppercase tracking-wider mb-2">
-                  Spektrum Aktiviti Utama:
+                  Main Spectrum of Activity:
                 </h4>
                 <ul className="space-y-1 text-xs text-emerald-800 font-medium">
                   {drug.antimicrobial.spectrumOfActivity?.map((sp, idx) => (
                     <li key={idx}>• {sp}</li>
-                  )) || <li>• Sesuai mengikut ujian sensitiviti kultur (C&S)</li>}
+                  )) || <li>• Appropriate according to culture sensitivity (C&S) testing</li>}
                 </ul>
               </div>
 
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
                 <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">
-                  Syarat Pertukaran IV ke Oral (IV to Oral Switch):
+                  IV to Oral Switch Criteria:
                 </h4>
                 <ul className="space-y-1 text-xs text-slate-700 font-medium">
                   {drug.antimicrobial.ivToOralSwitchCriteria?.map((sw, idx) => (
                     <li key={idx}>• {sw}</li>
-                  )) || <li>• Pesakit tiada demam &gt; 24 jam & toleran oral</li>}
+                  )) || <li>• Patient afebrile &gt; 24 hours & tolerating oral intake</li>}
                 </ul>
               </div>
             </div>
@@ -1237,17 +1586,17 @@ export const DrugDetailPage: React.FC = () => {
             {drug.antimicrobial.renalDoseAdjustment && (
               <div>
                 <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">
-                  Jadual Pelarasan Dos Mengikut Fungsi Buah Pinggang (Renal Adjustment):
+                  Renal Dose Adjustment Schedule:
                 </h4>
                 <div className="overflow-x-auto rounded-2xl border border-slate-200">
                   <table className="w-full text-xs text-left">
                     <thead className="bg-slate-100 text-slate-700 uppercase font-bold text-[10px]">
                       <tr>
-                        <th className="p-3">CrCl Normal (&gt;50 mL/min)</th>
+                        <th className="p-3">Normal CrCl (&gt;50 mL/min)</th>
                         <th className="p-3">CrCl 30-50 mL/min</th>
                         <th className="p-3">CrCl 10-30 mL/min</th>
                         <th className="p-3">CrCl &lt; 10 mL/min</th>
-                        <th className="p-3">Hemodialisis</th>
+                        <th className="p-3">Hemodialysis</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 bg-slate-50">
@@ -1266,7 +1615,7 @@ export const DrugDetailPage: React.FC = () => {
 
             {drug.antimicrobial.specialistApprovalRequired && (
               <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900">
-                <strong>Keperluan Kelulusan Pakar: </strong>{drug.antimicrobial.specialistApprovalRequired}
+                <strong>Specialist Approval Requirement: </strong>{drug.antimicrobial.specialistApprovalRequired}
               </div>
             )}
           </div>
@@ -1281,21 +1630,21 @@ export const DrugDetailPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Layers className="w-5 h-5 text-violet-600" />
                 <h3 className="text-base font-bold text-slate-900">
-                  Ubat Alternatif Terapeutik & Pilihan Gantian FUKKM ({drug.alternativeDrugs.length})
+                  Therapeutic Alternatives & MOH Substitution Options ({drug.alternativeDrugs.length})
                 </h3>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                Pilihan penggantian sekunder sekiranya kehabisan stok, isu rantaian bekalan, atau rintangan klinikal
+                Secondary substitution choices during out-of-stock events, supply chain issues, or clinical resistance
               </p>
             </div>
             <span className="text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200 px-3 py-1 rounded-full">
-              Piawaian Terapi KKM
+              MOH Therapeutic Standard
             </span>
           </div>
 
           {drug.alternativeDrugs.length === 0 ? (
             <div className="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">
-              Tiada ubat alternatif khusus didaftarkan untuk ubat ini. Sila rujuk Pegawai Farmasi Klinikal atau Pakar Perubatan.
+              No specific alternative drugs registered for this medication. Please consult a Clinical Pharmacist or Specialist.
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1322,12 +1671,12 @@ export const DrugDetailPage: React.FC = () => {
                         </span>
                       </div>
                       <span className="text-[10px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded font-bold shrink-0">
-                        Kat {alt.prescriberCategory}
+                        Cat {alt.prescriberCategory}
                       </span>
                     </div>
 
                     <div className="p-3 bg-white rounded-xl border border-slate-200/70 text-xs text-slate-700 leading-relaxed font-medium">
-                      <strong className="text-slate-900 font-semibold block mb-0.5">Rasional Klinikal & Padanan:</strong>
+                      <strong className="text-slate-900 font-semibold block mb-0.5">Clinical Rationale & Matching:</strong>
                       {alt.reasonForChoice}
                     </div>
 
@@ -1337,7 +1686,7 @@ export const DrugDetailPage: React.FC = () => {
                         <span>Status: {alt.stockStatus}</span>
                       </div>
                       <span className="text-violet-600 font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-1 text-[11px]">
-                        Buka Monograf <ChevronRight className="w-3.5 h-3.5" />
+                        Open Monograph <ChevronRight className="w-3.5 h-3.5" />
                       </span>
                     </div>
                   </div>
@@ -1354,6 +1703,13 @@ export const DrugDetailPage: React.FC = () => {
         onClose={() => setIsInteractionModalOpen(false)}
         allDrugs={allDrugs}
         initialDrug={drug}
+      />
+
+      {/* Paediatric Full Dose Calculator Modal */}
+      <PaediatricDoseCalculatorModal
+        isOpen={isPaediatricModalOpen}
+        onClose={() => setIsPaediatricModalOpen(false)}
+        initialDrugName={drug.genericName}
       />
     </div>
   )

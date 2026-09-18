@@ -1,5 +1,6 @@
 // src/modules/mypriviledging/components/PriviledgingHeader.tsx
 // Modern Government Design System Header (Clean, Authoritative, Single Primary Sidebar Navigation)
+// Full English default with seamless language toggle support
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,12 +8,12 @@ import {
   UserCheck,
   Plus,
   ArrowLeft,
-  ShieldCheck,
   User,
   ShieldAlert
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/lib/constants';
+import { useLanguage } from '@/shared/contexts/LanguageContext';
 import { priviledgingService } from '../services/priviledgingService';
 
 interface PriviledgingHeaderProps {
@@ -31,6 +32,8 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
   changesCount = 0
 }) => {
   const navigate = useNavigate();
+  const { language, t } = useLanguage();
+  const isMs = language === 'ms';
 
   return (
     <div className="mb-6">
@@ -41,7 +44,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
           <button
             onClick={() => navigate(ROUTES.HUB)}
             className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
-            title="Kembali ke Hub Utama"
+            title={t('nav.back_to_hub', isMs ? 'Kembali ke Hub Utama' : 'Back to Main Hub')}
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -56,16 +59,18 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
                 MyPriviledging
               </h1>
               <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                Piawaian KKM C&P
+                {isMs ? 'Piawaian C&P KKM' : 'MOH C&P Standards'}
               </span>
               {pendingReviewsCount > 0 && isAdminMode && (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                  {pendingReviewsCount} Menunggu Tindakan
+                  {pendingReviewsCount} {isMs ? 'Menunggu Tindakan' : 'Pending Review'}
                 </span>
               )}
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Sistem Buku Log & Perakuan Penurunan Kuasa Klinikal Hospital Lawas
+              {isMs
+                ? 'Sistem Buku Log & Perakuan Penurunan Kuasa Klinikal Hospital Lawas'
+                : 'Hospital Lawas Clinical Credentialing, Logbook & Privileging System'}
             </p>
           </div>
         </div>
@@ -89,7 +94,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
                 )}
               >
                 <User className="w-3.5 h-3.5" />
-                <span>Mod Staf</span>
+                <span>{isMs ? 'Mod Staf' : 'Staff Mode'}</span>
               </button>
               <button
                 type="button"
@@ -105,7 +110,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
                 )}
               >
                 <ShieldAlert className="w-3.5 h-3.5" />
-                <span>Mod Admin JKCP</span>
+                <span>{isMs ? 'Mod Admin JKCP' : 'JKCP Admin Mode'}</span>
               </button>
             </div>
           )}
@@ -117,7 +122,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
               className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs md:text-sm font-semibold rounded-xl shadow-xs hover:shadow-sm transition-all active:scale-95"
             >
               <Plus className="w-4 h-4" />
-              <span>Log Prosedur Baru</span>
+              <span>{isMs ? 'Log Prosedur Baharu' : 'Log New Procedure'}</span>
             </button>
           )}
         </div>

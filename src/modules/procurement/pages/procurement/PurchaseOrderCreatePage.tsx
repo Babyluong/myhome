@@ -368,10 +368,29 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                       .maybeSingle()
                     
                     if (stdData) {
+                      let realCode = stdData[codeCol] || item.item_code;
+                      if (realCode?.toUpperCase().startsWith('CC-') && (stdData[nameCol] || item.item_name)) {
+                        try {
+                          const normName = (stdData[nameCol] || item.item_name).replace(/\+/g, 'dan').toLowerCase().trim();
+                          const { data: realCandidates } = await supabase
+                            .from(table)
+                            .select('*')
+                            .not(codeCol, 'ilike', 'CC-%')
+                            .limit(250);
+                          const realMatch = realCandidates?.find((c: any) => {
+                            const cName = (c[nameCol] || '').replace(/\+/g, 'dan').toLowerCase().trim();
+                            return cName === normName || cName.includes(normName) || normName.includes(cName);
+                          });
+                          if (realMatch && (realMatch[codeCol] || realMatch.drug_code || realMatch.item_code)) {
+                            realCode = realMatch[codeCol] || realMatch.drug_code || realMatch.item_code;
+                          }
+                        } catch (_err) {}
+                      }
+
                       return {
                         ...item,
                         item_name: stdData[nameCol] || item.item_name,
-                        item_code: stdData[codeCol] || item.item_code,
+                        item_code: realCode,
                         supplier_name: stdData.cc_supplier_name || stdData.supplier?.company_name || item.supplier_name || '',
                         contract_number: stdData.cc_contract_number || item.contract_number || '',
                         lead_time_days: stdData.lead_time_days || item.lead_time_days || '',
@@ -950,15 +969,27 @@ export const PurchaseOrderCreatePage: React.FC = () => {
   const handleInputChange = (field: keyof PurchaseOrderFormData, value: any) => {
     setFormData((prev) => {
       if (field === 'vote_code' && prev.vote_code && prev.vote_code !== value && prev.items && prev.items.length > 0) {
-        const confirmClear = window.confirm('Menukar Kod Vote akan mengosongkan senarai item kerana setiap Kod Vote menguatkuasakan katalog MyInventory yang berbeza. Teruskan?')
-        if (!confirmClear) {
-          return prev
+        // Only warn & clear items when the catalog *mode* actually changes.
+        // Switching within the same family (e.g. 080702 CC ↔ 080600 (CC) Duit Khas, or
+        // 990102 APPL ↔ 080600 (APPL) Duit Khas) uses the same catalog — no disruption needed.
+        const prevMode = deriveCatalogSource(prev.vote_code).mode
+        const nextMode = deriveCatalogSource(value).mode
+        const catalogChanged = prevMode !== nextMode
+        if (catalogChanged) {
+          const confirmClear = window.confirm('Menukar Kod Vote akan mengosongkan senarai item kerana setiap Kod Vote menguatkuasakan katalog MyInventory yang berbeza. Teruskan?')
+          if (!confirmClear) {
+            return prev
+          }
         }
       }
 
       const newData = { ...prev, [field]: value };
       if (field === 'vote_code' && prev.vote_code && prev.vote_code !== value && prev.items && prev.items.length > 0) {
-        newData.items = []
+        const prevMode = deriveCatalogSource(prev.vote_code).mode
+        const nextMode = deriveCatalogSource(value).mode
+        if (prevMode !== nextMode) {
+          newData.items = []
+        }
       }
       
       // 1. Auto-select Pharmaniaga for APPL (990102 / 080600 APPL)
@@ -1042,7 +1073,34 @@ export const PurchaseOrderCreatePage: React.FC = () => {
       return
     }
 
-    const itemCodeStr = ('drug_code' in item ? item.drug_code : item.item_code) || '';
+    let itemCodeStr = ('drug_code' in item ? item.drug_code : item.item_code) || '';
+    if (itemCodeStr.toUpperCase().startsWith('CC-') && ('drug_name' in item || 'item_name' in item)) {
+      const rawName = ('drug_name' in item ? item.drug_name : item.item_name) || '';
+      const currentItemId = item.id;
+      void (async () => {
+        try {
+          const normName = rawName.replace(/\+/g, 'dan').toLowerCase().trim();
+          const table = item.item_type === 'drug' ? 'drugs' : 'non_drugs';
+          const codeCol = item.item_type === 'drug' ? 'drug_code' : 'item_code';
+          const nameCol = item.item_type === 'drug' ? 'drug_name' : 'item_name';
+          const { data: realCandidates } = await supabase
+            .from(table)
+            .select('*')
+            .not(codeCol, 'ilike', 'CC-%')
+            .limit(200);
+          const realMatch = realCandidates?.find((c: any) => {
+            const cName = (c[nameCol] || '').replace(/\+/g, 'dan').toLowerCase().trim();
+            return cName === normName || cName.includes(normName) || normName.includes(cName);
+          });
+          if (realMatch && realMatch[codeCol]) {
+            setFormData(prev => ({
+              ...prev,
+              items: (prev.items || []).map(it => it.item_id === currentItemId ? { ...it, item_code: realMatch[codeCol], item_id: realMatch.id } : it)
+            }));
+          }
+        } catch (_err) {}
+      })();
+    }
     const isCc = isCcVote(formData.vote_code) || (item as any).procurement_vote === 'cc';
     
     const supplierName = (item as any).cc_supplier_name || (item as any).supplier?.company_name || (item as any).supplier_name || (item as any).supplier?.name || '';

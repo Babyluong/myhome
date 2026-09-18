@@ -32,6 +32,7 @@ import { Button, Modal, Badge } from '@/components/ui'
 export const StaffDeadlinePage: React.FC = () => {
   const navigate = useNavigate()
   const { language } = useLanguage()
+  const isMs = language === 'ms'
   const toast = useToast()
   const user = useAuthStore(state => state.user)
 
@@ -58,7 +59,7 @@ export const StaffDeadlinePage: React.FC = () => {
       if (res.data) setDeadlines(res.data)
     } catch (e) {
       console.error(e)
-      toast.error('Ralat memuatkan senarai tarikh akhir')
+      toast.error(isMs ? 'Ralat memuatkan senarai tarikh akhir' : 'Error loading deadlines list')
     } finally {
       setIsLoading(false)
     }
@@ -90,17 +91,21 @@ export const StaffDeadlinePage: React.FC = () => {
     try {
       const newStatus = dl.status === 'submitted' ? 'pending' : 'submitted'
       await updateDeadlineStatus(dl.id, newStatus)
-      toast.success(dl.status === 'submitted' ? 'Status ditukar ke belum selesai' : 'Tarikh akhir ditandakan selesai!')
+      toast.success(
+        dl.status === 'submitted' 
+          ? (isMs ? 'Status ditukar ke belum selesai' : 'Status reverted to pending') 
+          : (isMs ? 'Tarikh akhir ditandakan selesai!' : 'Deadline marked as completed!')
+      )
       await loadDeadlines()
     } catch (e: any) {
-      toast.error(e.message || 'Gagal mengemaskini status')
+      toast.error(e.message || (isMs ? 'Gagal mengemaskini status' : 'Failed to update status'))
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formTitle.trim() || !formDate) {
-      toast.error('Sila lengkapkan tajuk dan tarikh akhir.')
+      toast.error(isMs ? 'Sila lengkapkan tajuk dan tarikh akhir.' : 'Please complete the title and deadline date.')
       return
     }
 
@@ -121,7 +126,7 @@ export const StaffDeadlinePage: React.FC = () => {
 
       if (res.error) throw new Error(res.error)
 
-      toast.success('Tarikh akhir serahan berjaya didaftarkan!')
+      toast.success(isMs ? 'Tarikh akhir serahan berjaya didaftarkan!' : 'Deadline record successfully created!')
       setIsModalOpen(false)
       // Reset
       setFormTitle('')
@@ -129,7 +134,7 @@ export const StaffDeadlinePage: React.FC = () => {
       setFormDate('')
       await loadDeadlines()
     } catch (err: any) {
-      toast.error(err.message || 'Gagal menyimpan tarikh akhir')
+      toast.error(err.message || (isMs ? 'Gagal menyimpan tarikh akhir' : 'Failed to save deadline'))
     } finally {
       setSubmitting(false)
     }
@@ -150,10 +155,12 @@ export const StaffDeadlinePage: React.FC = () => {
           </button>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-              Log Laporan & Serahan Tugasan
+              {isMs ? 'Log Laporan & Serahan Tugasan' : 'Deadlines & Report Submissions'}
             </h1>
             <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              Pemantauan Serahan Laporan Bulanan, Anggaran Belanja Mengurus (ABM), Unjuran APPL & Audit
+              {isMs
+                ? 'Pemantauan Serahan Laporan Bulanan, Anggaran Belanja Mengurus (ABM), Unjuran APPL & Audit'
+                : 'Monthly Report Submissions, Budget Estimates (ABM), APPL Forecasting & Audit Deadlines'}
             </p>
           </div>
         </div>
@@ -164,7 +171,7 @@ export const StaffDeadlinePage: React.FC = () => {
             className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-2xl shadow-md font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm"
           >
             <Plus className="w-4 h-4" />
-            <span>Tambah Log Laporan</span>
+            <span>{isMs ? 'Tambah Log Laporan' : 'Add New Deadline'}</span>
           </Button>
         </div>
       </div>
@@ -179,7 +186,7 @@ export const StaffDeadlinePage: React.FC = () => {
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
-          Masih Aktif ({deadlines.filter(d => d.status !== 'submitted').length})
+          {isMs ? 'Masih Aktif' : 'Active'} ({deadlines.filter(d => d.status !== 'submitted').length})
         </button>
         <button
           onClick={() => setSelectedFilter('COMPLETED')}
@@ -189,7 +196,7 @@ export const StaffDeadlinePage: React.FC = () => {
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
-          Telah Selesai ({deadlines.filter(d => d.status === 'submitted').length})
+          {isMs ? 'Telah Selesai' : 'Completed'} ({deadlines.filter(d => d.status === 'submitted').length})
         </button>
         <button
           onClick={() => setSelectedFilter('ALL')}
@@ -199,7 +206,7 @@ export const StaffDeadlinePage: React.FC = () => {
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
-          Semua ({deadlines.length})
+          {isMs ? 'Semua' : 'All'} ({deadlines.length})
         </button>
       </div>
 
@@ -207,7 +214,7 @@ export const StaffDeadlinePage: React.FC = () => {
       <div className="space-y-3">
         {filteredDeadlines.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 shadow-md text-slate-400">
-            Tiada rekod tarikh akhir dalam senarai ini.
+            {isMs ? 'Tiada rekod tarikh akhir dalam senarai ini.' : 'No deadline records found in this list.'}
           </div>
         ) : (
           filteredDeadlines.map(dl => {
@@ -237,7 +244,7 @@ export const StaffDeadlinePage: React.FC = () => {
                         ? 'bg-emerald-500 text-white border-emerald-500'
                         : 'bg-white border-slate-300 hover:border-emerald-500 text-slate-300 hover:text-emerald-500'
                     }`}
-                    title={isDone ? 'Tanda belum selesai' : 'Tanda telah selesai'}
+                    title={isDone ? (isMs ? 'Tanda belum selesai' : 'Mark as pending') : (isMs ? 'Tanda telah selesai' : 'Mark as completed')}
                   >
                     <CheckCircle2 className="w-5 h-5" />
                   </button>
@@ -261,9 +268,9 @@ export const StaffDeadlinePage: React.FC = () => {
                     </p>
 
                     <div className="flex items-center gap-4 mt-2 text-xs text-slate-400 font-mono">
-                      <span>Tarikh Serahan: <strong className="text-slate-700">{dl.tarikh_akhir}</strong></span>
+                      <span>{isMs ? 'Tarikh Serahan:' : 'Deadline:'} <strong className="text-slate-700">{dl.tarikh_akhir}</strong></span>
                       {dl.creator?.full_name && (
-                        <span>Pegawai: <strong className="text-slate-700">{dl.creator.full_name}</strong></span>
+                        <span>{isMs ? 'Pegawai:' : 'Officer:'} <strong className="text-slate-700">{dl.creator.full_name}</strong></span>
                       )}
                     </div>
                   </div>
@@ -282,14 +289,14 @@ export const StaffDeadlinePage: React.FC = () => {
                     >
                       <div className="text-lg font-black">{Math.abs(daysLeft)}</div>
                       <div className="text-[9px] uppercase tracking-wider">
-                        {isPast ? 'Hari Lewat' : daysLeft === 0 ? 'Hari Ini' : 'Hari Lagi'}
+                        {isPast ? (isMs ? 'Hari Lewat' : 'Days Overdue') : daysLeft === 0 ? (isMs ? 'Hari Ini' : 'Today') : (isMs ? 'Hari Lagi' : 'Days Left')}
                       </div>
                     </div>
                   )}
 
                   {isDone && (
                     <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      Selesai
+                      {isMs ? 'Selesai' : 'Completed'}
                     </span>
                   )}
                 </div>
@@ -303,35 +310,35 @@ export const StaffDeadlinePage: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Daftar Log Laporan / Serahan Baharu"
+        title={isMs ? "Daftar Log Laporan / Serahan Baharu" : "New Deadline / Report Tracker"}
         size="2xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                Kategori Laporan <span className="text-rose-500">*</span>
+                {isMs ? 'Kategori Laporan' : 'Report Category'} <span className="text-rose-500">*</span>
               </label>
               <select
                 value={formCategory}
                 onChange={e => setFormCategory(e.target.value as DeadlineCategory)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium"
               >
-                <option value="laporan">Laporan Bulanan Jabatan</option>
-                <option value="anggaran">Unjuran & Pesanan APPL</option>
-                <option value="penyerahan">Anggaran Belanja Mengurus (ABM / Bajet)</option>
-                <option value="audit">Audit & Pematuhan KKM</option>
-                <option value="lain">Lain-lain</option>
+                <option value="laporan">{isMs ? 'Laporan Bulanan Jabatan' : 'Monthly Department Report'}</option>
+                <option value="anggaran">{isMs ? 'Unjuran & Pesanan APPL' : 'APPL Forecast & Order'}</option>
+                <option value="penyerahan">{isMs ? 'Anggaran Belanja Mengurus (ABM / Bajet)' : 'Budget Estimates (ABM)'}</option>
+                <option value="audit">{isMs ? 'Audit & Pematuhan KKM' : 'MOH Audit & Compliance'}</option>
+                <option value="lain">{isMs ? 'Lain-lain' : 'Other'}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                Tajuk Laporan / Serahan <span className="text-rose-500">*</span>
+                {isMs ? 'Tajuk Laporan / Serahan' : 'Report / Deadline Title'} <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="cth. Penyerahan Laporan Penggunaan Oksigen & Stok Q3"
+                placeholder={isMs ? "cth. Penyerahan Laporan Penggunaan Oksigen & Stok Q3" : "e.g. Q3 Oxygen Consumption & Stock Report"}
                 value={formTitle}
                 onChange={e => setFormTitle(e.target.value)}
                 required
@@ -343,7 +350,7 @@ export const StaffDeadlinePage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                Tarikh Akhir (Deadline) <span className="text-rose-500">*</span>
+                {isMs ? 'Tarikh Akhir (Deadline)' : 'Deadline Date'} <span className="text-rose-500">*</span>
               </label>
               <input
                 type="date"
@@ -355,25 +362,29 @@ export const StaffDeadlinePage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Tahap Keutamaan</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                {isMs ? 'Tahap Keutamaan' : 'Priority Level'}
+              </label>
               <select
                 value={formPriority}
                 onChange={e => setFormPriority(e.target.value as DeadlinePriority)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium"
               >
-                <option value="critical">Kritikal (Hukuman/Kesan Peruntukan)</option>
-                <option value="high">Tinggi (Kewangan / KKM Deadline)</option>
-                <option value="medium">Sederhana</option>
-                <option value="low">Rendah</option>
+                <option value="critical">{isMs ? 'Kritikal (Hukuman/Kesan Peruntukan)' : 'Critical (Funding Impact)'}</option>
+                <option value="high">{isMs ? 'Tinggi (Kewangan / KKM Deadline)' : 'High (Finance / MOH Deadline)'}</option>
+                <option value="medium">{isMs ? 'Sederhana' : 'Medium'}</option>
+                <option value="low">{isMs ? 'Rendah' : 'Low'}</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Keterangan / Panduan Serahan</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              {isMs ? 'Keterangan / Panduan Serahan' : 'Description / Guidelines'}
+            </label>
             <textarea
               rows={3}
-              placeholder="Format fail, pautan borang, atau arahan khusus HOD..."
+              placeholder={isMs ? "Format fail, pautan borang, atau arahan khusus HOD..." : "File format, form link, or specific instructions..."}
               value={formDesc}
               onChange={e => setFormDesc(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm"
@@ -387,14 +398,14 @@ export const StaffDeadlinePage: React.FC = () => {
               onClick={() => setIsModalOpen(false)}
               className="border-slate-200 hover:bg-slate-50 text-slate-700 font-bold"
             >
-              Batal
+              {isMs ? 'Batal' : 'Cancel'}
             </Button>
             <Button
               type="submit"
               disabled={submitting}
               className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 shadow-md"
             >
-              {submitting ? 'Menyimpan...' : 'Daftar Tarikh Akhir'}
+              {submitting ? (isMs ? 'Menyimpan...' : 'Saving...') : (isMs ? 'Daftar Tarikh Akhir' : 'Create Deadline')}
             </Button>
           </div>
         </form>

@@ -18,7 +18,7 @@ export function Skeleton({
   const variantClasses = {
     text: 'rounded',
     circular: 'rounded-full',
-    rectangular: 'rounded-lg',
+    rectangular: 'rounded-xl',
   };
   
   const animationClasses = {
@@ -33,7 +33,7 @@ export function Skeleton({
   
   return (
     <div
-      className={`bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 ${variantClasses[variant]} ${animationClasses[animation]} ${className}`}
+      className={`bg-slate-800/70 border border-slate-700/20 bg-gradient-to-r from-slate-800/70 via-slate-700/40 to-slate-800/70 ${variantClasses[variant]} ${animationClasses[animation]} ${className}`}
       style={style}
     />
   );
@@ -41,13 +41,13 @@ export function Skeleton({
 
 export function SkeletonText({ lines = 3, className = '' }: { lines?: number; className?: string }) {
   return (
-    <div className={`space-y-2 ${className}`}>
+    <div className={`space-y-2.5 ${className}`}>
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton
           key={i}
           variant="text"
-          className="h-4"
-          width={i === lines - 1 ? '80%' : '100%'}
+          className="h-3.5 bg-slate-800/80"
+          width={i === lines - 1 ? '75%' : '100%'}
         />
       ))}
     </div>
@@ -56,12 +56,12 @@ export function SkeletonText({ lines = 3, className = '' }: { lines?: number; cl
 
 export function SkeletonCard({ className = '' }: { className?: string }) {
   return (
-    <div className={`rounded-xl border border-gray-200/70 bg-white p-6 shadow-md ${className}`}>
+    <div className={`rounded-2xl border border-slate-800/80 bg-slate-900/70 backdrop-blur-xl p-5 sm:p-6 shadow-xl shadow-slate-950/40 ${className}`}>
       <div className="flex items-center gap-4 mb-4">
-        <Skeleton variant="circular" className="w-12 h-12" />
+        <Skeleton variant="circular" className="w-11 h-11 flex-shrink-0" />
         <div className="flex-1 space-y-2">
-          <Skeleton variant="text" className="h-5 w-1/3" />
-          <Skeleton variant="text" className="h-4 w-1/2" />
+          <Skeleton variant="text" className="h-4 w-1/3" />
+          <Skeleton variant="text" className="h-3 w-1/2" />
         </div>
       </div>
       <SkeletonText lines={3} />
@@ -71,23 +71,23 @@ export function SkeletonCard({ className = '' }: { className?: string }) {
 
 export function SkeletonTable({ rows = 5, columns = 4, className = '' }: { rows?: number; columns?: number; className?: string }) {
   return (
-    <div className={`rounded-xl border border-gray-200/70 bg-white shadow-md overflow-hidden ${className}`}>
+    <div className={`rounded-2xl border border-slate-800/80 bg-slate-900/70 backdrop-blur-xl shadow-xl shadow-slate-950/40 overflow-hidden ${className}`}>
       {/* Table Header */}
-      <div className="bg-gradient-to-r from-slate-50 to-blue-50/30 border-b border-gray-200 p-4">
-        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
+      <div className="bg-slate-950/80 border-b border-slate-800/80 p-4">
+        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
           {Array.from({ length: columns }).map((_, i) => (
-            <Skeleton key={i} variant="text" className="h-4" />
+            <Skeleton key={i} variant="text" className="h-3.5 w-4/5" />
           ))}
         </div>
       </div>
       
       {/* Table Rows */}
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-slate-800/50">
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <div key={rowIndex} className="p-4">
-            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
+            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
               {Array.from({ length: columns }).map((_, colIndex) => (
-                <Skeleton key={colIndex} variant="text" className="h-4" />
+                <Skeleton key={colIndex} variant="text" className="h-3.5" />
               ))}
             </div>
           </div>
@@ -114,11 +114,11 @@ export function SkeletonAvatar({ size = 'md', className = '' }: { size?: 'sm' | 
 
 export function SkeletonForm({ fields = 3, className = '' }: { fields?: number; className?: string }) {
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-5 ${className}`}>
       {Array.from({ length: fields }).map((_, i) => (
         <div key={i} className="space-y-2">
-          <Skeleton variant="text" className="h-4 w-24" />
-          <Skeleton className="h-10 w-full rounded-xl" />
+          <Skeleton variant="text" className="h-3.5 w-24" />
+          <Skeleton className="h-11 w-full rounded-xl" />
         </div>
       ))}
     </div>
@@ -126,4 +126,3 @@ export function SkeletonForm({ fields = 3, className = '' }: { fields?: number; 
 }
 
 export default Skeleton;
-

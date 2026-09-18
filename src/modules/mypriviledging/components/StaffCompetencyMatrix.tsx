@@ -48,27 +48,27 @@ export const StaffCompetencyMatrix: React.FC<StaffCompetencyMatrixProps> = ({
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
             <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-            Privileging Aktif
+            Active Privileging
           </span>
         );
       case 'in_progress':
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800">
             <Clock className="w-3 h-3 text-sky-600" />
-            Sedang Mengumpul Log
+            Logging In Progress
           </span>
         );
       case 'pending_renewal':
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200">
             <AlertCircle className="w-3 h-3 text-amber-600" />
-            Perlu Pembaharuan
+            Renewal Required
           </span>
         );
       default:
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-            Draf
+            Draft
           </span>
         );
     }
@@ -82,14 +82,14 @@ export const StaffCompetencyMatrix: React.FC<StaffCompetencyMatrixProps> = ({
           <div>
             <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Users2 className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-              Matriks Kemajuan & Kompetensi Staf Klinikal
+              Clinical Staff Competency & Progress Matrix
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Pemantauan status pengiktirafan buku log dan pentauliahan priviledging Hospital Lawas
+              Monitoring logbook certification status and privileging authorization for Lawas Hospital
             </p>
           </div>
           <span className="text-xs text-slate-500 font-semibold px-3 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl self-start sm:self-auto">
-            Jumlah Staf: <strong className="text-emerald-700 dark:text-emerald-400">{filteredStaff.length}</strong>
+            Total Staff: <strong className="text-emerald-700 dark:text-emerald-400">{filteredStaff.length}</strong>
           </span>
         </div>
 
@@ -100,7 +100,7 @@ export const StaffCompetencyMatrix: React.FC<StaffCompetencyMatrixProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari nama pegawai, no IC, jawatan, atau jabatan..."
+              placeholder="Search staff name, IC number, position, or department..."
               className="w-full pl-10 pr-4 py-2 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
             />
           </div>
@@ -111,9 +111,9 @@ export const StaffCompetencyMatrix: React.FC<StaffCompetencyMatrixProps> = ({
               onChange={(e) => setSelectedRole(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
             >
-              <option value="all">Semua Peranan</option>
-              <option value="nurses">Jururawat</option>
-              <option value="amos">Penolong Pegawai Perubatan</option>
+              <option value="all">All Roles</option>
+              <option value="nurses">Staff Nurses</option>
+              <option value="amos">Assistant Medical Officers</option>
             </select>
           </div>
 
@@ -123,10 +123,10 @@ export const StaffCompetencyMatrix: React.FC<StaffCompetencyMatrixProps> = ({
               onChange={(e) => setSelectedStatus(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
             >
-              <option value="all">Semua Status Privileging</option>
-              <option value="active">Privileging Aktif</option>
-              <option value="in_progress">Sedang Mengumpul Log</option>
-              <option value="pending_renewal">Perlu Pembaharuan</option>
+              <option value="all">All Privileging Statuses</option>
+              <option value="active">Active Privileging</option>
+              <option value="in_progress">Logging In Progress</option>
+              <option value="pending_renewal">Renewal Required</option>
             </select>
           </div>
         </div>
@@ -137,13 +137,13 @@ export const StaffCompetencyMatrix: React.FC<StaffCompetencyMatrixProps> = ({
         <table className="w-full text-left text-xs border-collapse">
           <thead>
             <tr className="bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 uppercase font-bold text-[11px] tracking-wider select-none">
-              <th className="py-3 px-4">Nama Staf & Jawatan</th>
-              <th className="py-3 px-4">Pendaftaran KKM & APC</th>
-              <th className="py-3 px-4">Jabatan & Penempatan</th>
-              <th className="py-3 px-4 text-center">Log Direkod</th>
-              <th className="py-3 px-4 text-center">Diluluskan</th>
-              <th className="py-3 px-4">Status Sijil</th>
-              <th className="py-3 px-4 text-right">Tindakan</th>
+              <th className="py-3 px-4">Staff Name & Position</th>
+              <th className="py-3 px-4">MOH Registration & APC</th>
+              <th className="py-3 px-4">Department & Placement</th>
+              <th className="py-3 px-4 text-center">Logged</th>
+              <th className="py-3 px-4 text-center">Approved</th>
+              <th className="py-3 px-4">Certificate Status</th>
+              <th className="py-3 px-4 text-right">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -219,7 +219,7 @@ export const StaffCompetencyMatrix: React.FC<StaffCompetencyMatrixProps> = ({
                       className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-xl shadow-2xs transition-all inline-flex items-center gap-1.5 active:scale-95 text-[11px]"
                     >
                       <Printer className="w-3.5 h-3.5" />
-                      <span>Lihat & Cetak Sijil</span>
+                      <span>View & Print Certificate</span>
                     </button>
                   </td>
                 </tr>

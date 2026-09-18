@@ -30,6 +30,7 @@ import { Button } from '@/components/ui'
 export const StaffLeaveApplyPage: React.FC = () => {
   const navigate = useNavigate()
   const { language } = useLanguage()
+  const isMs = language === 'ms'
   const toast = useToast()
   const user = useAuthStore(state => state.user)
 
@@ -64,7 +65,7 @@ export const StaffLeaveApplyPage: React.FC = () => {
         if (quotasRes.data) setQuotas(quotasRes.data)
       } catch (err) {
         console.error(err)
-        toast.error('Ralat memuatkan borang permohonan cuti')
+        toast.error(isMs ? 'Ralat memuatkan borang permohonan cuti' : 'Error loading leave application form')
       } finally {
         setLoading(false)
       }
@@ -93,12 +94,12 @@ export const StaffLeaveApplyPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!startDate || !endDate || totalDays <= 0 || !reason.trim()) {
-      toast.error('Sila lengkapkan maklumat tarikh dan sebab cuti.')
+      toast.error(isMs ? 'Sila lengkapkan maklumat tarikh dan sebab cuti.' : 'Please complete the date and reason details.')
       return
     }
 
     if (selectedQuota && totalDays > selectedQuota.baki_hari) {
-      toast.error(`Baki cuti tidak mencukupi! Anda hanya mempunyai ${selectedQuota.baki_hari} hari baki cuti.`)
+      toast.error(isMs ? `Baki cuti tidak mencukupi! Anda hanya mempunyai ${selectedQuota.baki_hari} hari baki cuti.` : `Insufficient leave balance! You only have ${selectedQuota.baki_hari} days remaining.`)
       return
     }
 
@@ -121,10 +122,10 @@ export const StaffLeaveApplyPage: React.FC = () => {
 
       if (res.error) throw new Error(res.error)
 
-      toast.success('Permohonan cuti berjaya dihantar ke HOD untuk kelulusan!')
+      toast.success(isMs ? 'Permohonan cuti berjaya dihantar ke HOD untuk kelulusan!' : 'Leave application submitted to HOD for approval!')
       navigate(ROUTES.STAFF_LEAVE)
     } catch (err: any) {
-      toast.error(err.message || 'Gagal menghantar permohonan cuti')
+      toast.error(err.message || (isMs ? 'Gagal menghantar permohonan cuti' : 'Failed to submit leave application'))
     } finally {
       setSubmitting(false)
     }
@@ -145,10 +146,10 @@ export const StaffLeaveApplyPage: React.FC = () => {
           </button>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-              Borang Permohonan Cuti
+              {isMs ? 'Borang Permohonan Cuti' : 'Leave Application Form'}
             </h1>
             <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              Sistem Cuti Bersepadu Hospital (Perintah Am Bab C / HRMIS)
+              {isMs ? 'Sistem Cuti Bersepadu Hospital (Perintah Am Bab C / HRMIS)' : 'Integrated Hospital Leave System (General Orders Chapter C / HRMIS)'}
             </p>
           </div>
         </div>
@@ -160,7 +161,7 @@ export const StaffLeaveApplyPage: React.FC = () => {
           {/* Leave Type Selection with Live Quota Card */}
           <div className="space-y-3">
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide">
-              Pilihan Jenis Cuti <span className="text-rose-500">*</span>
+              {isMs ? 'Pilihan Jenis Cuti' : 'Select Leave Type'} <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {leaveTypes.map(type => {
@@ -188,9 +189,9 @@ export const StaffLeaveApplyPage: React.FC = () => {
                     </div>
 
                     <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
-                      <span className="text-slate-400 font-bold">Baki Layak:</span>
+                      <span className="text-slate-400 font-bold">{isMs ? 'Baki Layak:' : 'Balance:'}</span>
                       <span className="text-emerald-700 font-black">
-                        {quota ? `${quota.baki_hari} Hari` : 'Tertakluk'}
+                        {quota ? `${quota.baki_hari} ${isMs ? 'Hari' : 'Days'}` : (isMs ? 'Tertakluk' : 'Subject')}
                       </span>
                     </div>
                   </div>
@@ -203,13 +204,13 @@ export const StaffLeaveApplyPage: React.FC = () => {
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
             <div className="font-bold text-slate-800 text-sm flex items-center gap-2">
               <Calendar className="w-4 h-4 text-emerald-600" />
-              <span>Tempoh Masa Cuti</span>
+              <span>{isMs ? 'Tempoh Masa Cuti' : 'Leave Period & Duration'}</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-bold text-slate-600 mb-1">
-                  Tarikh Mula Cuti <span className="text-rose-500">*</span>
+                  {isMs ? 'Tarikh Mula Cuti' : 'Start Date'} <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -222,7 +223,7 @@ export const StaffLeaveApplyPage: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-bold text-slate-600 mb-1">
-                  Tarikh Tamat Cuti <span className="text-rose-500">*</span>
+                  {isMs ? 'Tarikh Tamat Cuti' : 'End Date'} <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -235,10 +236,10 @@ export const StaffLeaveApplyPage: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-bold text-slate-600 mb-1">
-                  Jumlah Bilangan Hari
+                  {isMs ? 'Jumlah Bilangan Hari' : 'Total Days'}
                 </label>
                 <div className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-black font-mono text-emerald-700 flex items-center justify-between">
-                  <span>{totalDays > 0 ? `${totalDays} Hari` : '0 Hari'}</span>
+                  <span>{totalDays > 0 ? `${totalDays} ${isMs ? 'Hari' : 'Days'}` : (isMs ? '0 Hari' : '0 Days')}</span>
                   <Clock className="w-4 h-4 text-slate-400" />
                 </div>
               </div>
@@ -249,11 +250,11 @@ export const StaffLeaveApplyPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                Sebab Bercuti / Catatan <span className="text-rose-500">*</span>
+                {isMs ? 'Sebab Bercuti / Catatan' : 'Reason / Remarks'} <span className="text-rose-500">*</span>
               </label>
               <textarea
                 rows={4}
-                placeholder="Sila nyatakan sebab cuti..."
+                placeholder={isMs ? "Sila nyatakan sebab cuti..." : "Please specify the reason for leave..."}
                 value={reason}
                 onChange={e => setReason(e.target.value)}
                 required
@@ -264,11 +265,11 @@ export const StaffLeaveApplyPage: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  No. Telefon Semasa Bercuti (Kecemasan)
+                  {isMs ? 'No. Telefon Semasa Bercuti (Kecemasan)' : 'Contact Number While on Leave (Emergency)'}
                 </label>
                 <input
                   type="tel"
-                  placeholder="cth. 012-3456789"
+                  placeholder={isMs ? "cth. 012-3456789" : "e.g. 012-3456789"}
                   value={emergencyContact}
                   onChange={e => setEmergencyContact(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono"
@@ -277,11 +278,11 @@ export const StaffLeaveApplyPage: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Pegawai Pengambil Alih Tugas (Replacement Officer)
+                  {isMs ? 'Pegawai Pengambil Alih Tugas (Replacement Officer)' : 'Relief / Covering Officer'}
                 </label>
                 <input
                   type="text"
-                  placeholder="Nama pegawai pengganti..."
+                  placeholder={isMs ? "Nama pegawai pengganti..." : "Replacement officer name..."}
                   value={replacementOfficerName}
                   onChange={e => setReplacementOfficerName(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm"
@@ -298,14 +299,16 @@ export const StaffLeaveApplyPage: React.FC = () => {
               onClick={() => navigate(ROUTES.STAFF_LEAVE)}
               className="border-slate-200 hover:bg-slate-50 text-slate-700 font-bold px-5"
             >
-              Batal
+              {isMs ? 'Batal' : 'Cancel'}
             </Button>
             <Button
               type="submit"
               disabled={submitting || totalDays <= 0}
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 shadow-md"
             >
-              {submitting ? 'Menghantar Permohonan...' : 'Hantar Permohonan Cuti'}
+              {submitting 
+                ? (isMs ? 'Menghantar Permohonan...' : 'Submitting Application...') 
+                : (isMs ? 'Hantar Permohonan Cuti' : 'Submit Leave Application')}
             </Button>
           </div>
         </form>

@@ -32,6 +32,7 @@ import { Button, Badge, Modal } from '@/components/ui'
 export const StaffHodPage: React.FC = () => {
   const navigate = useNavigate()
   const { language } = useLanguage()
+  const isMs = language === 'ms'
   const toast = useToast()
   const user = useAuthStore(state => state.user)
 
@@ -61,7 +62,7 @@ export const StaffHodPage: React.FC = () => {
       if (statsRes.data) setStats(statsRes.data)
     } catch (e) {
       console.error(e)
-      toast.error('Ralat memuatkan portal kelulusan HOD')
+      toast.error(isMs ? 'Ralat memuatkan portal kelulusan HOD' : 'Error loading HOD approval portal')
     } finally {
       setIsLoading(false)
     }
@@ -74,13 +75,18 @@ export const StaffHodPage: React.FC = () => {
   const handleApprove = async (leave: StaffLeaveApplication) => {
     try {
       setProcessing(true)
-      const res = await updateLeaveStatus(leave.id, 'approved', user?.id || 'hod-user-id', 'Diluluskan oleh Ketua Jabatan')
+      const res = await updateLeaveStatus(
+        leave.id, 
+        'approved', 
+        user?.id || 'hod-user-id', 
+        isMs ? 'Diluluskan oleh Ketua Jabatan' : 'Approved by Head of Department'
+      )
       if (res.error) throw new Error(res.error)
 
-      toast.success(`Permohonan cuti ${leave.user?.full_name || 'pegawai'} berjaya diluluskan!`)
+      toast.success(isMs ? `Permohonan cuti ${leave.user?.full_name || 'pegawai'} berjaya diluluskan!` : `Leave application for ${leave.user?.full_name || 'officer'} approved!`)
       await loadData()
     } catch (err: any) {
-      toast.error(err.message || 'Gagal meluluskan permohonan cuti')
+      toast.error(err.message || (isMs ? 'Gagal meluluskan permohonan cuti' : 'Failed to approve leave application'))
     } finally {
       setProcessing(false)
     }
@@ -95,13 +101,13 @@ export const StaffHodPage: React.FC = () => {
       const res = await updateLeaveStatus(activeLeaveToReject.id, 'rejected', user?.id || 'hod-user-id', rejectionReason)
       if (res.error) throw new Error(res.error)
 
-      toast.success('Permohonan cuti telah ditolak.')
+      toast.success(isMs ? 'Permohonan cuti telah ditolak.' : 'Leave application rejected.')
       setRejectModalOpen(false)
       setActiveLeaveToReject(null)
       setRejectionReason('')
       await loadData()
     } catch (err: any) {
-      toast.error(err.message || 'Gagal menolak permohonan')
+      toast.error(err.message || (isMs ? 'Gagal menolak permohonan' : 'Failed to reject application'))
     } finally {
       setProcessing(false)
     }
@@ -126,10 +132,12 @@ export const StaffHodPage: React.FC = () => {
           </button>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-              Portal Kelulusan HOD & Ringkasan Jabatan
+              {isMs ? 'Portal Kelulusan HOD & Ringkasan Jabatan' : 'HOD Approval Portal & Department Summary'}
             </h1>
             <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              Kelulusan Permohonan Cuti, Pengesahan Pergerakan & Cetakan Penyata Kehadiran Staf
+              {isMs
+                ? 'Kelulusan Permohonan Cuti, Pengesahan Pergerakan & Cetakan Penyata Kehadiran Staf'
+                : 'Leave Approval, Movement Verification & Staff Attendance Summary'}
             </p>
           </div>
         </div>
@@ -140,7 +148,7 @@ export const StaffHodPage: React.FC = () => {
             className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-2xl border shadow-sm font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm bg-white"
           >
             <Printer className="w-4 h-4 text-slate-500" />
-            <span>Cetak Ringkasan</span>
+            <span>{isMs ? 'Cetak Ringkasan' : 'Print Summary'}</span>
           </Button>
         </div>
       </div>
@@ -148,29 +156,29 @@ export const StaffHodPage: React.FC = () => {
       {/* Summary Banner */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 rounded-3xl bg-white border border-slate-100 shadow-lg">
-          <span className="text-xs font-bold text-slate-400 uppercase">Menunggu Tindakan HOD</span>
+          <span className="text-xs font-bold text-slate-400 uppercase">{isMs ? 'Menunggu Tindakan HOD' : 'Pending HOD Action'}</span>
           <p className="text-3xl font-black font-mono text-purple-600 mt-2">
-            {pendingLeaves.length} Permohonan
+            {pendingLeaves.length} {isMs ? 'Permohonan' : 'Requests'}
           </p>
-          <p className="text-xs text-slate-500 mt-1 font-medium">Cuti Rehat & Tugas Luar</p>
+          <p className="text-xs text-slate-500 mt-1 font-medium">{isMs ? 'Cuti Rehat & Tugas Luar' : 'Annual Leave & Duty'}</p>
         </div>
 
         <div className="p-6 rounded-3xl bg-white border border-slate-100 shadow-lg">
-          <span className="text-xs font-bold text-slate-400 uppercase">Kekuatan Anggota Hari Ini</span>
+          <span className="text-xs font-bold text-slate-400 uppercase">{isMs ? 'Kekuatan Anggota Hari Ini' : 'Today Staff Strength'}</span>
           <p className="text-3xl font-black font-mono text-emerald-600 mt-2">
             {stats ? `${stats.presentToday} / ${stats.totalStaff}` : '26 / 30'}
           </p>
           <p className="text-xs text-slate-500 mt-1 font-medium">
-            {stats ? Math.round((stats.presentToday / stats.totalStaff) * 100) : 87}% Hadir Bertugas
+            {stats ? Math.round((stats.presentToday / stats.totalStaff) * 100) : 87}% {isMs ? 'Hadir Bertugas' : 'On Duty'}
           </p>
         </div>
 
         <div className="p-6 rounded-3xl bg-white border border-slate-100 shadow-lg">
-          <span className="text-xs font-bold text-slate-400 uppercase">Ketiadaan Bertugas</span>
+          <span className="text-xs font-bold text-slate-400 uppercase">{isMs ? 'Ketiadaan Bertugas' : 'Absent Officers'}</span>
           <p className="text-3xl font-black font-mono text-rose-600 mt-2">
-            {stats ? stats.onLeaveToday + stats.onCourseToday : 3} Orang
+            {stats ? stats.onLeaveToday + stats.onCourseToday : 3} {isMs ? 'Orang' : 'Staff'}
           </p>
-          <p className="text-xs text-slate-500 mt-1 font-medium">Cuti / Kursus Luar</p>
+          <p className="text-xs text-slate-500 mt-1 font-medium">{isMs ? 'Cuti / Kursus Luar' : 'Leave / External Course'}</p>
         </div>
       </div>
 
@@ -182,11 +190,11 @@ export const StaffHodPage: React.FC = () => {
               <UserCheck className="w-5 h-5" />
             </div>
             <h2 className="text-base font-black text-slate-800">
-              Senarai Permohonan Cuti Menunggu Kelulusan
+              {isMs ? 'Senarai Permohonan Cuti Menunggu Kelulusan' : 'Pending Leave Approvals Queue'}
             </h2>
           </div>
           <span className="text-xs font-bold font-mono text-purple-600 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
-            {pendingLeaves.length} Permohonan
+            {pendingLeaves.length} {isMs ? 'Permohonan' : 'Requests'}
           </span>
         </div>
 
@@ -194,8 +202,8 @@ export const StaffHodPage: React.FC = () => {
           {pendingLeaves.length === 0 ? (
             <div className="text-center py-16 text-slate-400 text-sm">
               <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-3 opacity-80" />
-              <p className="font-bold text-slate-700 text-base">Tiada permohonan yang menunggu kelulusan.</p>
-              <p className="text-xs text-slate-400 mt-1">Semua permohonan staf telah diselesaikan.</p>
+              <p className="font-bold text-slate-700 text-base">{isMs ? 'Tiada permohonan yang menunggu kelulusan.' : 'No pending approval requests.'}</p>
+              <p className="text-xs text-slate-400 mt-1">{isMs ? 'Semua permohonan staf telah diselesaikan.' : 'All staff requests have been processed.'}</p>
             </div>
           ) : (
             pendingLeaves.map(leave => (
@@ -211,23 +219,23 @@ export const StaffHodPage: React.FC = () => {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-extrabold text-slate-900 text-base">{leave.user?.full_name || 'Muhammad Farhan'}</h3>
-                      <span className="text-xs text-slate-500 font-medium">({leave.user?.jawatan || 'Pegawai Farmasi U41'})</span>
+                      <span className="text-xs text-slate-500 font-medium">({leave.user?.jawatan || (isMs ? 'Pegawai Farmasi U41' : 'Pharmacy Officer')})</span>
                       <span className="text-xs font-bold font-mono px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        {leave.leave_type?.nama_cuti || 'Cuti Rehat'}
+                        {leave.leave_type?.nama_cuti || (isMs ? 'Cuti Rehat' : 'Annual Leave')}
                       </span>
                     </div>
 
                     <p className="text-xs text-slate-600 font-medium">
-                      Tarikh: <strong className="text-slate-800 font-mono">{leave.tarikh_mula}</strong> hingga{' '}
+                      {isMs ? 'Tarikh:' : 'Date:'} <strong className="text-slate-800 font-mono">{leave.tarikh_mula}</strong> {isMs ? 'hingga' : 'to'}{' '}
                       <strong className="text-slate-800 font-mono">{leave.tarikh_tamat}</strong> (
-                      <span className="text-emerald-700 font-bold">{leave.jumlah_hari} Hari</span>)
+                      <span className="text-emerald-700 font-bold">{leave.jumlah_hari} {isMs ? 'Hari' : 'Days'}</span>)
                     </p>
 
-                    <p className="text-xs text-slate-500 italic mt-1">Sebab: {leave.sebab}</p>
+                    <p className="text-xs text-slate-500 italic mt-1">{isMs ? 'Sebab:' : 'Reason:'} {leave.sebab}</p>
 
                     {leave.replacement_user && (
                       <p className="text-xs text-slate-600 font-medium mt-1">
-                        Pegawai Pengganti: <strong className="text-slate-800">{leave.replacement_user.full_name}</strong>
+                        {isMs ? 'Pegawai Pengganti:' : 'Relief Officer:'} <strong className="text-slate-800">{leave.replacement_user.full_name}</strong>
                       </p>
                     )}
                   </div>
@@ -238,13 +246,13 @@ export const StaffHodPage: React.FC = () => {
                   <Button
                     onClick={() => {
                       setActiveLeaveToReject(leave)
-                      setRejectModalOpen(true)
+                      setRejectModalOpen(false)
                     }}
                     disabled={processing}
                     className="border-rose-300 hover:bg-rose-50 text-rose-700 rounded-2xl border shadow-sm font-bold flex items-center gap-2 px-4 py-2 text-xs bg-white"
                   >
                     <XCircle className="w-4 h-4 text-rose-500" />
-                    <span>Tolak</span>
+                    <span>{isMs ? 'Tolak' : 'Reject'}</span>
                   </Button>
 
                   <Button
@@ -253,7 +261,7 @@ export const StaffHodPage: React.FC = () => {
                     className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-md font-bold flex items-center gap-2 px-5 py-2 text-xs"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>Luluskan Cuti</span>
+                    <span>{isMs ? 'Luluskan Cuti' : 'Approve Leave'}</span>
                   </Button>
                 </div>
               </div>
@@ -266,17 +274,17 @@ export const StaffHodPage: React.FC = () => {
       <Modal
         isOpen={rejectModalOpen}
         onClose={() => setRejectModalOpen(false)}
-        title="Tolak Permohonan Cuti Staf"
+        title={isMs ? "Tolak Permohonan Cuti Staf" : "Reject Leave Application"}
         size="md"
       >
         <form onSubmit={handleRejectSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1">
-              Sebab / Justifikasi Penolakan <span className="text-rose-500">*</span>
+              {isMs ? 'Sebab / Justifikasi Penolakan' : 'Reason / Justification for Rejection'} <span className="text-rose-500">*</span>
             </label>
             <textarea
               rows={3}
-              placeholder="Sila nyatakan sebab permohonan tidak diluluskan (cth. kekurangan tenaga kerja di wad)..."
+              placeholder={isMs ? "Sila nyatakan sebab permohonan tidak diluluskan (cth. kekurangan tenaga kerja di wad)..." : "Please state reason for rejection (e.g. ward manpower shortage)..."}
               value={rejectionReason}
               onChange={e => setRejectionReason(e.target.value)}
               required
@@ -291,14 +299,14 @@ export const StaffHodPage: React.FC = () => {
               onClick={() => setRejectModalOpen(false)}
               className="border-slate-200 hover:bg-slate-50 text-slate-700 font-bold"
             >
-              Batal
+              {isMs ? 'Batal' : 'Cancel'}
             </Button>
             <Button
               type="submit"
               disabled={processing}
               className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 shadow-md"
             >
-              {processing ? 'Menolak...' : 'Sahkan Penolakan'}
+              {processing ? (isMs ? 'Menolak...' : 'Rejecting...') : (isMs ? 'Sahkan Penolakan' : 'Confirm Rejection')}
             </Button>
           </div>
         </form>

@@ -84,7 +84,7 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!documentNo.trim() || amount <= 0) {
-      toast.error('Sila masukkan No. Dokumen Waran dan Jumlah Peruntukan yang sah.')
+      toast.error('Please enter a valid Warrant Document No. and Allocation Amount.')
       return
     }
 
@@ -121,12 +121,12 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
         if (error) throw error
       }
 
-      toast.success('Penerimaan Peruntukan Waran Berjaya Direkodkan!')
+      toast.success('Warrant Allocation Inflow Successfully Recorded!')
       onSuccess()
       onClose()
     } catch (err: any) {
       console.error('Error adding warrant inflow:', err)
-      toast.error('Gagal merekod waran', err.message || 'Ralat sistem.')
+      toast.error('Failed to record warrant', err.message || 'System error.')
     } finally {
       setIsSubmitting(false)
     }
@@ -146,8 +146,8 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
               <Wallet className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-slate-900">Tambah Peruntukan Waran Masuk</h3>
-              <p className="text-xs text-slate-500">Rekod penerimaan waran agihan daripada KKM / Negeri</p>
+              <h3 className="text-lg font-black text-slate-900">Add Inflow Warrant Allocation</h3>
+              <p className="text-xs text-slate-500">Record official warrant allocations from MOH / State Health Department</p>
             </div>
           </div>
           <button
@@ -170,7 +170,7 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
               }`}
             >
               <Building className="w-4 h-4 text-blue-600" />
-              <span>Pengurusan (020200/022300)</span>
+              <span>Operating (020200/022300)</span>
             </button>
 
             <button
@@ -183,16 +183,16 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
               }`}
             >
               <HardHat className="w-4 h-4 text-amber-600" />
-              <span>Pembangunan (P42)</span>
+              <span>Development (P42)</span>
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">No. Dokumen Waran</label>
+              <label className="block text-xs font-bold text-slate-600 mb-1">Warrant Document No.</label>
               <input
                 type="text"
-                placeholder="cth: WA/2026/FNB/002 atau 91000914"
+                placeholder="e.g. WA/2026/FNB/002 or 91000914"
                 value={documentNo}
                 onChange={(e) => setDocumentNo(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none"
@@ -201,7 +201,7 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">Tarikh Waran</label>
+              <label className="block text-xs font-bold text-slate-600 mb-1">Warrant Date</label>
               <input
                 type="date"
                 value={warrantDate}
@@ -231,7 +231,7 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 mb-1">Objek</label>
+                <label className="block text-[11px] font-bold text-slate-600 mb-1">Object Code</label>
                 <select
                   value={selectedObjekCode}
                   onChange={(e) => setSelectedObjekCode(e.target.value)}
@@ -246,7 +246,7 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 mb-1">Kategori</label>
+                <label className="block text-[11px] font-bold text-slate-600 mb-1">Category</label>
                 <select
                   value={selectedKategoriCode}
                   onChange={(e) => setSelectedKategoriCode(e.target.value)}
@@ -264,7 +264,7 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">Jumlah Peruntukan (RM)</label>
+              <label className="block text-xs font-bold text-slate-600 mb-1">Allocation Amount (RM)</label>
               <input
                 type="number"
                 step="0.01"
@@ -277,7 +277,7 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">Tahun Kewangan</label>
+              <label className="block text-xs font-bold text-slate-600 mb-1">Fiscal Year</label>
               <input
                 type="number"
                 value={fiscalYear}
@@ -289,10 +289,10 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1">Keterangan / Butiran Waran</label>
+            <label className="block text-xs font-bold text-slate-600 mb-1">Description / Warrant Details</label>
             <textarea
               rows={2}
-              placeholder="cth: Waran Agihan Pertama KKM bagi Perkhidmatan Sajian..."
+              placeholder="e.g. MOH First Distribution Warrant for Food Services..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none resize-none"
@@ -306,14 +306,14 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
               onClick={onClose}
               className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold"
             >
-              Batal
+              Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
               className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 rounded-xl shadow-sm"
             >
-              {isSubmitting ? 'Menyimpan...' : 'Simpan Waran'}
+              {isSubmitting ? 'Saving...' : 'Save Warrant'}
             </Button>
           </div>
         </form>

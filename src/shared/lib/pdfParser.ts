@@ -12,7 +12,7 @@ async function getPdfjs(): Promise<any> {
   if (!_pdfjs) {
     const raw = await import('pdfjs-dist')
     _pdfjs = (raw as any).default || raw
-    if (_pdfjs && _pdfjs.GlobalWorkerOptions) {
+    if (typeof window !== 'undefined' && _pdfjs && _pdfjs.GlobalWorkerOptions) {
       _pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs`
     }
   }
@@ -29,8 +29,19 @@ async function getTesseract(): Promise<any> {
 
 
 /**
- * Extracts text from the first page of a PDF file and finds the LPO number.
- * Looks for patterns like PO26..., CO26..., LPO-..., etc.
+ * Checks if a string matches the internal hospital Purchase Order format (e.g. PO-2026-0699).
+ * Internal PO numbers should NEVER be treated as uploaded LPO numbers.
+ */
+function isInternalPoNumber(value: string): boolean {
+  if (!value) return false;
+  const clean = value.trim().toUpperCase();
+  return /^PO[-_\s]?\d{4}[-_\s]?\d{3,5}$/i.test(clean) || /^PO-\d{4}-/i.test(clean);
+}
+
+/**
+ * Extracts text from the first few pages of a PDF file and finds the genuine government LPO number.
+ * Prioritizes Malaysian ePerolehan numbers (CO26..., PO26...) and AM 75E labels.
+ * Strictly ignores internal hospital Purchase Order numbers (e.g. PO-2026-XXXX).
  */
 export async function extractLpoNumberFromPdf(file: File): Promise<string | null> {
   try {
@@ -51,47 +62,54 @@ export async function extractLpoNumberFromPdf(file: File): Promise<string | null
         .join(' ');
       text += ' ' + pageText;
     }
-    
-    // 1. Try label-based search first (highly accurate, matches e.g. "NO. PESANAN (LPO) : PO-2026-0407")
-    const labelRegex = /(?:No\.\s*Pesanan\s*\(LPO\)|No\s*Pesanan\s*LPO|Pesanan\s*\(?LPO\)?)\s*:\s*([A-Z0-9\-_/]+)/i;
-    const labelMatch = text.match(labelRegex);
-    if (labelMatch) {
-      return labelMatch[1].trim();
-    }
-    
-    // 2. Try patterns like PO-2026-0407, LPO-2026-0407, etc.
-    const lpoPatternRegex = /\b((?:LPO|PO|CO|DO)[-_\s/]?\d{2,6}[-_\s/]?\d{4,20})\b/i;
-    const patternMatch = text.match(lpoPatternRegex);
-    if (patternMatch) {
-      return patternMatch[1].trim();
+
+    // 1. Priority: Strict Malaysian government ePerolehan Contract Order & Direct Purchase format
+    // Format: CO/PO followed by 2-digit fiscal year (e.g. 25, 26, 27) and 10 to 16 continuous digits WITHOUT hyphens
+    // e.g. CO260000000515835, PO260000000583832, CO260000000479739
+    const epMatch = text.match(/\b((?:CO|PO)\d{10,18})\b/i);
+    if (epMatch) {
+      return epMatch[1].toUpperCase();
     }
 
-    // 3. Fallback to older strict numeric patterns
-    // Try CO or LPO prefix first (usually the actual LPO number)
-    const lpoRegex = /\b((?:CO|LPO)\s*\d{10,})\b/i;
-    let match = text.match(lpoRegex);
-    
-    // Fallback to PO prefix
-    if (!match) {
-      const poRegex = /\b(PO\s*\d{10,})\b/i;
-      match = text.match(poRegex);
+    // 2. Priority: Malaysian Government AM 75E labels (No. Dokumen, No. Dokumen Kawalan, No. Pesanan Kerajaan)
+    const labelRegex = /(?:No\.?\s*Dokumen\s*(?:Kawalan)?|No\.?\s*Pesanan\s*Kerajaan|Pesanan\s*Tempatan|No\.\s*Pesanan\s*\(LPO\)|No\s*Pesanan\s*LPO|Pesanan\s*\(?LPO\)?)\s*[:\s]+([A-Z0-9\-_/]+)/i;
+    const labelMatch = text.match(labelRegex);
+    if (labelMatch) {
+      const candidate = labelMatch[1].trim();
+      if (!isInternalPoNumber(candidate)) {
+        return candidate.toUpperCase();
+      }
     }
-    
-    if (match) {
-      const cleaned = match[1].replace(/\s+/g, '').toUpperCase();
-      // STRICT VALIDATION: Must start with CO, LPO, or PO and be followed by digits
-      if (/^(CO|LPO|PO)\d{8,}$/.test(cleaned)) {
+
+    // 3. Priority: Standard manual or ministry LPO formats (e.g. LPO-..., LPO/..., EP...)
+    const lpoRegex = /\b(LPO[-_\s/][A-Z0-9\-_/]{3,25})\b/i;
+    const lpoMatch = text.match(lpoRegex);
+    if (lpoMatch && !isInternalPoNumber(lpoMatch[1])) {
+      return lpoMatch[1].toUpperCase();
+    }
+
+    const epRefRegex = /\b(EP\d{10,20})\b/i;
+    const epRefMatch = text.match(epRefRegex);
+    if (epRefMatch) {
+      return epRefMatch[1].toUpperCase();
+    }
+
+    // 4. Fallback: CO or LPO prefix followed by at least 8 digits
+    const fallbackRegex = /\b((?:CO|LPO)\s*\d{8,20})\b/i;
+    const fallbackMatch = text.match(fallbackRegex);
+    if (fallbackMatch) {
+      const cleaned = fallbackMatch[1].replace(/\s+/g, '').toUpperCase();
+      if (!isInternalPoNumber(cleaned)) {
         return cleaned;
       }
     }
-    
-    // Fallback: search for any 10+ digit sequence if prefix is missing
-    const digitRegex = /\b(\d{10,})\b/;
+
+    // 5. Fallback: search for any 12+ digit sequence if prefix is missing
+    const digitRegex = /\b(\d{12,20})\b/;
     const digitMatch = text.match(digitRegex);
-    
     if (digitMatch) {
       const cleaned = digitMatch[1];
-      if (cleaned.startsWith('26') || cleaned.startsWith('20') || cleaned.length >= 12) {
+      if (cleaned.startsWith('26') || cleaned.startsWith('20') || cleaned.length >= 14) {
         return cleaned;
       }
     }
@@ -189,95 +207,155 @@ export async function extractDatesFromPdf(file: File): Promise<ExtractedLpoDates
   return result;
 }
 
-/**
- * Accurately extracts serial numbers from oxygen delivery order documents:
- * 1. Sanitizes non-serial metadata (dates, batch numbers, postcodes, phone numbers, terms, item sizes).
- * 2. Works reliably across digital PDF streams, multi-page PDFs, and OCR scanned images.
- * 3. Extracts all 6-digit (e.g. 006064, 001026, 004047) and standard alphanumeric cylinder tags.
- */
-export function parseSerialsFromText(text: string): string[] {
-  const serialsList: string[] = [];
+function cleanDocumentText(text: string): string {
+  let s = text;
 
-  // Sanitize out non-serial patterns from the raw text to prevent false matches
-  let sanitized = text;
+  // 1. Remove company registration patterns:
+  // e.g. Co.Reg No:199401024117 (309798 - V), (309798-V), SSM: ..., ROC: ...
+  s = s.replace(/Co\.?\s*Reg\.?\s*(?:No\.?)?[\s:]*\d+[\s\-_]*\([0-9A-Z\s\-_]+\)/gi, ' ');
+  s = s.replace(/\(\s*\d{4,8}\s*[-–]\s*[A-Z]\s*\)/gi, ' ');
+  s = s.replace(/\b\d{12}\b/g, ' ');
 
-  // 1. Remove order/LPO/PO/REQ references like O2-REQ-20260702-2688, PO-2026-0407, DO-2026-9876, etc.
-  sanitized = sanitized.replace(/\b(?:O2-REQ|PO|DO|LPO|CO)[A-Z0-9\-_/]+\b/gi, ' ');
+  // 2. Remove Tax / TIN numbers:
+  // e.g. Tin Number : C8870258080 or TIN: C1234567890
+  s = s.replace(/(?:Tin(?:\s*Number)?|Tax(?:\s*ID)?)[\s:]*[A-Z0-9]+/gi, ' ');
 
-  // 2. Remove dates DD/MM/YYYY or YYYYMMDD
-  sanitized = sanitized.replace(/\b\d{2}\/\d{2}\/\d{4}\b/g, ' ');
-  sanitized = sanitized.replace(/\b(20\d{6}|19\d{6})\b/g, ' ');
+  // 3. Remove Delivery Order / PO / LPO / Ref patterns:
+  // e.g. DELIVERY ORDER : No. D26/09-021, D26/09-021(TP), PO/LPO refs
+  s = s.replace(/\b(?:DELIVERY\s+ORDER|D\/?O)[\s:]*(?:No\.?)?[\s:]*[A-Z0-9/_\-\(\)]+/gi, ' ');
+  s = s.replace(/\b(?:Your\s+P\/?O(?:\s*No\.?)?|P\/?O\s*No\.?)[\s:]*[A-Z0-9/_\-]*/gi, ' ');
+  s = s.replace(/\b(?:O2-REQ|PO|DO|LPO|CO)[A-Z0-9\-_/]+\b/gi, ' ');
 
-  // 3. Remove batch numbers like O970/26, 0971/26, O973/26, O975/26, etc.
-  sanitized = sanitized.replace(/\b[A-Z0-9]{2,8}\/\d{2}\b/gi, ' ');
+  // 4. Remove return / request / reference codes:
+  // e.g. 02 - RET - 2026828 - 3176 or 02-RET-20260828-3176
+  s = s.replace(/\b\d{2}\s*[-–]\s*(?:RET|REQ)\s*[-–]\s*[\d\s\-–]+/gi, ' ');
+  s = s.replace(/\bPerihal\s*:[\s\S]*?(?=(?:BANTUAN|SILINDER|Batch|Item|CODE|$))/gi, ' ');
 
-  // 4. Remove company registration / tax IDs like C8870258080 or 199401024117
-  sanitized = sanitized.replace(/\b[A-Z]\d{8,}\b/gi, ' ');
-  sanitized = sanitized.replace(/\b\d{10,}\b/g, ' ');
+  // 5. Remove dates DD/MM/YYYY or YYYYMMDD:
+  s = s.replace(/\b\d{2}\/\d{2}\/\d{4}\b/g, ' ');
+  s = s.replace(/\b(20\d{6}|19\d{6})\b/g, ' ');
 
-  // 5. Remove Malaysian postcodes (e.g. 93450 Kuching, 98850 Lawas, 88xxx KK, etc.)
-  sanitized = sanitized.replace(/\b(93|98|95|96|97|88|89|90|91|50|51|52|53|54|55|56|57|58|59|60|68|40|41|42|43|47|48)\d{3}\b/g, ' ');
+  // 6. Remove batch numbers e.g. Batch No.: O1267/26 or O1269/26
+  s = s.replace(/\bBatch\s*No\.?[\s:]*[A-Z0-9/_\-]+/gi, ' ');
+  s = s.replace(/\b[A-Z0-9]{2,8}\/\d{2}\b/gi, ' ');
 
-  // 6. Remove phone numbers / fax numbers e.g. 082-337713, 085-123456, 337713, 334178
-  sanitized = sanitized.replace(/\b08\d[\-\s]?\d{6,8}\b/g, ' ');
-  sanitized = sanitized.replace(/\b33\d{4}\b/g, ' ');
+  // 7. Remove phone, fax, mobile, attention contact details:
+  s = s.replace(/ATTN\s*:[\s\S]*?(?=(?:TEL|FAX|Item|CODE|Batch|$))/gi, ' ');
+  s = s.replace(/\b(?:TEL|FAX|Tel|Fax)[\s:]*[\d\s\-–\(\)\/ext:,]+/gi, ' ');
+  s = s.replace(/\b01\d[\s\-–]*\d{3,4}[\s\-–]*\d{4}\b/g, ' ');
+  s = s.replace(/\b08\d[\s\-–]*\d{3}[\s\-–]*\d{3,4}\b/g, ' ');
+  s = s.replace(/\b(?:33|34|35)\d{4}\b/g, ' ');
 
-  // 7. Remove item sizes & units like 101-F, 101-N, 101F, 10F, 1.4m3, 80m3, 64m3, 48 UNIT
-  sanitized = sanitized.replace(/\b(?:CODE\s*SIZE\s*:\s*)?[A-Z]?101[\-_]?[A-Z0-9]+\b/gi, ' ');
-  sanitized = sanitized.replace(/\b\d+(\.\d+)?\s*m[3]?\b/gi, ' ');
-  sanitized = sanitized.replace(/\b\d+\s*(?:UNIT|PCS|BATANG)\b/gi, ' ');
+  // 8. Remove Malaysian address postcodes specifically in address context (e.g. 93450 Kuching, 98850 Lawas):
+  s = s.replace(/\b\d{5}\s+(?:KUCHING|LAWAS|MIRI|SIBU|BINTULU|KOTA\s+KINABALU|SARAWAK|SABAH|KUALA\s+LUMPUR|SELANGOR)\b/gi, ' ');
+  s = s.replace(/\b(?:SECTION|SEKSYEN|LOT|FLOOR|TINGKAT|JALAN|POSKOD|P\.O\.?\s*BOX)\s+[\d\s\-–,/]+/gi, ' ');
 
-  // 8. Remove quantity prefixes before "Serial No." e.g. "10 Serial No.:", "9 Serial No.:", "1 Serial No.:"
-  sanitized = sanitized.replace(/\b\d+\s+(?:Serial\s*No|Nomor\s*Siri|No\.\s*Siri)\b/gi, ' ');
+  // 9. Remove item sizes, units, volumes:
+  // e.g. CODE SIZE : 101 - N, 8.0m³, UNIT 40, UNIT 4, 40 Total, 4 Total
+  s = s.replace(/\bCODE\s*SIZE\s*:?\s*[A-Z0-9\s\-–]+/gi, ' ');
+  s = s.replace(/\b\d+(\.\d+)?\s*m[3³]?\b/gi, ' ');
+  s = s.replace(/\b\d+\s*(?:UNIT|PCS|BATANG|Total)\b/gi, ' ');
 
-  // 9. Remove payment terms e.g. 30 DAYS, 30DAYS, 60 DAYS
-  sanitized = sanitized.replace(/\b\d+\s*DAYS\b/gi, ' ');
+  // 10. Remove payment terms e.g. 30 DAYS
+  s = s.replace(/\b\d+\s*DAYS\b/gi, ' ');
 
-  // Tokenize the sanitized text
-  const tokens = sanitized.split(/[\s,;|]+/);
+  // 11. Remove page indicators:
+  s = s.replace(/\b(?:Page|Halaman)\s*:\s*\d+\s+(?:of|dari)\s+\d+\b/gi, ' ');
+
+  // 12. Remove common footer boilerplate:
+  s = s.replace(/Notes\s*:[\s\S]*?(?=(?:Authorised|Receipient|Tandatangan|$))/gi, ' ');
+  s = s.replace(/(?:Authorised\s+Signature|Tandatangan\s+Dibenarkan)[\s\S]*?(?=(?:Receipient|Chop|$))/gi, ' ');
+  s = s.replace(/(?:Receipient['’]?s\s+Chop|Cop\s+Penerima)[\s\S]*$/gi, ' ');
+
+  return s;
+}
+
+function isValidSerialToken(cleaned: string): boolean {
+  if (!cleaned) return false;
 
   const isNoiseWord = (lower: string): boolean => {
     const meta = new Set([
       'serial', 'no', 'number', 'numbers', 's/n', 'nomor', 'siri', 'batch',
       'filling', 'expiry', 'date', 'unit', 'silinder', 'sewaan', 'gas', 'oksigen',
-      'oxygen', 'perihal', 'kegunaan', 'ambulance', 'hospital', 'borneo', 'delivery',
+      'oxygen', 'perihal', 'kegunaan', 'ambulance', 'hospital', 'borneo', 'indah', 'delivery',
       'order', 'received', 'signature', 'tandatangan', 'jumlah', 'total',
       'halaman', 'page', 'code', 'size', 'attn', 'kuching', 'sarawak', 'malaysia',
       'lawas', 'pending', 'terms', 'nota', 'catatan', 'notes', 'disediakan',
-      'disahkan', 'item', 'customer', 'tel', 'fax', 'days', 'day'
+      'disahkan', 'item', 'customer', 'tel', 'fax', 'days', 'day', 'uom', 'qty',
+      'bantuan', 'bhd', 'sdn', 'description'
     ]);
     return meta.has(lower);
   };
 
-  for (const token of tokens) {
-    // Strip leading/trailing bullets, dashes, tildes, colons
-    const cleaned = token.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '').trim();
-    if (!cleaned) continue;
+  const lower = cleaned.toLowerCase();
+  if (isNoiseWord(lower)) return false;
 
-    const lower = cleaned.toLowerCase();
-    if (isNoiseWord(lower)) continue;
+  // Cylinder serial criteria:
+  // 1. 4-8 digit numeric e.g. 011045, 80648, 26537, 57944, 0152334, 8448047
+  const isNumericSerial = /^\d{4,8}$/.test(cleaned);
 
-    // Genuine cylinder serial pattern:
-    // 1. 6-digit numeric (e.g. 006064, 001026, 004047, 001006)
-    // 2. Or 5-8 digit numeric
-    // 3. Or alphanumeric code of length 5-10 with at least 2 digits
-    const is6Digit = /^\d{6}$/.test(cleaned);
-    const isStandardSerial = /^(00\d{4}|\d{5,8})$/.test(cleaned);
-    const isAlphaNumericTag = /^[A-Z0-9]{5,10}$/i.test(cleaned) && (cleaned.match(/\d/g) || []).length >= 2;
+  // 2. Alphanumeric cylinder codes e.g. 8124A, K13937120, K13938020, K13940061
+  const isAlphaNumericTag = /^[A-Z0-9]{4,12}$/i.test(cleaned) && (cleaned.match(/\d/g) || []).length >= 2;
 
-    if (is6Digit || isStandardSerial || isAlphaNumericTag) {
-      let finalSerial = cleaned.toUpperCase();
-      if (/^saboxy-/i.test(finalSerial)) {
-        finalSerial = `saboxy-${finalSerial.substring(7)}`;
-      } else {
-        finalSerial = `saboxy-${finalSerial}`;
+  return isNumericSerial || isAlphaNumericTag;
+}
+
+/**
+ * Accurately extracts serial numbers from oxygen delivery order documents:
+ * 1. Checks for structured "Serial No." blocks first to preserve exact vendor lists.
+ * 2. Fallbacks to robust document-wide sanitization to cleanly ignore non-serial metadata (company reg, taxes, postcodes, phone numbers, terms, item sizes).
+ * 3. Extracts numeric (4-8 digits) and alphanumeric tags (e.g. K13937120, 8124A, 011045, 57944).
+ */
+export function parseSerialsFromText(text: string, applySuffix = true): string[] {
+  // Method 1: Check for explicit "Serial No" blocks
+  // e.g. "30 Serial No.: - 011045 - 014079 ... Batch No.:"
+  const serialSectionRegex = /(?:(?:\d+\s+)?(?:Serial\s*No\.?|Nomor\s*Siri|No\.?\s*Siri|S\/N))[\s:]*([\s\S]*?)(?=(?:(?:\d+\s+)?(?:Serial\s*No\.?|Nomor\s*Siri|No\.?\s*Siri|S\/N))|Batch\s*No\.?|Perihal\s*:|Notes\s*:|Authorised|Receipient|Tandatangan|Page\s*:|Halaman\s*:|$)/gi;
+
+  let match;
+  let foundInSections = false;
+  const sectionSerials: string[] = [];
+
+  while ((match = serialSectionRegex.exec(text)) !== null) {
+    const sectionBody = match[1];
+    const tokens = sectionBody.split(/[\s,;|•\-–*~]+/);
+    for (const token of tokens) {
+      const cleaned = token.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '').trim();
+      if (isValidSerialToken(cleaned)) {
+        let finalSerial = cleaned.toUpperCase();
+        if (!finalSerial.startsWith('SABOXY-')) {
+          finalSerial = `saboxy-${finalSerial}`;
+        } else {
+          finalSerial = `saboxy-${finalSerial.substring(7)}`;
+        }
+        sectionSerials.push(finalSerial);
+        foundInSections = true;
       }
+    }
+  }
 
+  if (foundInSections && sectionSerials.length > 0) {
+    return applySuffix ? applySameDoDuplicateSuffix(sectionSerials) : sectionSerials;
+  }
+
+  // Method 2: Fallback to whole document cleaned parsing
+  const sanitized = cleanDocumentText(text);
+  const tokens = sanitized.split(/[\s,;|•\-–*~]+/);
+  const serialsList: string[] = [];
+
+  for (const token of tokens) {
+    const cleaned = token.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '').trim();
+    if (isValidSerialToken(cleaned)) {
+      let finalSerial = cleaned.toUpperCase();
+      if (!finalSerial.startsWith('SABOXY-')) {
+        finalSerial = `saboxy-${finalSerial}`;
+      } else {
+        finalSerial = `saboxy-${finalSerial.substring(7)}`;
+      }
       serialsList.push(finalSerial);
     }
   }
 
-  return applySameDoDuplicateSuffix(serialsList);
+  return applySuffix ? applySameDoDuplicateSuffix(serialsList) : serialsList;
 }
 
 /**
@@ -319,7 +397,7 @@ export async function extractSerialsFromDocument(files: File | File[]): Promise<
         // 1. Try digital text extraction first
         const digitalText = await extractTextFromPdf(file);
         if (digitalText && digitalText.trim().length > 0) {
-          const digitalSerials = parseSerialsFromText(digitalText);
+          const digitalSerials = parseSerialsFromText(digitalText, false);
           if (digitalSerials.length > 0) {
             combinedSerials.push(...digitalSerials);
             continue;
@@ -353,13 +431,13 @@ export async function extractSerialsFromDocument(files: File | File[]): Promise<
           }
         }
         
-        const ocrSerials = parseSerialsFromText(fullOcrText);
+        const ocrSerials = parseSerialsFromText(fullOcrText, false);
         combinedSerials.push(...ocrSerials);
       } else {
         // Image file OCR
         const Tesseract = await getTesseract();
         const { data: { text: ocrText } } = await Tesseract.recognize(file, 'eng');
-        const imgSerials = parseSerialsFromText(ocrText);
+        const imgSerials = parseSerialsFromText(ocrText, false);
         combinedSerials.push(...imgSerials);
       }
     } catch (error) {

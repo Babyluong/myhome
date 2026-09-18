@@ -20,6 +20,7 @@ import {
 import { Ambulance } from '../components/AmbulanceIcon'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 
 import { 
   getRequests, 
@@ -40,14 +41,16 @@ import {
   CardContent, 
   Button, 
   Input, 
-  Badge,
-  Modal,
+  Badge, 
+  Modal, 
   SlideOver
 } from '@/components/ui'
 
 const TransporterDriverPanelPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
+  const { language } = useLanguage()
+  const isEn = language !== 'ms'
   const toast = useToast()
 
   const [requests, setRequests] = useState<TransportRequest[]>([])
@@ -110,7 +113,10 @@ const TransporterDriverPanelPage: React.FC = () => {
       const vehRes = await getVehicles()
       if (vehRes.data) setVehicles(vehRes.data.filter(v => v.status === 'active'))
     } catch (err: any) {
-      toast.error('Gagal Memuatkan Data', err.message || 'Sila cuba lagi.')
+      toast.error(
+        isEn ? 'Failed to Load Data' : 'Gagal Memuatkan Data', 
+        err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
+      )
     } finally {
       setLoading(false)
     }
@@ -118,7 +124,7 @@ const TransporterDriverPanelPage: React.FC = () => {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [isEn])
 
   // Filter requests by driver role tabs
   const incomingRequests = requests.filter(r => {
@@ -398,21 +404,21 @@ const TransporterDriverPanelPage: React.FC = () => {
       case 'draft':
         return <Badge variant="gray">Draf</Badge>
       case 'submitted':
-        return <Badge variant="info">Dihantar (Baru)</Badge>
+        return <Badge variant="info">{isEn ? 'Submitted (New)' : 'Dihantar (Baru)'}</Badge>
       case 'driver_accepted':
-        return <Badge variant="warning">Diterima Pemandu</Badge>
+        return <Badge variant="warning">{isEn ? 'Driver Accepted' : 'Diterima Pemandu'}</Badge>
       case 'driver_rejected':
-        return <Badge variant="error">Pemandu Tolak</Badge>
+        return <Badge variant="error">{isEn ? 'Driver Rejected' : 'Pemandu Tolak'}</Badge>
       case 'approved':
-        return <Badge variant="success">Diluluskan</Badge>
+        return <Badge variant="success">{isEn ? 'Approved' : 'Diluluskan'}</Badge>
       case 'rejected':
-        return <Badge variant="error">Ditolak Pentadbir</Badge>
+        return <Badge variant="error">{isEn ? 'Admin Rejected' : 'Ditolak Pentadbir'}</Badge>
       case 'in_transit':
-        return <Badge variant="warning">Dalam Perjalanan</Badge>
+        return <Badge variant="warning">{isEn ? 'In Transit' : 'Dalam Perjalanan'}</Badge>
       case 'completed':
-        return <Badge variant="success">Selesai</Badge>
+        return <Badge variant="success">{isEn ? 'Completed' : 'Selesai'}</Badge>
       case 'cancelled':
-        return <Badge variant="gray">Dibatalkan</Badge>
+        return <Badge variant="gray">{isEn ? 'Cancelled' : 'Dibatalkan'}</Badge>
       default:
         return <Badge variant="gray">{status}</Badge>
     }
@@ -424,20 +430,22 @@ const TransporterDriverPanelPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Papan Pemuka</span>
+        <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
       </button>
 
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
           <Ambulance className="w-8 h-8 text-emerald-600 animate-pulse" />
-          Panel Tugasan Pemandu
+          {isEn ? 'Driver Operations & Dispatch Panel' : 'Panel Tugasan Pemandu'}
         </h1>
         <p className="text-slate-500 text-sm">
-          Semak, terima tugasan perjalanan pesakit/staf, dan lengkapkan semakan keselamatan kenderaan hospital.
+          {isEn 
+            ? 'Review, accept patient/staff transport assignments, and complete hospital vehicle safety checks.'
+            : 'Semak, terima tugasan perjalanan pesakit/staf, dan lengkapkan semakan keselamatan kenderaan hospital.'}
         </p>
       </div>
 
@@ -445,39 +453,41 @@ const TransporterDriverPanelPage: React.FC = () => {
       <div className="flex border-b border-slate-200 gap-6">
         <button
           onClick={() => setActiveTab('incoming')}
-          className={`py-3 text-sm font-bold border-b-2 transition-all ${
+          className={`py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
             activeTab === 'incoming' 
               ? 'border-emerald-600 text-emerald-700' 
               : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
-          Tugasan Menunggu Pemandu ({incomingRequests.length})
+          {isEn ? 'Incoming Dispatch Queue' : 'Tugasan Menunggu Pemandu'} ({incomingRequests.length})
         </button>
         <button
           onClick={() => setActiveTab('active')}
-          className={`py-3 text-sm font-bold border-b-2 transition-all ${
+          className={`py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
             activeTab === 'active' 
               ? 'border-emerald-600 text-emerald-700' 
               : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
-          Trip Aktif Saya ({myActiveTrips.length})
+          {isEn ? 'My Active Trips' : 'Trip Aktif Saya'} ({myActiveTrips.length})
         </button>
         <button
           onClick={() => setActiveTab('history')}
-          className={`py-3 text-sm font-bold border-b-2 transition-all ${
+          className={`py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
             activeTab === 'history' 
               ? 'border-emerald-600 text-emerald-700' 
               : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
-          Sejarah Tugasan ({myHistoryTrips.length})
+          {isEn ? 'Assignment History' : 'Sejarah Tugasan'} ({myHistoryTrips.length})
         </button>
       </div>
 
       {/* Content based on tab */}
       {loading ? (
-        <div className="p-12 text-center text-slate-500 font-medium animate-pulse">Memproses maklumat tugasan...</div>
+        <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+          {isEn ? 'Processing dispatch assignments...' : 'Memproses maklumat tugasan...'}
+        </div>
       ) : (
         <div className="space-y-6">
           
@@ -486,7 +496,7 @@ const TransporterDriverPanelPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {incomingRequests.length === 0 ? (
                 <div className="md:col-span-2 p-12 text-center text-slate-500 bg-slate-50 border border-slate-200/60 rounded-2xl">
-                  Tiada tugasan pengangkutan baru buat masa ini.
+                  {isEn ? 'No new transport dispatches available at the moment.' : 'Tiada tugasan pengangkutan baru buat masa ini.'}
                 </div>
               ) : (
                 incomingRequests.map((req) => (
@@ -499,11 +509,11 @@ const TransporterDriverPanelPage: React.FC = () => {
                         <div className="flex justify-between items-center">
                           <span className="font-mono font-bold text-xs text-blue-600">{req.no_rujukan}</span>
                           {req.jenis_permohonan === 'ambulance' ? (
-                            <Badge variant="error">Ambulans</Badge>
+                            <Badge variant="error">{isEn ? 'Ambulance' : 'Ambulans'}</Badge>
                           ) : req.jenis_permohonan === 'van_jenazah' ? (
-                            <Badge variant="gray">Van Jenazah</Badge>
+                            <Badge variant="gray">{isEn ? 'Hearse Van' : 'Van Jenazah'}</Badge>
                           ) : (
-                            <Badge variant="info">Kereta Jabatan (SG)</Badge>
+                            <Badge variant="info">{isEn ? 'Official Vehicle (SG)' : 'Kereta Jabatan (SG)'}</Badge>
                           )}
                         </div>
                       </CardHeader>
@@ -520,7 +530,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                           <div className="flex items-center gap-2">
                             <Clock className="w-4 h-4 text-slate-400" />
                             <span className="font-semibold text-slate-700">
-                              {new Date(req.tarikh_masa_diperlukan).toLocaleString('ms-MY')}
+                              {new Date(req.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY')}
                             </span>
                           </div>
 
@@ -528,14 +538,21 @@ const TransporterDriverPanelPage: React.FC = () => {
                             <div className="space-y-1.5 pt-1">
                               <div className="flex items-center gap-2 p-2 bg-rose-50 text-rose-800 rounded-lg text-xs font-bold">
                                 <User className="w-3.5 h-3.5" />
-                                <span>Pesakit: {req.nama_pesakit} ({req.rn_pesakit})</span>
+                                <span>{isEn ? 'Patient:' : 'Pesakit:'} {req.nama_pesakit} ({req.rn_pesakit})</span>
                               </div>
                               {req.patient_mobility && (
                                 <div className={`flex items-center gap-2 p-2 rounded-lg text-xs font-bold border ${
                                   req.patient_mobility === 'stretcher' ? 'bg-amber-50 text-amber-900 border-amber-200' : 'bg-slate-50 text-slate-700 border-slate-200'
                                 }`}>
                                   <Info className="w-3.5 h-3.5 text-slate-500" />
-                                  <span>Mobiliti: <span className="capitalize">{req.patient_mobility === 'stretcher' ? 'Stretcher / Usungan (WAJIB AMBIL DARI WAD)' : req.patient_mobility}</span></span>
+                                  <span>
+                                    {isEn ? 'Mobility:' : 'Mobiliti:'}{' '}
+                                    <span className="capitalize">
+                                      {req.patient_mobility === 'stretcher' 
+                                        ? (isEn ? 'Stretcher (WARD PICKUP REQUIRED)' : 'Stretcher / Usungan (WAJIB AMBIL DARI WAD)') 
+                                        : req.patient_mobility}
+                                    </span>
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -546,16 +563,16 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
                       <Button 
                         onClick={() => handleOpenInspection(req, 'pre_trip')}
-                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs"
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer"
                       >
-                        Semak & Terima
+                        {isEn ? 'Inspect & Accept' : 'Semak & Terima'}
                       </Button>
                       <Button 
                         variant="outline"
                         onClick={() => handleOpenDirectReject(req.id)}
-                        className="text-xs border-slate-200 text-rose-600 hover:bg-rose-50/50"
+                        className="text-xs border-slate-200 text-rose-600 hover:bg-rose-50/50 cursor-pointer"
                       >
-                        Tolak
+                        {isEn ? 'Decline' : 'Tolak'}
                       </Button>
                     </div>
                   </Card>
@@ -569,7 +586,7 @@ const TransporterDriverPanelPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {myActiveTrips.length === 0 ? (
                 <div className="md:col-span-2 p-12 text-center text-slate-500 bg-slate-50 border border-slate-200/60 rounded-2xl">
-                  Tiada trip pengangkutan aktif yang didaftarkan di bawah anda.
+                  {isEn ? 'No active transport trips currently assigned to you.' : 'Tiada trip pengangkutan aktif yang didaftarkan di bawah anda.'}
                 </div>
               ) : (
                 myActiveTrips.map((req) => (
@@ -581,9 +598,9 @@ const TransporterDriverPanelPage: React.FC = () => {
                       <CardHeader className="pb-3 bg-slate-50/50 border-b border-slate-100 flex flex-row justify-between items-center">
                         <span className="font-mono font-bold text-xs text-blue-600">{req.no_rujukan}</span>
                         <span className="text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded">
-                          {req.status_semasa === 'driver_accepted' && 'Menunggu Kelulusan Admin'}
-                          {req.status_semasa === 'approved' && 'Diluluskan (Sedia Jalan)'}
-                          {req.status_semasa === 'in_transit' && 'Dalam Transit'}
+                          {req.status_semasa === 'driver_accepted' && (isEn ? 'Pending Admin Approval' : 'Menunggu Kelulusan Admin')}
+                          {req.status_semasa === 'approved' && (isEn ? 'Approved (Ready to Depart)' : 'Diluluskan (Sedia Jalan)')}
+                          {req.status_semasa === 'in_transit' && (isEn ? 'In Transit' : 'Dalam Transit')}
                         </span>
                       </CardHeader>
                       <CardContent className="p-6 space-y-4 flex-1">
@@ -596,11 +613,11 @@ const TransporterDriverPanelPage: React.FC = () => {
 
                           <div className="pt-2 grid grid-cols-2 gap-2 text-xs">
                             <div>
-                              <span className="text-slate-400 block">Tarikh Trip:</span>
-                              <span className="font-bold">{new Date(req.tarikh_masa_diperlukan).toLocaleDateString('ms-MY')}</span>
+                              <span className="text-slate-400 block">{isEn ? 'Trip Date:' : 'Tarikh Trip:'}</span>
+                              <span className="font-bold">{new Date(req.tarikh_masa_diperlukan).toLocaleDateString(isEn ? 'en-US' : 'ms-MY')}</span>
                             </div>
                             <div>
-                              <span className="text-slate-400 block">Kenderaan Diagih:</span>
+                              <span className="text-slate-400 block">{isEn ? 'Assigned Vehicle:' : 'Kenderaan Diagih:'}</span>
                               <span className="font-bold text-blue-600 font-mono">{req.kenderaan?.no_kenderaan}</span>
                             </div>
                           </div>
@@ -609,14 +626,21 @@ const TransporterDriverPanelPage: React.FC = () => {
                             <div className="space-y-1.5 pt-2">
                               <div className="flex items-center gap-2 p-2 bg-rose-50 text-rose-800 rounded-lg text-xs font-bold">
                                 <User className="w-3.5 h-3.5" />
-                                <span>Pesakit: {req.nama_pesakit} ({req.rn_pesakit})</span>
+                                <span>{isEn ? 'Patient:' : 'Pesakit:'} {req.nama_pesakit} ({req.rn_pesakit})</span>
                               </div>
                               {req.patient_mobility && (
                                 <div className={`flex items-center gap-2 p-2 rounded-lg text-xs font-bold border ${
                                   req.patient_mobility === 'stretcher' ? 'bg-amber-50 text-amber-900 border-amber-200' : 'bg-slate-50 text-slate-700 border-slate-200'
                                 }`}>
                                   <Info className="w-3.5 h-3.5 text-slate-500" />
-                                  <span>Mobiliti: <span className="capitalize">{req.patient_mobility === 'stretcher' ? 'Stretcher / Usungan (WAJIB AMBIL DARI WAD)' : req.patient_mobility}</span></span>
+                                  <span>
+                                    {isEn ? 'Mobility:' : 'Mobiliti:'}{' '}
+                                    <span className="capitalize">
+                                      {req.patient_mobility === 'stretcher' 
+                                        ? (isEn ? 'Stretcher (WARD PICKUP MANDATORY)' : 'Stretcher / Usungan (WAJIB AMBIL DARI WAD)') 
+                                        : req.patient_mobility}
+                                    </span>
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -626,7 +650,9 @@ const TransporterDriverPanelPage: React.FC = () => {
                             <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-800 flex items-start gap-2 mt-2">
                               <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                               <p>
-                                Pre-trip selesai. Sila tunggu kelulusan dari admin sebelum menekan butang <strong>Mula Trip</strong>.
+                                {isEn 
+                                  ? 'Pre-trip completed. Awaiting administrator approval before trip departure.'
+                                  : 'Pre-trip selesai. Sila tunggu kelulusan dari admin sebelum menekan butang Mula Trip.'}
                               </p>
                             </div>
                           )}
@@ -640,21 +666,23 @@ const TransporterDriverPanelPage: React.FC = () => {
                           <Button 
                             onClick={() => handleStartTrip(req.id)}
                             disabled={!isTripToday(req.tarikh_masa_diperlukan)}
-                            className={`w-full font-bold flex items-center justify-center gap-2 transition-all ${
+                            className={`w-full font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                               !isTripToday(req.tarikh_masa_diperlukan)
                                 ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none hover:bg-slate-100'
                                 : 'bg-blue-600 hover:bg-blue-700 text-white'
                             }`}
                           >
                             <Play className="w-4 h-4" />
-                            {isTripToday(req.tarikh_masa_diperlukan) ? 'Mula Trip (Start Journey)' : 'Mula Trip (Tersedia pada tarikh trip)'}
+                            {isTripToday(req.tarikh_masa_diperlukan) 
+                              ? (isEn ? 'Start Trip (Begin Journey)' : 'Mula Trip (Start Journey)') 
+                              : (isEn ? 'Start Trip (Available on trip date)' : 'Mula Trip (Tersedia pada tarikh trip)')}
                           </Button>
                           <Button
                             onClick={() => handleOpenCancelModal(req.id)}
                             variant="outline"
-                            className="w-full border-red-200 hover:bg-red-50 text-red-650 hover:text-red-750 font-bold flex items-center justify-center gap-2"
+                            className="w-full border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 font-bold flex items-center justify-center gap-2 cursor-pointer"
                           >
-                            Batal Trip (Cancel Journey)
+                            {isEn ? 'Cancel Trip (Cancel Journey)' : 'Batal Trip (Cancel Journey)'}
                           </Button>
                         </>
                       )}
@@ -662,10 +690,10 @@ const TransporterDriverPanelPage: React.FC = () => {
                       {req.status_semasa === 'in_transit' && (
                         <Button 
                           onClick={() => handleOpenInspection(req, 'post_trip')}
-                          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center justify-center gap-2"
+                          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center justify-center gap-2 cursor-pointer"
                         >
                           <Check className="w-4 h-4" />
-                          Selesai Trip & Post-Trip Inspection
+                          {isEn ? 'Complete Trip & Post-Trip Inspection' : 'Selesai Trip & Post-Trip Inspection'}
                         </Button>
                       )}
 
@@ -674,7 +702,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                           disabled
                           className="w-full bg-slate-200 text-slate-500 cursor-not-allowed font-bold"
                         >
-                          Menunggu Kelulusan Admin
+                          {isEn ? 'Pending Administrator Approval' : 'Menunggu Kelulusan Admin'}
                         </Button>
                       )}
                     </div>
@@ -689,18 +717,20 @@ const TransporterDriverPanelPage: React.FC = () => {
             <Card className="border border-slate-200 shadow-sm overflow-hidden">
               <CardContent className="p-0">
                 {myHistoryTrips.length === 0 ? (
-                  <div className="p-12 text-center text-slate-500">Tiada sejarah tugasan lampau ditemui.</div>
+                  <div className="p-12 text-center text-slate-500">
+                    {isEn ? 'No past assignment history records found.' : 'Tiada sejarah tugasan lampau ditemui.'}
+                  </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          <th className="px-6 py-4">No. Rujukan</th>
-                          <th className="px-6 py-4">Jenis</th>
-                          <th className="px-6 py-4">Destinasi</th>
-                          <th className="px-6 py-4">Selesai Perjalanan</th>
-                          <th className="px-6 py-4">Kenderaan</th>
-                          <th className="px-6 py-4">Status</th>
+                          <th className="px-6 py-4">{isEn ? 'Reference No.' : 'No. Rujukan'}</th>
+                          <th className="px-6 py-4">{isEn ? 'Type' : 'Jenis'}</th>
+                          <th className="px-6 py-4">{isEn ? 'Destination' : 'Destinasi'}</th>
+                          <th className="px-6 py-4">{isEn ? 'Completion Date' : 'Selesai Perjalanan'}</th>
+                          <th className="px-6 py-4">{isEn ? 'Vehicle' : 'Kenderaan'}</th>
+                          <th className="px-6 py-4">{isEn ? 'Status' : 'Status'}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
@@ -713,24 +743,24 @@ const TransporterDriverPanelPage: React.FC = () => {
                             <td className="px-6 py-4 font-mono font-bold text-slate-600">{req.no_rujukan}</td>
                             <td className="px-6 py-4 capitalize font-semibold">
                               {req.jenis_permohonan === 'sg' 
-                                ? 'Kereta Jabatan (SG)' 
+                                ? (isEn ? 'Official Car (SG)' : 'Kereta Jabatan (SG)') 
                                 : req.jenis_permohonan === 'van_jenazah' 
-                                ? 'Van Jenazah' 
-                                : 'Ambulans'}
+                                ? (isEn ? 'Hearse Van' : 'Van Jenazah') 
+                                : (isEn ? 'Ambulance' : 'Ambulans')}
                             </td>
                             <td className="px-6 py-4">{req.destinasi}</td>
                             <td className="px-6 py-4">
-                              {req.trip_completed_at ? new Date(req.trip_completed_at).toLocaleString('ms-MY') : '-'}
+                              {req.trip_completed_at ? new Date(req.trip_completed_at).toLocaleString(isEn ? 'en-US' : 'ms-MY') : '-'}
                             </td>
                             <td className="px-6 py-4 font-mono font-bold text-blue-600">{req.kenderaan?.no_kenderaan || '-'}</td>
                             <td className="px-6 py-4">
-                              {req.status_semasa === 'completed' && <Badge variant="success">Selesai</Badge>}
-                              {req.status_semasa === 'rejected' && <Badge variant="error">Ditolak Pentadbir</Badge>}
-                              {req.status_semasa === 'cancelled' && <Badge variant="gray">Dibatalkan</Badge>}
+                              {req.status_semasa === 'completed' && <Badge variant="success">{isEn ? 'Completed' : 'Selesai'}</Badge>}
+                              {req.status_semasa === 'rejected' && <Badge variant="error">{isEn ? 'Admin Rejected' : 'Ditolak Pentadbir'}</Badge>}
+                              {req.status_semasa === 'cancelled' && <Badge variant="gray">{isEn ? 'Cancelled' : 'Dibatalkan'}</Badge>}
                               {(req.status_semasa === 'driver_rejected' || 
                                 (loggedUser?.id && 
                                  JSON.parse(localStorage.getItem(`rejected_requests_${loggedUser.id}`) || '[]').includes(req.id))
-                              ) && <Badge variant="error">Ditolak Pemandu</Badge>}
+                              ) && <Badge variant="error">{isEn ? 'Driver Rejected' : 'Ditolak Pemandu'}</Badge>}
                             </td>
                           </tr>
                         ))}
@@ -753,9 +783,13 @@ const TransporterDriverPanelPage: React.FC = () => {
             <div className="bg-slate-50 border-b border-slate-100 px-6 py-4 flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-bold text-slate-800">
-                  {inspType === 'pre_trip' ? 'Pemeriksaan Keselamatan Kenderaan (Pre-Trip)' : 'Laporan Pemeriksaan Kenderaan (Post-Trip)'}
+                  {inspType === 'pre_trip' 
+                    ? (isEn ? 'Vehicle Safety Inspection (Pre-Trip)' : 'Pemeriksaan Keselamatan Kenderaan (Pre-Trip)') 
+                    : (isEn ? 'Vehicle Inspection Report (Post-Trip)' : 'Laporan Pemeriksaan Kenderaan (Post-Trip)')}
                 </h3>
-                <p className="text-xs text-slate-400">Pemeriksaan sebelum/selepas perjalanan. Bukti foto adalah pilihan.</p>
+                <p className="text-xs text-slate-400">
+                  {isEn ? 'Pre/Post travel inspection checklist. Photo attachments are optional.' : 'Pemeriksaan sebelum/selepas perjalanan. Bukti foto adalah pilihan.'}
+                </p>
               </div>
               <Badge variant="info" className="uppercase font-mono">{selectedReq.no_rujukan}</Badge>
             </div>
@@ -764,15 +798,17 @@ const TransporterDriverPanelPage: React.FC = () => {
               
               {/* Vehicle Selection */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Kenderaan Hospital</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  {isEn ? 'Hospital Fleet Vehicle' : 'Kenderaan Hospital'}
+                </label>
                 {inspType === 'pre_trip' ? (
                   <select
                     value={selectedVehicleId}
                     onChange={(e) => setSelectedVehicleId(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors"
+                    className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
                     required
                   >
-                    <option value="">Sila Pilih Kenderaan</option>
+                    <option value="">{isEn ? 'Please Select Vehicle' : 'Sila Pilih Kenderaan'}</option>
                     {vehicles
                       .filter(v => v.jenis_kenderaan === selectedReq.jenis_permohonan)
                       .map(v => (
@@ -791,22 +827,28 @@ const TransporterDriverPanelPage: React.FC = () => {
               </div>
               {/* 4 MANDATORY INSPECTION CHECKLIST ITEMS */}
               <div className="space-y-4">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">Senarai Semak & Bukti Foto</h4>
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+                  {isEn ? 'Inspection Checklist & Photo Evidence' : 'Senarai Semak & Bukti Foto'}
+                </h4>
                 
                 {/* Tyre */}
                 <div className="p-4 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-slate-200 transition-colors">
                   <div className="space-y-1">
-                    <span className="font-bold text-sm text-slate-700">1. Keadaan Tayar & Rim</span>
-                    <p className="text-xs text-slate-400">Tekanan angin mencukupi, rim kukuh, tayar tidak botak.</p>
+                    <span className="font-bold text-sm text-slate-700">
+                      {isEn ? '1. Tyres & Rims Condition' : '1. Keadaan Tayar & Rim'}
+                    </span>
+                    <p className="text-xs text-slate-400">
+                      {isEn ? 'Adequate tyre pressure, secure rims, no tyre tread wear issues.' : 'Tekanan angin mencukupi, rim kukuh, tayar tidak botak.'}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <select 
                       value={tyreStatus} 
                       onChange={(e) => setTyreStatus(e.target.value as any)}
-                      className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold outline-none"
+                      className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold outline-none cursor-pointer"
                     >
-                      <option value="good">Baik (Good)</option>
-                      <option value="issue">Rosak / Masalah (Issue)</option>
+                      <option value="good">{isEn ? 'Good' : 'Baik (Good)'}</option>
+                      <option value="issue">{isEn ? 'Issue / Defect' : 'Rosak / Masalah (Issue)'}</option>
                     </select>
                     
                     {tyrePhoto && (tyrePhoto.startsWith('data:') || tyrePhoto.startsWith('http') || tyrePhoto.startsWith('/')) && (
@@ -818,14 +860,14 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handlePhotoCapture('tyre')}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                         tyrePhoto 
                           ? 'border-emerald-200 bg-emerald-50 text-emerald-700' 
                           : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                       }`}
                     >
                       <Camera className="w-3.5 h-3.5" />
-                      <span>{tyrePhoto ? 'Selesai' : 'Ambil Foto'}</span>
+                      <span>{tyrePhoto ? (isEn ? 'Captured' : 'Selesai') : (isEn ? 'Take Photo' : 'Ambil Foto')}</span>
                     </button>
                   </div>
                 </div>
@@ -833,17 +875,21 @@ const TransporterDriverPanelPage: React.FC = () => {
                 {/* Gas */}
                 <div className="p-4 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-slate-200 transition-colors">
                   <div className="space-y-1">
-                    <span className="font-bold text-sm text-slate-700">2. Paras Gas / Minyak Petrol</span>
-                    <p className="text-xs text-slate-400">Minyak petrol mencukupi untuk pergi dan balik perjalanan.</p>
+                    <span className="font-bold text-sm text-slate-700">
+                      {isEn ? '2. Fuel / Petrol Level' : '2. Paras Gas / Minyak Petrol'}
+                    </span>
+                    <p className="text-xs text-slate-400">
+                      {isEn ? 'Adequate petrol/fuel level for roundtrip transit journey.' : 'Minyak petrol mencukupi untuk pergi dan balik perjalanan.'}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <select 
                       value={gasStatus} 
                       onChange={(e) => setGasStatus(e.target.value as any)}
-                      className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold outline-none"
+                      className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold outline-none cursor-pointer"
                     >
-                      <option value="good">Mencukupi (Good)</option>
-                      <option value="issue">Kritis / Isi Semula (Issue)</option>
+                      <option value="good">{isEn ? 'Good' : 'Mencukupi (Good)'}</option>
+                      <option value="issue">{isEn ? 'Critical / Refuel Required' : 'Kritis / Isi Semula (Issue)'}</option>
                     </select>
                     
                     {gasPhoto && (gasPhoto.startsWith('data:') || gasPhoto.startsWith('http') || gasPhoto.startsWith('/')) && (
@@ -855,14 +901,14 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handlePhotoCapture('gas')}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                         gasPhoto 
                           ? 'border-emerald-200 bg-emerald-50 text-emerald-700' 
                           : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                       }`}
                     >
                       <Camera className="w-3.5 h-3.5" />
-                      <span>{gasPhoto ? 'Selesai' : 'Ambil Foto'}</span>
+                      <span>{gasPhoto ? (isEn ? 'Captured' : 'Selesai') : (isEn ? 'Take Photo' : 'Ambil Foto')}</span>
                     </button>
                   </div>
                 </div>
@@ -870,17 +916,21 @@ const TransporterDriverPanelPage: React.FC = () => {
                 {/* Oil */}
                 <div className="p-4 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-slate-200 transition-colors">
                   <div className="space-y-1">
-                    <span className="font-bold text-sm text-slate-700">3. Minyak Hitam / Enjin</span>
-                    <p className="text-xs text-slate-400">Paras minyak hitam mencukupi, tiada kebocoran enjin.</p>
+                    <span className="font-bold text-sm text-slate-700">
+                      {isEn ? '3. Engine Oil Level' : '3. Minyak Hitam / Enjin'}
+                    </span>
+                    <p className="text-xs text-slate-400">
+                      {isEn ? 'Sufficient engine oil level, no visible engine oil leaks.' : 'Paras minyak hitam mencukupi, tiada kebocoran enjin.'}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <select 
                       value={oilStatus} 
                       onChange={(e) => setOilStatus(e.target.value as any)}
-                      className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold outline-none"
+                      className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold outline-none cursor-pointer"
                     >
-                      <option value="good">Mencukupi (Good)</option>
-                      <option value="issue">Perlu Tambah / Servis (Issue)</option>
+                      <option value="good">{isEn ? 'Good' : 'Mencukupi (Good)'}</option>
+                      <option value="issue">{isEn ? 'Top-Up / Service Required' : 'Perlu Tambah / Servis (Issue)'}</option>
                     </select>
                     
                     {oilPhoto && (oilPhoto.startsWith('data:') || oilPhoto.startsWith('http') || oilPhoto.startsWith('/')) && (
@@ -892,14 +942,14 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handlePhotoCapture('oil')}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                         oilPhoto 
                           ? 'border-emerald-200 bg-emerald-50 text-emerald-700' 
                           : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                       }`}
                     >
                       <Camera className="w-3.5 h-3.5" />
-                      <span>{oilPhoto ? 'Selesai' : 'Ambil Foto'}</span>
+                      <span>{oilPhoto ? (isEn ? 'Captured' : 'Selesai') : (isEn ? 'Take Photo' : 'Ambil Foto')}</span>
                     </button>
                   </div>
                 </div>
@@ -907,17 +957,21 @@ const TransporterDriverPanelPage: React.FC = () => {
                 {/* Odometer Photo */}
                 <div className="p-4 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-slate-200 transition-colors">
                   <div className="space-y-1 flex-1">
-                    <span className="font-bold text-sm text-slate-700">4. Bacaan & Foto Odometer Kenderaan</span>
-                    <p className="text-xs text-slate-400">Masukkan bacaan odometer (km) terkini (wajib) dan ambil foto sebagai bukti (pilihan).</p>
+                    <span className="font-bold text-sm text-slate-700">
+                      {isEn ? '4. Odometer Reading & Photo' : '4. Bacaan & Foto Odometer Kenderaan'}
+                    </span>
+                    <p className="text-xs text-slate-400">
+                      {isEn ? 'Enter current odometer reading (km) and optional photo proof.' : 'Masukkan bacaan odometer (km) terkini (wajib) dan ambil foto sebagai bukti (pilihan).'}
+                    </p>
                     {inspType === 'post_trip' && preTripOdo !== null && (
                       <div className="mt-2 text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded w-fit">
-                        Odometer Mula: <span className="font-bold font-mono text-slate-800">{preTripOdo.toLocaleString('ms-MY')} km</span>
+                        {isEn ? 'Start Odometer:' : 'Odometer Mula:'} <span className="font-bold font-mono text-slate-800">{preTripOdo.toLocaleString(isEn ? 'en-US' : 'ms-MY')} km</span>
                       </div>
                     )}
                     <div className="mt-3 max-w-xs">
                       <Input
                         type="number"
-                        placeholder="Masukkan bacaan odometer (km)"
+                        placeholder={isEn ? 'Enter odometer reading (km)' : 'Masukkan bacaan odometer (km)'}
                         value={odoReading}
                         onChange={(e) => setOdoReading(e.target.value)}
                         required
@@ -935,14 +989,14 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handlePhotoCapture('odo')}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                         odoPhoto 
                           ? 'border-emerald-200 bg-emerald-50 text-emerald-700' 
                           : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                       }`}
                     >
                       <Camera className="w-3.5 h-3.5" />
-                      <span>{odoPhoto ? 'Selesai' : 'Ambil Foto'}</span>
+                      <span>{odoPhoto ? (isEn ? 'Captured' : 'Selesai') : (isEn ? 'Take Photo' : 'Ambil Foto')}</span>
                     </button>
                   </div>
                 </div>
@@ -951,34 +1005,36 @@ const TransporterDriverPanelPage: React.FC = () => {
               {/* pre-trip decision toggle */}
               {inspType === 'pre_trip' && (
                 <div className="space-y-4 pt-4 border-t border-slate-100">
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Keputusan Pemeriksaan Pemandu</h4>
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    {isEn ? 'Driver Inspection Decision' : 'Keputusan Pemeriksaan Pemandu'}
+                  </h4>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
                       onClick={() => setDecision('cleared')}
-                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${
+                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-1 transition-all cursor-pointer ${
                         decision === 'cleared'
                           ? 'border-emerald-600 bg-emerald-50/50 text-emerald-800'
                           : 'border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}
                     >
                       <CheckCircle className="w-6 h-6 text-emerald-600" />
-                      <span className="font-bold text-sm">Selamat Jalan (Good to Go)</span>
-                      <span className="text-xxs text-slate-400">Saya sedia menerima tugasan ini</span>
+                      <span className="font-bold text-sm">{isEn ? 'Good to Go (Clear)' : 'Selamat Jalan (Good to Go)'}</span>
+                      <span className="text-xxs text-slate-400">{isEn ? 'I accept this dispatch task' : 'Saya sedia menerima tugasan ini'}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setDecision('rejected')}
-                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${
+                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-1 transition-all cursor-pointer ${
                         decision === 'rejected'
                           ? 'border-rose-600 bg-rose-50/50 text-rose-800'
                           : 'border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}
                     >
                       <AlertTriangle className="w-6 h-6 text-rose-600" />
-                      <span className="font-bold text-sm">Tolak Tugasan (Kerosakan)</span>
-                      <span className="text-xxs text-slate-400">Kenderaan tidak selamat digunakan</span>
+                      <span className="font-bold text-sm">{isEn ? 'Decline Task (Vehicle Defect)' : 'Tolak Tugasan (Kerosakan)'}</span>
+                      <span className="text-xxs text-slate-400">{isEn ? 'Vehicle unsafe for deployment' : 'Kenderaan tidak selamat digunakan'}</span>
                     </button>
                   </div>
                 </div>
@@ -987,10 +1043,12 @@ const TransporterDriverPanelPage: React.FC = () => {
               {/* Remarks explanation (Mandatory if rejected) */}
               {(decision === 'rejected' || tyreStatus === 'issue' || gasStatus === 'issue' || oilStatus === 'issue') && (
                 <div className="space-y-1.5 animate-fadeIn">
-                  <label className="text-xs font-bold text-rose-800 uppercase tracking-wider">Catatan Kerosakan & Isu (Mandatori)</label>
+                  <label className="text-xs font-bold text-rose-800 uppercase tracking-wider">
+                    {isEn ? 'Defect & Issue Remarks (Mandatory)' : 'Catatan Kerosakan & Isu (Mandatori)'}
+                  </label>
                   <textarea
                     rows={3}
-                    placeholder="Sila jelaskan kerosakan/isu kenderaan secara terperinci untuk rujukan penyelenggaraan..."
+                    placeholder={isEn ? 'Please detail the vehicle defect/issue for workshop reference...' : 'Sila jelaskan kerosakan/isu kenderaan secara terperinci untuk rujukan penyelenggaraan...'}
                     value={remarks}
                     onChange={(e) => setRemarks(e.target.value)}
                     className="w-full bg-slate-50 border border-rose-200 hover:border-rose-300 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-500 focus:bg-white transition-colors font-medium shadow-xs"
@@ -1005,15 +1063,15 @@ const TransporterDriverPanelPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setIsInspModalOpen(false)}
-                className="border-slate-200 text-slate-700"
+                className="border-slate-200 text-slate-700 cursor-pointer"
               >
-                Tutup
+                {isEn ? 'Close' : 'Tutup'}
               </Button>
               <Button 
                 onClick={handleInspectionSubmit}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer"
               >
-                Hantar Laporan Semakan
+                {isEn ? 'Submit Inspection Report' : 'Hantar Laporan Semakan'}
               </Button>
             </div>
 
@@ -1026,20 +1084,22 @@ const TransporterDriverPanelPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs">
           <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 max-w-md w-full mx-4 space-y-4 animate-fadeIn">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-red-650" />
-              Batalkan Trip Pengangkutan
+              <AlertTriangle className="w-5 h-5 text-red-600" />
+              {isEn ? 'Cancel Transport Trip' : 'Batalkan Trip Pengangkutan'}
             </h3>
             
             <p className="text-xs text-slate-500">
-              Sila nyatakan sebab pembatalan trip perjalanan ini. Tindakan ini akan membatalkan tempahan kenderaan ini.
+              {isEn 
+                ? 'Please state why this transport trip is being cancelled. This will release the assigned vehicle.'
+                : 'Sila nyatakan sebab pembatalan trip perjalanan ini. Tindakan ini akan membatalkan tempahan kenderaan ini.'}
             </p>
 
             <textarea 
               rows={3}
-              placeholder="Sila nyatakan sebab pembatalan (contoh: Mesyuarat ditangguhkan, kereta rosak, dll)..."
+              placeholder={isEn ? 'State cancellation reason (e.g. Meeting cancelled, vehicle breakdown)...' : 'Sila nyatakan sebab pembatalan (contoh: Mesyuarat ditangguhkan, kereta rosak, dll)...'}
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-205 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-red-500 focus:bg-white transition-colors font-medium shadow-xs"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-red-500 focus:bg-white transition-colors font-medium shadow-xs"
               required
             />
 
@@ -1047,15 +1107,15 @@ const TransporterDriverPanelPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setIsCancelOpen(false)}
-                className="border-slate-200 text-slate-700"
+                className="border-slate-200 text-slate-700 cursor-pointer"
               >
-                Batal
+                {isEn ? 'Cancel' : 'Batal'}
               </Button>
               <Button 
                 onClick={handleCancelTripSubmit}
-                className="bg-red-600 hover:bg-red-700 text-white font-bold"
+                className="bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer"
               >
-                Sahkan Batal Trip
+                {isEn ? 'Confirm Cancel Trip' : 'Sahkan Batal Trip'}
               </Button>
             </div>
           </div>
@@ -1068,16 +1128,18 @@ const TransporterDriverPanelPage: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 max-w-md w-full mx-4 space-y-4">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-rose-600" />
-              Tolak Tugasan Pengangkutan
+              {isEn ? 'Decline Transport Assignment' : 'Tolak Tugasan Pengangkutan'}
             </h3>
             
             <p className="text-xs text-slate-500">
-              Sila nyatakan sebab penolakan tugasan ini. Tugasan akan dikembalikan ke senarai utama untuk pemandu lain bertugas.
+              {isEn 
+                ? 'Please state why you are declining this assignment. The request will return to the pool for another driver.'
+                : 'Sila nyatakan sebab penolakan tugasan ini. Tugasan akan dikembalikan ke senarai utama untuk pemandu lain bertugas.'}
             </p>
 
             <textarea 
               rows={3}
-              placeholder="Contoh: Terlibat dengan permohonan lain / luar kawasan..."
+              placeholder={isEn ? 'E.g., Engaged with another urgent trip / out of coverage...' : 'Contoh: Terlibat dengan permohonan lain / luar kawasan...'}
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-500 focus:bg-white transition-colors font-medium shadow-xs"
@@ -1088,15 +1150,15 @@ const TransporterDriverPanelPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setIsRejectOpen(false)}
-                className="border-slate-200 text-slate-700"
+                className="border-slate-200 text-slate-700 cursor-pointer"
               >
-                Batal
+                {isEn ? 'Back' : 'Batal'}
               </Button>
               <Button 
                 onClick={handleDirectRejectSubmit}
-                className="bg-rose-600 hover:bg-rose-700 text-white font-bold"
+                className="bg-rose-600 hover:bg-rose-700 text-white font-bold cursor-pointer"
               >
-                Tolak & Pulang Tugasan
+                {isEn ? 'Decline & Release Task' : 'Tolak & Pulang Tugasan'}
               </Button>
             </div>
           </div>
@@ -1107,8 +1169,8 @@ const TransporterDriverPanelPage: React.FC = () => {
       <SlideOver
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
-        title={`Maklumat Perjalanan: ${selectedReq?.no_rujukan}`}
-        description="Semak status kelulusan, pre-trip inspection, dan log pergerakan"
+        title={isEn ? `Trip Information: ${selectedReq?.no_rujukan}` : `Maklumat Perjalanan: ${selectedReq?.no_rujukan}`}
+        description={isEn ? 'Review clearance status, pre-trip inspection, and movement logs' : 'Semak status kelulusan, pre-trip inspection, dan log pergerakan'}
       >
         {selectedReq && (
           <div className="p-6 space-y-6">
@@ -1116,7 +1178,9 @@ const TransporterDriverPanelPage: React.FC = () => {
             {/* Overview Section */}
             <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-xl space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Status Semasa</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  {isEn ? 'Current Status' : 'Status Semasa'}
+                </span>
                 {getStatusBadge(selectedReq.status_semasa)}
               </div>
               <div className="text-sm">
@@ -1127,42 +1191,54 @@ const TransporterDriverPanelPage: React.FC = () => {
 
             {/* Basic Info Table */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">Maklumat Perjalanan</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+                {isEn ? 'Trip Details' : 'Maklumat Perjalanan'}
+              </h4>
               <div className="grid grid-cols-2 gap-y-3 text-sm">
                 <div>
-                  <span className="block text-xs font-bold text-slate-400">Jenis Perkhidmatan</span>
+                  <span className="block text-xs font-bold text-slate-400">
+                    {isEn ? 'Service Type' : 'Jenis Perkhidmatan'}
+                  </span>
                   <span className="font-semibold text-slate-800 capitalize">
                     {selectedReq.jenis_permohonan === 'sg' 
-                      ? 'Kereta Jabatan (SG)' 
+                      ? (isEn ? 'Official Car (SG)' : 'Kereta Jabatan (SG)') 
                       : selectedReq.jenis_permohonan === 'van_jenazah' 
-                      ? 'Van Jenazah' 
-                      : 'Ambulans'}
+                      ? (isEn ? 'Hearse Van' : 'Van Jenazah') 
+                      : (isEn ? 'Ambulance' : 'Ambulans')}
                   </span>
                 </div>
                 <div>
-                  <span className="block text-xs font-bold text-slate-400">Unit Pemohon</span>
+                  <span className="block text-xs font-bold text-slate-400">
+                    {isEn ? 'Requesting Unit' : 'Unit Pemohon'}
+                  </span>
                   <span className="font-semibold text-slate-800">{selectedReq.unit_pemohon}</span>
                 </div>
                 {selectedReq.nama_pemohon && (
                   <div>
-                    <span className="block text-xs font-bold text-slate-400">Nama Pemohon</span>
+                    <span className="block text-xs font-bold text-slate-400">
+                      {isEn ? 'Applicant Name' : 'Nama Pemohon'}
+                    </span>
                     <span className="font-semibold text-slate-800">{selectedReq.nama_pemohon}</span>
                   </div>
                 )}
                  <div>
-                  <span className="block text-xs font-bold text-slate-400">Tarikh & Masa</span>
+                  <span className="block text-xs font-bold text-slate-400">
+                    {isEn ? 'Date & Time' : 'Tarikh & Masa'}
+                  </span>
                   <span className="font-bold text-slate-800">
-                    {new Date(selectedReq.tarikh_masa_diperlukan).toLocaleString('ms-MY')}
+                    {new Date(selectedReq.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY')}
                     {selectedReq.tarikh_masa_sehingga && (
                       <>
-                        <span className="text-slate-400 font-normal"> hingga </span>
-                        {new Date(selectedReq.tarikh_masa_sehingga).toLocaleString('ms-MY')}
+                        <span className="text-slate-400 font-normal"> {isEn ? 'until' : 'hingga'} </span>
+                        {new Date(selectedReq.tarikh_masa_sehingga).toLocaleString(isEn ? 'en-US' : 'ms-MY')}
                       </>
                     )}
                   </span>
                 </div>
                 <div>
-                  <span className="block text-xs font-bold text-slate-400">Kakitangan Pengiring</span>
+                  <span className="block text-xs font-bold text-slate-400">
+                    {isEn ? 'Escort Personnel' : 'Kakitangan Pengiring'}
+                  </span>
                   <span className="font-semibold text-slate-800 capitalize">
                     {selectedReq.pengiring_list && selectedReq.pengiring_list.length > 0 ? (
                       <span className="block space-y-0.5 mt-1">
@@ -1173,21 +1249,27 @@ const TransporterDriverPanelPage: React.FC = () => {
                         ))}
                       </span>
                     ) : (
-                      selectedReq.pengiring ? selectedReq.pengiring.replace(/_/g, ' ') : 'Tiada'
+                      selectedReq.pengiring ? selectedReq.pengiring.replace(/_/g, ' ') : (isEn ? 'None' : 'Tiada')
                     )}
                   </span>
                 </div>
                 {selectedReq.jenis_permohonan === 'sg' && (
                   <>
                     <div>
-                      <span className="block text-xs font-bold text-slate-400">Keperluan Perkhidmatan</span>
+                      <span className="block text-xs font-bold text-slate-400">
+                        {isEn ? 'Service Requirement' : 'Keperluan Perkhidmatan'}
+                      </span>
                       <span className="font-semibold text-slate-800">
-                        {selectedReq.pemandu_diperlukan ? 'Pemandu & Kereta' : 'Kereta Sahaja (Tanpa Pemandu)'}
+                        {selectedReq.pemandu_diperlukan 
+                          ? (isEn ? 'Vehicle & Driver' : 'Pemandu & Kereta') 
+                          : (isEn ? 'Vehicle Only (Self-Drive)' : 'Kereta Sahaja (Tanpa Pemandu)')}
                       </span>
                     </div>
                     {selectedReq.senarai_penumpang && selectedReq.senarai_penumpang.length > 0 && (
                       <div className="col-span-2 mt-2 pt-2 border-t border-slate-100/60">
-                        <span className="block text-xs font-bold text-slate-400">Senarai Penumpang (Staf/Pengikut)</span>
+                        <span className="block text-xs font-bold text-slate-400">
+                          {isEn ? 'Passenger Roster (Staff/Accompanying)' : 'Senarai Penumpang (Staf/Pengikut)'}
+                        </span>
                         <div className="text-xs font-medium text-slate-800 space-y-0.5 mt-1">
                           {selectedReq.senarai_penumpang.map((passenger, idx) => (
                             <div key={idx}>• {passenger.name}</div>
@@ -1199,9 +1281,11 @@ const TransporterDriverPanelPage: React.FC = () => {
                 )}
                 {selectedReq.medical_officer_referring && (
                   <div className="col-span-2 mt-2 pt-2 border-t border-slate-100/60">
-                    <span className="block text-xs font-bold text-slate-400">Pegawai Perubatan Merujuk (Referring MO)</span>
+                    <span className="block text-xs font-bold text-slate-400">
+                      {isEn ? 'Referring Medical Officer' : 'Pegawai Perubatan Merujuk (Referring MO)'}
+                    </span>
                     <span className="font-semibold text-slate-800 text-xs">
-                      Dr. {selectedReq.medical_officer_referring.name} | Jabatan: {selectedReq.medical_officer_referring.department}
+                      Dr. {selectedReq.medical_officer_referring.name} | {isEn ? 'Department' : 'Jabatan'}: {selectedReq.medical_officer_referring.department}
                     </span>
                   </div>
                 )}
@@ -1211,57 +1295,76 @@ const TransporterDriverPanelPage: React.FC = () => {
             {/* Patient details (Conditional) */}
             {(selectedReq.jenis_permohonan === 'ambulance' || selectedReq.bawa_pesakit) && (
               <div className="space-y-3 pt-4 border-t border-slate-100">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1 text-rose-700">Maklumat Pesakit</h4>
+                <h4 className="text-xs font-bold uppercase tracking-wider border-b pb-1 text-rose-700">
+                  {isEn ? 'Patient Clinical Details' : 'Maklumat Pesakit'}
+                </h4>
                 <div className="grid grid-cols-2 gap-y-3 text-sm bg-rose-50/20 p-4 rounded-xl border border-rose-100">
                   <div className="col-span-2">
-                    <span className="block text-xs font-bold text-rose-800/60">Nama Penuh</span>
+                    <span className="block text-xs font-bold text-rose-800/60">
+                      {isEn ? 'Full Name' : 'Nama Penuh'}
+                    </span>
                     <span className="font-bold text-slate-800">{selectedReq.nama_pesakit || '-'}</span>
                   </div>
                   <div>
-                    <span className="block text-xs font-bold text-rose-800/60">No RN Pesakit</span>
+                    <span className="block text-xs font-bold text-rose-800/60">
+                      {isEn ? 'Patient RN' : 'No RN Pesakit'}
+                    </span>
                     <span className="font-semibold font-mono text-slate-800">{selectedReq.rn_pesakit || '-'}</span>
                   </div>
                   <div>
-                    <span className="block text-xs font-bold text-rose-800/60">Jantina</span>
+                    <span className="block text-xs font-bold text-rose-800/60">
+                      {isEn ? 'Gender' : 'Jantina'}
+                    </span>
                     <span className="font-semibold text-slate-800">{selectedReq.jantina_pesakit || '-'}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="block text-xs font-bold text-rose-800/60">Diagnosis Pesakit</span>
+                    <span className="block text-xs font-bold text-rose-800/60">
+                      {isEn ? 'Clinical Diagnosis' : 'Diagnosis Pesakit'}
+                    </span>
                     <span className="font-semibold text-slate-800">{selectedReq.diagnosis_pesakit || '-'}</span>
                   </div>
                   {selectedReq.patient_mobility && (
                     <div className={`col-span-2 p-2.5 rounded-lg text-xs font-bold flex flex-col gap-1 border ${
                       selectedReq.patient_mobility === 'stretcher'
-                        ? 'bg-amber-50 border-amber-250 text-amber-955'
+                        ? 'bg-amber-50 border-amber-200 text-amber-950'
                         : 'bg-slate-50 border-slate-200 text-slate-900'
                     }`}>
                       <div className="flex items-center gap-2">
                         <Info className={`w-3.5 h-3.5 ${selectedReq.patient_mobility === 'stretcher' ? 'text-amber-600' : 'text-slate-500'}`} />
-                        <span>Mobiliti Pesakit: <span className="capitalize">{selectedReq.patient_mobility === 'stretcher' ? 'Stretcher / Usungan' : selectedReq.patient_mobility}</span></span>
+                        <span>
+                          {isEn ? 'Patient Mobility:' : 'Mobiliti Pesakit:'}{' '}
+                          <span className="capitalize">
+                            {selectedReq.patient_mobility === 'stretcher' 
+                              ? (isEn ? 'Stretcher' : 'Stretcher / Usungan') 
+                              : selectedReq.patient_mobility}
+                          </span>
+                        </span>
                       </div>
                       {selectedReq.patient_mobility === 'stretcher' && (
-                        <p className="text-[10px] text-amber-800 font-medium leading-normal mt-0.5 pl-5.5">
-                          ⚠️ Pemandu WAJIB naik ke wad untuk mengambil pesakit.
+                        <p className="text-[10px] text-amber-800 font-medium leading-normal mt-0.5 pl-5">
+                          {isEn ? '⚠️ Driver MANDATED to assist ward transfer with stretcher.' : '⚠️ Pemandu WAJIB naik ke wad untuk mengambil pesakit.'}
                         </p>
                       )}
                     </div>
                   )}
                   {selectedReq.oksigen_diperlukan && (
-                    <div className="col-span-2 p-2.5 bg-rose-50 border border-rose-150 rounded-lg text-xs font-bold text-rose-955 flex flex-col gap-1">
+                    <div className="col-span-2 p-2.5 bg-rose-50 border border-rose-200 rounded-lg text-xs font-bold text-rose-950 flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <Shield className="w-3.5 h-3.5 text-rose-600" />
-                        <span>Sokongan Oksigen Berterusan Diperlukan</span>
+                        <span>{isEn ? 'Continuous Oxygen Support Required' : 'Sokongan Oksigen Berterusan Diperlukan'}</span>
                       </div>
                       {selectedReq.jenis_oksigen && (
-                        <div className="text-xxs text-rose-800 font-medium pl-5.5">
-                          Alat Oksigen: <span className="text-rose-900 font-semibold">{selectedReq.jenis_oksigen}</span>
+                        <div className="text-xxs text-rose-800 font-medium pl-5">
+                          {isEn ? 'Oxygen Device:' : 'Alat Oksigen:'} <span className="text-rose-900 font-semibold">{selectedReq.jenis_oksigen}</span>
                         </div>
                       )}
                     </div>
                   )}
                   {selectedReq.mesin_diperlukan && selectedReq.mesin_diperlukan.length > 0 && (
                     <div className="col-span-2 pt-2">
-                      <span className="block text-xs font-bold text-rose-800/60">Peralatan / Mesin Diperlukan</span>
+                      <span className="block text-xs font-bold text-rose-800/60">
+                        {isEn ? 'Medical Devices / Machines Required' : 'Peralatan / Mesin Diperlukan'}
+                      </span>
                       <span className="text-xs font-semibold text-slate-800">
                         {selectedReq.mesin_diperlukan.join(', ')}
                       </span>
@@ -1274,18 +1377,26 @@ const TransporterDriverPanelPage: React.FC = () => {
             {/* Vehicle & Driver Details */}
             {selectedReq.kenderaan && (
               <div className="space-y-3 pt-4 border-t border-slate-100">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">Kenderaan & Pemandu Bertugas</h4>
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+                  {isEn ? 'Assigned Vehicle & Duty Driver' : 'Kenderaan & Pemandu Bertugas'}
+                </h4>
                 <div className="grid grid-cols-2 gap-y-3 text-sm">
                   <div>
-                    <span className="block text-xs font-bold text-slate-400">Pemandu</span>
+                    <span className="block text-xs font-bold text-slate-400">
+                      {isEn ? 'Driver Name' : 'Pemandu'}
+                    </span>
                     <span className="font-bold text-slate-800">{selectedReq.pemandu?.full_name || 'Ali bin Ahmad'}</span>
                   </div>
                   <div>
-                    <span className="block text-xs font-bold text-slate-400">No. Pendaftaran Kenderaan</span>
+                    <span className="block text-xs font-bold text-slate-400">
+                      {isEn ? 'Vehicle Plate No.' : 'No. Pendaftaran Kenderaan'}
+                    </span>
                     <span className="font-bold text-blue-600 font-mono">{selectedReq.kenderaan.no_kenderaan}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="block text-xs font-bold text-slate-400">Model Kenderaan</span>
+                    <span className="block text-xs font-bold text-slate-400">
+                      {isEn ? 'Vehicle Model' : 'Model Kenderaan'}
+                    </span>
                     <span className="font-semibold text-slate-800">{selectedReq.kenderaan.model}</span>
                   </div>
                 </div>
@@ -1294,19 +1405,27 @@ const TransporterDriverPanelPage: React.FC = () => {
 
             {/* Rejection / Cancellation note */}
             {selectedReq.sebab_tolak && (
-              <div className="p-4 bg-rose-50 border border-rose-200 text-rose-955 rounded-xl space-y-1">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-rose-800">Catatan Sebab Penolakan / Pembatalan</h4>
+              <div className="p-4 bg-rose-50 border border-rose-200 text-rose-950 rounded-xl space-y-1">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-rose-800">
+                  {isEn ? 'Rejection / Cancellation Remarks' : 'Catatan Sebab Penolakan / Pembatalan'}
+                </h4>
                 <p className="text-sm font-semibold italic">"{selectedReq.sebab_tolak}"</p>
               </div>
             )}
 
             {/* Audit Logs Trail */}
             <div className="space-y-3 pt-4 border-t border-slate-100">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">Jejak Audit Kelulusan</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+                {isEn ? 'Approval Audit Trail' : 'Jejak Audit Kelulusan'}
+              </h4>
               {loadingLogs ? (
-                <div className="text-xs text-slate-500">Memuatkan log audit...</div>
+                <div className="text-xs text-slate-500">
+                  {isEn ? 'Loading audit trail...' : 'Memuatkan log audit...'}
+                </div>
               ) : logs.length === 0 ? (
-                <div className="text-xs text-slate-400">Tiada log direkodkan.</div>
+                <div className="text-xs text-slate-400">
+                  {isEn ? 'No logs recorded.' : 'Tiada log direkodkan.'}
+                </div>
               ) : (
                 <div className="relative border-l border-slate-200 pl-4 space-y-4">
                   {logs.map((log) => (
@@ -1316,14 +1435,16 @@ const TransporterDriverPanelPage: React.FC = () => {
                       <div className="flex justify-between items-center font-bold text-slate-800">
                         <span>{log.tindakan}</span>
                         <span className="text-slate-400 font-medium">
-                          {new Date(log.created_at).toLocaleString('ms-MY', {
+                          {new Date(log.created_at).toLocaleString(isEn ? 'en-US' : 'ms-MY', {
                             dateStyle: 'short',
                             timeStyle: 'short'
                           })}
                         </span>
                       </div>
                       <div className="text-slate-500 mt-0.5">{log.catatan}</div>
-                      <div className="text-slate-400 mt-0.5">Oleh: {log.performer?.full_name || 'Kakitangan'}</div>
+                      <div className="text-slate-400 mt-0.5">
+                        {isEn ? 'By:' : 'Oleh:'} {log.performer?.full_name || (isEn ? 'Staff' : 'Kakitangan')}
+                      </div>
                     </div>
                   ))}
                 </div>

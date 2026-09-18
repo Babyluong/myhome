@@ -28,6 +28,7 @@ import {
 import { Booking } from '@/shared/types/mytempahan'
 import { downloadBookingConfirmationPdf } from '../services/tempahanPdfService'
 import { downloadBookingICS } from '../services/tempahanCalendarService'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { cn } from '@/lib/utils'
 
 export interface BookingDetailDrawerProps {
@@ -49,21 +50,67 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
   onRejectBooking,
   canApprove = false
 }) => {
+  const { language } = useLanguage()
+  const isBM = language === 'ms'
+
   if (!booking) return null
 
   // Status visual mapping
-  const statusConfig: Record<string, { label: string; bg: string; text: string; icon: React.ElementType }> = {
-    pending: { label: 'Menunggu Kelulusan', bg: 'bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800', text: 'text-amber-700 dark:text-amber-300', icon: AlertCircle },
-    approved: { label: 'Diluluskan', bg: 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-300', icon: CheckCircle2 },
-    rejected: { label: 'Ditolak', bg: 'bg-rose-50 dark:bg-rose-950/50 border-rose-200 dark:border-rose-800', text: 'text-rose-700 dark:text-rose-300', icon: XCircle },
-    in_use: { label: 'Sedang Digunakan', bg: 'bg-teal-50 dark:bg-teal-950/50 border-teal-200 dark:border-teal-800', text: 'text-teal-700 dark:text-teal-300', icon: Clock },
-    completed: { label: 'Selesai', bg: 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700', text: 'text-slate-700 dark:text-slate-300', icon: CheckCircle2 },
-    cancelled: { label: 'Dibatalkan', bg: 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700', text: 'text-slate-600 dark:text-slate-400', icon: XCircle },
-    expired: { label: 'Luput', bg: 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700', text: 'text-slate-600 dark:text-slate-400', icon: AlertCircle }
+  const statusConfig: Record<string, { labelEn: string; labelMs: string; bg: string; text: string; icon: React.ElementType }> = {
+    pending: {
+      labelEn: 'Pending Approval',
+      labelMs: 'Menunggu Kelulusan',
+      bg: 'bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800',
+      text: 'text-amber-700 dark:text-amber-300',
+      icon: AlertCircle
+    },
+    approved: {
+      labelEn: 'Approved',
+      labelMs: 'Diluluskan',
+      bg: 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800',
+      text: 'text-emerald-700 dark:text-emerald-300',
+      icon: CheckCircle2
+    },
+    rejected: {
+      labelEn: 'Rejected',
+      labelMs: 'Ditolak',
+      bg: 'bg-rose-50 dark:bg-rose-950/50 border-rose-200 dark:border-rose-800',
+      text: 'text-rose-700 dark:text-rose-300',
+      icon: XCircle
+    },
+    in_use: {
+      labelEn: 'In Use',
+      labelMs: 'Sedang Digunakan',
+      bg: 'bg-teal-50 dark:bg-teal-950/50 border-teal-200 dark:border-teal-800',
+      text: 'text-teal-700 dark:text-teal-300',
+      icon: Clock
+    },
+    completed: {
+      labelEn: 'Completed',
+      labelMs: 'Selesai',
+      bg: 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700',
+      text: 'text-slate-700 dark:text-slate-300',
+      icon: CheckCircle2
+    },
+    cancelled: {
+      labelEn: 'Cancelled',
+      labelMs: 'Dibatalkan',
+      bg: 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700',
+      text: 'text-slate-600 dark:text-slate-400',
+      icon: XCircle
+    },
+    expired: {
+      labelEn: 'Expired',
+      labelMs: 'Luput',
+      bg: 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700',
+      text: 'text-slate-600 dark:text-slate-400',
+      icon: AlertCircle
+    }
   }
 
   const currentStatus = statusConfig[booking.status] || statusConfig.pending
   const StatusIcon = currentStatus.icon
+  const statusLabel = isBM ? currentStatus.labelMs : currentStatus.labelEn
 
   return (
     <AnimatePresence>
@@ -101,7 +148,7 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
                     )}
                   >
                     <StatusIcon className="w-3 h-3" />
-                    {currentStatus.label}
+                    {statusLabel}
                   </span>
                 </div>
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white leading-snug">
@@ -120,30 +167,52 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
             {/* Drawer Scrollable Body */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {/* Event Time & Venue Card */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700 dark:text-teal-400">
-                      Fasiliti / Bilik
-                    </span>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
-                      {booking.room?.name || 'Bilik Mesyuarat'}
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                      {booking.room?.location}
-                    </p>
+              <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 overflow-hidden">
+                {booking.room?.image_url && (
+                  <div className="relative h-36 w-full overflow-hidden bg-slate-900">
+                    <img
+                      src={booking.room.image_url}
+                      alt={booking.room.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between">
+                      <span className="font-mono text-[10px] font-bold text-white bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded border border-white/20">
+                        {booking.room.room_code}
+                      </span>
+                      <span className="text-[10px] font-medium text-white/90 bg-black/50 backdrop-blur-xs px-2 py-0.5 rounded border border-white/10">
+                        {booking.room.floor_level}
+                      </span>
+                    </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-2xs">
-                    {booking.event_type}
-                  </span>
-                </div>
+                )}
+
+                <div className="p-4 space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700 dark:text-teal-400">
+                        {isBM ? 'Fasiliti / Bilik' : 'Facility / Room'}
+                      </span>
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
+                        {booking.room?.name || (isBM ? 'Bilik Mesyuarat' : 'Conference Room')}
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        {booking.room?.location}
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-2xs">
+                      {booking.event_type}
+                    </span>
+                  </div>
 
                 <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-200 dark:border-slate-700 text-xs">
                   <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
                     <Calendar className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                     <div>
-                      <div className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Tarikh Acara</div>
+                      <div className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                        {isBM ? 'Tarikh Acara' : 'Event Date'}
+                      </div>
                       <div className="font-semibold">{booking.date}</div>
                     </div>
                   </div>
@@ -151,19 +220,22 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
                   <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
                     <Clock className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                     <div>
-                      <div className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Masa (Durasi)</div>
+                      <div className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                        {isBM ? 'Masa (Durasi)' : 'Time (Duration)'}
+                      </div>
                       <div className="font-semibold">
-                        {booking.start_time} - {booking.end_time} ({booking.duration_hours}j)
+                        {booking.start_time} - {booking.end_time} ({booking.duration_hours}{isBM ? 'j' : 'h'})
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Pemohon Contact Card */}
+              {/* Requester Contact Card */}
               <div className="space-y-2">
                 <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Maklumat Pemohon & Jabatan
+                  {isBM ? 'Maklumat Pemohon & Jabatan' : 'Applicant & Department Details'}
                 </h4>
                 <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2.5 text-xs">
                   <div className="flex items-center justify-between">
@@ -192,12 +264,14 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
               {/* Logistics & Equipment */}
               <div className="space-y-3">
                 <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Susun Atur & Keperluan Logistik
+                  {isBM ? 'Susun Atur & Keperluan Logistik' : 'Layout & Logistics Requirements'}
                 </h4>
 
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold block mb-1">SUSUNAN MEJA</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold block mb-1">
+                      {isBM ? 'SUSUNAN MEJA' : 'TABLE LAYOUT'}
+                    </span>
                     <span className="font-bold text-slate-800 dark:text-slate-200 uppercase flex items-center gap-1.5">
                       <Layers className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       {booking.layout_type}
@@ -205,10 +279,14 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
                   </div>
 
                   <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold block mb-1">STATUS JAMUAN</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold block mb-1">
+                      {isBM ? 'STATUS JAMUAN' : 'CATERING STATUS'}
+                    </span>
                     <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
                       <Utensils className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                      {booking.tempahan_makanan?.diperlukan ? 'Katering Disediakan' : 'Tiada Jamuan'}
+                      {booking.tempahan_makanan?.diperlukan
+                        ? (isBM ? 'Katering Disediakan' : 'Catering Provided')
+                        : (isBM ? 'Tiada Jamuan' : 'No Catering')}
                     </span>
                   </div>
                 </div>
@@ -218,9 +296,9 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
                   <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-xs text-amber-900 dark:text-amber-300 flex items-start gap-2.5">
                     <Crown className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                     <div>
-                      <div className="font-bold">Kehadiran Tetamu Kenamaan (VIP)</div>
+                      <div className="font-bold">{isBM ? 'Kehadiran Tetamu Kenamaan (VIP)' : 'VIP Dignitary Presence'}</div>
                       <div className="text-[11px] text-amber-700 dark:text-amber-400 mt-0.5">
-                        {(booking.tetamu_vip.senarai_vip || []).join(', ') || 'Tetamu Rasmi KKM'}
+                        {(booking.tetamu_vip.senarai_vip || []).join(', ') || (isBM ? 'Tetamu Rasmi KKM' : 'Official MOH VIP')}
                       </div>
                     </div>
                   </div>
@@ -229,7 +307,7 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
                 {/* Amenities Requested */}
                 <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
                   <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase block tracking-wider">
-                    Peralatan Dimohon
+                    {isBM ? 'Peralatan Dimohon' : 'Requested Amenities'}
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {(booking.requested_amenities || []).map(amenity => (
@@ -247,7 +325,7 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
                 {booking.special_requirements && (
                   <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs">
                     <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase block mb-1">
-                      Catatan Khas
+                      {isBM ? 'Catatan Khas' : 'Special Requirements'}
                     </span>
                     <p className="text-slate-700 dark:text-slate-300 italic">{booking.special_requirements}</p>
                   </div>
@@ -258,7 +336,8 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
               {booking.rejection_reason && (
                 <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-xs text-rose-800 dark:text-rose-300">
                   <div className="font-bold flex items-center gap-1.5 mb-0.5">
-                    <AlertCircle className="w-4 h-4 text-rose-600" /> Sebab Penolakan:
+                    <AlertCircle className="w-4 h-4 text-rose-600" />
+                    {isBM ? 'Sebab Penolakan:' : 'Rejection Reason:'}
                   </div>
                   <div>{booking.rejection_reason}</div>
                 </div>
@@ -267,7 +346,8 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
               {booking.catatan_pelulus && (
                 <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-xs text-emerald-800 dark:text-emerald-300">
                   <div className="font-bold flex items-center gap-1.5 mb-0.5">
-                    <ShieldCheck className="w-4 h-4 text-emerald-600" /> Catatan Kelulusan ({booking.approved_by_name || 'Pentadbir'}):
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    {isBM ? `Catatan Kelulusan (${booking.approved_by_name || 'Pentadbir'}):` : `Approval Notes (${booking.approved_by_name || 'Admin'}):`}
                   </div>
                   <div>{booking.catatan_pelulus}</div>
                 </div>
@@ -283,7 +363,7 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
                   className="py-2.5 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
                 >
                   <Printer className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                  Cetak Slip PDF
+                  {isBM ? 'Cetak Slip PDF' : 'Print PDF Slip'}
                 </button>
 
                 <button
@@ -291,7 +371,7 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
                   className="py-2.5 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
                 >
                   <Download className="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                  Eksport ke iCal (.ics)
+                  {isBM ? 'Eksport ke iCal (.ics)' : 'Export to iCal (.ics)'}
                 </button>
               </div>
 
@@ -302,13 +382,13 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
                     onClick={() => onRejectBooking && onRejectBooking(booking)}
                     className="py-2.5 px-3 rounded-xl bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-bold transition-colors"
                   >
-                    Tolak Permohonan
+                    {isBM ? 'Tolak Permohonan' : 'Reject Request'}
                   </button>
                   <button
                     onClick={() => onApproveBooking && onApproveBooking(booking)}
                     className="py-2.5 px-3 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shadow-xs transition-colors"
                   >
-                    Luluskan Tempahan
+                    {isBM ? 'Luluskan Tempahan' : 'Approve Booking'}
                   </button>
                 </div>
               )}
@@ -318,7 +398,7 @@ export const BookingDetailDrawer: React.FC<BookingDetailDrawerProps> = ({
                   onClick={() => onCancelBooking(booking.id)}
                   className="w-full py-2 px-3 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-xs font-semibold transition-colors"
                 >
-                  Batal Permohonan Tempahan Ini
+                  {isBM ? 'Batal Permohonan Tempahan Ini' : 'Cancel This Booking Request'}
                 </button>
               )}
             </div>

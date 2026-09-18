@@ -19,6 +19,7 @@ import {
   Bell,
   X
 } from 'lucide-react'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { SlideOver, Badge } from '@/components/ui'
 import { getStaffAuditLogs } from '@/modules/mystaff/services/staffService'
 import type { StaffAuditLog, AuditModuleType, AuditActionType } from '@/shared/types/mystaff'
@@ -34,8 +35,13 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
   isOpen,
   onClose,
   defaultModule = 'ALL',
-  title = 'Log Audit & Sejarah Pindaan Rasmi'
+  title
 }) => {
+  const { language } = useLanguage()
+  const isMs = language === 'ms'
+  const defaultTitle = isMs ? 'Log Audit & Sejarah Pindaan Rasmi' : 'Official Audit Trail & Modification History'
+  const displayTitle = title || defaultTitle
+
   const [logs, setLogs] = useState<StaffAuditLog[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [selectedModule, setSelectedModule] = useState<string>(defaultModule)
@@ -82,25 +88,25 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
         return {
           bg: 'bg-rose-100 text-rose-900 border-rose-300',
           icon: <Trash2 className="w-3 h-3 text-rose-700" />,
-          label: 'PEMADAMAN'
+          label: isMs ? 'PEMADAMAN' : 'DELETION'
         }
       case 'EDIT':
         return {
           bg: 'bg-amber-100 text-amber-950 border-amber-300',
           icon: <Edit3 className="w-3 h-3 text-amber-700" />,
-          label: 'PINDAAN DATA'
+          label: isMs ? 'PINDAAN DATA' : 'DATA MODIFICATION'
         }
       case 'CREATE':
         return {
           bg: 'bg-emerald-100 text-emerald-950 border-emerald-300',
           icon: <PlusCircle className="w-3 h-3 text-emerald-700" />,
-          label: 'PENDAFTARAN'
+          label: isMs ? 'PENDAFTARAN' : 'REGISTRATION'
         }
       case 'STATUS_CHANGE':
         return {
           bg: 'bg-purple-100 text-purple-950 border-purple-300',
           icon: <CheckCircle2 className="w-3 h-3 text-purple-700" />,
-          label: 'STATUS SELESAI'
+          label: isMs ? 'STATUS SELESAI' : 'STATUS COMPLETED'
         }
       default:
         return {
@@ -116,13 +122,13 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
       case 'MOVEMENT':
         return {
           bg: 'bg-teal-50 text-teal-800 border-teal-200',
-          label: 'Pergerakan Staf',
+          label: isMs ? 'Pergerakan Staf' : 'Staff Movement',
           icon: <Briefcase className="w-3 h-3 text-teal-600" />
         }
       case 'REMINDER':
         return {
           bg: 'bg-purple-50 text-purple-800 border-purple-200',
-          label: 'Log Event / CME',
+          label: isMs ? 'Log Event / CME' : 'Event Log / CME',
           icon: <Bell className="w-3 h-3 text-purple-600" />
         }
       default:
@@ -139,8 +145,12 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       size="3xl"
-      title={title}
-      description="Jejak audit penuh merekodkan siapa, bila dan mengapa sesuatu rekod dipinda atau dipadam bagi tujuan ketelusan & integriti data."
+      title={displayTitle}
+      description={
+        isMs
+          ? 'Jejak audit penuh merekodkan siapa, bila dan mengapa sesuatu rekod dipinda atau dipadam bagi tujuan ketelusan & integriti data.'
+          : 'Comprehensive audit trail recording who, when, and why a record was modified or deleted for transparency and data integrity.'
+      }
     >
       <div className="p-6 md:p-8 space-y-6 text-slate-800 pb-20">
         {/* Top Filter and Search Bar */}
@@ -150,7 +160,7 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Cari sebab, pegawai, tajuk acara..."
+              placeholder={isMs ? "Cari sebab, pegawai, tajuk acara..." : "Search reason, officer, record title..."}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
@@ -159,11 +169,13 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
 
           {/* Module Filter Tabs */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mr-1">Modul:</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+              {isMs ? 'Modul:' : 'Module:'}
+            </span>
             {[
-              { id: 'ALL', label: 'Semua Modul' },
-              { id: 'REMINDER', label: 'Log Event / CME' },
-              { id: 'MOVEMENT', label: 'Pergerakan Staf' }
+              { id: 'ALL', label: isMs ? 'Semua Modul' : 'All Modules' },
+              { id: 'REMINDER', label: isMs ? 'Log Event / CME' : 'Event Log / CME' },
+              { id: 'MOVEMENT', label: isMs ? 'Pergerakan Staf' : 'Staff Movement' }
             ].map(m => (
               <button
                 key={m.id}
@@ -181,11 +193,13 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
 
           {/* Action Filter Tabs */}
           <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200/60">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mr-1">Tindakan:</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+              {isMs ? 'Tindakan:' : 'Action:'}
+            </span>
             {[
-              { id: 'ALL', label: 'Semua' },
-              { id: 'EDIT', label: 'Pindaan', dot: 'bg-amber-500' },
-              { id: 'DELETE', label: 'Pemadaman', dot: 'bg-rose-500' }
+              { id: 'ALL', label: isMs ? 'Semua' : 'All' },
+              { id: 'EDIT', label: isMs ? 'Pindaan' : 'Modifications', dot: 'bg-amber-500' },
+              { id: 'DELETE', label: isMs ? 'Pemadaman' : 'Deletions', dot: 'bg-rose-500' }
             ].map(a => (
               <button
                 key={a.id}
@@ -206,21 +220,31 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
         {/* Timeline Log List */}
         <div className="space-y-4">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500 px-1">
-            <span>Jumlah Rekod Audit: {filteredLogs.length}</span>
-            <span className="text-[11px] text-slate-400">Susunan: Terkini ke Terawal</span>
+            <span>
+              {isMs ? `Jumlah Rekod Audit: ${filteredLogs.length}` : `Total Audit Records: ${filteredLogs.length}`}
+            </span>
+            <span className="text-[11px] text-slate-400">
+              {isMs ? 'Susunan: Terkini ke Terawal' : 'Sort: Newest to Oldest'}
+            </span>
           </div>
 
           {isLoading ? (
             <div className="text-center py-16 text-slate-400">
               <Clock className="w-8 h-8 mx-auto mb-2 animate-spin text-slate-400" />
-              <p className="text-xs font-bold text-slate-600">Memuatkan rekod audit...</p>
+              <p className="text-xs font-bold text-slate-600">
+                {isMs ? 'Memuatkan rekod audit...' : 'Loading audit records...'}
+              </p>
             </div>
           ) : filteredLogs.length === 0 ? (
             <div className="text-center py-16 text-slate-400 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
               <History className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-              <p className="font-bold text-slate-600 text-sm">Tiada rekod audit ditemui</p>
+              <p className="font-bold text-slate-600 text-sm">
+                {isMs ? 'Tiada rekod audit ditemui' : 'No audit records found'}
+              </p>
               <p className="text-xs text-slate-400 mt-0.5">
-                Sebarang pindaan atau pemadaman rekod akan direkodkan di sini secara automatik.
+                {isMs
+                  ? 'Sebarang pindaan atau pemadaman rekod akan direkodkan di sini secara automatik.'
+                  : 'Any record modifications or deletions will be automatically logged here.'}
               </p>
             </div>
           ) : (
@@ -251,13 +275,13 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
                     <div className="flex items-center gap-1 text-slate-500 font-mono text-[11px] font-medium">
                       <Clock className="w-3 h-3 text-slate-400" />
                       <span>
-                        {date.toLocaleDateString('ms-MY', {
+                        {date.toLocaleDateString(isMs ? 'ms-MY' : 'en-MY', {
                           day: 'numeric',
                           month: 'short',
                           year: 'numeric'
                         })}{' '}
                         •{' '}
-                        {date.toLocaleTimeString('ms-MY', {
+                        {date.toLocaleTimeString(isMs ? 'ms-MY' : 'en-MY', {
                           hour: '2-digit',
                           minute: '2-digit'
                         })}
@@ -268,7 +292,7 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
                   {/* Record Title */}
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                      Tajuk Rekod Terlibat:
+                      {isMs ? 'Tajuk Rekod Terlibat:' : 'Target Record Title:'}
                     </span>
                     <h4 className="font-extrabold text-sm text-slate-900 leading-snug">
                       "{log.record_title}"
@@ -283,7 +307,7 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
                   }`}>
                     <div className="flex items-center gap-1.5 font-black text-[11px] uppercase tracking-wider mb-1">
                       <ShieldCheck className="w-3.5 h-3.5" />
-                      <span>Sebab / Justifikasi Rasmi:</span>
+                      <span>{isMs ? 'Sebab / Justifikasi Rasmi:' : 'Official Reason / Justification:'}</span>
                     </div>
                     <p className="font-semibold italic">"{log.reason}"</p>
                   </div>

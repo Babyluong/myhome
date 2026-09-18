@@ -29,6 +29,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { ROUTES } from '@/lib/constants'
 import { getStaffMovements, updateMovementStatus } from '@/modules/mystaff/services/staffService'
 import type { StaffMovement, MovementType, MovementStatus } from '@/shared/types/mystaff'
@@ -187,6 +188,7 @@ interface Palette {
   lightBg: string
   lightBorder: string
   label: string
+  labelMs: string
   icon: LucideIcon
 }
 
@@ -195,14 +197,16 @@ const PALETTE: Record<string, Palette> = {
     solid: '#2563eb',
     lightBg: '#eff6ff',
     lightBorder: '#bfdbfe',
-    label: 'Mesyuarat',
+    label: 'Meeting',
+    labelMs: 'Mesyuarat',
     icon: Briefcase
   },
   COURSE: {
     solid: '#7c3aed',
     lightBg: '#f5f3ff',
     lightBorder: '#ddd6fe',
-    label: 'Kursus / Latihan',
+    label: 'Course / Training',
+    labelMs: 'Kursus / Latihan',
     icon: GraduationCap
   },
   CME: {
@@ -210,20 +214,23 @@ const PALETTE: Record<string, Palette> = {
     lightBg: '#ecfeff',
     lightBorder: '#a5f3fc',
     label: 'CME / CPD',
+    labelMs: 'CME / CPD',
     icon: Stethoscope
   },
   PRESENTATION: {
     solid: '#d97706',
     lightBg: '#fffbeb',
     lightBorder: '#fde68a',
-    label: 'Pembentangan',
+    label: 'Presentation',
+    labelMs: 'Pembentangan',
     icon: Presentation
   },
   ANNUAL_LEAVE: {
     solid: '#e11d48',
     lightBg: '#fff1f2',
     lightBorder: '#fecdd3',
-    label: 'Cuti Tahunan',
+    label: 'Annual Leave',
+    labelMs: 'Cuti Tahunan',
     icon: Palmtree
   },
   TIME_OFF: {
@@ -231,35 +238,31 @@ const PALETTE: Record<string, Palette> = {
     lightBg: '#fff7ed',
     lightBorder: '#fed7aa',
     label: 'Time Off',
+    labelMs: 'Time Off',
     icon: Timer
   },
   SITE_VISIT: {
     solid: '#059669',
     lightBg: '#ecfdf5',
     lightBorder: '#a7f3d0',
-    label: 'Lawatan / Tugas Luar',
+    label: 'Site Visit / Duty',
+    labelMs: 'Lawatan / Tugas Luar',
     icon: MapPin
   },
   OFFICIAL_DUTY: {
     solid: '#059669',
     lightBg: '#ecfdf5',
     lightBorder: '#a7f3d0',
-    label: 'Tugas Rasmi',
+    label: 'Official Duty',
+    labelMs: 'Tugas Rasmi',
     icon: Car
   },
 }
 
-const FILTERS = [
-  { id: 'ALL',          label: 'Semua Kategori', color: null },
-  { id: 'MEETING',      label: 'Mesyuarat',      color: '#2563eb' },
-  { id: 'ANNUAL_LEAVE', label: 'Cuti',           color: '#e11d48' },
-  { id: 'COURSE',       label: 'Kursus',         color: '#7c3aed' },
-  { id: 'CME',          label: 'CME',            color: '#0891b2' },
-  { id: 'SITE_VISIT',   label: 'Lawatan',        color: '#059669' },
-  { id: 'PRESENTATION', label: 'Pembentangan',   color: '#d97706' },
-  { id: 'TIME_OFF',     label: 'Time Off',       color: '#ea580c' },
+const MONTHS_EN = [
+  'January','February','March','April','May','June',
+  'July','August','September','October','November','December',
 ]
-
 const MONTHS_MY = [
   'Januari','Februari','Mac','April','Mei','Jun',
   'Julai','Ogos','September','Oktober','November','Disember',
@@ -413,6 +416,8 @@ function fmtDate(dateStr: string) {
 
 export const StaffCalendarPage: React.FC = () => {
   const navigate = useNavigate()
+  const { language } = useLanguage()
+  const isMs = language === 'ms'
   const toast    = useToast()
   const user     = useAuthStore(s => s.user)
 
@@ -425,6 +430,17 @@ export const StaffCalendarPage: React.FC = () => {
   const [loading,      setLoading]      = useState(true)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
 
+  const FILTERS = useMemo(() => [
+    { id: 'ALL',          label: isMs ? 'Semua Kategori' : 'All Categories', color: null },
+    { id: 'MEETING',      label: isMs ? 'Mesyuarat' : 'Meeting',             color: '#2563eb' },
+    { id: 'ANNUAL_LEAVE', label: isMs ? 'Cuti' : 'Annual Leave',            color: '#e11d48' },
+    { id: 'COURSE',       label: isMs ? 'Kursus' : 'Course',                 color: '#7c3aed' },
+    { id: 'CME',          label: 'CME',                                      color: '#0891b2' },
+    { id: 'SITE_VISIT',   label: isMs ? 'Lawatan' : 'Site Visit',            color: '#059669' },
+    { id: 'PRESENTATION', label: isMs ? 'Pembentangan' : 'Presentation',     color: '#d97706' },
+    { id: 'TIME_OFF',     label: 'Time Off',                                 color: '#ea580c' },
+  ], [isMs])
+
   const handleMarkMovementDone = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
     try {
@@ -432,9 +448,9 @@ export const StaffCalendarPage: React.FC = () => {
         prev.map(m => (m.id === id ? { ...m, status: 'completed' as MovementStatus } : m))
       )
       await updateMovementStatus(id, 'completed' as MovementStatus)
-      toast.success('Acara / Pergerakan berjaya ditandakan sebagai SELESAI!')
+      toast.success(isMs ? 'Acara / Pergerakan berjaya ditandakan sebagai SELESAI!' : 'Event / Movement marked as completed!')
     } catch {
-      toast.error('Gagal mengemaskini status pergerakan.')
+      toast.error(isMs ? 'Gagal mengemaskini status pergerakan.' : 'Failed to update movement status.')
     }
   }
 
@@ -608,14 +624,14 @@ export const StaffCalendarPage: React.FC = () => {
           <button
             onClick={() => navigate(ROUTES.STAFF_DASHBOARD)}
             className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 transition-all shadow-sm"
-            title="Kembali ke Dashboard"
+            title={isMs ? "Kembali ke Dashboard" : "Back to Dashboard"}
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <div className="flex items-center gap-2.5">
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
-                Kalendar Pergerakan Staf
+                {isMs ? 'Kalendar Pergerakan Staf' : 'Staff Movement & Schedule Calendar'}
               </h1>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -623,7 +639,11 @@ export const StaffCalendarPage: React.FC = () => {
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-              {loading ? 'Memuatkan rekod...' : `Terdapat ${monthTotal} aktiviti dan pergerakan dijadualkan bagi ${MONTHS_MY[m]} ${y}`}
+              {loading 
+                ? (isMs ? 'Memuatkan rekod...' : 'Loading records...') 
+                : isMs 
+                ? `Terdapat ${monthTotal} aktiviti dan pergerakan dijadualkan bagi ${MONTHS_MY[m]} ${y}`
+                : `${monthTotal} scheduled activities and movements for ${MONTHS_EN[m]} ${y}`}
             </p>
           </div>
         </div>
@@ -634,7 +654,7 @@ export const StaffCalendarPage: React.FC = () => {
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all"
           >
             <Plus className="w-4 h-4" />
-            <span>Catat Pergerakan</span>
+            <span>{isMs ? 'Catat Pergerakan' : 'Record Movement'}</span>
           </button>
         </div>
       </div>
@@ -647,19 +667,19 @@ export const StaffCalendarPage: React.FC = () => {
           <button
             onClick={prevMonth}
             className="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 transition-colors"
-            title="Bulan Sebelumnya"
+            title={isMs ? "Bulan Sebelumnya" : "Previous Month"}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
 
           <div className="min-w-[150px] text-center font-bold text-slate-900 text-sm tracking-tight px-2">
-            {MONTHS_MY[m]} {y}
+            {isMs ? MONTHS_MY[m] : MONTHS_EN[m]} {y}
           </div>
 
           <button
             onClick={nextMonth}
             className="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 transition-colors"
-            title="Bulan Seterusnya"
+            title={isMs ? "Bulan Seterusnya" : "Next Month"}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -670,7 +690,7 @@ export const StaffCalendarPage: React.FC = () => {
             onClick={goToday}
             className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition-colors"
           >
-            Hari Ini
+            {isMs ? 'Hari Ini' : 'Today'}
           </button>
         </div>
 
@@ -912,16 +932,16 @@ export const StaffCalendarPage: React.FC = () => {
           <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2.5">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Kategori Cuti & Pergerakan
+                {isMs ? 'Kategori Cuti & Pergerakan' : 'Movement & Leave Categories'}
               </span>
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-rose-50 border border-rose-200 text-[11px] font-bold text-rose-800">
                   <span>🇲🇾</span>
-                  <span>Cuti Umum Malaysia</span>
+                  <span>{isMs ? 'Cuti Umum Malaysia' : 'Malaysia Public Holiday'}</span>
                 </div>
                 <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-amber-50 border border-amber-300 text-[11px] font-extrabold text-amber-950">
                   <span>⭐</span>
-                  <span>Cuti Khas Sarawak</span>
+                  <span>{isMs ? 'Cuti Khas Sarawak' : 'Sarawak Special Holiday'}</span>
                 </div>
               </div>
             </div>
@@ -932,7 +952,7 @@ export const StaffCalendarPage: React.FC = () => {
                     className="w-2.5 h-2.5 rounded-full shrink-0"
                     style={{ backgroundColor: pal.solid }}
                   />
-                  <span className="text-xs font-medium text-slate-600">{pal.label}</span>
+                  <span className="text-xs font-medium text-slate-600">{isMs ? pal.labelMs : pal.label}</span>
                 </div>
               ))}
             </div>
@@ -953,7 +973,7 @@ export const StaffCalendarPage: React.FC = () => {
                   {selLabel.isToday && (
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
                       <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-                      Hari Ini
+                      {isMs ? 'Hari Ini' : 'Today'}
                     </span>
                   )}
                 </div>
@@ -970,7 +990,7 @@ export const StaffCalendarPage: React.FC = () => {
                     {dayEvents.length}
                   </div>
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-0.5">
-                    Aktiviti
+                    {isMs ? 'Aktiviti' : 'Activities'}
                   </div>
                 </div>
               </div>
@@ -1003,13 +1023,15 @@ export const StaffCalendarPage: React.FC = () => {
                           : 'bg-rose-200/70 text-rose-950 border-rose-300'
                       }`}
                     >
-                      {selectedHoliday.isSarawakOnly ? 'Cuti Khas Negeri Sarawak' : 'Cuti Umum Kebangsaan (Malaysia)'}
+                      {selectedHoliday.isSarawakOnly 
+                        ? (isMs ? 'Cuti Khas Negeri Sarawak' : 'Sarawak Special Holiday') 
+                        : (isMs ? 'Cuti Umum Kebangsaan (Malaysia)' : 'National Public Holiday (Malaysia)')}
                     </span>
                   </div>
                   <h4 className="text-base font-black text-slate-900 mt-1">
-                    {selectedHoliday.name}
+                    {isMs ? selectedHoliday.name : (selectedHoliday.nameEn || selectedHoliday.name)}
                   </h4>
-                  {selectedHoliday.nameEn && (
+                  {isMs && selectedHoliday.nameEn && (
                     <p className="text-xs font-medium text-slate-500 mt-0.5">
                       {selectedHoliday.nameEn}
                     </p>
@@ -1034,7 +1056,7 @@ export const StaffCalendarPage: React.FC = () => {
                       }}
                     >
                       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: pal.solid }} />
-                      <span>{count} {pal.label}</span>
+                      <span>{count} {isMs ? pal.labelMs : pal.label}</span>
                     </div>
                   )
                 })}
@@ -1050,17 +1072,19 @@ export const StaffCalendarPage: React.FC = () => {
                     <Users className="w-6 h-6 text-slate-400" />
                   </div>
                   <h3 className="text-sm font-bold text-slate-800">
-                    Semua Staf di Stesen
+                    {isMs ? 'Semua Staf di Stesen' : 'All Staff On Station'}
                   </h3>
                   <p className="text-xs text-slate-500 max-w-[260px] mt-1 leading-relaxed">
-                    Tiada pergerakan luar, kursus, mesyuarat atau cuti direkodkan untuk tarikh ini.
+                    {isMs 
+                      ? 'Tiada pergerakan luar, kursus, mesyuarat atau cuti direkodkan untuk tarikh ini.' 
+                      : 'No outstation movements, courses, meetings or leaves recorded for this date.'}
                   </p>
                   <button
                     onClick={() => navigate(ROUTES.STAFF_MOVEMENT)}
                     className="mt-4 inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-sm transition-all"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Catat Pergerakan</span>
+                    <span>{isMs ? 'Catat Pergerakan' : 'Record Movement'}</span>
                   </button>
                 </div>
               ) : (
@@ -1098,7 +1122,7 @@ export const StaffCalendarPage: React.FC = () => {
                             }}
                           >
                             <Icon className="w-3.5 h-3.5" />
-                            <span>{pal.label}</span>
+                            <span>{isMs ? pal.labelMs : pal.label}</span>
                           </span>
 
                           <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
@@ -1108,7 +1132,11 @@ export const StaffCalendarPage: React.FC = () => {
                               ? 'bg-blue-100 text-blue-800 border border-blue-200'
                               : 'bg-amber-50 text-amber-800 border border-amber-200'
                           }`}>
-                            {ev.status === 'completed' ? '✓ Selesai' : ev.status === 'confirmed' ? 'Disahkan' : 'Aktif'}
+                            {ev.status === 'completed' 
+                              ? (isMs ? '✓ Selesai' : '✓ Completed') 
+                              : ev.status === 'confirmed' 
+                              ? (isMs ? 'Disahkan' : 'Confirmed') 
+                              : (isMs ? 'Aktif' : 'Active')}
                           </span>
                         </div>
 
@@ -1157,7 +1185,7 @@ export const StaffCalendarPage: React.FC = () => {
                             <MapPin className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                             <div className="min-w-0">
                               <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                Lokasi / Destinasi
+                                {isMs ? 'Lokasi / Destinasi' : 'Location / Destination'}
                               </span>
                               <span className="font-semibold text-slate-800 break-words">
                                 {ev.destination}
@@ -1171,11 +1199,13 @@ export const StaffCalendarPage: React.FC = () => {
                           <CalendarDays className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
                           <div className="min-w-0">
                             <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                              Tempoh Pergerakan
+                              {isMs ? 'Tempoh Pergerakan' : 'Duration'}
                             </span>
                             <span className="font-semibold text-slate-800">
                               {ev.startDate.split('-').reverse().join('/')}
-                              {isMulti ? ` – ${ev.endDate.split('-').reverse().join('/')} (${ev.daysCount} Hari)` : ' (1 Hari)'}
+                              {isMulti 
+                                ? ` – ${ev.endDate.split('-').reverse().join('/')} (${ev.daysCount} ${isMs ? 'Hari' : 'Days'})` 
+                                : ` (1 ${isMs ? 'Hari' : 'Day'})`}
                             </span>
                           </div>
                         </div>
@@ -1186,7 +1216,7 @@ export const StaffCalendarPage: React.FC = () => {
                         <div className="p-3 rounded-xl bg-amber-50/50 border border-amber-200/60 text-xs text-amber-900 leading-relaxed">
                           <div className="flex items-center gap-1.5 font-bold text-amber-800 mb-1">
                             <Info className="w-3.5 h-3.5 text-amber-600" />
-                            <span>Tujuan / Keterangan:</span>
+                            <span>{isMs ? 'Tujuan / Keterangan:' : 'Purpose / Notes:'}</span>
                           </div>
                           <p className="font-normal text-slate-700 italic">
                             "{ev.purpose}"
@@ -1202,7 +1232,7 @@ export const StaffCalendarPage: React.FC = () => {
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-800 hover:text-white border border-emerald-200 text-xs font-bold transition-all shadow-2xs group/btn"
                           >
                             <Check className="w-3.5 h-3.5 text-emerald-600 group-hover/btn:text-white" />
-                            <span>Tanda Selesai</span>
+                            <span>{isMs ? 'Tanda Selesai' : 'Mark Completed'}</span>
                           </button>
                         </div>
                       )}
@@ -1217,10 +1247,10 @@ export const StaffCalendarPage: React.FC = () => {
               <div className="pt-4 border-t border-slate-100 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    Akan Datang ({MONTHS_MY[m]})
+                    {isMs ? `Akan Datang (${MONTHS_MY[m]})` : `Upcoming (${MONTHS_EN[m]})`}
                   </span>
                   <span className="text-[11px] font-semibold text-indigo-600">
-                    {upcoming.length} Rekod Seterusnya
+                    {isMs ? `${upcoming.length} Rekod Seterusnya` : `${upcoming.length} Next Records`}
                   </span>
                 </div>
 
@@ -1246,7 +1276,7 @@ export const StaffCalendarPage: React.FC = () => {
                               {up.title}
                             </div>
                             <div className="text-[11px] text-slate-500 font-medium truncate">
-                              {up.person} • <span className="font-semibold" style={{ color: pal.solid }}>{pal.label}</span>
+                              {up.person} • <span className="font-semibold" style={{ color: pal.solid }}>{isMs ? pal.labelMs : pal.label}</span>
                             </div>
                           </div>
                         </div>

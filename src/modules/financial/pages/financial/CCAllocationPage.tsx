@@ -250,7 +250,7 @@ export const CCAllocationPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16">
+    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16 text-slate-900">
       {/* Premium Ambient Radial Lights */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-teal-500/[0.04] to-emerald-500/[0.02] rounded-full blur-[140px] pointer-events-none -z-10 animate-pulse-subtle" />
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-500/[0.02] to-sky-500/[0.03] rounded-full blur-[120px] pointer-events-none -z-10" />

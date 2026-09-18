@@ -162,22 +162,22 @@ export const MyPerolehanDashboard: React.FC<MyPerolehanDashboardProps> = ({ init
       aggData.recentOrders.slice(0, 5).forEach((po) => {
         if (po.status === 'completed') {
           mappedActivities.push({
-            title: 'Bayaran Selesai',
+            title: 'Payment Completed',
             sub: `${po.order_number} - RM ${Number(po.total_amount).toLocaleString('en-MY', { minimumFractionDigits: 2 })}`,
             time: po.order_date,
             color: 'bg-emerald-500'
           })
         } else if (po.status === 'approved') {
           mappedActivities.push({
-            title: 'Pesanan Diluluskan (LPO)',
-            sub: `${po.order_number} - ${po.supplier?.company_name || 'Pembekal Dilantik'}`,
+            title: 'Order Approved (LPO)',
+            sub: `${po.order_number} - ${po.supplier?.company_name || 'Appointed Supplier'}`,
             time: po.order_date,
             color: 'bg-indigo-500'
           })
         } else {
           mappedActivities.push({
-            title: 'Pesanan Baharu Dicipta',
-            sub: `${po.order_number} - Menunggu kelulusan pentadbir`,
+            title: 'New Order Created',
+            sub: `${po.order_number} - Awaiting administrator approval`,
             time: po.order_date,
             color: 'bg-amber-500'
           })
@@ -188,13 +188,13 @@ export const MyPerolehanDashboard: React.FC<MyPerolehanDashboardProps> = ({ init
         mappedActivities.push(
           {
             title: 'System Activity',
-            sub: 'Pangkalan data perolehan & waran disegerakkan secara langsung',
+            sub: 'Procurement & warrant database synchronized live',
             time: 'Just now',
             color: 'bg-indigo-500'
           },
           {
-            title: 'Waran KKM Direkodkan',
-            sub: 'Peruntukan P42 & 022300 dikemaskini',
+            title: 'MOH Warrant Recorded',
+            sub: 'P42 & 022300 allocations updated',
             time: '1 day ago',
             color: 'bg-emerald-500'
           }
@@ -250,21 +250,21 @@ export const MyPerolehanDashboard: React.FC<MyPerolehanDashboardProps> = ({ init
               }}
               className="hover:text-indigo-600 transition-colors flex items-center gap-1"
             >
-              Perolehan
+              Procurement
             </button>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             <span className="text-slate-800 font-extrabold tracking-wide uppercase">
               {activeView === 'dashboard'
                 ? 'Operations Dashboard'
                 : activeView === 'pengurusan'
-                ? 'Bajet Pengurusan'
+                ? 'Operating Budget'
                 : activeView === 'pembangunan'
-                ? 'Bajet Pembangunan'
+                ? 'Development Budget'
                 : activeView === 'orders'
                 ? 'Purchase Orders'
                 : activeView === 'receiving_payments'
-                ? 'Terimaan & Bayaran'
-                : 'Katalog & Pembekal'}
+                ? 'Receiving & Payments'
+                : 'Catalogs & Suppliers'}
             </span>
           </nav>
 
@@ -403,7 +403,7 @@ export const MyPerolehanDashboard: React.FC<MyPerolehanDashboardProps> = ({ init
             </div>
             <div className="space-y-1 mt-6 relative z-10">
               <h3 className="text-lg font-black text-slate-900 group-hover:text-purple-600 transition-colors leading-tight">
-                Terimaan & Bayaran
+                Receiving & Payments
               </h3>
               <p className="text-slate-400 font-semibold text-[11px]">DO Receiving & EFT Vouchers</p>
             </div>
@@ -582,7 +582,7 @@ export const MyPerolehanDashboard: React.FC<MyPerolehanDashboardProps> = ({ init
                 }}
                 className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-xs"
               >
-                <span>← Kembali ke Operations Portal</span>
+                <span>← Back to Operations Portal</span>
               </button>
             </div>
 

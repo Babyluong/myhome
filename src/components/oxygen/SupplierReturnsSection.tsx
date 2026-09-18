@@ -1,6 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Printer, FileText, Truck, FileCheck, Edit2, Trash2, X, AlertTriangle, History as HistoryIcon, MoreVertical } from 'lucide-react';
-import type { OxygenReturnDocumentWithRelations, OxygenRequestDocumentWithRelations } from '@/types/pharmacy';
+import React, { useState, useEffect, useMemo } from 'react';
+import { 
+  Plus, 
+  Printer, 
+  FileText, 
+  Truck, 
+  FileCheck, 
+  Edit2, 
+  Trash2, 
+  X, 
+  AlertTriangle, 
+  History as HistoryIcon, 
+  MoreVertical, 
+  PackageCheck, 
+  CheckCircle2, 
+  Eye,
+  Search,
+  Filter,
+  Copy,
+  Check,
+  Calendar,
+  Building2,
+  Layers,
+  RotateCcw,
+  ShieldCheck
+} from 'lucide-react';
+import { useLanguage } from '@/shared/contexts/LanguageContext';
+import type { OxygenReturnDocumentWithRelations, OxygenRequestDocumentWithRelations, OxygenReceiveDocumentWithRelations } from '@/types/pharmacy';
 import { useAuthStore } from '@/stores/authStore';
 import { supabase } from '@/services/supabase';
 import {
@@ -11,19 +36,27 @@ import {
   updateReturnDocumentCylinders,
   getEmptyCylindersInStore,
   updateCylinderValveType,
+  deleteReceiveDocument,
+  updateReceiveDocument,
+  getSupplierCylinderReconciliationData,
 } from '@/modules/mycylinder/services/oxygenService';
+import { SupplierCylinderTrackingSection } from './SupplierCylinderTrackingSection';
 
 interface SupplierReturnsSectionProps {
   documents: OxygenReturnDocumentWithRelations[];
   requestDocuments?: OxygenRequestDocumentWithRelations[];
+  receiveDocuments?: OxygenReceiveDocumentWithRelations[];
+  hospitalId?: string;
   onCreateClick: () => void;
   onCreateRequestClick?: () => void;
+  onCreateReceiveClick?: () => void;
   onScanClick: () => void;
   onPrintClick: (docId: string) => void;
   onPrintRequestClick?: (docId: string) => void;
+  onPrintReceiveClick?: (docId: string) => void;
   isViewOnly: boolean;
-  subTab?: 'returns' | 'requests';
-  onSubTabChange?: (tab: 'returns' | 'requests') => void;
+  subTab?: 'returns' | 'requests' | 'received' | 'tracking';
+  onSubTabChange?: (tab: 'returns' | 'requests' | 'received' | 'tracking') => void;
   hideSubTabBar?: boolean;
   onSuccess?: () => void;
 }
@@ -31,30 +64,165 @@ interface SupplierReturnsSectionProps {
 export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
   documents,
   requestDocuments = [],
+  receiveDocuments = [],
+  hospitalId,
   onCreateClick,
   onCreateRequestClick = () => {},
+  onCreateReceiveClick = () => {},
   onScanClick,
   onPrintClick,
   onPrintRequestClick = () => {},
+  onPrintReceiveClick = () => {},
   isViewOnly,
   subTab: propSubTab,
   onSubTabChange,
   hideSubTabBar = false,
   onSuccess,
 }) => {
-  const [localSubTab, setLocalSubTab] = useState<'returns' | 'requests'>('returns');
+  const [localSubTab, setLocalSubTab] = useState<'returns' | 'requests' | 'received' | 'tracking'>('returns');
   const subTab = propSubTab !== undefined ? propSubTab : localSubTab;
   const setSubTab = onSubTabChange !== undefined ? onSubTabChange : setLocalSubTab;
+  const [trackingSummary, setTrackingSummary] = useState<any>(null);
 
   const { user } = useAuthStore();
+  const { language } = useLanguage();
+  const activeHospitalId = hospitalId || user?.hospital_id || '';
+
+  // Pre-fetch tracking count to display on tab badge
+  useEffect(() => {
+    if (!activeHospitalId) return;
+    getSupplierCylinderReconciliationData(activeHospitalId).then(res => {
+      if (res.data) setTrackingSummary(res.data);
+    });
+  }, [activeHospitalId]);
+
   const [suppliers, setSuppliers] = useState<{ id: string; company_name: string }[]>([]);
+
+  // Search & Filter State
+  const [searchTerm, setSearchTerm] = useState('');
+  const [supplierFilter, setSupplierFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopy = (text: string, id: string) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  // KPI summary statistics for active subTab
+  const kpiStats = useMemo(() => {
+    if (subTab === 'returns') {
+      const totalDocs = documents.length;
+      const totalCylinders = documents.reduce((sum, d) => sum + (d.items?.length || 0), 0);
+      const completedCount = documents.filter(d => d.status === 'completed').length;
+      const uniqueSuppliers = Array.from(new Set(documents.map(d => d.supplier?.company_name).filter(Boolean)));
+      const latestDate = documents[0]?.returned_date
+        ? new Date(documents[0].returned_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+        : '-';
+      return { totalDocs, totalCylinders, completedCount, suppliersCount: uniqueSuppliers.length, latestDate };
+    } else if (subTab === 'requests') {
+      const totalDocs = requestDocuments.length;
+      const totalCylinders = requestDocuments.reduce((sum, d) => sum + (d.items?.reduce((s, i) => s + (i.quantity || 0), 0) || 0), 0);
+      const completedCount = requestDocuments.filter(d => d.status === 'completed').length;
+      const uniqueSuppliers = Array.from(new Set(requestDocuments.map(d => d.supplier?.company_name).filter(Boolean)));
+      const latestDate = requestDocuments[0]?.requested_date
+        ? new Date(requestDocuments[0].requested_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+        : '-';
+      return { totalDocs, totalCylinders, completedCount, suppliersCount: uniqueSuppliers.length, latestDate };
+    } else {
+      const totalDocs = receiveDocuments.length;
+      const totalCylinders = receiveDocuments.reduce((sum, d) => sum + (d.items?.length || 0), 0);
+      const completedCount = receiveDocuments.filter(d => d.status === 'completed').length;
+      const uniqueSuppliers = Array.from(new Set(receiveDocuments.map(d => d.supplier?.company_name).filter(Boolean)));
+      const latestDate = receiveDocuments[0]?.received_date
+        ? new Date(receiveDocuments[0].received_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+        : '-';
+      return { totalDocs, totalCylinders, completedCount, suppliersCount: uniqueSuppliers.length, latestDate };
+    }
+  }, [subTab, documents, requestDocuments, receiveDocuments]);
+
+  // Unique suppliers for active filter
+  const availableFilterSuppliers = useMemo(() => {
+    const list = subTab === 'returns' 
+      ? documents 
+      : subTab === 'requests' 
+      ? requestDocuments 
+      : receiveDocuments;
+    const names = list.map(d => d.supplier?.company_name).filter(Boolean) as string[];
+    return Array.from(new Set(names));
+  }, [subTab, documents, requestDocuments, receiveDocuments]);
+
+  // Filtered documents for Returns
+  const filteredDocuments = useMemo(() => {
+    return documents.filter(doc => {
+      if (searchTerm.trim()) {
+        const q = searchTerm.toLowerCase();
+        const matchesDoc = (doc.document_number || '').toLowerCase().includes(q);
+        const matchesSup = (doc.supplier?.company_name || '').toLowerCase().includes(q);
+        if (!matchesDoc && !matchesSup) return false;
+      }
+      if (supplierFilter !== 'all') {
+        const supName = doc.supplier?.company_name || '';
+        if (supName !== supplierFilter) return false;
+      }
+      if (statusFilter !== 'all') {
+        if (doc.status !== statusFilter) return false;
+      }
+      return true;
+    });
+  }, [documents, searchTerm, supplierFilter, statusFilter]);
+
+  // Filtered documents for Requests
+  const filteredRequestDocuments = useMemo(() => {
+    return requestDocuments.filter(doc => {
+      if (searchTerm.trim()) {
+        const q = searchTerm.toLowerCase();
+        const matchesDoc = (doc.document_number || '').toLowerCase().includes(q);
+        const matchesSup = (doc.supplier?.company_name || '').toLowerCase().includes(q);
+        if (!matchesDoc && !matchesSup) return false;
+      }
+      if (supplierFilter !== 'all') {
+        const supName = doc.supplier?.company_name || '';
+        if (supName !== supplierFilter) return false;
+      }
+      if (statusFilter !== 'all') {
+        if (doc.status !== statusFilter) return false;
+      }
+      return true;
+    });
+  }, [requestDocuments, searchTerm, supplierFilter, statusFilter]);
+
+  // Filtered documents for Received
+  const filteredReceiveDocuments = useMemo(() => {
+    return receiveDocuments.filter(doc => {
+      if (searchTerm.trim()) {
+        const q = searchTerm.toLowerCase();
+        const matchesDoc = (doc.document_number || '').toLowerCase().includes(q);
+        const matchesDO = (doc.delivery_order_no || '').toLowerCase().includes(q);
+        const matchesSup = (doc.supplier?.company_name || '').toLowerCase().includes(q);
+        if (!matchesDoc && !matchesDO && !matchesSup) return false;
+      }
+      if (supplierFilter !== 'all') {
+        const supName = doc.supplier?.company_name || '';
+        if (supName !== supplierFilter) return false;
+      }
+      if (statusFilter !== 'all') {
+        if (doc.status !== statusFilter) return false;
+      }
+      return true;
+    });
+  }, [receiveDocuments, searchTerm, supplierFilter, statusFilter]);
 
   // Modals state
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<any>(null);
-  const [docType, setDocType] = useState<'returns' | 'requests'>('returns');
+  const [docType, setDocType] = useState<'returns' | 'requests' | 'received'>('returns');
+  const [isViewCylindersOpen, setIsViewCylindersOpen] = useState(false);
+  const [viewCylindersDoc, setViewCylindersDoc] = useState<any>(null);
 
   // Edit form state
   const [editDate, setEditDate] = useState('');
@@ -236,13 +404,15 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     }
   };
 
-  const openEditModal = (doc: any, type: 'returns' | 'requests') => {
+  const openEditModal = (doc: any, type: 'returns' | 'requests' | 'received') => {
     setSelectedDoc(doc);
     setDocType(type);
     setEditDate(
       type === 'returns'
         ? new Date(doc.returned_date).toISOString().split('T')[0]
-        : new Date(doc.requested_date).toISOString().split('T')[0]
+        : type === 'requests'
+        ? new Date(doc.requested_date).toISOString().split('T')[0]
+        : new Date(doc.received_date || doc.created_at).toISOString().split('T')[0]
     );
     setEditSupplierId(doc.supplier_id || '');
     setEditStatus(doc.status || 'completed');
@@ -264,14 +434,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     setIsEditOpen(true);
   };
 
-  const openDeleteModal = (doc: any, type: 'returns' | 'requests') => {
+  const openDeleteModal = (doc: any, type: 'returns' | 'requests' | 'received') => {
     setSelectedDoc(doc);
     setDocType(type);
     setDeleteReason('');
     setIsDeleteOpen(true);
   };
 
-  const openHistoryModal = async (doc: any, type: 'returns' | 'requests') => {
+  const openHistoryModal = async (doc: any, type: 'returns' | 'requests' | 'received') => {
     setSelectedDoc(doc);
     setDocType(type);
     setIsHistoryOpen(true);
@@ -371,7 +541,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           editReason,
           user?.id || ''
         );
-      } else {
+      } else if (docType === 'requests') {
         res = await updateRequestDocument(
           selectedDoc.id,
           {
@@ -381,6 +551,17 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
             remarks: updates.remarks,
           },
           editReason,
+          user?.id || ''
+        );
+      } else {
+        res = await updateReceiveDocument(
+          selectedDoc.id,
+          {
+            receivedDate: new Date(editDate).toISOString(),
+            supplierId: editSupplierId,
+            status: editStatus,
+            remarks: editRemarks,
+          },
           user?.id || ''
         );
       }
@@ -417,8 +598,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       let res;
       if (docType === 'returns') {
         res = await deleteReturnDocument(selectedDoc.id, deleteReason, user?.id || '');
-      } else {
+      } else if (docType === 'requests') {
         res = await deleteRequestDocument(selectedDoc.id, deleteReason, user?.id || '');
+      } else {
+        res = await deleteReceiveDocument(selectedDoc.id, deleteReason, user?.id || '');
       }
 
       if (res?.error) {
@@ -437,144 +620,400 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Sub-Tabs selector */}
-      {!hideSubTabBar && (
-        <div className="flex bg-slate-100/60 backdrop-blur-md p-1 rounded-2xl max-w-xs border border-slate-200">
-          <button
-            onClick={() => setSubTab('returns')}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
-              subTab === 'returns'
-                ? 'bg-rose-500 text-white shadow-md'
-                : 'text-slate-600 hover:bg-slate-200/50'
-            }`}
-          >
-            Returns
-          </button>
-          <button
-            onClick={() => setSubTab('requests')}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
-              subTab === 'requests'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-600 hover:bg-slate-200/50'
-            }`}
-          >
-            Requests
-          </button>
-        </div>
-      )}
+      {/* Executive Header & KPI Summary Card with Integrated Workflow Switcher */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-5 md:p-6 shadow-xs space-y-5">
+        {/* Top Control Bar: Segmented Workflow Switcher (Left) + Contextual Actions (Right) */}
+        <div className={`flex flex-col lg:flex-row lg:items-center justify-between gap-4 ${subTab === 'tracking' ? '' : 'pb-4 border-b border-slate-100'}`}>
+          {/* Executive Segmented Workflow Selector */}
+          {!hideSubTabBar && (
+            <div className="inline-flex flex-wrap sm:flex-nowrap items-center bg-slate-100/90 p-1.5 rounded-xl border border-slate-200/80 gap-1 w-full sm:w-auto">
+              <button
+                onClick={() => setSubTab('returns')}
+                className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                  subTab === 'returns'
+                    ? 'bg-white text-rose-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                }`}
+              >
+                <Truck className={`w-3.5 h-3.5 ${subTab === 'returns' ? 'text-rose-600' : 'text-slate-400'}`} />
+                <span>{language === 'ms' ? 'Pemulangan' : 'Returns'}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                  subTab === 'returns' ? 'bg-rose-100 text-rose-700' : 'bg-slate-200/80 text-slate-600'
+                }`}>
+                  {documents.length}
+                </span>
+              </button>
 
-      {/* Header and Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white/20 backdrop-blur-xl border border-white/30 rounded-3xl p-5 shadow-xl">
-        <div className="flex items-center space-x-4">
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner border ${
+              <button
+                onClick={() => setSubTab('requests')}
+                className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                  subTab === 'requests'
+                    ? 'bg-white text-blue-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                }`}
+              >
+                <FileCheck className={`w-3.5 h-3.5 ${subTab === 'requests' ? 'text-blue-600' : 'text-slate-400'}`} />
+                <span>{language === 'ms' ? 'Pesanan / Inden' : 'Requests'}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                  subTab === 'requests' ? 'bg-blue-100 text-blue-700' : 'bg-slate-200/80 text-slate-600'
+                }`}>
+                  {requestDocuments.length}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setSubTab('received')}
+                className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                  subTab === 'received'
+                    ? 'bg-white text-emerald-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                }`}
+              >
+                <PackageCheck className={`w-3.5 h-3.5 ${subTab === 'received' ? 'text-emerald-600' : 'text-slate-400'}`} />
+                <span>{language === 'ms' ? 'Penerimaan' : 'Received'}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                  subTab === 'received' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200/80 text-slate-600'
+                }`}>
+                  {receiveDocuments.length}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setSubTab('tracking')}
+                className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                  subTab === 'tracking'
+                    ? 'bg-white text-indigo-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                }`}
+              >
+                <ShieldCheck className={`w-3.5 h-3.5 ${subTab === 'tracking' ? 'text-indigo-600' : 'text-slate-400'}`} />
+                <span>{language === 'ms' ? 'Pengesanan Silinder' : 'Cylinder Tracking'}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                  subTab === 'tracking' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-200/80 text-slate-600'
+                }`}>
+                  {trackingSummary?.totalTracked ?? 0}
+                </span>
+              </button>
+            </div>
+          )}
+
+          {/* Contextual Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 ml-auto">
+            {subTab === 'returns' && (
+              <>
+                <button
+                  onClick={onScanClick}
+                  disabled={isViewOnly}
+                  title={isViewOnly ? 'View-only for Office Admin' : undefined}
+                  className={`px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs hover:border-slate-300 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                    isViewOnly ? 'opacity-60 grayscale cursor-not-allowed' : ''
+                  }`}
+                >
+                  <Plus className="w-3.5 h-3.5 text-blue-600" />
+                  <span>{language === 'ms' ? 'Imbas Silinder Kosong' : 'Scan Empty Cylinder'}</span>
+                </button>
+                <button
+                  onClick={onCreateClick}
+                  disabled={isViewOnly}
+                  title={isViewOnly ? 'View-only for Office Admin' : undefined}
+                  className={`px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bold text-xs shadow-sm shadow-rose-500/25 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                    isViewOnly ? 'opacity-60 grayscale cursor-not-allowed' : ''
+                  }`}
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{language === 'ms' ? 'Cipta Dokumen Pulang' : 'Create Return Document'}</span>
+                </button>
+              </>
+            )}
+            {subTab === 'requests' && (
+              <button
+                onClick={onCreateRequestClick}
+                disabled={isViewOnly}
+                title={isViewOnly ? 'View-only for Office Admin' : undefined}
+                className={`px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-sm shadow-blue-500/25 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                  isViewOnly ? 'opacity-60 grayscale cursor-not-allowed' : ''
+                }`}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{language === 'ms' ? 'Cipta Dokumen Permintaan' : 'Create Request Document'}</span>
+              </button>
+            )}
+            {subTab === 'received' && (
+              <button
+                onClick={onCreateReceiveClick}
+                disabled={isViewOnly}
+                title={isViewOnly ? 'View-only for Office Admin' : undefined}
+                className={`px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs shadow-sm shadow-emerald-500/25 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                  isViewOnly ? 'opacity-60 grayscale cursor-not-allowed' : ''
+                }`}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{language === 'ms' ? 'Terima Dari Pembekal' : 'Receive From Supplier'}</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {subTab !== 'tracking' && (
+          <>
+            {/* Sub-workflow Information: Icon + Title + Operational Tag + Clinical Description */}
+            <div className="flex items-center space-x-3.5">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
             subTab === 'returns' 
-              ? 'bg-rose-500/10 border-rose-500/20' 
-              : 'bg-blue-500/10 border-blue-500/20'
+              ? 'bg-rose-50 border-rose-200/80 text-rose-600' 
+              : subTab === 'requests'
+              ? 'bg-blue-50 border-blue-200/80 text-blue-600'
+              : 'bg-emerald-50 border-emerald-200/80 text-emerald-600'
           }`}>
             {subTab === 'returns' ? (
-              <Truck className="w-6 h-6 text-rose-600" />
+              <Truck className="w-5 h-5" />
+            ) : subTab === 'requests' ? (
+              <FileCheck className="w-5 h-5" />
             ) : (
-              <FileCheck className="w-6 h-6 text-blue-600" />
+              <PackageCheck className="w-5 h-5" />
             )}
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-800">
-              {subTab === 'returns' ? 'Supplier Returns' : 'Supplier Requests'}
-            </h3>
-            <p className="text-slate-500 text-xs font-semibold">
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-bold text-slate-900 tracking-tight">
+                {subTab === 'returns'
+                  ? (language === 'ms' ? 'Pemulangan Pembekal' : 'Supplier Returns')
+                  : subTab === 'requests'
+                  ? (language === 'ms' ? 'Pesanan Pembekal' : 'Supplier Requests')
+                  : (language === 'ms' ? 'Penerimaan Pembekal' : 'Supplier Received')}
+              </h3>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                subTab === 'returns'
+                  ? 'bg-rose-100/80 text-rose-700'
+                  : subTab === 'requests'
+                  ? 'bg-blue-100/80 text-blue-700'
+                  : 'bg-emerald-100/80 text-emerald-700'
+              }`}>
+                {subTab === 'returns' ? 'Outbound Fleet' : subTab === 'requests' ? 'Procurement Indent' : 'Inbound Fleet'}
+              </span>
+            </div>
+            <p className="text-slate-500 text-xs mt-0.5">
               {subTab === 'returns' 
-                ? 'Return documents sent to medical oxygen suppliers' 
-                : 'Cylinder request documents sent to medical oxygen suppliers'}
+                ? (language === 'ms' ? 'Dokumen penghantaran balik silinder gas ke pembekal perubatan rasmi.' : 'Official return document dispatch to medical gas suppliers.')
+                : subTab === 'requests'
+                ? (language === 'ms' ? 'Pesanan pembekalan dan permohonan isian semula silinder perubatan.' : 'Official purchase order and cylinder replenishment indents.')
+                : (language === 'ms' ? 'Kemasukan kelompok silinder daripada pembekal terus dikreditkan ke stor.' : 'Cylinder intake batches received from supplier directly credited to live storage.')}
             </p>
           </div>
         </div>
 
-        {subTab === 'returns' ? (
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-            <button
-              onClick={onScanClick}
-              disabled={isViewOnly}
-              title={isViewOnly ? 'View-only for Office Admin' : undefined}
-              className={`group px-5 py-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] sm:hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center space-x-2 ${
-                isViewOnly ? 'opacity-60 grayscale cursor-not-allowed hover:scale-100 hover:shadow-md' : ''
-              }`}
-            >
-              <Plus className="w-4 h-4 text-blue-600" />
-              <span>Scan Empty Cylinder</span>
-            </button>
-            <button
-              onClick={onCreateClick}
-              disabled={isViewOnly}
-              title={isViewOnly ? 'View-only for Office Admin' : undefined}
-              className={`group px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-bold text-sm shadow-lg hover:shadow-xl hover:scale-[1.02] sm:hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center space-x-2 border border-rose-400/20 ${
-                isViewOnly ? 'opacity-60 grayscale cursor-not-allowed hover:scale-100 hover:shadow-lg' : ''
-              }`}
-            >
-              <Plus className="w-4 h-4" />
-              <span>Create Return Document</span>
-            </button>
+        {/* Live Operational Metrics Chip Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-100">
+          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              {language === 'ms' ? 'Jumlah Dokumen' : 'Total Documents'}
+            </span>
+            <div className="text-lg font-extrabold text-slate-900 font-mono mt-0.5">
+              {kpiStats.totalDocs}
+            </div>
+            <span className="text-[10px] text-slate-500 font-medium">
+              {kpiStats.completedCount} {language === 'ms' ? 'selesai' : 'completed'}
+            </span>
           </div>
-        ) : (
-          <button
-            onClick={onCreateRequestClick}
-            disabled={isViewOnly}
-            title={isViewOnly ? 'View-only for Office Admin' : undefined}
-            className={`group w-full sm:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm shadow-lg hover:shadow-xl hover:scale-[1.02] sm:hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center space-x-2 border border-blue-400/20 ${
-              isViewOnly ? 'opacity-60 grayscale cursor-not-allowed hover:scale-100 hover:shadow-lg' : ''
-            }`}
-          >
-            <Plus className="w-4 h-4" />
-            <span>Create Request Document</span>
-          </button>
+
+          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              {subTab === 'returns' 
+                ? (language === 'ms' ? 'Silinder Dipulangkan' : 'Cylinders Returned')
+                : subTab === 'requests'
+                ? (language === 'ms' ? 'Silinder Dipesan' : 'Cylinders Requested')
+                : (language === 'ms' ? 'Silinder Diterima' : 'Cylinders Received')}
+            </span>
+            <div className="text-lg font-extrabold text-slate-900 font-mono mt-0.5">
+              {kpiStats.totalCylinders}
+              <span className="text-xs font-sans font-normal text-slate-500 ml-1">cyl</span>
+            </div>
+            <span className="text-[10px] text-slate-500 font-medium">
+              {language === 'ms' ? 'Rentang keseluruhan' : 'Across all records'}
+            </span>
+          </div>
+
+          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              {language === 'ms' ? 'Pembekal Terlibat' : 'Active Suppliers'}
+            </span>
+            <div className="text-lg font-extrabold text-slate-900 font-mono mt-0.5">
+              {kpiStats.suppliersCount}
+            </div>
+            <span className="text-[10px] text-slate-500 font-medium truncate block">
+              {availableFilterSuppliers.length > 0 ? availableFilterSuppliers.join(', ') : 'Borneo Indah / Linde'}
+            </span>
+          </div>
+
+          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              {language === 'ms' ? 'Aktiviti Terkini' : 'Latest Activity'}
+            </span>
+            <div className="text-sm font-bold text-slate-900 mt-1 truncate">
+              {kpiStats.latestDate}
+            </div>
+            <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              {language === 'ms' ? 'Disegerakkan' : 'Live Sync'}
+            </span>
+          </div>
+        </div>
+        </>
         )}
       </div>
 
+      {subTab === 'tracking' ? (
+        <SupplierCylinderTrackingSection
+          hospitalId={activeHospitalId}
+          onOpenReceiveModal={onCreateReceiveClick}
+          onOpenReturnModal={onCreateClick}
+          onPrintDocument={onPrintClick}
+          isViewOnly={isViewOnly}
+          onDataLoaded={(sum) => setTrackingSummary(sum)}
+        />
+      ) : (
+        <>
+      {/* Search & Filter Toolbar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs">
+        <div className="flex flex-1 flex-wrap items-center gap-2">
+          <div className="relative flex-1 min-w-[200px] max-w-md">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder={language === 'ms' ? 'Cari no. dokumen atau pembekal...' : 'Search document # or supplier...'}
+              className="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 transition-all"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Supplier Filter */}
+          <select
+            value={supplierFilter}
+            onChange={(e) => setSupplierFilter(e.target.value)}
+            className="px-3 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer"
+          >
+            <option value="all">{language === 'ms' ? 'Semua Pembekal' : 'All Suppliers'}</option>
+            {availableFilterSuppliers.map(sup => (
+              <option key={sup} value={sup}>{sup}</option>
+            ))}
+          </select>
+
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer"
+          >
+            <option value="all">{language === 'ms' ? 'Semua Status' : 'All Status'}</option>
+            <option value="completed">{language === 'ms' ? 'Selesai' : 'Completed'}</option>
+            <option value="draft">{language === 'ms' ? 'Draf' : 'Draft'}</option>
+            <option value="cancelled">{language === 'ms' ? 'Dibatalkan' : 'Cancelled'}</option>
+          </select>
+        </div>
+
+        <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-slate-500 font-medium px-1">
+          <span>
+            {language === 'ms' ? 'Memaparkan' : 'Showing'}{' '}
+            <strong className="text-slate-800 font-mono">
+              {subTab === 'returns' ? filteredDocuments.length : subTab === 'requests' ? filteredRequestDocuments.length : filteredReceiveDocuments.length}
+            </strong>{' '}
+            {language === 'ms' ? 'daripada' : 'of'}{' '}
+            <strong className="text-slate-800 font-mono">
+              {subTab === 'returns' ? documents.length : subTab === 'requests' ? requestDocuments.length : receiveDocuments.length}
+            </strong>
+          </span>
+
+          {(searchTerm || supplierFilter !== 'all' || statusFilter !== 'all') && (
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setSupplierFilter('all');
+                setStatusFilter('all');
+              }}
+              className="text-teal-600 hover:text-teal-700 font-bold text-xs flex items-center gap-1 cursor-pointer"
+            >
+              <RotateCcw className="w-3 h-3" />
+              {language === 'ms' ? 'Set Semula' : 'Reset'}
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Documents List */}
-      <div className="bg-white/30 backdrop-blur-xl border border-white/25 rounded-3xl shadow-xl overflow-hidden">
+      <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs overflow-hidden">
         {subTab === 'returns' ? (
           <>
             {/* Mobile View: Cards Layout */}
-            <div className="block md:hidden divide-y divide-slate-200/40 text-slate-700 font-medium">
-              {documents.length === 0 ? (
-                <div className="py-12 text-center text-slate-400 font-bold">
-                  No return documents found. Create one to get started.
+            <div className="block md:hidden divide-y divide-slate-100 text-slate-700 font-medium">
+              {filteredDocuments.length === 0 ? (
+                <div className="py-12 px-4 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-3">
+                    <Truck className="w-6 h-6" />
+                  </div>
+                  <p className="text-slate-800 font-bold text-sm">
+                    {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
+                      ? 'No matching return documents'
+                      : 'No return documents found'}
+                  </p>
+                  <p className="text-slate-400 text-xs mt-1">
+                    {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
+                      ? 'Try clearing your search query or filters.'
+                      : 'Create a return document to get started.'}
+                  </p>
                 </div>
               ) : (
-                documents.map((doc) => {
+                filteredDocuments.map((doc) => {
                   const itemsCount = doc.items?.length || 0;
+                  const isCopied = copiedId === doc.id;
                   return (
-                    <div key={doc.id} className="p-5 space-y-4">
-                      <div className="flex items-start justify-between">
+                    <div key={doc.id} className="p-4 space-y-3 hover:bg-slate-50/60 transition-colors">
+                      <div className="flex items-start justify-between gap-2">
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Return Document #</span>
-                          <div className="font-bold text-slate-800 flex items-center gap-1.5 text-sm">
-                            <FileText className="w-4 h-4 text-rose-500" />
-                            {doc.document_number}
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Return Document #</span>
+                          <div className="font-mono font-bold text-slate-900 flex items-center gap-1.5 text-xs">
+                            <FileText className="w-4 h-4 text-rose-500 shrink-0" />
+                            <span>{doc.document_number}</span>
+                            <button
+                              onClick={() => handleCopy(doc.document_number, doc.id)}
+                              className="p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                              title="Copy Document #"
+                            >
+                              {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            </button>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 relative">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-bold border inline-flex items-center ${
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
                             doc.status === 'completed' 
-                              ? 'bg-emerald-100/60 text-emerald-800 border-emerald-200/50' 
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10' 
                               : doc.status === 'cancelled'
-                              ? 'bg-red-100/60 text-red-800 border-red-200/50'
-                              : 'bg-amber-100/60 text-amber-800 border-amber-200/50'
+                              ? 'bg-rose-50 text-rose-700 border-rose-200/80'
+                              : 'bg-amber-50 text-amber-700 border-amber-200/80'
                           }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                              doc.status === 'completed' ? 'bg-emerald-500' : doc.status === 'cancelled' ? 'bg-red-500' : 'bg-amber-500'
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              doc.status === 'completed' ? 'bg-emerald-500 animate-pulse' : doc.status === 'cancelled' ? 'bg-rose-500' : 'bg-amber-500'
                             }`} />
-                            {doc.status}
+                            <span className="capitalize">{doc.status}</span>
                           </span>
                           <button
                             onClick={(e) => toggleDropdown(e, doc.id)}
-                            className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors duration-200"
+                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors duration-150 cursor-pointer"
                           >
-                            <MoreVertical className="w-4 h-4 text-slate-500" />
+                            <MoreVertical className="w-4 h-4" />
                           </button>
                           
                           {activeDropdownId === doc.id && (
                             <div 
-                              className="absolute right-0 top-9 bg-white border border-slate-200 shadow-xl rounded-2xl p-1 z-30 min-w-[150px] animate-in fade-in zoom-in-95 duration-100 text-left font-semibold text-slate-700"
+                              className="absolute right-0 top-9 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <button
@@ -582,7 +1021,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   setActiveDropdownId(null);
                                   onPrintClick(doc.id);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
                               >
                                 <Printer className="w-3.5 h-3.5 text-slate-400" />
                                 Print Document
@@ -592,7 +1031,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   setActiveDropdownId(null);
                                   openHistoryModal(doc, 'returns');
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
                               >
                                 <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
                                 View History
@@ -603,7 +1042,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   openEditModal(doc, 'returns');
                                 }}
                                 disabled={isViewOnly}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                               >
                                 <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                                 Edit Document
@@ -615,13 +1054,38 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   openDeleteModal(doc, 'returns');
                                 }}
                                 disabled={isViewOnly}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-650 hover:bg-red-50 transition-colors duration-150 disabled:opacity-40"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-650 hover:bg-red-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                               >
                                 <Trash2 className="w-3.5 h-3.5 text-red-400" />
                                 Delete Document
                               </button>
                             </div>
                           )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-100">
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">DATE</span>
+                          <span className="font-medium text-slate-700">
+                            {new Date(doc.returned_date).toLocaleDateString(undefined, {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">SUPPLIER</span>
+                          <span className="font-semibold text-slate-800 truncate block">
+                            {doc.supplier?.company_name || 'Linde Malaysia'}
+                          </span>
+                        </div>
+                        <div className="col-span-2">
+                          <span className="text-[10px] text-slate-400 font-bold block">CYLINDERS RETURNED</span>
+                          <span className="inline-flex items-center gap-1 font-mono font-bold text-slate-900 text-xs mt-0.5">
+                            {itemsCount} <span className="font-sans font-normal text-slate-500">cylinders</span>
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -633,74 +1097,119 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
             {/* Desktop View: Standard Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-200/50 bg-slate-50/20 text-slate-500 font-bold text-xs uppercase tracking-wider">
-                    <th className="py-4 px-6">Return Document #</th>
-                    <th className="py-4 px-6">Date</th>
-                    <th className="py-4 px-6">Supplier</th>
-                    <th className="py-4 px-6 text-center">Cylinders Returned</th>
-                    <th className="py-4 px-6 text-center">Status</th>
-                    <th className="py-4 px-6 text-right">Actions</th>
+                <thead className="bg-slate-50/75 border-b border-slate-200/80">
+                  <tr className="text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
+                    <th className="py-3.5 px-6">Return Document #</th>
+                    <th className="py-3.5 px-6">Date</th>
+                    <th className="py-3.5 px-6">Supplier</th>
+                    <th className="py-3.5 px-6 text-center">Cylinders Returned</th>
+                    <th className="py-3.5 px-6 text-center">Status</th>
+                    <th className="py-3.5 px-6 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200/40 text-slate-700 font-medium">
-                  {documents.length === 0 ? (
+                <tbody className="divide-y divide-slate-100 text-slate-700 font-medium text-xs">
+                  {filteredDocuments.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-12 text-center text-slate-400 font-bold">
-                        No return documents found. Create one to get started.
+                      <td colSpan={6} className="py-16 text-center">
+                        <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                            <Truck className="w-6 h-6" />
+                          </div>
+                          <p className="text-slate-800 font-bold text-sm">
+                            {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
+                              ? 'No matching return documents'
+                              : 'No return documents found'}
+                          </p>
+                          <p className="text-slate-400 text-xs mt-1">
+                            {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
+                              ? 'Try adjusting your search query or active filters.'
+                              : 'Create a new return document to dispatch cylinders to the supplier.'}
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   ) : (
-                    documents.map((doc) => {
+                    filteredDocuments.map((doc) => {
                       const itemsCount = doc.items?.length || 0;
+                      const isCopied = copiedId === doc.id;
                       return (
                         <tr
                           key={doc.id}
-                          className="hover:bg-white/25 transition-colors duration-200"
+                          className="hover:bg-slate-50/70 transition-colors duration-150 group"
                         >
-                          <td className="py-4 px-6 font-bold text-slate-800 flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-rose-500" />
-                            {doc.document_number}
+                          <td className="py-3.5 px-6">
+                            <div className="flex items-center gap-2">
+                              <div className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 shrink-0">
+                                <FileText className="w-3.5 h-3.5" />
+                              </div>
+                              <span className="font-mono font-bold text-slate-900 text-xs tracking-tight">
+                                {doc.document_number}
+                              </span>
+                              <button
+                                onClick={() => handleCopy(doc.document_number, doc.id)}
+                                className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                                title="Copy Document #"
+                              >
+                                {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                              </button>
+                            </div>
                           </td>
-                          <td className="py-4 px-6 text-slate-600">
-                            {new Date(doc.returned_date).toLocaleDateString(undefined, {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })}
+                          <td className="py-3.5 px-6 text-slate-600">
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span>
+                                {new Date(doc.returned_date).toLocaleDateString(undefined, {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                              </span>
+                            </div>
                           </td>
-                          <td className="py-4 px-6">
-                            {doc.supplier?.company_name || 'Linde Malaysia'}
+                          <td className="py-3.5 px-6">
+                            <div className="flex items-center gap-1.5 font-medium text-slate-800">
+                              <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className="truncate max-w-[220px]">
+                                {doc.supplier?.company_name || 'Linde Malaysia'}
+                              </span>
+                            </div>
                           </td>
-                          <td className="py-4 px-6 text-center font-bold text-slate-800">
-                            {itemsCount}
-                          </td>
-                          <td className="py-4 px-6 text-center">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold border inline-flex items-center ${
-                              doc.status === 'completed' 
-                                ? 'bg-emerald-100/60 text-emerald-800 border-emerald-200/50' 
-                                : doc.status === 'cancelled'
-                                ? 'bg-red-100/60 text-red-800 border-red-200/50'
-                                : 'bg-amber-100/60 text-amber-800 border-amber-200/50'
-                            }`}>
-                              <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                                doc.status === 'completed' ? 'bg-emerald-500' : doc.status === 'cancelled' ? 'bg-red-500' : 'bg-amber-500'
-                              }`} />
-                              {doc.status}
+                          <td className="py-3.5 px-6 text-center">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-mono font-bold text-xs">
+                              {itemsCount}
+                              <span className="text-[10px] text-slate-400 font-sans font-normal">cyl</span>
                             </span>
                           </td>
-                          <td className="py-4 px-6 text-right relative">
+                          <td className="py-3.5 px-6 text-center">
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
+                              doc.status === 'completed' 
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10' 
+                                : doc.status === 'cancelled'
+                                ? 'bg-rose-50 text-rose-700 border-rose-200/80'
+                                : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                            }`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${
+                                doc.status === 'completed' 
+                                  ? 'bg-emerald-500 animate-pulse' 
+                                  : doc.status === 'cancelled' 
+                                  ? 'bg-rose-500' 
+                                  : 'bg-amber-500'
+                              }`} />
+                              <span className="capitalize">{doc.status}</span>
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-6 text-right relative">
                             <div className="flex items-center justify-end">
                               <button
                                 onClick={(e) => toggleDropdown(e, doc.id)}
-                                className="p-2 hover:bg-slate-100 rounded-xl transition-colors duration-200"
+                                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800 transition-colors duration-150 cursor-pointer"
                               >
-                                <MoreVertical className="w-4 h-4 text-slate-500" />
+                                <MoreVertical className="w-4 h-4" />
                               </button>
                               
                               {activeDropdownId === doc.id && (
                                 <div 
-                                  className="absolute right-6 top-12 bg-white/95 border border-slate-200/60 backdrop-blur-md shadow-xl rounded-2xl p-1 z-30 min-w-[150px] animate-in fade-in zoom-in-95 duration-100 text-left font-semibold text-slate-700"
+                                  className="absolute right-6 top-10 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   <button
@@ -708,9 +1217,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       setActiveDropdownId(null);
                                       onPrintClick(doc.id);
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
                                   >
-                                    <Printer className="w-3.5 h-3.5 text-slate-405" />
+                                    <Printer className="w-3.5 h-3.5 text-slate-400" />
                                     Print Document
                                   </button>
                                   <button
@@ -718,9 +1227,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       setActiveDropdownId(null);
                                       openHistoryModal(doc, 'returns');
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
                                   >
-                                    <HistoryIcon className="w-3.5 h-3.5 text-slate-405" />
+                                    <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
                                     View History
                                   </button>
                                   <button
@@ -729,9 +1238,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       openEditModal(doc, 'returns');
                                     }}
                                     disabled={isViewOnly}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                                   >
-                                    <Edit2 className="w-3.5 h-3.5 text-slate-405" />
+                                    <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                                     Edit Document
                                   </button>
                                   <div className="my-1 border-t border-slate-100" />
@@ -741,9 +1250,326 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       openDeleteModal(doc, 'returns');
                                     }}
                                     disabled={isViewOnly}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-650 hover:bg-red-50 transition-colors duration-150 disabled:opacity-40"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-650 hover:bg-red-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                                   >
-                                    <Trash2 className="w-3.5 h-3.5 text-red-405" />
+                                    <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                                    Delete Document
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        ) : subTab === 'requests' ? (
+          <>
+            {/* Mobile View: Cards Layout */}
+            <div className="block md:hidden divide-y divide-slate-100 text-slate-700 font-medium">
+              {filteredRequestDocuments.length === 0 ? (
+                <div className="py-12 px-4 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-3">
+                    <FileCheck className="w-6 h-6" />
+                  </div>
+                  <p className="text-slate-800 font-bold text-sm">
+                    {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
+                      ? 'No matching request documents'
+                      : 'No request documents found'}
+                  </p>
+                  <p className="text-slate-400 text-xs mt-1">
+                    {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
+                      ? 'Try clearing your search query or filters.'
+                      : 'Create a request document to get started.'}
+                  </p>
+                </div>
+              ) : (
+                filteredRequestDocuments.map((doc) => {
+                  const totalQty = doc.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+                  const isCopied = copiedId === doc.id;
+                  return (
+                    <div key={doc.id} className="p-4 space-y-3 hover:bg-slate-50/60 transition-colors">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="space-y-1">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Request Document #</span>
+                          <div className="font-mono font-bold text-slate-900 flex items-center gap-1.5 text-xs">
+                            <FileText className="w-4 h-4 text-blue-500 shrink-0" />
+                            <span>{doc.document_number}</span>
+                            <button
+                              onClick={() => handleCopy(doc.document_number, doc.id)}
+                              className="p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                              title="Copy Document #"
+                            >
+                              {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 relative">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
+                            doc.status === 'completed' 
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10' 
+                              : doc.status === 'cancelled'
+                              ? 'bg-rose-50 text-rose-700 border-rose-200/80'
+                              : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              doc.status === 'completed' ? 'bg-emerald-500 animate-pulse' : doc.status === 'cancelled' ? 'bg-rose-500' : 'bg-amber-500'
+                            }`} />
+                            <span className="capitalize">{doc.status}</span>
+                          </span>
+                          <button
+                            onClick={(e) => toggleDropdown(e, doc.id)}
+                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors duration-150 cursor-pointer"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </button>
+                          
+                          {activeDropdownId === doc.id && (
+                            <div 
+                              className="absolute right-0 top-9 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <button
+                                onClick={() => {
+                                  setActiveDropdownId(null);
+                                  onPrintRequestClick(doc.id);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                              >
+                                <Printer className="w-3.5 h-3.5 text-slate-400" />
+                                Print Document
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setActiveDropdownId(null);
+                                  openHistoryModal(doc, 'requests');
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                              >
+                                <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
+                                View History
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setActiveDropdownId(null);
+                                  openEditModal(doc, 'requests');
+                                }}
+                                disabled={isViewOnly}
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                              >
+                                <Edit2 className="w-3.5 h-3.5 text-slate-400" />
+                                Edit Document
+                              </button>
+                              <div className="my-1 border-t border-slate-100" />
+                              <button
+                                onClick={() => {
+                                  setActiveDropdownId(null);
+                                  openDeleteModal(doc, 'requests');
+                                }}
+                                disabled={isViewOnly}
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-650 hover:bg-red-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                                Delete Document
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-100">
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">DATE</span>
+                          <span className="font-medium text-slate-700">
+                            {new Date(doc.requested_date).toLocaleDateString(undefined, {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">SUPPLIER</span>
+                          <span className="font-semibold text-slate-800 truncate block">
+                            {doc.supplier?.company_name || 'Linde Malaysia'}
+                          </span>
+                        </div>
+                        <div className="col-span-2">
+                          <span className="text-[10px] text-slate-400 font-bold block">CYLINDERS REQUESTED</span>
+                          <span className="inline-flex items-center gap-1 font-mono font-bold text-slate-900 text-xs mt-0.5">
+                            {totalQty} <span className="font-sans font-normal text-slate-500">cylinders</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Desktop View: Standard Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-slate-50/75 border-b border-slate-200/80">
+                  <tr className="text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
+                    <th className="py-3.5 px-6">Request Document #</th>
+                    <th className="py-3.5 px-6">Date</th>
+                    <th className="py-3.5 px-6">Supplier</th>
+                    <th className="py-3.5 px-6 text-center">Cylinders Requested</th>
+                    <th className="py-3.5 px-6 text-center">Status</th>
+                    <th className="py-3.5 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-700 font-medium text-xs">
+                  {filteredRequestDocuments.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-16 text-center">
+                        <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                            <FileCheck className="w-6 h-6" />
+                          </div>
+                          <p className="text-slate-800 font-bold text-sm">
+                            {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
+                              ? 'No matching request documents'
+                              : 'No request documents found'}
+                          </p>
+                          <p className="text-slate-400 text-xs mt-1">
+                            {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
+                              ? 'Try adjusting your search query or active filters.'
+                              : 'Create a new request document to indent cylinders from supplier.'}
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredRequestDocuments.map((doc) => {
+                      const totalQty = doc.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+                      const isCopied = copiedId === doc.id;
+                      return (
+                        <tr
+                          key={doc.id}
+                          className="hover:bg-slate-50/70 transition-colors duration-150 group"
+                        >
+                          <td className="py-3.5 px-6">
+                            <div className="flex items-center gap-2">
+                              <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                                <FileText className="w-3.5 h-3.5" />
+                              </div>
+                              <span className="font-mono font-bold text-slate-900 text-xs tracking-tight">
+                                {doc.document_number}
+                              </span>
+                              <button
+                                onClick={() => handleCopy(doc.document_number, doc.id)}
+                                className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                                title="Copy Document #"
+                              >
+                                {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                              </button>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-6 text-slate-600">
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span>
+                                {new Date(doc.requested_date).toLocaleDateString(undefined, {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-6">
+                            <div className="flex items-center gap-1.5 font-medium text-slate-800">
+                              <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className="truncate max-w-[220px]">
+                                {doc.supplier?.company_name || 'Linde Malaysia'}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-6 text-center">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-mono font-bold text-xs">
+                              {totalQty}
+                              <span className="text-[10px] text-slate-400 font-sans font-normal">cyl</span>
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-6 text-center">
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
+                              doc.status === 'completed' 
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10' 
+                                : doc.status === 'cancelled'
+                                ? 'bg-rose-50 text-rose-700 border-rose-200/80'
+                                : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                            }`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${
+                                doc.status === 'completed' 
+                                  ? 'bg-emerald-500 animate-pulse' 
+                                  : doc.status === 'cancelled' 
+                                  ? 'bg-rose-500' 
+                                  : 'bg-amber-500'
+                              }`} />
+                              <span className="capitalize">{doc.status}</span>
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-6 text-right relative">
+                            <div className="flex items-center justify-end">
+                              <button
+                                onClick={(e) => toggleDropdown(e, doc.id)}
+                                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800 transition-colors duration-150 cursor-pointer"
+                              >
+                                <MoreVertical className="w-4 h-4" />
+                              </button>
+                              
+                              {activeDropdownId === doc.id && (
+                                <div 
+                                  className="absolute right-6 top-10 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <button
+                                    onClick={() => {
+                                      setActiveDropdownId(null);
+                                      onPrintRequestClick(doc.id);
+                                    }}
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                  >
+                                    <Printer className="w-3.5 h-3.5 text-slate-400" />
+                                    Print Document
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setActiveDropdownId(null);
+                                      openHistoryModal(doc, 'requests');
+                                    }}
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                  >
+                                    <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
+                                    View History
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setActiveDropdownId(null);
+                                      openEditModal(doc, 'requests');
+                                    }}
+                                    disabled={isViewOnly}
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5 text-slate-400" />
+                                    Edit Document
+                                  </button>
+                                  <div className="my-1 border-t border-slate-100" />
+                                  <button
+                                    onClick={() => {
+                                      setActiveDropdownId(null);
+                                      openDeleteModal(doc, 'requests');
+                                    }}
+                                    disabled={isViewOnly}
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-650 hover:bg-red-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5 text-red-400" />
                                     Delete Document
                                   </button>
                                 </div>
@@ -760,56 +1586,85 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           </>
         ) : (
           <>
-            {/* Mobile View: Cards Layout */}
-            <div className="block md:hidden divide-y divide-slate-200/40 text-slate-700 font-medium">
-              {requestDocuments.length === 0 ? (
-                <div className="py-12 text-center text-slate-400 font-bold">
-                  No request documents found. Create one to get started.
+            {/* Supplier Received: Mobile View */}
+            <div className="block md:hidden divide-y divide-slate-100 text-slate-700 font-medium">
+              {filteredReceiveDocuments.length === 0 ? (
+                <div className="py-12 px-4 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-3">
+                    <PackageCheck className="w-6 h-6" />
+                  </div>
+                  <p className="text-slate-800 font-bold text-sm">
+                    {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
+                      ? 'No matching receive documents'
+                      : (language === 'ms' ? 'Tiada rekod penerimaan silinder dijumpai.' : 'No receive documents found.')}
+                  </p>
+                  <p className="text-slate-400 text-xs mt-1">
+                    {language === 'ms' ? 'Klik "Terima Dari Pembekal" untuk mula merekod.' : 'Click "Receive From Supplier" to begin receiving stock.'}
+                  </p>
                 </div>
               ) : (
-                requestDocuments.map((doc) => {
-                  const totalQty = doc.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+                filteredReceiveDocuments.map((doc) => {
+                  const itemsCount = doc.items?.length || 0;
+                  const isCopied = copiedId === doc.id;
                   return (
-                    <div key={doc.id} className="p-5 space-y-4">
-                      <div className="flex items-start justify-between">
+                    <div key={doc.id} className="p-4 space-y-3 hover:bg-slate-50/60 transition-colors">
+                      <div className="flex items-start justify-between gap-2">
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Request Document #</span>
-                          <div className="font-bold text-slate-800 flex items-center gap-1.5 text-sm">
-                            <FileText className="w-4 h-4 text-blue-500" />
-                            {doc.document_number}
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Receive Document #</span>
+                          <div className="font-mono font-bold text-slate-900 flex items-center gap-1.5 text-xs">
+                            <PackageCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                            <span>{doc.document_number}</span>
+                            <button
+                              onClick={() => handleCopy(doc.document_number, doc.id)}
+                              className="p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                              title="Copy Document #"
+                            >
+                              {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            </button>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 relative">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-bold border inline-flex items-center ${
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
                             doc.status === 'completed' 
-                              ? 'bg-emerald-100/60 text-emerald-800 border-emerald-200/50' 
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10' 
                               : doc.status === 'cancelled'
-                              ? 'bg-red-100/60 text-red-800 border-red-200/50'
-                              : 'bg-amber-100/60 text-amber-800 border-amber-200/50'
+                              ? 'bg-rose-50 text-rose-700 border-rose-200/80'
+                              : 'bg-amber-50 text-amber-700 border-amber-200/80'
                           }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                              doc.status === 'completed' ? 'bg-emerald-500' : doc.status === 'cancelled' ? 'bg-red-500' : 'bg-amber-500'
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              doc.status === 'completed' ? 'bg-emerald-500 animate-pulse' : doc.status === 'cancelled' ? 'bg-rose-500' : 'bg-amber-500'
                             }`} />
-                            {doc.status}
+                            <span className="capitalize">{doc.status}</span>
                           </span>
                           <button
                             onClick={(e) => toggleDropdown(e, doc.id)}
-                            className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors duration-200"
+                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors duration-150 cursor-pointer"
                           >
-                            <MoreVertical className="w-4 h-4 text-slate-500" />
+                            <MoreVertical className="w-4 h-4" />
                           </button>
                           
                           {activeDropdownId === doc.id && (
                             <div 
-                              className="absolute right-0 top-9 bg-white border border-slate-200 shadow-xl rounded-2xl p-1 z-30 min-w-[150px] animate-in fade-in zoom-in-95 duration-100 text-left font-semibold text-slate-700"
+                              className="absolute right-0 top-9 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <button
                                 onClick={() => {
                                   setActiveDropdownId(null);
-                                  onPrintRequestClick(doc.id);
+                                  setViewCylindersDoc(doc);
+                                  setIsViewCylindersOpen(true);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                              >
+                                <Eye className="w-3.5 h-3.5 text-slate-400" />
+                                View Cylinders
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setActiveDropdownId(null);
+                                  onPrintReceiveClick(doc.id);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
                               >
                                 <Printer className="w-3.5 h-3.5 text-slate-400" />
                                 Print Document
@@ -817,9 +1672,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                               <button
                                 onClick={() => {
                                   setActiveDropdownId(null);
-                                  openHistoryModal(doc, 'requests');
+                                  openHistoryModal(doc, 'received');
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
                               >
                                 <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
                                 View History
@@ -827,10 +1682,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                               <button
                                 onClick={() => {
                                   setActiveDropdownId(null);
-                                  openEditModal(doc, 'requests');
+                                  openEditModal(doc, 'received');
                                 }}
                                 disabled={isViewOnly}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                               >
                                 <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                                 Edit Document
@@ -839,10 +1694,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                               <button
                                 onClick={() => {
                                   setActiveDropdownId(null);
-                                  openDeleteModal(doc, 'requests');
+                                  openDeleteModal(doc, 'received');
                                 }}
                                 disabled={isViewOnly}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-650 hover:bg-red-50 transition-colors duration-150 disabled:opacity-40"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-650 hover:bg-red-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                               >
                                 <Trash2 className="w-3.5 h-3.5 text-red-400" />
                                 Delete Document
@@ -851,126 +1706,194 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           )}
                         </div>
                       </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-100">
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">DATE</span>
+                          <span className="font-medium text-slate-700">
+                            {new Date(doc.received_date || doc.created_at).toLocaleDateString(undefined, {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">DO # / SURAT HANTARAN</span>
+                          <span className="font-mono font-medium text-slate-800">{doc.delivery_order_no || '-'}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">SUPPLIER</span>
+                          <span className="font-semibold text-slate-800 truncate block">{doc.supplier?.company_name || 'Pembekal'}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">CYLINDERS RECEIVED</span>
+                          <span className="font-mono font-bold text-emerald-700">{itemsCount} units</span>
+                        </div>
+                      </div>
                     </div>
                   );
                 })
               )}
             </div>
 
-            {/* Desktop View: Standard Table */}
+            {/* Supplier Received: Desktop Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-200/50 bg-slate-50/20 text-slate-500 font-bold text-xs uppercase tracking-wider">
-                    <th className="py-4 px-6">Request Document #</th>
-                    <th className="py-4 px-6">Date</th>
-                    <th className="py-4 px-6">Supplier</th>
-                    <th className="py-4 px-6 text-center">Cylinders Requested</th>
-                    <th className="py-4 px-6 text-center">Status</th>
-                    <th className="py-4 px-6 text-right">Actions</th>
+                <thead className="bg-slate-50/75 border-b border-slate-200/80">
+                  <tr className="text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
+                    <th className="py-3.5 px-6">RECEIVE DOCUMENT #</th>
+                    <th className="py-3.5 px-6">DATE</th>
+                    <th className="py-3.5 px-6">SUPPLIER</th>
+                    <th className="py-3.5 px-6">DO # (SURAT HANTARAN)</th>
+                    <th className="py-3.5 px-6 text-center">CYLINDERS RECEIVED</th>
+                    <th className="py-3.5 px-6 text-center">STATUS</th>
+                    <th className="py-3.5 px-6 text-right">ACTIONS</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200/40 text-slate-700 font-medium">
-                  {requestDocuments.length === 0 ? (
+                <tbody className="divide-y divide-slate-100 text-slate-700 font-medium text-xs">
+                  {filteredReceiveDocuments.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-12 text-center text-slate-400 font-bold">
-                        No request documents found. Create one to get started.
+                      <td colSpan={7} className="py-16 text-center">
+                        <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                            <PackageCheck className="w-6 h-6" />
+                          </div>
+                          <p className="text-slate-800 font-bold text-sm">
+                            {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
+                              ? 'No matching receive documents'
+                              : (language === 'ms' ? 'Tiada dokumen penerimaan silinder dijumpai.' : 'No receive documents found.')}
+                          </p>
+                          <p className="text-slate-400 text-xs mt-1">
+                            {language === 'ms' ? 'Klik "Terima Dari Pembekal" untuk mula merekod.' : 'Click "Receive From Supplier" to begin receiving stock.'}
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   ) : (
-                    requestDocuments.map((doc) => {
-                      const totalQty = doc.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+                    filteredReceiveDocuments.map((doc) => {
+                      const itemsCount = doc.items?.length || 0;
+                      const isCopied = copiedId === doc.id;
                       return (
-                        <tr
-                          key={doc.id}
-                          className="hover:bg-white/25 transition-colors duration-200"
-                        >
-                          <td className="py-4 px-6 font-bold text-slate-800 flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-blue-500" />
-                            {doc.document_number}
+                        <tr key={doc.id} className="hover:bg-slate-50/70 transition-colors duration-150 group">
+                          <td className="py-3.5 px-6">
+                            <div className="flex items-center gap-2">
+                              <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
+                                <PackageCheck className="w-3.5 h-3.5 text-emerald-600" />
+                              </div>
+                              <span className="font-mono font-bold text-slate-900 text-xs tracking-tight">{doc.document_number}</span>
+                              <button
+                                onClick={() => handleCopy(doc.document_number, doc.id)}
+                                className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                                title="Copy Document #"
+                              >
+                                {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                              </button>
+                            </div>
                           </td>
-                          <td className="py-4 px-6 text-slate-600">
-                            {new Date(doc.requested_date).toLocaleDateString(undefined, {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })}
+                          <td className="py-3.5 px-6 text-slate-600">
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span>
+                                {new Date(doc.received_date || doc.created_at).toLocaleDateString(undefined, {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric'
+                                })}
+                              </span>
+                            </div>
                           </td>
-                          <td className="py-4 px-6">
-                            {doc.supplier?.company_name || 'Linde Malaysia'}
+                          <td className="py-3.5 px-6">
+                            <div className="flex items-center gap-1.5 font-medium text-slate-800">
+                              <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className="truncate max-w-[220px]">
+                                {doc.supplier?.company_name || 'Pembekal Oksigen'}
+                              </span>
+                            </div>
                           </td>
-                          <td className="py-4 px-6 text-center font-bold text-slate-800">
-                            {totalQty}
-                          </td>
-                          <td className="py-4 px-6 text-center">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold border inline-flex items-center ${
-                              doc.status === 'completed' 
-                                ? 'bg-emerald-100/60 text-emerald-800 border-emerald-200/50' 
-                                : doc.status === 'cancelled'
-                                ? 'bg-red-100/60 text-red-800 border-red-200/50'
-                                : 'bg-amber-100/60 text-amber-800 border-amber-200/50'
-                            }`}>
-                              <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                                doc.status === 'completed' ? 'bg-emerald-500' : doc.status === 'cancelled' ? 'bg-red-500' : 'bg-amber-500'
-                              }`} />
-                              {doc.status}
+                          <td className="py-3.5 px-6">
+                            <span className="font-mono font-bold text-slate-700 text-xs bg-slate-100 px-2 py-0.5 rounded">
+                              {doc.delivery_order_no || '-'}
                             </span>
                           </td>
-                          <td className="py-4 px-6 text-right relative">
+                          <td className="py-3.5 px-6 text-center">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 font-mono font-bold text-xs border border-emerald-100">
+                              {itemsCount}
+                              <span className="text-[10px] text-emerald-600 font-sans font-normal">units</span>
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-6 text-center">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                              <span className="capitalize">{doc.status}</span>
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-6 text-right relative">
                             <div className="flex items-center justify-end">
                               <button
                                 onClick={(e) => toggleDropdown(e, doc.id)}
-                                className="p-2 hover:bg-slate-100 rounded-xl transition-colors duration-200"
+                                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800 transition-colors duration-150 cursor-pointer"
                               >
-                                <MoreVertical className="w-4 h-4 text-slate-500" />
+                                <MoreVertical className="w-4 h-4" />
                               </button>
                               
                               {activeDropdownId === doc.id && (
                                 <div 
-                                  className="absolute right-6 top-12 bg-white/95 border border-slate-200/60 backdrop-blur-md shadow-xl rounded-2xl p-1 z-30 min-w-[150px] animate-in fade-in zoom-in-95 duration-100 text-left font-semibold text-slate-700"
+                                  className="absolute right-6 top-10 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   <button
                                     onClick={() => {
                                       setActiveDropdownId(null);
-                                      onPrintRequestClick(doc.id);
+                                      setViewCylindersDoc(doc);
+                                      setIsViewCylindersOpen(true);
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
                                   >
-                                    <Printer className="w-3.5 h-3.5 text-slate-405" />
+                                    <Eye className="w-3.5 h-3.5 text-slate-400" />
+                                    View Cylinders
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setActiveDropdownId(null);
+                                      onPrintReceiveClick(doc.id);
+                                    }}
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                  >
+                                    <Printer className="w-3.5 h-3.5 text-slate-400" />
                                     Print Document
                                   </button>
                                   <button
                                     onClick={() => {
                                       setActiveDropdownId(null);
-                                      openHistoryModal(doc, 'requests');
+                                      openHistoryModal(doc, 'received');
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
                                   >
-                                    <HistoryIcon className="w-3.5 h-3.5 text-slate-405" />
+                                    <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
                                     View History
                                   </button>
                                   <button
                                     onClick={() => {
                                       setActiveDropdownId(null);
-                                      openEditModal(doc, 'requests');
+                                      openEditModal(doc, 'received');
                                     }}
                                     disabled={isViewOnly}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                                   >
-                                    <Edit2 className="w-3.5 h-3.5 text-slate-405" />
+                                    <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                                     Edit Document
                                   </button>
                                   <div className="my-1 border-t border-slate-100" />
                                   <button
                                     onClick={() => {
                                       setActiveDropdownId(null);
-                                      openDeleteModal(doc, 'requests');
+                                      openDeleteModal(doc, 'received');
                                     }}
                                     disabled={isViewOnly}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-650 hover:bg-red-50 transition-colors duration-150 disabled:opacity-40"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-red-650 hover:bg-red-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                                   >
-                                    <Trash2 className="w-3.5 h-3.5 text-red-405" />
+                                    <Trash2 className="w-3.5 h-3.5 text-red-400" />
                                     Delete Document
                                   </button>
                                 </div>
@@ -987,6 +1910,93 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           </>
         )}
       </div>
+        </>
+      )}
+
+      {/* View Cylinders Modal for Received Document */}
+      {isViewCylindersOpen && viewCylindersDoc && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-xl w-full flex flex-col max-h-[85vh] overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/60">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                  <PackageCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold text-slate-900">
+                    Senarai Silinder Diterima
+                  </h3>
+                  <p className="text-xs text-slate-500 font-mono font-bold">
+                    {viewCylindersDoc.document_number} {viewCylindersDoc.delivery_order_no ? `• DO: ${viewCylindersDoc.delivery_order_no}` : ''}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setIsViewCylindersOpen(false);
+                  setViewCylindersDoc(null);
+                }}
+                className="p-2 text-slate-400 hover:text-slate-600 rounded-xl"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-5 flex-1 overflow-y-auto space-y-3">
+              <div className="flex items-center justify-between text-xs text-slate-500 font-semibold px-1">
+                <span>Pembekal: <strong className="text-slate-800">{viewCylindersDoc.supplier?.company_name || 'Pembekal'}</strong></span>
+                <span>Jumlah: <strong className="text-emerald-700">{viewCylindersDoc.items?.length || 0} unit</strong></span>
+              </div>
+
+              <div className="border border-slate-200 rounded-2xl overflow-hidden divide-y divide-slate-100 max-h-[300px] overflow-y-auto">
+                {(viewCylindersDoc.items || []).map((it: any, idx: number) => {
+                  const cyl = it.cylinder;
+                  return (
+                    <div key={it.id || idx} className="p-3 flex items-center justify-between hover:bg-slate-50/60">
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-[10px] font-mono font-bold text-slate-400 w-5">#{idx + 1}</span>
+                        <span className="font-mono text-xs font-extrabold text-slate-900">
+                          {cyl?.serial_number || 'N/A'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-slate-500 font-medium">
+                          {cyl?.combo?.display_name || cyl?.type_info?.type_name || 'Standard Cylinder'}
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          Tersedia di Stor
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+              <button
+                onClick={() => {
+                  setIsViewCylindersOpen(false);
+                  setViewCylindersDoc(null);
+                }}
+                className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl"
+              >
+                Tutup
+              </button>
+              <button
+                onClick={() => {
+                  setIsViewCylindersOpen(false);
+                  onPrintReceiveClick(viewCylindersDoc.id);
+                }}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Cetak Dokumen</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edit Document Side Drawer */}
       <div 

@@ -30,6 +30,11 @@ import {
   RefreshCw,
   BarChart2,
   Sparkles,
+  LayoutGrid,
+  CheckCircle2,
+  AlertCircle,
+  Table as TableIcon,
+  Layers,
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -48,6 +53,8 @@ import {
   WARRANT_VOTE_ACTIVITIES,
   WARRANT_CATEGORIES,
   WARRANT_DEPARTMENTS,
+  getPrimaryDepartment,
+  normalize,
 } from '@/services/pharmacy/warrantService'
 import type { Warrant, WarrantFormData, WarrantSummary, WarrantCategory, WarrantDepartment } from '@/types/pharmacy'
 import { cn, formatCurrency } from '@/lib/utils'
@@ -65,37 +72,37 @@ const warrantSchema = z.object({
 
 // Category colors for visual distinction
 const CATEGORY_COLORS: Record<string, string> = {
-  drug: 'bg-blue-50 text-blue-750 border-blue-150',
-  non_drug: 'bg-purple-50 text-purple-750 border-purple-150',
-  non_standard: 'bg-amber-50 text-amber-750 border-amber-150',
-  reagent: 'bg-teal-50 text-teal-750 border-teal-150',
-  vaccine: 'bg-green-50 text-green-750 border-green-150',
-  insulin: 'bg-rose-50 text-rose-755 border-rose-150',
-  hepc: 'bg-indigo-50 text-indigo-750 border-indigo-150',
-  medical_oxygen: 'bg-cyan-50 text-cyan-750 border-cyan-150',
-  sglt2: 'bg-emerald-50 text-emerald-750 border-emerald-150',
-  pathologist: 'bg-orange-50 text-orange-750 border-orange-150',
-  medical_cylinder: 'bg-slate-50 text-slate-750 border-slate-150',
-  x_ray: 'bg-zinc-50 text-zinc-755 border-zinc-150',
-  duit_khas: 'bg-amber-100/80 text-amber-900 border-amber-300 font-black',
+  drug: 'bg-blue-50 text-blue-700 border-blue-200',
+  non_drug: 'bg-purple-50 text-purple-700 border-purple-200',
+  non_standard: 'bg-amber-50 text-amber-800 border-amber-200',
+  reagent: 'bg-teal-50 text-teal-700 border-teal-200',
+  vaccine: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  insulin: 'bg-rose-50 text-rose-700 border-rose-200',
+  hepc: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+  medical_oxygen: 'bg-cyan-50 text-cyan-800 border-cyan-200',
+  sglt2: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+  pathologist: 'bg-orange-50 text-orange-800 border-orange-200',
+  medical_cylinder: 'bg-slate-100 text-slate-700 border-slate-300',
+  x_ray: 'bg-zinc-100 text-zinc-700 border-zinc-300',
+  duit_khas: 'bg-amber-100/90 text-amber-900 border-amber-300 font-black',
 }
 
 // Department colors
 const DEPARTMENT_COLORS: Record<WarrantDepartment, string> = {
-  pharmacy: 'bg-emerald-50 text-emerald-750 border-emerald-150',
-  nephrology: 'bg-blue-50 text-blue-750 border-blue-150',
-  radiology_radiography: 'bg-violet-50 text-violet-750 border-violet-150',
-  emergency_trauma: 'bg-red-50 text-red-750 border-red-150',
-  cssu_cssd: 'bg-orange-50 text-orange-750 border-orange-150',
-  operation_theater: 'bg-pink-50 text-pink-750 border-pink-150',
-  laboratory_pathology: 'bg-teal-50 text-teal-750 border-teal-150',
-  general_ward: 'bg-sky-50 text-sky-750 border-sky-150',
-  wound_care: 'bg-amber-50 text-amber-750 border-amber-150',
-  rehabilitation: 'bg-lime-50 text-lime-750 border-lime-150',
-  anaesthesiology: 'bg-fuchsia-50 text-fuchsia-750 border-fuchsia-150',
-  paediatric_ward: 'bg-indigo-50 text-indigo-750 border-indigo-150',
-  maternity_ward: 'bg-rose-50 text-rose-750 border-rose-150',
-  klinik_pakar: 'bg-emerald-50 text-emerald-750 border-emerald-150',
+  pharmacy: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  nephrology: 'bg-blue-50 text-blue-700 border-blue-200',
+  radiology_radiography: 'bg-violet-50 text-violet-700 border-violet-200',
+  emergency_trauma: 'bg-red-50 text-red-700 border-red-200',
+  cssu_cssd: 'bg-orange-50 text-orange-800 border-orange-200',
+  operation_theater: 'bg-pink-50 text-pink-700 border-pink-200',
+  laboratory_pathology: 'bg-teal-50 text-teal-700 border-teal-200',
+  general_ward: 'bg-sky-50 text-sky-800 border-sky-200',
+  wound_care: 'bg-amber-50 text-amber-800 border-amber-200',
+  rehabilitation: 'bg-lime-50 text-lime-800 border-lime-300',
+  anaesthesiology: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200',
+  paediatric_ward: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+  maternity_ward: 'bg-rose-50 text-rose-700 border-rose-200',
+  klinik_pakar: 'bg-teal-50 text-teal-800 border-teal-200',
 }
 
 export const WarrantPage: React.FC = () => {
@@ -122,6 +129,12 @@ export const WarrantPage: React.FC = () => {
   const [selectedVoteCodeOption, setSelectedVoteCodeOption] = useState<string>('')
   const [customVoteCode, setCustomVoteCode] = useState<string>('')
   const [voteCodeCustomError, setVoteCodeCustomError] = useState<string>('')
+
+  // Modern Category Breakdown State
+  const [breakdownView, setBreakdownView] = useState<'table' | 'bento'>('table')
+  const [categorySearch, setCategorySearch] = useState('')
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({})
+  const [expandedDepartments, setExpandedDepartments] = useState<Record<string, boolean>>({})
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1)
@@ -271,8 +284,318 @@ export const WarrantPage: React.FC = () => {
     })
   }, [warrants, searchQuery])
 
+  // Category Breakdown Modern Helpers
+  const getHealthStatus = (usage: number) => {
+    if (usage >= 100) {
+      return {
+        label: 'DEFICIT',
+        badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+        barClass: 'bg-rose-600',
+        dotClass: 'bg-rose-500',
+      }
+    }
+    if (usage >= 90) {
+      return {
+        label: 'CRITICAL',
+        badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+        barClass: 'bg-rose-500',
+        dotClass: 'bg-rose-500',
+      }
+    }
+    if (usage >= 70) {
+      return {
+        label: 'WATCHING',
+        badgeClass: 'bg-amber-50 text-amber-700 border-amber-200',
+        barClass: 'bg-amber-500',
+        dotClass: 'bg-amber-500',
+      }
+    }
+    return {
+      label: 'HEALTHY',
+      badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      barClass: 'bg-emerald-500',
+      dotClass: 'bg-emerald-500',
+    }
+  }
+
+  const getCategoryCode = (category: string): string => {
+    const codeMap: Record<string, string> = {
+      drug: 'DRG',
+      non_drug: 'NDR',
+      non_standard: 'NST',
+      reagent: 'REA',
+      vaccine: 'VAC',
+      insulin: 'INS',
+      hepc: 'HPC',
+      medical_oxygen: 'OXY',
+      sglt2: 'SGL',
+      pathologist: 'PTH',
+      medical_cylinder: 'CYL',
+      x_ray: 'XRY',
+      duit_khas: 'KHS',
+    }
+    return codeMap[category] || category.substring(0, 3).toUpperCase()
+  }
+
+  const isCategoryExpanded = (catKey: string) => {
+    return expandedCategories[catKey] !== false
+  }
+
+  const toggleCategory = (catKey: string) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [catKey]: prev[catKey] === undefined ? false : !prev[catKey]
+    }))
+  }
+
+  const isDepartmentExpanded = (deptKey: string) => {
+    return expandedDepartments[deptKey] !== false
+  }
+
+  const toggleDepartment = (deptKey: string) => {
+    setExpandedDepartments(prev => ({
+      ...prev,
+      [deptKey]: prev[deptKey] === undefined ? false : !prev[deptKey]
+    }))
+  }
+
+  const handleExpandAll = (categories: any[]) => {
+    const newCats: Record<string, boolean> = {}
+    const newDepts: Record<string, boolean> = {}
+    categories.forEach(c => {
+      newCats[c.category] = true
+      c.departments?.forEach((d: any) => {
+        newDepts[`${c.category}:${d.department}`] = true
+      })
+    })
+    setExpandedCategories(newCats)
+    setExpandedDepartments(newDepts)
+  }
+
+  const handleCollapseAll = (categories: any[]) => {
+    const newCats: Record<string, boolean> = {}
+    const newDepts: Record<string, boolean> = {}
+    categories.forEach(c => {
+      newCats[c.category] = false
+      c.departments?.forEach((d: any) => {
+        newDepts[`${c.category}:${d.department}`] = false
+      })
+    })
+    setExpandedCategories(newCats)
+    setExpandedDepartments(newDepts)
+  }
+
+  // Helper to get real warrant document numbers
+  const getDocumentNumbers = (category?: string, department?: string, voteCode?: string): string[] => {
+    const matched = warrants.filter(w => {
+      if (category && w.category !== category) return false
+      if (department) {
+        const normWDept = normalize(w.department)
+        const primWDept = getPrimaryDepartment(normWDept)
+        const primTarget = getPrimaryDepartment(department)
+        if (normWDept !== department && primWDept !== primTarget) return false
+      }
+      if (voteCode && w.vote_code !== voteCode) return false
+      return true
+    })
+    return Array.from(new Set(matched.map(w => w.document_no).filter(Boolean)))
+  }
+
+  // Helper to render document numbers in badges
+  const renderDocNos = (docNos: string[], maxVisible = 2) => {
+    if (!docNos || docNos.length === 0) {
+      return <span className="text-slate-300 font-mono text-[10px]">—</span>
+    }
+
+    if (docNos.length === 1) {
+      return (
+        <span 
+          className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200/80 shadow-2xs inline-block tracking-tight"
+          title={`Document No: ${docNos[0]}`}
+        >
+          {docNos[0]}
+        </span>
+      )
+    }
+
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-1 max-w-[200px] mx-auto" title={`Document Nos: ${docNos.join(', ')}`}>
+        {docNos.slice(0, maxVisible).map(doc => (
+          <span key={doc} className="font-mono text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 tracking-tight">
+            {doc}
+          </span>
+        ))}
+        {docNos.length > maxVisible && (
+          <span 
+            className="font-mono text-[9px] font-bold text-slate-500 px-1 py-0.5 rounded bg-slate-50 border border-slate-200/80 cursor-help"
+            title={docNos.join(', ')}
+          >
+            +{docNos.length - maxVisible}
+          </span>
+        )}
+      </div>
+    )
+  }
+
+  const filteredCategories = useMemo(() => {
+    if (!summary?.by_category) return []
+    if (!categorySearch.trim()) return summary.by_category
+
+    const q = categorySearch.toLowerCase().trim()
+    return summary.by_category.filter(cat => {
+      const catLabel = getCategoryLabel(cat.category).toLowerCase()
+      if (catLabel.includes(q) || cat.category.toLowerCase().includes(q)) return true
+      
+      const catDocs = getDocumentNumbers(cat.category)
+      if (catDocs.some(d => d.toLowerCase().includes(q))) return true
+
+      const deptMatch = cat.departments?.some(dept => {
+        const deptLabel = getDepartmentLabel(dept.department).toLowerCase()
+        if (deptLabel.includes(q) || dept.department.toLowerCase().includes(q)) return true
+        
+        const deptDocs = getDocumentNumbers(cat.category, dept.department)
+        if (deptDocs.some(d => d.toLowerCase().includes(q))) return true
+
+        return dept.vote_codes?.some(vc => {
+          if (vc.vote_code.toLowerCase().includes(q)) return true
+          const vcDocs = getDocumentNumbers(cat.category, dept.department, vc.vote_code)
+          return vcDocs.some(d => d.toLowerCase().includes(q))
+        })
+      })
+      return deptMatch
+    })
+  }, [summary?.by_category, categorySearch, warrants])
+
   // Pagination Logic
   const totalPages = Math.ceil(filteredWarrants.length / pageSize)
+
+  const renderBentoGrid = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {filteredCategories.map((cat) => {
+        const catPct = summary.total_allocation > 0 ? (cat.allocation / summary.total_allocation) * 100 : 0
+        const catUsage = cat.allocation > 0 ? (cat.expenses / cat.allocation) * 100 : 0
+        const catHealth = getHealthStatus(catUsage)
+        const catCode = getCategoryCode(cat.category)
+
+        return (
+          <div
+            key={cat.category}
+            className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 p-5 flex flex-col justify-between"
+          >
+            <div>
+              {/* Card Top: Code, Category Name, Share %, and Health Badge */}
+              <div className="flex items-start justify-between gap-2 mb-3.5">
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-mono text-[9px] font-black px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                      {catCode}
+                    </span>
+                    <h4 className="text-sm font-black text-slate-900 tracking-tight">
+                      {getCategoryLabel(cat.category)}
+                    </h4>
+                  </div>
+                  <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">
+                    {cat.count} Warrants • {catPct.toFixed(1)}% Share
+                  </p>
+                </div>
+
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${catHealth.badgeClass}`}>
+                  {catHealth.label}
+                </span>
+              </div>
+
+              {/* Financial Metric Block */}
+              <div className="p-3 bg-slate-50/70 border border-slate-100 rounded-xl mb-4">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Allocation</span>
+                  <span className="text-base font-black font-mono tabular-nums text-slate-900">
+                    {formatCurrency(cat.allocation).replace('MYR', 'RM')}
+                  </span>
+                </div>
+
+                {/* Progress bar */}
+                <div className="mt-2.5 mb-2 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${catHealth.barClass}`}
+                    style={{ width: `${Math.min(catUsage, 100)}%` }}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between text-[10px] font-bold">
+                  <span className="text-slate-500">
+                    Spent: <strong className="font-mono tabular-nums text-slate-700">{formatCurrency(cat.expenses).replace('MYR', 'RM')}</strong>
+                  </span>
+                  <span className="text-slate-500">
+                    Bal: <strong className={`font-mono tabular-nums ${cat.balance < 0 ? 'text-rose-600' : 'text-slate-900'}`}>
+                      {formatCurrency(cat.balance).replace('MYR', 'RM')}
+                    </strong>
+                  </span>
+                </div>
+              </div>
+
+              {/* Department / Vote Code List */}
+              <div className="space-y-3">
+                {cat.departments?.map((dept) => (
+                  <div key={dept.department} className="pt-2.5 first:pt-0 border-t border-slate-100 first:border-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-700">
+                          {getDepartmentLabel(dept.department)}
+                        </span>
+                      </div>
+                      <span className="text-[9px] font-mono font-bold text-slate-400">
+                        BAL: {formatCurrency(dept.balance).replace('MYR', 'RM')}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {dept.vote_codes?.map((vc) => {
+                        const vcUsage = vc.allocation > 0 ? (vc.expenses / vc.allocation) * 100 : 0
+                        const vcHealth = getHealthStatus(vcUsage)
+
+                        return (
+                          <div
+                            key={vc.vote_code}
+                            className="flex items-center justify-between p-2 rounded-lg bg-slate-50/50 hover:bg-slate-100/60 border border-slate-100 transition-colors text-[10px]"
+                          >
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-mono font-bold px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-700">
+                                {vc.vote_code}
+                              </span>
+                              <span className="font-mono font-bold tabular-nums text-slate-800">
+                                {formatCurrency(vc.allocation).replace('MYR', 'RM')}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-slate-500 tabular-nums">
+                                Bal: {formatCurrency(vc.balance).replace('MYR', 'RM')}
+                              </span>
+                              <span className={`font-mono font-extrabold tabular-nums px-1.5 py-0.2 rounded text-[9px] ${vcHealth.badgeClass}`}>
+                                {vcUsage.toFixed(0)}%
+                              </span>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Card Footer */}
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400">
+              <span>Kadar Gunaan: {catUsage.toFixed(1)}%</span>
+              <span className="text-slate-500">
+                {cat.departments?.length || 0} {cat.departments?.length === 1 ? 'Department' : 'Departments'}
+              </span>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
   const paginatedWarrants = useMemo(() => {
     const start = (currentPage - 1) * pageSize
     return filteredWarrants.slice(start, start + pageSize)
@@ -379,13 +702,13 @@ export const WarrantPage: React.FC = () => {
     {
       key: 'vote_code',
       header: 'Vote',
-      render: (w: Warrant) => <Badge variant="outline" className="font-mono text-[10px] px-2.5 py-0.5 rounded-lg bg-slate-50 border-slate-200 text-slate-700">{w.vote_code}</Badge>,
+      render: (w: Warrant) => <Badge variant="outline" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100/90 border-slate-200 text-slate-800">{w.vote_code}</Badge>,
     },
     {
       key: 'category',
       header: 'Category',
       render: (w: Warrant) => (
-        <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category])}>
+        <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category] || 'bg-slate-100 text-slate-700 border-slate-200')}>
           {getCategoryLabel(w.category)}
         </span>
       ),
@@ -394,7 +717,7 @@ export const WarrantPage: React.FC = () => {
       key: 'department',
       header: 'Department',
       render: (w: Warrant) => (
-        <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department])}>
+        <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department] || 'bg-slate-100 text-slate-700 border-slate-200')}>
           {getDepartmentLabel(w.department)}
         </span>
       ),
@@ -407,7 +730,7 @@ export const WarrantPage: React.FC = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16">
+    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16 text-slate-900">
       {/* Premium Ambient Radial Lights */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-500/[0.04] to-indigo-500/[0.02] rounded-full blur-[140px] pointer-events-none -z-10 animate-pulse-subtle" />
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-sky-500/[0.02] to-teal-500/[0.03] rounded-full blur-[120px] pointer-events-none -z-10" />
@@ -463,7 +786,7 @@ export const WarrantPage: React.FC = () => {
             <input
               type="text"
               placeholder="Search by document number, category..."
-              className="w-full pl-11 pr-4 h-11 bg-slate-50 hover:bg-slate-100/50 border border-slate-150 rounded-2xl text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:bg-white transition-all outline-none"
+              className="w-full pl-11 pr-4 h-11 bg-slate-50 hover:bg-slate-100/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-slate-900/10 focus:bg-white transition-all outline-none"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -473,7 +796,7 @@ export const WarrantPage: React.FC = () => {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className="h-11 px-4 bg-slate-50 border border-slate-150 rounded-2xl text-xs font-black text-slate-705 focus:ring-2 focus:ring-slate-900/10 outline-none"
+              className="h-11 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
             >
               {years.map(y => <option key={y} value={y}>FY {y}</option>)}
             </select>
@@ -481,7 +804,7 @@ export const WarrantPage: React.FC = () => {
             <select
               value={filterVoteCode}
               onChange={(e) => setFilterVoteCode(e.target.value)}
-              className="h-11 px-4 bg-slate-50 border border-slate-150 rounded-2xl text-xs font-black text-slate-705 focus:ring-2 focus:ring-slate-900/10 outline-none"
+              className="h-11 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
             >
               <option value="">All Vote Codes</option>
               {availableFilterVoteCodes.map(vc => <option key={vc} value={vc}>{vc}</option>)}
@@ -490,7 +813,7 @@ export const WarrantPage: React.FC = () => {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="h-11 px-4 bg-slate-50 border border-slate-150 rounded-2xl text-xs font-black text-slate-705 focus:ring-2 focus:ring-slate-900/10 outline-none"
+              className="h-11 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
             >
               <option value="">All Categories</option>
               {WARRANT_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
@@ -499,7 +822,7 @@ export const WarrantPage: React.FC = () => {
             <select
               value={filterDepartment}
               onChange={(e) => setFilterDepartment(e.target.value)}
-              className="h-11 px-4 bg-slate-50 border border-slate-150 rounded-2xl text-xs font-black text-slate-705 focus:ring-2 focus:ring-slate-900/10 outline-none"
+              className="h-11 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
             >
               <option value="">All Departments</option>
               {WARRANT_DEPARTMENTS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
@@ -507,7 +830,7 @@ export const WarrantPage: React.FC = () => {
 
             <button 
               onClick={loadData} 
-              className="h-11 w-11 flex items-center justify-center rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-150 text-slate-400 hover:text-slate-800 transition-colors"
+              className="h-11 w-11 flex items-center justify-center rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
@@ -562,7 +885,7 @@ export const WarrantPage: React.FC = () => {
                       <h3 className="text-2xl sm:text-3xl xl:text-4xl font-black text-rose-900 mt-2.5 tracking-tight tabular-nums truncate" title={formatCurrency(summary.total_expenses).replace('MYR', 'RM')}>
                         {formatCurrency(summary.total_expenses).replace('MYR', 'RM')}
                       </h3>
-                      <p className="text-[11px] font-bold text-rose-605 mt-2 flex items-center gap-1.5 pt-0.5">
+                      <p className="text-[11px] font-bold text-rose-600 mt-2 flex items-center gap-1.5 pt-0.5">
                         <span className="font-extrabold">{summary.usage_percentage.toFixed(1)}%</span>
                         <span>utilization rate reached</span>
                       </p>
@@ -606,7 +929,7 @@ export const WarrantPage: React.FC = () => {
                     <AlertTriangle className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-[9px] font-black text-amber-900/65 uppercase tracking-widest leading-none">Total Liabilities</p>
+                    <p className="text-[9px] font-black text-amber-900/80 uppercase tracking-widest leading-none">Total Liabilities</p>
                     <h4 className="text-lg font-black text-amber-900 mt-1.5 tabular-nums">{formatCurrency(summary.total_liabilities).replace('MYR', 'RM')}</h4>
                   </div>
                 </div>
@@ -616,18 +939,18 @@ export const WarrantPage: React.FC = () => {
                     <BarChart2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-[9px] font-black text-sky-900/65 uppercase tracking-widest leading-none">Net Expenses</p>
+                    <p className="text-[9px] font-black text-sky-900/80 uppercase tracking-widest leading-none">Net Expenses</p>
                     <h4 className="text-lg font-black text-sky-900 mt-1.5 tabular-nums">{formatCurrency(summary.net_expenses).replace('MYR', 'RM')}</h4>
                   </div>
                 </div>
 
                 <div className="bg-teal-50/50 border-2 border-teal-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-teal-50 hover:border-teal-200 hover:shadow-xl transition-all duration-300 cursor-default">
-                  <div className="w-10 h-10 bg-teal-100 text-teal-605 rounded-2xl flex items-center justify-center border border-teal-200 shadow-sm group-hover:scale-110 transition-transform duration-200">
+                  <div className="w-10 h-10 bg-teal-100 text-teal-700 rounded-2xl flex items-center justify-center border border-teal-200 shadow-sm group-hover:scale-110 transition-transform duration-200">
                     <PieChart className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <p className="text-[9px] font-black text-teal-900/65 uppercase tracking-widest leading-none">Usage Percentage</p>
+                      <p className="text-[9px] font-black text-teal-900/80 uppercase tracking-widest leading-none">Usage Percentage</p>
                       <span className="text-[10px] font-black text-teal-600">{summary.usage_percentage.toFixed(1)}%</span>
                     </div>
                     <div className="mt-2 h-1.5 bg-slate-200 rounded-full overflow-hidden">
@@ -640,127 +963,429 @@ export const WarrantPage: React.FC = () => {
 
             {/* Bottom Section: Category Breakdown */}
             <div className="bg-white rounded-[2rem] border border-slate-200/80 shadow-xl shadow-slate-200/15 overflow-hidden flex flex-col">
-              <div className="p-6 lg:p-8 pb-4 flex items-center justify-between border-b border-slate-100">
+              {/* Header with Title, Search, Expand/Collapse, and View Switcher */}
+              <div className="p-6 lg:p-8 pb-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100">
                 <div className="flex items-center gap-4">
                   <div className="w-11 h-11 bg-slate-100 rounded-2xl flex items-center justify-center">
                     <Clock className="w-5.5 h-5.5 text-slate-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Category Breakdown</h3>
-                    <p className="text-[10px] font-bold text-slate-450 uppercase tracking-widest">Allocation distribution by pharmaceutical catalog type</p>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-black text-slate-900 tracking-tight">Category Breakdown</h3>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-600 border border-slate-200/80">
+                        {summary.by_category.length} Categories
+                      </span>
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                      Allocation distribution by pharmaceutical catalog type
+                    </p>
+                  </div>
+                </div>
+
+                {/* Interactive Controls Toolbar */}
+                <div className="flex flex-wrap items-center gap-2.5">
+                  {/* Search Bar */}
+                  <div className="relative min-w-[220px]">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={categorySearch}
+                      onChange={(e) => setCategorySearch(e.target.value)}
+                      placeholder="Search Category, Dept, Vote..."
+                      className="w-full pl-8.5 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
+                    />
+                    {categorySearch && (
+                      <button
+                        onClick={() => setCategorySearch('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Expand / Collapse All (active when in table view) */}
+                  {breakdownView === 'table' && (
+                    <div className="flex items-center border border-slate-200 rounded-xl bg-slate-50/70 p-0.5">
+                      <button
+                        onClick={() => handleExpandAll(summary.by_category)}
+                        className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:text-slate-900 rounded-lg hover:bg-white transition-colors"
+                        title="Expand all categories and departments"
+                      >
+                        Expand All
+                      </button>
+                      <div className="h-3.5 w-px bg-slate-200 my-auto" />
+                      <button
+                        onClick={() => handleCollapseAll(summary.by_category)}
+                        className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:text-slate-900 rounded-lg hover:bg-white transition-colors"
+                        title="Collapse all categories and departments"
+                      >
+                        Collapse
+                      </button>
+                    </div>
+                  )}
+
+                  {/* View Mode Toggle: Table View vs Bento Grid */}
+                  <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200/80">
+                    <button
+                      onClick={() => setBreakdownView('table')}
+                      className={cn(
+                        'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
+                        breakdownView === 'table'
+                          ? 'bg-white text-indigo-900 shadow-sm font-black'
+                          : 'text-slate-500 hover:text-slate-800'
+                      )}
+                    >
+                      <TableIcon className="w-3.5 h-3.5" />
+                      <span>Table</span>
+                    </button>
+                    <button
+                      onClick={() => setBreakdownView('bento')}
+                      className={cn(
+                        'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
+                        breakdownView === 'bento'
+                          ? 'bg-white text-indigo-900 shadow-sm font-black'
+                          : 'text-slate-500 hover:text-slate-800'
+                      )}
+                    >
+                      <LayoutGrid className="w-3.5 h-3.5" />
+                      <span>Grid</span>
+                    </button>
                   </div>
                 </div>
               </div>
 
-              <div className="p-6 lg:p-8">
-                <div className="columns-1 md:columns-2 xl:columns-3 gap-6 space-y-6">
-                  {summary.by_category.map((cat, catIdx) => {
-                    const percentage = summary.total_allocation > 0 ? (cat.allocation / summary.total_allocation) * 100 : 0
-                    
-                    const themes = [
-                      { border: 'border-emerald-100', top: 'bg-emerald-500', sub: 'text-emerald-700', light: 'bg-emerald-50/[0.15]' },
-                      { border: 'border-blue-100', top: 'bg-blue-500', sub: 'text-blue-700', light: 'bg-blue-50/[0.15]' },
-                      { border: 'border-indigo-100', top: 'bg-indigo-500', sub: 'text-indigo-700', light: 'bg-indigo-50/[0.15]' },
-                      { border: 'border-violet-100', top: 'bg-violet-500', sub: 'text-violet-700', light: 'bg-violet-50/[0.15]' },
-                      { border: 'border-rose-100', top: 'bg-rose-500', sub: 'text-rose-700', light: 'bg-rose-50/[0.15]' },
-                      { border: 'border-amber-100', top: 'bg-amber-500', sub: 'text-amber-700', light: 'bg-amber-50/[0.15]' },
+              {/* Macro Allocation Share Ribbon (Executive Composition Bar) */}
+              <div className="px-6 lg:px-8 py-5 bg-gradient-to-b from-slate-50/70 to-white border-b border-slate-100">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      Macro Allocation Share
+                    </span>
+                    <span className="text-slate-300">•</span>
+                    <span className="text-[10px] font-bold text-slate-500 tabular-nums">
+                      Vault Total: {formatCurrency(summary.total_allocation).replace('MYR', 'RM')}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 text-[10px] font-bold text-slate-500">
+                    <span>
+                      Burn Rate: <strong className="text-slate-800 tabular-nums">{summary.usage_percentage.toFixed(1)}%</strong>
+                    </span>
+                    <span className="text-slate-300">•</span>
+                    <span>
+                      Available: <strong className="text-emerald-700 tabular-nums">{formatCurrency(summary.total_balance).replace('MYR', 'RM')}</strong>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Proportional Segmented Track */}
+                <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden flex border border-slate-200/80 shadow-inner">
+                  {summary.by_category.map((cat, idx) => {
+                    const pct = summary.total_allocation > 0 ? (cat.allocation / summary.total_allocation) * 100 : 0
+                    if (pct <= 0) return null
+                    const trackColors = [
+                      'bg-indigo-600',
+                      'bg-blue-500',
+                      'bg-cyan-500',
+                      'bg-teal-500',
+                      'bg-emerald-500',
+                      'bg-amber-500',
+                      'bg-orange-500',
+                      'bg-purple-500',
+                      'bg-rose-500',
                     ]
-                    const theme = themes[catIdx % themes.length]
-
+                    const color = trackColors[idx % trackColors.length]
                     return (
-                      <div key={cat.category} className={`break-inside-avoid mb-6 bg-white rounded-3xl border-2 ${theme.border} shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden`}>
-                        <div className={`h-1.5 w-full ${theme.top}`} />
-                        
-                        <div className="p-6">
-                          <div className="flex items-start justify-between mb-5">
-                            <div>
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider ${theme.top} text-white`}>
-                                {getCategoryLabel(cat.category)}
-                              </span>
-                              <div className="mt-1.5">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                  {cat.count} Warrants • {percentage.toFixed(1)}%
-                                </span>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <p className={`text-base font-black tracking-tight tabular-nums ${theme.sub}`}>
-                                {formatCurrency(cat.allocation).replace('MYR', 'RM')}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="space-y-5">
-                            {cat.departments.map((dept, index) => (
-                              <div key={dept.department} className={`pt-4 ${index !== 0 ? 'border-t border-slate-100' : 'border-t border-dashed border-slate-200'}`}>
-                                <div className="flex items-center gap-2 mb-3">
-                                  <div className={`w-1.5 h-1.5 rounded-full ${theme.top}`} />
-                                  <div className={`text-[10px] font-black uppercase tracking-wider ${theme.sub}`}>
-                                    {getDepartmentLabel(dept.department)}
-                                  </div>
-                                </div>
-                                
-                                <div className="space-y-3">
-                                  {dept.vote_codes.map(vc => {
-                                    const vcUsage = vc.allocation > 0 ? (vc.expenses / vc.allocation) * 100 : 0
-                                    
-                                    let vcTheme = { 
-                                      badge: 'bg-white border-slate-200 text-slate-700', 
-                                      bar: theme.top 
-                                    }
-                                    
-                                    if (vc.vote_code === '080702') {
-                                      vcTheme = { 
-                                        badge: 'bg-indigo-50 border-indigo-100 text-indigo-700', 
-                                        bar: 'bg-indigo-500' 
-                                      }
-                                    } else if (vc.vote_code === '990102') {
-                                      vcTheme = { 
-                                        badge: 'bg-amber-50 border-amber-200 text-amber-700', 
-                                        bar: 'bg-amber-500' 
-                                      }
-                                    }
-                                    
-                                    return (
-                                      <div key={vc.vote_code} className={`p-3 rounded-2xl transition-colors ${theme.light}`}>
-                                        <div className="flex items-center justify-between text-xs mb-2">
-                                          <div className="flex items-center gap-2">
-                                            <span className={`font-mono font-bold border px-2 py-0.5 rounded-lg text-[9px] ${vcTheme.badge}`}>
-                                              {vc.vote_code}
-                                            </span>
-                                            <span className="font-black text-slate-900 tabular-nums">
-                                              {formatCurrency(vc.allocation).replace('MYR', 'RM')}
-                                            </span>
-                                          </div>
-                                          <div className="font-bold text-[9px] text-slate-400">
-                                            BAL: <span className="text-slate-800 tabular-nums">{formatCurrency(vc.balance).replace('MYR', 'RM')}</span>
-                                          </div>
-                                        </div>
-                                        
-                                        <div className="flex items-center gap-2">
-                                          <div className="flex-1 h-1.5 bg-white/70 rounded-full overflow-hidden border border-slate-100">
-                                            <motion.div 
-                                              initial={{ width: 0 }}
-                                              animate={{ width: `${vcUsage}%` }}
-                                              className={`h-full rounded-full ${vcTheme.bar}`}
-                                            />
-                                          </div>
-                                          <span className={`text-[9px] font-black w-8 text-right tabular-nums ${vcUsage > 90 ? 'text-rose-600 animate-pulse' : 'text-slate-500'}`}>
-                                            {vcUsage.toFixed(0)}%
-                                          </span>
-                                        </div>
-                                      </div>
-                                    )
-                                  })}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
+                      <div
+                        key={cat.category}
+                        style={{ width: `${pct}%` }}
+                        className={`${color} h-full border-r border-white/40 transition-all hover:opacity-80 cursor-pointer`}
+                        title={`${getCategoryLabel(cat.category)}: ${formatCurrency(cat.allocation).replace('MYR', 'RM')} (${pct.toFixed(1)}%)`}
+                        onClick={() => setCategorySearch(getCategoryLabel(cat.category))}
+                      />
                     )
                   })}
                 </div>
+
+                {/* Category Chips Legend */}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 pt-2 text-[10px]">
+                  {summary.by_category.slice(0, 7).map((cat, idx) => {
+                    const pct = summary.total_allocation > 0 ? (cat.allocation / summary.total_allocation) * 100 : 0
+                    const trackColors = [
+                      'bg-indigo-600',
+                      'bg-blue-500',
+                      'bg-cyan-500',
+                      'bg-teal-500',
+                      'bg-emerald-500',
+                      'bg-amber-500',
+                      'bg-orange-500',
+                      'bg-purple-500',
+                      'bg-rose-500',
+                    ]
+                    const color = trackColors[idx % trackColors.length]
+                    return (
+                      <button
+                        key={cat.category}
+                        onClick={() => setCategorySearch(categorySearch === getCategoryLabel(cat.category) ? '' : getCategoryLabel(cat.category))}
+                        className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 transition-colors group"
+                      >
+                        <span className={`w-2 h-2 rounded-full ${color}`} />
+                        <span className="font-bold">{getCategoryLabel(cat.category)}</span>
+                        <span className="font-mono tabular-nums text-slate-400 group-hover:text-slate-600">{pct.toFixed(1)}%</span>
+                      </button>
+                    )
+                  })}
+                  {summary.by_category.length > 7 && (
+                    <span className="text-slate-400 font-bold">
+                      +{summary.by_category.length - 7} more
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Main Content Area */}
+              <div className="p-6 lg:p-8">
+                {filteredCategories.length === 0 ? (
+                  <div className="py-12 text-center flex flex-col items-center justify-center gap-3">
+                    <AlertCircle className="w-8 h-8 text-slate-300" />
+                    <p className="text-sm font-bold text-slate-600">No categories found matching "{categorySearch}"</p>
+                    <Button variant="outline" size="sm" onClick={() => setCategorySearch('')}>
+                      Clear Search
+                    </Button>
+                  </div>
+                ) : breakdownView === 'table' ? (
+                  <>
+                    <div className="hidden md:block overflow-x-auto border border-slate-200/90 rounded-2xl bg-white shadow-sm">
+                    <table className="w-full border-collapse text-left">
+                      <thead>
+                        <tr className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500">
+                          <th className="py-3.5 pl-4 pr-2 font-black">Category / Department / Vote Code</th>
+                          <th className="py-3.5 px-3 text-center font-black min-w-[140px]">Document No.</th>
+                          <th className="py-3.5 px-4 text-right font-black">Allocation (RM)</th>
+                          <th className="py-3.5 px-4 text-right font-black">Expenses (RM)</th>
+                          <th className="py-3.5 px-4 text-right font-black">Balance (RM)</th>
+                          <th className="py-3.5 px-4 text-right font-black w-48">Utilization (%)</th>
+                          <th className="py-3.5 pr-4 pl-2 text-center font-black">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 text-xs">
+                        {filteredCategories.map((cat) => {
+                          const catExpanded = isCategoryExpanded(cat.category)
+                          const catPct = summary.total_allocation > 0 ? (cat.allocation / summary.total_allocation) * 100 : 0
+                          const catUsage = cat.allocation > 0 ? (cat.expenses / cat.allocation) * 100 : 0
+                          const catHealth = getHealthStatus(catUsage)
+                          const catCode = getCategoryCode(cat.category)
+                          const catDocNos = getDocumentNumbers(cat.category)
+
+                          return (
+                            <React.Fragment key={cat.category}>
+                              {/* 1. Category Row (Parent) */}
+                              <tr 
+                                onClick={() => toggleCategory(cat.category)}
+                                className="bg-slate-50/40 hover:bg-slate-100/70 transition-colors cursor-pointer font-bold select-none group"
+                              >
+                                <td className="py-3.5 pl-4 pr-2">
+                                  <div className="flex items-center gap-2.5">
+                                    <button
+                                      type="button"
+                                      className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors"
+                                    >
+                                      {catExpanded ? (
+                                        <ChevronDown className="w-4 h-4 text-slate-600 transition-transform" />
+                                      ) : (
+                                        <ChevronRight className="w-4 h-4 text-slate-600 transition-transform" />
+                                      )}
+                                    </button>
+                                    <span className="font-mono text-[9px] font-black px-2 py-0.5 rounded bg-slate-200/80 text-slate-700 border border-slate-300/60">
+                                      {catCode}
+                                    </span>
+                                    <div>
+                                      <span className="text-sm font-black text-slate-900 group-hover:text-indigo-900 transition-colors">
+                                        {getCategoryLabel(cat.category)}
+                                      </span>
+                                      <span className="text-[10px] font-bold text-slate-400 ml-2">
+                                        ({catPct.toFixed(1)}% of total)
+                                      </span>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="py-3.5 px-3 text-center">
+                                  {renderDocNos(catDocNos, 2)}
+                                </td>
+                                <td className="py-3.5 px-4 text-right font-mono font-black text-slate-900 tabular-nums">
+                                  {formatCurrency(cat.allocation).replace('MYR', 'RM')}
+                                </td>
+                                <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-700 tabular-nums">
+                                  {formatCurrency(cat.expenses).replace('MYR', 'RM')}
+                                </td>
+                                <td className="py-3.5 px-4 text-right font-mono font-black tabular-nums">
+                                  <span className={cat.balance < 0 ? 'text-rose-600' : 'text-slate-900'}>
+                                    {formatCurrency(cat.balance).replace('MYR', 'RM')}
+                                  </span>
+                                </td>
+                                <td className="py-3.5 px-4 text-right">
+                                  <div className="flex items-center justify-end gap-2.5">
+                                    <div className="w-24 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-200">
+                                      <div
+                                        className={`h-full rounded-full ${catHealth.barClass}`}
+                                        style={{ width: `${Math.min(catUsage, 100)}%` }}
+                                      />
+                                    </div>
+                                    <span className="font-mono font-black text-[11px] tabular-nums w-12 text-right text-slate-800">
+                                      {catUsage.toFixed(1)}%
+                                    </span>
+                                  </div>
+                                </td>
+                                <td className="py-3.5 pr-4 pl-2 text-center">
+                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${catHealth.badgeClass}`}>
+                                    {catHealth.label}
+                                  </span>
+                                </td>
+                              </tr>
+
+                              {/* 2. Departments & Vote Codes Rows */}
+                              {catExpanded && cat.departments?.map((dept) => {
+                                const deptKey = `${cat.category}:${dept.department}`
+                                const deptExpanded = isDepartmentExpanded(deptKey)
+                                const deptUsage = dept.allocation > 0 ? (dept.expenses / dept.allocation) * 100 : 0
+                                const deptHealth = getHealthStatus(deptUsage)
+                                const deptDocNos = getDocumentNumbers(cat.category, dept.department)
+
+                                return (
+                                  <React.Fragment key={deptKey}>
+                                    {/* Department Row */}
+                                    <tr 
+                                      onClick={() => toggleDepartment(deptKey)}
+                                      className="bg-white hover:bg-slate-50/80 transition-colors cursor-pointer select-none group border-t border-slate-100"
+                                    >
+                                      <td className="py-2.5 pl-10 pr-2">
+                                        <div className="flex items-center gap-2">
+                                          <button
+                                            type="button"
+                                            className="p-0.5 rounded text-slate-400 hover:text-slate-600"
+                                          >
+                                            {deptExpanded ? (
+                                              <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+                                            ) : (
+                                              <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                                            )}
+                                          </button>
+                                          <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                          <span className="font-extrabold text-slate-800 text-xs tracking-tight uppercase">
+                                            {getDepartmentLabel(dept.department)}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td className="py-2.5 px-3 text-center">
+                                        {renderDocNos(deptDocNos, 2)}
+                                      </td>
+                                      <td className="py-2.5 px-4 text-right font-mono font-bold text-slate-700 tabular-nums">
+                                        {formatCurrency(dept.allocation).replace('MYR', 'RM')}
+                                      </td>
+                                      <td className="py-2.5 px-4 text-right font-mono font-semibold text-slate-600 tabular-nums">
+                                        {formatCurrency(dept.expenses).replace('MYR', 'RM')}
+                                      </td>
+                                      <td className="py-2.5 px-4 text-right font-mono font-bold text-slate-800 tabular-nums">
+                                        <span className={dept.balance < 0 ? 'text-rose-600' : 'text-slate-800'}>
+                                          {formatCurrency(dept.balance).replace('MYR', 'RM')}
+                                        </span>
+                                      </td>
+                                      <td className="py-2.5 px-4 text-right">
+                                        <div className="flex items-center justify-end gap-2.5">
+                                          <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                                            <div
+                                              className={`h-full rounded-full ${deptHealth.barClass}`}
+                                              style={{ width: `${Math.min(deptUsage, 100)}%` }}
+                                            />
+                                          </div>
+                                          <span className="font-mono text-[10px] font-bold tabular-nums w-10 text-right text-slate-600">
+                                            {deptUsage.toFixed(0)}%
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td className="py-2.5 pr-4 pl-2 text-center">
+                                        <span className={`inline-flex items-center px-1.5 py-0.2 rounded text-[8.5px] font-bold uppercase ${deptHealth.badgeClass}`}>
+                                          {deptHealth.label}
+                                        </span>
+                                      </td>
+                                    </tr>
+
+                                      {/* 3. Vote Code Rows (Grandchildren) */}
+                                      {deptExpanded && dept.vote_codes?.map((vc) => {
+                                        const vcKey = `${deptKey}-${vc.vote_code}`
+                                        const vcUsage = vc.allocation > 0 ? (vc.expenses / vc.allocation) * 100 : 0
+                                        const vcHealth = getHealthStatus(vcUsage)
+                                        const vcDocNos = getDocumentNumbers(cat.category, dept.department, vc.vote_code)
+
+                                        return (
+                                          <tr key={vcKey} className="bg-slate-50/20 hover:bg-slate-50/80 transition-colors text-[11px] border-l-2 border-indigo-200">
+                                            <td className="py-2 pl-14 pr-2">
+                                              <div className="flex items-center gap-2">
+                                                <FileText className="w-3 h-3 text-slate-400" />
+                                                <span className="font-mono font-bold text-slate-700 bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[10px]">
+                                                  {vc.vote_code}
+                                                </span>
+                                                <span className="text-slate-500 text-[10px]">({vc.count} warrants)</span>
+                                              </div>
+                                            </td>
+                                            <td className="py-2 px-3 text-center">
+                                              {vcDocNos.length > 0 ? (
+                                                <div className="flex flex-wrap gap-1 justify-center max-w-[180px] mx-auto">
+                                                  {vcDocNos.map(doc => (
+                                                    <span key={doc} className="font-mono text-[9px] bg-white text-indigo-700 px-1 py-0.2 rounded border border-indigo-100 font-bold">
+                                                      {doc}
+                                                    </span>
+                                                  ))}
+                                                </div>
+                                              ) : (
+                                                <span className="text-slate-300 font-mono text-[10px]">-</span>
+                                              )}
+                                            </td>
+                                            <td className="py-2 px-4 text-right font-mono tabular-nums text-slate-700">
+                                              {formatCurrency(vc.allocation).replace('MYR', 'RM')}
+                                            </td>
+                                            <td className="py-2 px-4 text-right font-mono tabular-nums text-slate-500">
+                                              {formatCurrency(vc.expenses).replace('MYR', 'RM')}
+                                            </td>
+                                            <td className={cn('py-2 px-4 text-right font-mono tabular-nums font-semibold', vc.balance < 0 ? 'text-rose-600' : 'text-slate-700')}>
+                                              {formatCurrency(vc.balance).replace('MYR', 'RM')}
+                                            </td>
+                                            <td className="py-2 px-4">
+                                              <div className="flex items-center gap-2">
+                                                <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
+                                                  <div className={`h-full rounded-full ${vcHealth.barClass}`} style={{ width: `${Math.min(vcUsage, 100)}%` }} />
+                                                </div>
+                                                <span className="font-mono text-[9px] font-bold text-slate-400 w-10 text-right tabular-nums">
+                                                  {vcUsage.toFixed(0)}%
+                                                </span>
+                                              </div>
+                                            </td>
+                                            <td className="py-2 pr-4 pl-2 text-center">
+                                              <span className={`inline-flex items-center px-1.5 py-0.2 rounded text-[8px] font-semibold uppercase tracking-wider ${vcHealth.badgeClass}`}>
+                                                {vcHealth.label}
+                                              </span>
+                                            </td>
+                                          </tr>
+                                        )
+                                      })}
+                                    </React.Fragment>
+                                  )
+                                })}
+                              </React.Fragment>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile View: High-End Bento Cards (Zero Horizontal Scroll!) */}
+                    <div className="md:hidden">
+                      {renderBentoGrid()}
+                    </div>
+                  </>
+                ) : (
+                  renderBentoGrid()
+                )}
               </div>
             </div>
           </div>
@@ -772,7 +1397,7 @@ export const WarrantPage: React.FC = () => {
                 <FileText className="w-5 h-5 text-indigo-950" />
                 Warrant Records
               </h3>
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-0.5">{filteredWarrants.length} items logged</p>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">{filteredWarrants.length} items logged</p>
             </div>
           </div>
           
@@ -783,12 +1408,12 @@ export const WarrantPage: React.FC = () => {
                 <thead>
                   <tr className="bg-gradient-to-r from-slate-50 to-indigo-50/10 border-b border-slate-200/80">
                     <th className="w-1.5 p-0" />
-                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Date</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Document No</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Vote</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Category</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Department</th>
-                    <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Amount</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Date</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Document No</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Vote</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Category</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Department</th>
+                    <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Amount</th>
                     <th className="w-10 px-3 py-4" />
                   </tr>
                 </thead>
@@ -818,21 +1443,21 @@ export const WarrantPage: React.FC = () => {
                           <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-indigo-650 scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center rounded-r" />
                         </td>
                         <td className="px-6 py-4">
-                          <span className="font-semibold text-xs text-slate-500 tabular-nums">{formatDate(w.warrant_date)}</span>
+                          <span className="font-semibold text-xs text-slate-700 tabular-nums">{formatDate(w.warrant_date)}</span>
                         </td>
                         <td className="px-6 py-4">
                           <span className="font-mono text-xs text-slate-900 font-black group-hover:text-indigo-600 transition-colors tabular-nums">{w.document_no}</span>
                         </td>
                         <td className="px-6 py-4">
-                          <Badge variant="outline" className="font-mono text-[10px] px-2.5 py-0.5 rounded-lg bg-slate-50 border-slate-200 text-slate-700">{w.vote_code}</Badge>
+                          <Badge variant="outline" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100/90 border-slate-200 text-slate-800">{w.vote_code}</Badge>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category])}>
+                          <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category] || 'bg-slate-100 text-slate-700 border-slate-200')}>
                             {getCategoryLabel(w.category)}
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department])}>
+                          <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department] || 'bg-slate-100 text-slate-700 border-slate-200')}>
                             {getDepartmentLabel(w.department)}
                           </span>
                         </td>
@@ -884,18 +1509,18 @@ export const WarrantPage: React.FC = () => {
                         <p className="text-xs font-bold text-slate-700">{formatDate(w.warrant_date)}</p>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Vote Code</span>
+                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Vote Code</span>
                         <div>
-                          <Badge variant="outline" className="font-mono text-[9px] px-2.5 py-0.5 h-5 rounded-lg border-slate-200 bg-slate-50 text-slate-600">{w.vote_code}</Badge>
+                          <Badge variant="outline" className="font-mono text-[9px] font-bold px-2.5 py-0.5 h-5 rounded-lg border-slate-200 bg-slate-100 text-slate-800">{w.vote_code}</Badge>
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2 pt-3 border-t border-slate-50">
-                      <span className={cn("px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category])}>
+                      <span className={cn("px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category] || 'bg-slate-100 text-slate-700 border-slate-200')}>
                         {getCategoryLabel(w.category)}
                       </span>
-                      <span className={cn("px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department])}>
+                      <span className={cn("px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department] || 'bg-slate-100 text-slate-700 border-slate-200')}>
                         {getDepartmentLabel(w.department)}
                       </span>
                     </div>
@@ -908,7 +1533,7 @@ export const WarrantPage: React.FC = () => {
             {!isLoading && filteredWarrants.length > 0 && (
               <div className="mt-8 pt-6 pb-6 px-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                 {/* Count Summary */}
-                <div className="text-xs font-semibold text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
+                <div className="text-xs font-semibold text-slate-500 flex items-center gap-1.5 uppercase tracking-wider">
                   Showing <span className="text-slate-900 font-bold">{(currentPage - 1) * pageSize + 1}</span> to <span className="text-slate-900 font-bold">{Math.min(currentPage * pageSize, filteredWarrants.length)}</span> of <span className="text-slate-900 font-bold">{filteredWarrants.length}</span> entries
                 </div>
 
@@ -1020,7 +1645,7 @@ export const WarrantPage: React.FC = () => {
               <div className="bg-slate-50/40 border border-slate-100 p-4 rounded-2xl">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Category</p>
                 <div className="mt-1">
-                  <Badge variant="outline" className={cn("px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", CATEGORY_COLORS[selectedWarrant.category])}>
+                  <Badge variant="outline" className={cn("px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", CATEGORY_COLORS[selectedWarrant.category] || 'bg-slate-100 text-slate-700 border-slate-200')}>
                     {getCategoryLabel(selectedWarrant.category)}
                   </Badge>
                 </div>
@@ -1034,7 +1659,7 @@ export const WarrantPage: React.FC = () => {
               <div className="bg-slate-50/40 border border-slate-100 p-4 rounded-2xl">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Department</p>
                 <div className="mt-1">
-                  <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[selectedWarrant.department])}>
+                  <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[selectedWarrant.department] || 'bg-slate-100 text-slate-700 border-slate-200')}>
                     {getDepartmentLabel(selectedWarrant.department)}
                   </span>
                 </div>
@@ -1048,7 +1673,7 @@ export const WarrantPage: React.FC = () => {
                 </div>
                 <div className="text-[10px]">
                   <p className="font-bold text-slate-400 uppercase tracking-wider">Logged By</p>
-                  <p className="font-black text-slate-750">{selectedWarrant.created_by_user.full_name}</p>
+                  <p className="font-black text-slate-800">{selectedWarrant.created_by_user.full_name}</p>
                 </div>
               </div>
             )}
@@ -1165,7 +1790,7 @@ export const WarrantPage: React.FC = () => {
                   type="text"
                   value={formattedAmount}
                   onChange={handleAmountChange}
-                  className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 font-bold text-lg focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300 outline-none bg-white"
+                  className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 font-bold text-lg text-slate-900 focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300 outline-none bg-white"
                   placeholder="0.00"
                 />
               </div>
@@ -1177,7 +1802,7 @@ export const WarrantPage: React.FC = () => {
             <button
               type="button"
               onClick={resetModalForm}
-              className="h-10 px-5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-655 font-bold text-xs active:scale-95 transition-all shadow-sm"
+              className="h-10 px-5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs active:scale-95 transition-all shadow-sm"
             >
               Cancel
             </button>

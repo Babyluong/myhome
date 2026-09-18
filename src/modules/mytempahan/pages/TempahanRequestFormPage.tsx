@@ -165,25 +165,25 @@ export const TempahanRequestFormPage: React.FC = () => {
   const handleNext = () => {
     if (step === 1) {
       if (!roomId) {
-        addToast({ type: 'warning', title: 'Pilih Fasiliti', message: 'Sila pilih bilik atau dewan yang ingin ditempah.' })
+        addToast({ type: 'warning', title: 'Select Facility', message: 'Please select a room or hall to book.' })
         return
       }
       if (!conflictResult.isAvailable) {
-        addToast({ type: 'error', title: 'Pertindihan Slot', message: conflictResult.reason || 'Slot masa bilik tidak tersedia.' })
+        addToast({ type: 'error', title: 'Slot Conflict', message: conflictResult.reason || 'Room time slot is not available.' })
         return
       }
     }
 
     if (step === 2) {
       if (!purpose.trim()) {
-        addToast({ type: 'warning', title: 'Isi Tajuk Mesyuarat', message: 'Sila nyatakan tujuan atau nama program acara.' })
+        addToast({ type: 'warning', title: 'Meeting Title Required', message: 'Please state the meeting purpose or event program name.' })
         return
       }
       if (selectedRoom && attendeesCount > selectedRoom.capacity) {
         addToast({
           type: 'warning',
-          title: 'Kapasiti Melebihi Had',
-          message: `Kapasiti maksimum bilik ini adalah ${selectedRoom.capacity} pax.`
+          title: 'Capacity Limit Exceeded',
+          message: `Maximum capacity for this room is ${selectedRoom.capacity} pax.`
         })
         return
       }
@@ -201,8 +201,8 @@ export const TempahanRequestFormPage: React.FC = () => {
     if (!agreedTerms) {
       addToast({
         type: 'warning',
-        title: 'Perakuan Diperlukan',
-        message: 'Sila tandakan persetujuan terhadap terma penggunaan fasiliti.'
+        title: 'Agreement Required',
+        message: 'Please agree to the terms of facility usage.'
       })
       return
     }
@@ -248,18 +248,18 @@ export const TempahanRequestFormPage: React.FC = () => {
         setSubmittedBooking(res.data)
         addToast({
           type: 'success',
-          title: 'Tempahan Berjaya Dihantar',
-          message: `No. Rujukan Tempahan: ${res.data.booking_number}`
+          title: 'Booking Successfully Submitted',
+          message: `Booking Reference No.: ${res.data.booking_number}`
         })
       } else {
-        throw new Error(res.error || 'Gagal menghantar tempahan.')
+        throw new Error(res.error || 'Failed to submit booking.')
       }
     } catch (err: any) {
       console.error(err)
       addToast({
         type: 'error',
-        title: 'Ralat Penghantaran',
-        message: err.message || 'Sila semak semula maklumat tempahan anda.'
+        title: 'Submission Error',
+        message: err.message || 'Please check your booking details and try again.'
       })
     } finally {
       setSubmitting(false)
@@ -280,32 +280,32 @@ export const TempahanRequestFormPage: React.FC = () => {
 
         <div className="space-y-2">
           <span className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider">
-            {submittedBooking.status === 'approved' ? 'Tempahan Diluluskan Secara Automatik' : 'Permohonan Dalam Semakan Pentadbir'}
+            {submittedBooking.status === 'approved' ? 'Booking Automatically Approved' : 'Application Under Admin Review'}
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
-            Tempahan Anda Berjaya Didaftarkan!
+            Your Booking Has Been Successfully Registered!
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-            Slip pengesahan rasmi telah dijana. Anda boleh memuat turun fail PDF atau melihatnya di senarai permohonan.
+            Official confirmation slip has been generated. You can download the PDF file or view it in your applications list.
           </p>
         </div>
 
         {/* Summary Card */}
         <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-left max-w-lg mx-auto space-y-3 text-xs shadow-xs">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-            <span className="text-slate-500 dark:text-slate-400">No. Rujukan:</span>
+            <span className="text-slate-500 dark:text-slate-400">Reference No.:</span>
             <span className="font-mono font-bold text-sm text-teal-700 dark:text-teal-400">{submittedBooking.booking_number}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-slate-500 dark:text-slate-400">Fasiliti:</span>
+            <span className="text-slate-500 dark:text-slate-400">Facility:</span>
             <span className="font-bold text-slate-900 dark:text-white">{submittedBooking.room?.name}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-slate-500 dark:text-slate-400">Tarikh & Masa:</span>
+            <span className="text-slate-500 dark:text-slate-400">Date & Time:</span>
             <span className="font-semibold text-slate-800 dark:text-slate-200">{submittedBooking.date} ({submittedBooking.start_time} - {submittedBooking.end_time})</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-slate-500 dark:text-slate-400">Tujuan:</span>
+            <span className="text-slate-500 dark:text-slate-400">Purpose:</span>
             <span className="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[200px]">{submittedBooking.purpose}</span>
           </div>
         </div>
@@ -317,14 +317,14 @@ export const TempahanRequestFormPage: React.FC = () => {
             className="px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
           >
             <Printer className="w-4 h-4" />
-            Muat Turun Slip PDF
+            Download PDF Slip
           </button>
 
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN_MY_BOOKINGS)}
             className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
           >
-            Lihat Permohonan Saya
+            View My Bookings
           </button>
         </div>
       </div>
@@ -340,11 +340,11 @@ export const TempahanRequestFormPage: React.FC = () => {
           className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-bold transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Kembali ke Papan Pemuka
+          Back to Dashboard
         </button>
 
         <span className="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
-          Langkah {step} daripada 4
+          Step {step} of 4
         </span>
       </div>
 
@@ -352,10 +352,10 @@ export const TempahanRequestFormPage: React.FC = () => {
       <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs">
         <div className="grid grid-cols-4 gap-2 text-center text-xs">
           {[
-            { num: 1, label: 'Fasiliti & Masa' },
-            { num: 2, label: 'Butiran Acara' },
-            { num: 3, label: 'Logistik & Jamuan' },
-            { num: 4, label: 'Pengesahan' }
+            { num: 1, label: 'Facility & Timing' },
+            { num: 2, label: 'Event Details' },
+            { num: 3, label: 'Logistics & Catering' },
+            { num: 4, label: 'Confirmation' }
           ].map(s => {
             const isCompleted = step > s.num
             const isCurrent = step === s.num
@@ -394,42 +394,108 @@ export const TempahanRequestFormPage: React.FC = () => {
         {step === 1 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Pilih Fasiliti & Slot Masa</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Sistem akan menyemak ketersediaan bilik dan sebarang pertindihan secara masa nyata.</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Select Facility & Time Slot</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">The system automatically checks room availability and detects conflicts in real-time.</p>
             </div>
 
             {/* Room Selection */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
-                Pilih Bilik / Dewan Hospital
-              </label>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
+                  Select Hospital Room / Hall
+                </label>
+                <span className="text-[11px] text-slate-400">
+                  {rooms.length} facilities available
+                </span>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {rooms.map(r => (
                   <div
                     key={r.id}
                     onClick={() => setRoomId(r.id)}
                     className={cn(
-                      'p-4 rounded-xl border transition-all cursor-pointer flex items-start gap-3',
+                      'p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-3.5 group',
                       roomId === r.id
-                        ? 'bg-teal-50/70 dark:bg-teal-950/40 border-teal-600 dark:border-teal-500 ring-2 ring-teal-200 dark:ring-teal-900/60'
-                        : 'bg-slate-50/70 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/80 hover:border-slate-300 dark:hover:border-slate-600'
+                        ? 'bg-teal-50/80 dark:bg-teal-950/40 border-teal-600 dark:border-teal-500 ring-2 ring-teal-200 dark:ring-teal-900/60 shadow-xs'
+                        : 'bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                     )}
                   >
-                    <Building2 className={cn('w-5 h-5 mt-0.5 shrink-0', roomId === r.id ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400')} />
-                    <div>
-                      <div className="font-bold text-slate-900 dark:text-white text-xs">{r.name}</div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400">{r.location}</div>
-                      <div className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 mt-1">Kapasiti: {r.capacity} Pax Maks</div>
+                    {/* Room Thumbnail Photo */}
+                    <div className="w-20 h-16 sm:w-24 sm:h-18 rounded-xl overflow-hidden shrink-0 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative">
+                      {r.image_url ? (
+                        <img
+                          src={r.image_url}
+                          alt={r.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-400">
+                          <Building2 className="w-6 h-6 opacity-40" />
+                        </div>
+                      )}
+                      <span className="absolute bottom-1 left-1 font-mono text-[9px] font-bold text-white bg-black/60 backdrop-blur-xs px-1.5 py-0.5 rounded">
+                        {r.room_code}
+                      </span>
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-bold text-slate-900 dark:text-white text-xs truncate">
+                          {r.name}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                        {r.location}
+                      </div>
+                      <div className="flex items-center gap-2 mt-1.5 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                        <span className="inline-flex items-center gap-1 text-teal-700 dark:text-teal-300 font-semibold bg-teal-50 dark:bg-teal-950/50 px-2 py-0.5 rounded-md border border-teal-200/60 dark:border-teal-800/60">
+                          <Users className="w-3 h-3" /> {r.capacity} Max
+                        </span>
+                        <span>{r.floor_level}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
+
+              {/* Selected Room Expanded Visual Banner */}
+              {selectedRoom && (
+                <div className="mt-4 p-4 rounded-2xl bg-teal-50/50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3.5">
+                    {selectedRoom.image_url && (
+                      <img
+                        src={selectedRoom.image_url}
+                        alt={selectedRoom.name}
+                        className="w-16 h-16 rounded-xl object-cover border border-teal-300 dark:border-teal-700 shadow-2xs shrink-0"
+                      />
+                    )}
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300 bg-teal-100 dark:bg-teal-900/60 px-2 py-0.5 rounded">
+                          Selected Venue
+                        </span>
+                        <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300">
+                          {selectedRoom.room_code}
+                        </span>
+                      </div>
+                      <h4 className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">
+                        {selectedRoom.name}
+                      </h4>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        {selectedRoom.location} • Max {selectedRoom.capacity} Pax • Setup buffer: {selectedRoom.setup_buffer_minutes || 15}m
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Date & Time Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Tarikh Acara</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Event Date</label>
                 <input
                   type="date"
                   value={date}
@@ -439,7 +505,7 @@ export const TempahanRequestFormPage: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Masa Mula</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Start Time</label>
                 <input
                   type="time"
                   value={startTime}
@@ -449,7 +515,7 @@ export const TempahanRequestFormPage: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Masa Tamat</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">End Time</label>
                 <input
                   type="time"
                   value={endTime}
@@ -477,12 +543,12 @@ export const TempahanRequestFormPage: React.FC = () => {
                 <div>
                   <div className="font-bold">
                     {conflictResult.isAvailable
-                      ? 'Slot Masa Tersedia & Bebas Untuk Ditempah'
-                      : 'Amaran Pertindihan Slot Tempahan'}
+                      ? 'Time Slot Available & Ready to Book'
+                      : 'Booking Slot Conflict Alert'}
                   </div>
                   <div className="text-[11px] mt-0.5 opacity-90">
                     {conflictResult.isAvailable
-                      ? 'Tiada sebarang acara lain yang dijadualkan pada waktu ini.'
+                      ? 'No other events or meetings are scheduled during this time window.'
                       : conflictResult.reason}
                   </div>
                 </div>
@@ -492,14 +558,14 @@ export const TempahanRequestFormPage: React.FC = () => {
             {/* Layout Preset */}
             <div className="space-y-2 pt-2">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
-                Bentuk Susunan Meja / Kerusi
+                Room Layout Setup
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                 {[
-                  { id: 'boardroom', label: 'Boardroom (Meja Utama)' },
-                  { id: 'classroom', label: 'Bilik Darjah' },
-                  { id: 'u_shape', label: 'Bentuk U' },
-                  { id: 'theatre', label: 'Teater' }
+                  { id: 'boardroom', label: 'Boardroom (Main Table)' },
+                  { id: 'classroom', label: 'Classroom' },
+                  { id: 'u_shape', label: 'U-Shape' },
+                  { id: 'theatre', label: 'Theatre' }
                 ].map(l => (
                   <button
                     key={l.id}
@@ -524,52 +590,52 @@ export const TempahanRequestFormPage: React.FC = () => {
         {step === 2 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Maklumat Acara & Penganjur</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Lengkapkan butiran rasmi mesyuarat atau program hospital.</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Event & Organizer Details</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Complete the official information for the meeting or hospital program.</p>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Tajuk Mesyuarat / Program *</label>
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Meeting / Program Title *</label>
               <input
                 type="text"
                 value={purpose}
                 onChange={e => setPurpose(e.target.value)}
-                placeholder="cth. Mesyuarat Kajian Semula Pengurusan Kualiti Bil. 2/2026"
+                placeholder="e.g. Quality Management Review Meeting No. 2/2026"
                 className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Kategori Acara</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Event Category</label>
                 <select
                   value={eventType}
                   onChange={e => setEventType(e.target.value)}
                   className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
                 >
-                  <option value="Mesyuarat Rasmi">Mesyuarat Rasmi</option>
-                  <option value="Kursus / Latihan">Kursus / Latihan</option>
-                  <option value="CME / CPD Klinikal">CME / CPD Klinikal</option>
-                  <option value="Taklimat / Briefing">Taklimat / Briefing</option>
-                  <option value="Lawatan VIP">Lawatan VIP</option>
+                  <option value="Official Meeting">Official Meeting</option>
+                  <option value="Course / Training">Course / Training</option>
+                  <option value="Clinical CME / CPD">Clinical CME / CPD</option>
+                  <option value="Briefing">Briefing</option>
+                  <option value="VIP Visit">VIP Visit</option>
                 </select>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Keutamaan Tempahan</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Booking Priority</label>
                 <select
                   value={priority}
                   onChange={e => setPriority(e.target.value as any)}
                   className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
                 >
-                  <option value="normal">Biasa (Normal)</option>
-                  <option value="urgent">Segera (Urgent)</option>
-                  <option value="vvip_event">Acara Khas VVIP</option>
+                  <option value="normal">Normal</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="vvip_event">Special VVIP Event</option>
                 </select>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Bilangan Peserta (Pax)</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Number of Attendees (Pax)</label>
                 <input
                   type="number"
                   min="1"
@@ -584,12 +650,12 @@ export const TempahanRequestFormPage: React.FC = () => {
             {/* Organizer Info */}
             <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
               <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
-                Pegawai Bertanggungjawab (PIC)
+                Person-In-Charge (PIC)
               </span>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Nama Pegawai</label>
+                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Officer Name</label>
                   <input
                     type="text"
                     value={pemohonName}
@@ -599,7 +665,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Jawatan & Jabatan</label>
+                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Designation & Department</label>
                   <input
                     type="text"
                     value={`${pemohonJawatan} (${departmentName})`}
@@ -609,7 +675,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">No. Telefon Bimbit / Sambungan</label>
+                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Mobile / Extension Phone</label>
                   <input
                     type="text"
                     value={pemohonPhone}
@@ -619,7 +685,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Alamat Emel</label>
+                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Email Address</label>
                   <input
                     type="email"
                     value={pemohonEmail}
@@ -641,7 +707,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                 />
                 <span className="text-xs font-bold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
                   <Crown className="w-4 h-4 text-amber-600" />
-                  Melibatkan Tetamu Kehormat / VVIP (Pengarah KKM / JKN / VIP Luar)
+                  Involves Dignitaries / VVIP (MOH / JKN Director / External VIP)
                 </span>
               </label>
 
@@ -650,7 +716,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                   type="text"
                   value={vipListStr}
                   onChange={e => setVipListStr(e.target.value)}
-                  placeholder="Senaraikan nama tetamu VIP (asingkan dengan koma)"
+                  placeholder="List VIP guest names (separated by commas)"
                   className="w-full p-2.5 rounded-xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 text-xs text-amber-950 dark:text-amber-200 font-medium focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
                 />
               )}
@@ -662,26 +728,26 @@ export const TempahanRequestFormPage: React.FC = () => {
         {step === 3 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Peralatan AV & Penyediaan Jamuan</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Pilih peralatan teknikal dan kemudahan sokongan yang diperlukan.</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">AV Equipment & Catering Setup</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Select technical equipment and support facilities required for the session.</p>
             </div>
 
             {/* Amenities Toggle Grid */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
-                Peralatan Audio Visual & Kemudahan
+                Audio Visual Equipment & Amenities
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
                 {[
-                  { id: 'projector', label: 'Projektor HD & Layar' },
-                  { id: 'smart_tv', label: 'Smart TV Interaktif' },
+                  { id: 'projector', label: 'HD Projector & Screen' },
+                  { id: 'smart_tv', label: 'Interactive Smart TV' },
                   { id: 'video_conferencing', label: 'Video Conferencing (Zoom/Teams)' },
-                  { id: 'pa_sound_system', label: 'Sistem PA & Pembesar Suara' },
-                  { id: 'wireless_mic', label: 'Mikrofon Tanpa Wayar' },
-                  { id: 'whiteboard', label: 'Papan Putih & Pen Penanda' },
-                  { id: 'podium', label: 'Podium / Rostrum Rasmi' },
-                  { id: 'recording_facility', label: 'Rakaman Video Acara' },
-                  { id: 'flipchart', label: 'Papan Carta Selak (Flipchart)' }
+                  { id: 'pa_sound_system', label: 'PA & Sound System' },
+                  { id: 'wireless_mic', label: 'Wireless Microphone' },
+                  { id: 'whiteboard', label: 'Whiteboard & Markers' },
+                  { id: 'podium', label: 'Official Podium / Rostrum' },
+                  { id: 'recording_facility', label: 'Video Event Recording' },
+                  { id: 'flipchart', label: 'Flipchart Stand' }
                 ].map(item => {
                   const isSelected = requestedAmenities.includes(item.id as any)
                   return (
@@ -715,34 +781,34 @@ export const TempahanRequestFormPage: React.FC = () => {
                 />
                 <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                   <Utensils className="w-4 h-4 text-amber-500" />
-                  Perkhidmatan Jamuan / Makanan Disediakan
+                  Catering / Food Service Required
                 </span>
               </label>
 
               {hasCatering && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   <div className="space-y-1">
-                    <label className="text-slate-500 dark:text-slate-400 font-semibold block">Jenis Hidangan</label>
+                    <label className="text-slate-500 dark:text-slate-400 font-semibold block">Meal Type</label>
                     <select
                       value={mealType}
                       onChange={e => setMealType(e.target.value as any)}
                       className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-semibold text-xs"
                     >
-                      <option value="sarapan">Sarapan Pagi</option>
-                      <option value="makan_tengahari">Makan Tengahari</option>
-                      <option value="minum_petang">Minum Petang</option>
-                      <option value="makan_malam">Makan Malam</option>
-                      <option value="kudapan">Kudapan Ringan</option>
+                      <option value="sarapan">Breakfast</option>
+                      <option value="makan_tengahari">Lunch</option>
+                      <option value="minum_petang">Afternoon Tea</option>
+                      <option value="makan_malam">Dinner</option>
+                      <option value="kudapan">Light Refreshments</option>
                     </select>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-slate-500 dark:text-slate-400 font-semibold block">Lokasi Hidangan</label>
+                    <label className="text-slate-500 dark:text-slate-400 font-semibold block">Serving Location</label>
                     <input
                       type="text"
                       value={cateringLocation}
                       onChange={e => setCateringLocation(e.target.value)}
-                      placeholder="cth. Foyer Luar Bilik Mesyuarat"
+                      placeholder="e.g. Foyer Outside Meeting Room"
                       className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-semibold text-xs"
                     />
                   </div>
@@ -752,12 +818,12 @@ export const TempahanRequestFormPage: React.FC = () => {
 
             {/* Special Remarks */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Catatan Khas / Keperluan Tambahan</label>
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Special Remarks / Additional Requirements</label>
               <textarea
                 rows={3}
                 value={specialRequirements}
                 onChange={e => setSpecialRequirements(e.target.value)}
-                placeholder="Sebarang perincian tambahan untuk perhatian Pegawai Fasiliti..."
+                placeholder="Any special details for the Facility Officer..."
                 className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
               />
             </div>
@@ -768,44 +834,55 @@ export const TempahanRequestFormPage: React.FC = () => {
         {step === 4 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Semakan Ringkasan Permohonan</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Sila semak semula semua perincian sebelum menghantar permohonan rasmi.</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Review Booking Summary</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Please verify all details before submitting the official booking request.</p>
             </div>
 
             {/* Official Summary Card */}
             <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-4 text-xs">
-              <div className="pb-3 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-teal-700 dark:text-teal-400 font-bold uppercase">Fasiliti Dipilih</span>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">{selectedRoom?.name}</h3>
-                  <div className="text-slate-500 dark:text-slate-400 text-[11px]">{selectedRoom?.location}</div>
+              <div className="pb-4 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3.5">
+                  {selectedRoom?.image_url && (
+                    <img
+                      src={selectedRoom.image_url}
+                      alt={selectedRoom.name}
+                      className="w-20 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 shadow-2xs"
+                    />
+                  )}
+                  <div>
+                    <span className="text-[10px] text-teal-700 dark:text-teal-400 font-bold uppercase tracking-wider">
+                      Selected Facility • {selectedRoom?.room_code}
+                    </span>
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">{selectedRoom?.name}</h3>
+                    <div className="text-slate-500 dark:text-slate-400 text-[11px]">{selectedRoom?.location}</div>
+                  </div>
                 </div>
-                <span className="px-3 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300">
+                <span className="px-3 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 self-start sm:self-center">
                   {attendeesCount} Pax
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Tajuk Acara:</span>
+                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Event Title:</span>
                   <span className="font-bold text-slate-800 dark:text-slate-200">{purpose}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Tarikh & Masa:</span>
+                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Date & Time:</span>
                   <span className="font-bold text-slate-800 dark:text-slate-200">{date} ({startTime} - {endTime})</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Susunan Meja:</span>
+                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Room Layout:</span>
                   <span className="font-semibold text-slate-800 dark:text-slate-200 uppercase">{layoutType}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Pemohon:</span>
+                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Applicant:</span>
                   <span className="font-semibold text-slate-800 dark:text-slate-200">{pemohonName} ({departmentName})</span>
                 </div>
               </div>
 
               <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-                <span className="text-slate-400 dark:text-slate-500 block mb-1">Peralatan Dimohon:</span>
+                <span className="text-slate-400 dark:text-slate-500 block mb-1">Requested Amenities:</span>
                 <div className="flex flex-wrap gap-1">
                   {requestedAmenities.map(a => (
                     <span key={a} className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-semibold">
@@ -826,7 +903,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                   className="rounded text-teal-600 focus:ring-teal-500 mt-0.5"
                 />
                 <span className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                  Saya dengan ini mengesahkan bahawa maklumat yang diberikan adalah tepat dan berjanji akan mematuhi terma kebersihan, keselamatan peralatan AV, serta memastikan suis elektrik dan penghawa dingin dimatikan selepas selesai digunakan.
+                  I hereby confirm that all information provided is accurate and agree to abide by facility rules regarding cleanliness, AV equipment handling, and ensuring electrical appliances and air conditioners are switched off after the session.
                 </span>
               </label>
             </div>
@@ -845,7 +922,7 @@ export const TempahanRequestFormPage: React.FC = () => {
             )}
           >
             <ArrowLeft className="w-4 h-4" />
-            Sebelumnya
+            Previous
           </button>
 
           {step < 4 ? (
@@ -854,7 +931,7 @@ export const TempahanRequestFormPage: React.FC = () => {
               onClick={handleNext}
               className="px-6 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 active:scale-95"
             >
-              Seterusnya
+              Next
               <ArrowRight className="w-4 h-4" />
             </button>
           ) : (
@@ -864,7 +941,7 @@ export const TempahanRequestFormPage: React.FC = () => {
               disabled={submitting}
               className="px-7 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold shadow-xs transition-all flex items-center gap-2 active:scale-95"
             >
-              {submitting ? 'Menghantar Permohonan...' : 'Hantar Permohonan Tempahan'}
+              {submitting ? 'Submitting Booking...' : 'Submit Booking Request'}
               <Check className="w-4 h-4" />
             </button>
           )}

@@ -26,23 +26,29 @@ const getBase64ImageFromUrl = async (imageUrl: string): Promise<string | null> =
 };
 
 const getCylinderVolume = (sizeCode: string): string => {
-  const code = sizeCode.toUpperCase();
-  if (code.includes('HS')) return '6.4m³';
-  if (code.includes('D')) return '0.5m³';
-  if (code.includes('E')) return '0.7m³';
+  const code = (sizeCode || '').toUpperCase().trim();
+  if (code.includes('HS') || code.includes('6.4')) return '6.4m³';
+  if (code.includes('-F') || /(?:^|[_\-\s])F(?:[_\-\s]|$)/i.test(code) || code.includes('1.4')) return '1.4m³';
+  if (code.includes('-E') || /(?:^|[_\-\s])E(?:[_\-\s]|$)/i.test(code) || code.includes('0.7')) return '0.7m³';
+  if (code.includes('-D') || /(?:^|[_\-\s])D(?:[_\-\s]|$)/i.test(code) || code.includes('0.5')) return '0.5m³';
+  if (code.includes('-N') || /(?:^|[_\-\s])N(?:[_\-\s]|$)/i.test(code) || code.includes('8.0') || code.includes('8M3')) return '8.0m³';
+  
   if (code.includes('F')) return '1.4m³';
-  if (code.includes('N')) return '8.0m³';
+  if (code.includes('E')) return '0.7m³';
+  if (code.includes('D')) return '0.5m³';
+  if (code.includes('N') && !code.includes('BN')) return '8.0m³';
   return '-';
 };
 
 const getCylinderSpecification = (sizeCode: string): string => {
-  const code = sizeCode.toUpperCase();
+  const code = (sizeCode || '').toUpperCase().trim();
   let sizeLabel = sizeCode;
-  if (code.includes('N')) sizeLabel = 'BN';
-  if (code.includes('F')) sizeLabel = 'PI / F';
-  if (code.includes('E')) sizeLabel = 'E';
-  if (code.includes('D')) sizeLabel = 'D';
-  if (code.includes('HS')) sizeLabel = 'HS';
+  if (code.includes('HS') || code.includes('6.4')) sizeLabel = 'HS';
+  else if (code.includes('-F-BN') || code.includes('F-BN') || (code.includes('-F') && code.includes('BN'))) sizeLabel = 'BN';
+  else if (code.includes('-F') || /(?:^|[_\-\s])F(?:[_\-\s]|$)/i.test(code)) sizeLabel = 'PI / F';
+  else if (code.includes('-E') || /(?:^|[_\-\s])E(?:[_\-\s]|$)/i.test(code)) sizeLabel = 'E';
+  else if (code.includes('-D') || /(?:^|[_\-\s])D(?:[_\-\s]|$)/i.test(code)) sizeLabel = 'D';
+  else if (code.includes('-N') || /(?:^|[_\-\s])N(?:[_\-\s]|$)/i.test(code)) sizeLabel = 'BN';
   
   return `Silinder Gas Oksigen Perubatan ${sizeLabel} (${getCylinderVolume(sizeCode)})`;
 };
@@ -86,11 +92,28 @@ export async function generateCylinderDispatchPdf(
 
   // 2. Document Title
   doc.setFont('times', 'bold');
-  doc.setFontSize(11);
-  doc.text('BORANG PENGELUARAN / PERMINTAAN SILINDER GAS PERUBATAN', pageWidth / 2, 40, { align: 'center' });
+  const isReturn = Boolean(
+    request.is_external_facility && (
+      request.external_operation === 'return' ||
+      request.manual_requester_name?.toLowerCase().includes('return') ||
+      request.manual_requester_name?.toLowerCase().includes('pulang') ||
+      request.remarks?.toLowerCase().includes('pemulangan')
+    )
+  );
+  const docTitle = isReturn
+    ? 'BORANG PEMULANGAN SILINDER GAS (ANTARA FASILITI)'
+    : (request.is_external_facility
+        ? (request.indent_direction === 'inbound' ? 'NOTA PENERIMAAN SILINDER ANTARA FASILITI (INBOUND)' : 'BORANG PENGELUARAN / INDENT SILINDER GAS (ANTARA FASILITI)')
+        : 'BORANG PENGELUARAN / PERMINTAAN SILINDER GAS PERUBATAN');
+  doc.text(docTitle, pageWidth / 2, 40, { align: 'center' });
   doc.setFont('times', 'italic');
   doc.setFontSize(9.5);
-  doc.text('Medical Oxygen Cylinder Request and Dispatch Document', pageWidth / 2, 44, { align: 'center' });
+  const docSubtitle = isReturn
+    ? 'Inter-Facility Medical Oxygen Cylinder Return Document'
+    : (request.is_external_facility
+        ? 'Inter-Facility Medical Oxygen Cylinder Requisition and Dispatch Document'
+        : 'Medical Oxygen Cylinder Request and Dispatch Document');
+  doc.text(docSubtitle, pageWidth / 2, 44, { align: 'center' });
 
   // 3. Info Box Grid
   const gridY = 48;
@@ -104,24 +127,48 @@ export async function generateCylinderDispatchPdf(
   // Right Box
   doc.rect(margin + 5 + colWidth, gridY, colWidth, boxHeight);
 
-  // Contents - Left Box
+  // Contents - Left Box (From)
   doc.setFont('times', 'bold');
   doc.setFontSize(8.5);
   doc.text('DARIPADA (FROM):', margin + 8, gridY + 4);
   doc.setFont('times', 'normal');
   doc.setFontSize(9.5);
-  const deptName = request.department?.department_name || 'Unit Pemohon';
-  doc.text(deptName.toUpperCase(), margin + 8, gridY + 9);
-  doc.text('HOSPITAL DAERAH LAWAS', margin + 8, gridY + 14);
+  
+  if (request.is_external_facility) {
+    if (request.indent_direction === 'inbound') {
+      doc.text((request.external_facility_name || 'FASILITI LUAR').toUpperCase(), margin + 8, gridY + 9);
+      doc.text('KEMENTERIAN KESIHATAN MALAYSIA', margin + 8, gridY + 14);
+    } else {
+      const deptName = request.department?.department_name || 'UNIT FARMASI LOGISTIK';
+      doc.text(deptName.toUpperCase(), margin + 8, gridY + 9);
+      doc.text('HOSPITAL DAERAH LAWAS', margin + 8, gridY + 14);
+    }
+  } else {
+    const deptName = request.department?.department_name || 'Unit Pemohon';
+    doc.text(deptName.toUpperCase(), margin + 8, gridY + 9);
+    doc.text('HOSPITAL DAERAH LAWAS', margin + 8, gridY + 14);
+  }
 
-  // Contents - Right Box
+  // Contents - Right Box (To)
   doc.setFont('times', 'bold');
   doc.setFontSize(8.5);
   doc.text('KEPADA (TO):', margin + 8 + colWidth, gridY + 4);
   doc.setFont('times', 'normal');
   doc.setFontSize(9.5);
-  doc.text('UNIT FARMASI LOGISTIK', margin + 8 + colWidth, gridY + 9);
-  doc.text('HOSPITAL DAERAH LAWAS', margin + 8 + colWidth, gridY + 14);
+
+  if (request.is_external_facility) {
+    if (request.indent_direction === 'inbound') {
+      const deptName = request.department?.department_name || 'UNIT FARMASI LOGISTIK';
+      doc.text(deptName.toUpperCase(), margin + 8 + colWidth, gridY + 9);
+      doc.text('HOSPITAL DAERAH LAWAS', margin + 8 + colWidth, gridY + 14);
+    } else {
+      doc.text((request.external_facility_name || 'HOSPITAL BEAUFORT').toUpperCase(), margin + 8 + colWidth, gridY + 9);
+      doc.text('KEMENTERIAN KESIHATAN MALAYSIA', margin + 8 + colWidth, gridY + 14);
+    }
+  } else {
+    doc.text('UNIT FARMASI LOGISTIK', margin + 8 + colWidth, gridY + 9);
+    doc.text('HOSPITAL DAERAH LAWAS', margin + 8 + colWidth, gridY + 14);
+  }
 
   // Reference Numbers Grid
   const refY = gridY + boxHeight + 4;
@@ -152,14 +199,44 @@ export async function generateCylinderDispatchPdf(
 
   // 4. Items Table
   const tableY = refY + 14;
-  const tableData = (request.items || []).map((item, index) => [
-    index + 1,
-    item.size_code,
-    getCylinderSpecification(item.size_code),
-    item.quantity_requested,
-    request.status === 'pending' || request.status === 'rejected' ? '-' : item.quantity_issued,
-    item.usage_notes || 'â€”'
-  ]);
+  const tableData = (request.items || []).map((item, index) => {
+    let serials = item.dispatched_serials || [];
+    let extraNotes = item.usage_notes || '';
+    if (serials.length === 0 && extraNotes) {
+      const match = extraNotes.match(/(?:serials?(?:\s*\(\d+\))?|siri)\s*:\s*([^|]+)/i);
+      if (match && match[1]) {
+        serials = match[1].split(/[,;\n]+/).map((s: string) => s.trim()).filter(Boolean);
+      }
+    }
+
+    const targetQty = (request.status === 'pending' || request.status === 'rejected')
+      ? item.quantity_requested
+      : (item.quantity_issued || item.quantity_requested);
+
+    if (targetQty && targetQty > 0 && serials.length > targetQty) {
+      serials = serials.slice(0, targetQty);
+    }
+
+    let catatan = '';
+    if (serials.length > 0) {
+      catatan = serials.map((s: string) => `• ${s}`).join('\n');
+      if (extraNotes) {
+        const cleanNotes = extraNotes.replace(/(?:serials?(?:\s*\(\d+\))?|siri)\s*:\s*[^|]+/i, '').replace(/^[|\s]+|[|\s]+$/g, '').trim();
+        if (cleanNotes) catatan += `\n${cleanNotes}`;
+      }
+    } else {
+      catatan = extraNotes || '—';
+    }
+
+    return [
+      index + 1,
+      item.size_code,
+      getCylinderSpecification(item.size_code),
+      item.quantity_requested,
+      request.status === 'pending' || request.status === 'rejected' ? '-' : item.quantity_issued,
+      catatan
+    ];
+  });
 
   // Totals
   const totalRequested = (request.items || []).reduce((sum, item) => sum + item.quantity_requested, 0);

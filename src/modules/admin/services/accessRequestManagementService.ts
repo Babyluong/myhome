@@ -418,32 +418,54 @@ export async function approveAccessRequest(
         }
       }
 
-      // Check if user already exists in public.users table
-      // Check by IC number (which is now used as employee_id) AND hospital_id
-      const { data: existingUser, error: checkError } = await supabase
+      // Check if user already exists in public.users table by IC number or email
+      const { data: existingUserByIc, error: checkIcError } = await supabase
         .from('users')
-        .select('id, employee_id, hospital_id')
+        .select('id, employee_id, email, ic_number, hospital_id')
         .eq('ic_number', request.ic_number)
         .maybeSingle()
 
-      if (checkError) {
-        console.error('Error checking for existing user:', checkError)
+      const { data: existingUserByEmail, error: checkEmailError } = await supabase
+        .from('users')
+        .select('id, employee_id, email, ic_number, hospital_id')
+        .eq('email', request.email)
+        .maybeSingle()
+
+      if (checkIcError) {
+        console.error('Error checking for existing user by IC:', checkIcError)
+      }
+      if (checkEmailError) {
+        console.error('Error checking for existing user by email:', checkEmailError)
       }
 
-      // Check if existing user is in a different hospital
-      if (existingUser && existingUser.hospital_id !== request.hospital_id) {
-        // Don't update status - return error immediately
+      // SECURITY & INTEGRITY: Collision checks
+      // If existing user with same IC has a different email
+      if (existingUserByIc && existingUserByIc.email.toLowerCase() !== request.email.toLowerCase()) {
         return {
           success: false,
-          error: `A user with IC number ${request.ic_number} already exists in a different hospital. ` +
-                 'Please contact a System Admin if you need to transfer this user between hospitals.'
+          error: `Pengguna dengan No. KP ${request.ic_number} sudah berdaftar di bawah emel yang lain (${existingUserByIc.email}). Sila semak semula No. KP pemohon bagi mengelakkan pertembungan akaun.`,
         }
       }
 
-      // Generate UUID and use IC number as employee_id
-      const newUserId = existingUser?.id || crypto.randomUUID()
-      isNewUser = !existingUser
-      
+      // If existing user with same Email has a different IC
+      if (existingUserByEmail && existingUserByEmail.ic_number !== request.ic_number) {
+        return {
+          success: false,
+          error: `Pengguna dengan emel ${request.email} sudah berdaftar di bawah No. KP yang berbeza (${existingUserByEmail.ic_number}). Sila semak semula maklumat pemohon.`,
+        }
+      }
+
+      const existingUser = existingUserByIc || existingUserByEmail
+
+      // Check if existing user is in a different hospital
+      if (existingUser && existingUser.hospital_id !== request.hospital_id) {
+        return {
+          success: false,
+          error: `Pengguna dengan No. KP ${request.ic_number} sudah berdaftar di hospital lain. ` +
+                 'Sila hubungi Pentadbir Sistem jika perlu membuat pertukaran hospital.'
+        }
+      }
+
       // Use IC number as employee_id (remove dashes if present)
       const employeeId = request.ic_number.replace(/-/g, '')
       
@@ -457,7 +479,27 @@ export async function approveAccessRequest(
         }
       }
 
-      // Create or update user account
+      // CRITICAL: Supabase Auth user creation MUST happen FIRST for new users
+      // This ensures public.users.id strictly matches auth.users.id (Auth UID)
+      const { success: authSuccess, error: authError, authUserId } = await createAuthUser(
+        request.email,
+        plainPassword,
+        existingUser?.id
+      )
+
+      if (!authSuccess || (!existingUser && !authUserId)) {
+        console.error('Failed to create Auth user:', authError)
+        return {
+          success: false,
+          error: `Gagal mencipta akaun pengesahan (Supabase Auth): ${authError || 'Tiada Auth UID dipulangkan'}. ` +
+                 'Akaun pengguna tidak dicipta. Sila cuba lagi atau hubungi pentadbir sistem.',
+        }
+      }
+
+      const newUserId = existingUser?.id || authUserId!
+      isNewUser = !existingUser
+
+      // Prepare user data for public.users
       const userData = {
         email: request.email,
         employee_id: employeeId,
@@ -477,12 +519,9 @@ export async function approveAccessRequest(
         updated_at: new Date().toISOString(),
       }
 
-      let newUser
-      let userError
-
-      if (existingUser && existingUser.hospital_id === request.hospital_id) {
+      let newUser: any
+      if (existingUser) {
         // Update existing user in the same hospital
-        // This handles cases where an access request was previously approved but needs to be updated
         const { data: updatedUser, error: updateError } = await supabase
           .from('users')
           .update(userData)
@@ -496,16 +535,11 @@ export async function approveAccessRequest(
         }
         
         if (!updatedUser) {
-          console.error('Update returned no data. This may be due to Row Level Security (RLS) restrictions.')
-          throw new Error(
-            'You do not have permission to update this user account. ' +
-            'Please ensure you are a Hospital Admin for this hospital.'
-          )
+          throw new Error('Gagal mengemaskini profil pengguna sedia ada.')
         }
         newUser = updatedUser
-        userError = updateError
       } else {
-        // Insert new user (either doesn't exist, or we've already handled the different hospital case above)
+        // Insert new user with the exact Auth user ID
         const { data: insertedUser, error: insertError } = await supabase
           .from('users')
           .insert({
@@ -515,54 +549,15 @@ export async function approveAccessRequest(
           })
           .select()
           .single()
+
+        if (insertError) {
+          console.error('Error inserting user record:', insertError)
+          throw insertError
+        }
         newUser = insertedUser
-        userError = insertError
       }
 
-      if (userError) throw userError
       createdUserId = newUser.id
-
-      // Create Supabase Auth user account using the decrypted password from the access request
-      const { success: authSuccess, error: authError, authUserId } = await createAuthUser(
-        request.email,
-        plainPassword, // Use the decrypted password from the access request
-        newUserId // Use the same UUID we generated or found for the users table
-      )
-
-      if (!authSuccess) {
-        console.error('Failed to create Auth user:', authError)
-        console.error('User ID:', newUserId)
-        console.error('Email:', request.email)
-        console.error('This is a critical error - the user account was created but Auth account was not.')
-        console.error('The user will not be able to log in until this is fixed.')
-        console.error('Solution: Use the fixMissingAuthAccount function or reset the password.')
-        
-        // Rollback: only delete if we actually inserted it in this session
-        if (isNewUser) {
-          await supabase.from('users').delete().eq('id', newUser.id)
-        }
-        // No need to rollback status since we haven't updated it yet
-        return {
-          success: false,
-          error: `Failed to create authentication account: ${authError || 'Unknown error'}. ` +
-                 'The user account was not created. Please try again or contact system administrator.',
-        }
-      }
-
-      // Verify Auth account was created successfully
-      if (!authUserId) {
-        console.error('WARNING: Auth account creation reported success but no authUserId returned!')
-        console.error('This may indicate the Auth account was not actually created.')
-      }
-
-      // Update user record with auth user ID if different (shouldn't be, but just in case)
-      if (authUserId && authUserId !== newUser.id) {
-        await supabase
-          .from('users')
-          .update({ id: authUserId })
-          .eq('id', newUser.id)
-        newUser.id = authUserId
-      }
 
       // Create emergency contact if provided
       if (request.emergency_contact_name && request.emergency_contact_phone) {

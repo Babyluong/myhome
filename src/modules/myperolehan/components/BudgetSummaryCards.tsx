@@ -33,51 +33,51 @@ export const BudgetSummaryCards: React.FC<BudgetSummaryCardsProps> = ({
   const cards = [
     {
       id: 'allocation',
-      title: 'Jumlah Peruntukan',
-      subtitle: `Tahun ${kpis.fiscalYear}`,
+      title: 'Total Allocated Budget',
+      subtitle: `Year ${kpis.fiscalYear}`,
       amount: formatCurrency(kpis.totalAllocatedGrand),
-      secondaryInfo: `Pengurusan: ${formatCurrency(kpis.totalAllocatedPengurusan)}`,
+      secondaryInfo: `Operating: ${formatCurrency(kpis.totalAllocatedPengurusan)}`,
       icon: Wallet,
       tag: 'FINANCIAL',
       iconBg: 'bg-blue-50 text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white',
       borderColor: 'border-2 border-slate-100 hover:border-blue-200 hover:shadow-blue-100/20',
-      actionText: 'RINGKASAN'
+      actionText: 'SUMMARY'
     },
     {
       id: 'committed',
-      title: 'Komitmen Pesanan (PO)',
-      subtitle: `${kpis.activePOCount} Pesanan Aktif`,
+      title: 'Committed Orders (PO)',
+      subtitle: `${kpis.activePOCount} Active Orders`,
       amount: formatCurrency(kpis.totalCommitted),
-      secondaryInfo: `${kpis.pendingApprovalCount} Menunggu Kelulusan`,
+      secondaryInfo: `${kpis.pendingApprovalCount} Pending Approval`,
       icon: Clock,
       tag: 'COMMITTED',
       iconBg: 'bg-amber-50 text-amber-600 border border-amber-100 group-hover:bg-amber-600 group-hover:text-white',
       borderColor: 'border-2 border-slate-100 hover:border-amber-200 hover:shadow-amber-100/20',
-      actionText: 'PESANAN'
+      actionText: 'ORDERS'
     },
     {
       id: 'spent',
-      title: 'Perbelanjaan Sebenar',
-      subtitle: 'Selesai Dibayar / Baucar',
+      title: 'Actual Expenditure',
+      subtitle: 'Disbursed / Paid Vouchers',
       amount: formatCurrency(kpis.totalActualSpent),
-      secondaryInfo: `Kadar Guna: ${kpis.overallUtilizationRate}%`,
+      secondaryInfo: `Utilization: ${kpis.overallUtilizationRate}%`,
       icon: CheckCircle2,
       tag: 'ACTUAL SPENT',
       iconBg: 'bg-emerald-50 text-emerald-600 border border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white',
       borderColor: 'border-2 border-slate-100 hover:border-emerald-200 hover:shadow-emerald-100/20',
-      actionText: 'LEJAR'
+      actionText: 'LEDGER'
     },
     {
       id: 'balance',
-      title: 'Baki Bersih Semasa',
-      subtitle: 'Peruntukan Bebas',
+      title: 'Current Net Balance',
+      subtitle: 'Unencumbered Funds',
       amount: formatCurrency(kpis.totalNetBalance),
-      secondaryInfo: `${(100 - kpis.overallUtilizationRate).toFixed(1)}% Baki Tersedia`,
+      secondaryInfo: `${(100 - kpis.overallUtilizationRate).toFixed(1)}% Available Balance`,
       icon: PieChart,
       tag: 'BALANCE',
       iconBg: 'bg-indigo-50 text-indigo-600 border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white',
       borderColor: 'border-2 border-slate-100 hover:border-indigo-200 hover:shadow-indigo-100/20',
-      actionText: 'BAKI'
+      actionText: 'BALANCE'
     }
   ]
 
@@ -139,25 +139,25 @@ export const BudgetSummaryCards: React.FC<BudgetSummaryCardsProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h4 className="text-base font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors">
-                  Bajet Pengurusan
+                  Operating Budget
                 </h4>
                 <span className="text-[10px] font-mono px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md font-bold border border-blue-200">
                   020200 & 022300
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-1">
-                Pengurusan Hospital & Dietetik / Sajian Pesakit
+                Hospital Administration & Food Services
               </p>
             </div>
           </div>
 
           <div className="text-right">
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Peruntukan</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Allocation</p>
             <p className="text-lg font-black text-slate-900 font-mono">
               {formatCurrency(kpis.totalAllocatedPengurusan)}
             </p>
             <span className="text-[10px] font-bold text-blue-600 flex items-center gap-0.5 justify-end mt-1">
-              PERINCIAN <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              DETAILS <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
             </span>
           </div>
         </motion.div>
@@ -175,25 +175,25 @@ export const BudgetSummaryCards: React.FC<BudgetSummaryCardsProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h4 className="text-base font-extrabold text-slate-900 group-hover:text-amber-600 transition-colors">
-                  Bajet Pembangunan
+                  Development Budget
                 </h4>
                 <span className="text-[10px] font-mono px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md font-bold border border-amber-200">
                   P42
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-1">
-                Sewaan Peralatan (Leasing 3.0), Konsesi PSH & LDP
+                Equipment Leasing (Leasing 3.0), PSH & Training Concessions
               </p>
             </div>
           </div>
 
           <div className="text-right">
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Peruntukan</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Allocation</p>
             <p className="text-lg font-black text-slate-900 font-mono">
               {formatCurrency(kpis.totalAllocatedPembangunan)}
             </p>
             <span className="text-[10px] font-bold text-amber-600 flex items-center gap-0.5 justify-end mt-1">
-              PERINCIAN <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              DETAILS <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
             </span>
           </div>
         </motion.div>

@@ -1,5 +1,6 @@
 // src/modules/mypriviledging/components/SubmissionsTable.tsx
 // Professional Modern Government Clinical Records Table (High Clarity, Legibility)
+// Full English default with seamless language toggle support
 
 import React, { useState, useMemo } from 'react';
 import {
@@ -15,6 +16,7 @@ import {
   Printer
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/shared/contexts/LanguageContext';
 import type {
   ProcedureSubmission,
   SubmissionStatus
@@ -43,30 +45,33 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
   activeStatusFilter = 'all',
   onStatusFilterChange
 }) => {
+  const { language } = useLanguage();
+  const isMs = language === 'ms';
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
 
   const statusTabs = [
-    { id: 'all', label: 'Semua Rekod', count: submissions.length },
+    { id: 'all', label: isMs ? 'Semua Rekod' : 'All Records', count: submissions.length },
     {
       id: 'pending',
-      label: 'Menunggu Semakan',
+      label: isMs ? 'Menunggu Semakan' : 'Pending Review',
       count: submissions.filter((s) => s.status === 'pending').length
     },
     {
       id: 'changes_requested',
-      label: 'Perlu Pindaan',
+      label: isMs ? 'Perlu Pindaan' : 'Changes Requested',
       count: submissions.filter((s) => s.status === 'changes_requested').length
     },
     {
       id: 'approved',
-      label: 'Diluluskan',
+      label: isMs ? 'Diluluskan' : 'Approved',
       count: submissions.filter((s) => s.status === 'approved').length
     },
     {
       id: 'draft',
-      label: 'Draf',
+      label: isMs ? 'Draf' : 'Drafts',
       count: submissions.filter((s) => s.status === 'draft').length
     }
   ];
@@ -105,35 +110,35 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            Diluluskan
+            {isMs ? 'Diluluskan' : 'Approved'}
           </span>
         );
       case 'pending':
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
             <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-            Menunggu Semakan
+            {isMs ? 'Menunggu Semakan' : 'Pending Review'}
           </span>
         );
       case 'changes_requested':
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
             <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
-            Perlu Pindaan
+            {isMs ? 'Perlu Pindaan' : 'Changes Requested'}
           </span>
         );
       case 'rejected':
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300">
             <XCircle className="w-3.5 h-3.5 text-slate-500" />
-            Ditolak
+            {isMs ? 'Ditolak' : 'Rejected'}
           </span>
         );
       default:
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
             <FileEdit className="w-3.5 h-3.5" />
-            Draf
+            {isMs ? 'Draf' : 'Draft'}
           </span>
         );
     }
@@ -142,13 +147,13 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
   const renderSupervisionBadge = (level: string) => {
     switch (level) {
       case 'level_4_independent':
-        return <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">Mandiri (T4)</span>;
+        return <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">{isMs ? 'Mandiri (T4)' : 'Independent (L4)'}</span>;
       case 'level_3_indirect_supervision':
-        return <span className="text-xs font-semibold text-sky-700 dark:text-sky-400">Tidak Terus (T3)</span>;
+        return <span className="text-xs font-semibold text-sky-700 dark:text-sky-400">{isMs ? 'Tidak Terus (T3)' : 'Indirect (L3)'}</span>;
       case 'level_2_direct_supervision':
-        return <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">Pengawasan (T2)</span>;
+        return <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">{isMs ? 'Pengawasan (T2)' : 'Direct Supervised (L2)'}</span>;
       default:
-        return <span className="text-xs font-semibold text-slate-500">Pemerhatian (T1)</span>;
+        return <span className="text-xs font-semibold text-slate-500">{isMs ? 'Pemerhatian (T1)' : 'Observed (L1)'}</span>;
     }
   };
 
@@ -196,7 +201,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari nama prosedur, staf, kategori, atau MRN..."
+              placeholder={isMs ? 'Cari nama prosedur, staf, kategori, atau MRN...' : 'Search procedure name, staff, category, or MRN...'}
               className="w-full pl-10 pr-4 py-2 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
             />
           </div>
@@ -207,9 +212,9 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
               onChange={(e) => setSelectedRole(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
             >
-              <option value="all">Semua Peranan</option>
-              <option value="nurses">Jururawat</option>
-              <option value="amos">Penolong Pegawai Perubatan</option>
+              <option value="all">{isMs ? 'Semua Peranan' : 'All Roles'}</option>
+              <option value="nurses">{isMs ? 'Jururawat' : 'Registered Nurses'}</option>
+              <option value="amos">{isMs ? 'Penolong Pegawai Perubatan' : 'Assistant Medical Officers (AMO)'}</option>
             </select>
           </div>
 
@@ -219,7 +224,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
               onChange={(e) => setSelectedDepartment(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
             >
-              <option value="all">Semua Jabatan</option>
+              <option value="all">{isMs ? 'Semua Jabatan' : 'All Departments'}</option>
               {departments.map((dept) => (
                 <option key={dept} value={dept}>
                   {dept}
@@ -235,10 +240,12 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
         <div className="p-10 text-center">
           <Clock className="w-9 h-9 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
           <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-            Tiada Rekod Dijumpai
+            {isMs ? 'Tiada Rekod Dijumpai' : 'No Records Found'}
           </h4>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Tiada rekod prosedur yang sepadan dengan kriteria tapisan anda.
+            {isMs
+              ? 'Tiada rekod prosedur yang sepadan dengan kriteria tapisan anda.'
+              : 'No procedure records match your filter criteria.'}
           </p>
         </div>
       ) : (
@@ -246,12 +253,12 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 uppercase font-bold text-[11px] tracking-wider select-none">
-                <th className="py-3 px-4">Tarikh</th>
-                <th className="py-3 px-4">Staf Klinikal</th>
-                <th className="py-3 px-4">Kategori & Prosedur</th>
-                <th className="py-3 px-4">Pengawasan</th>
-                <th className="py-3 px-4">Status & Kelulusan</th>
-                <th className="py-3 px-4 text-right">Tindakan</th>
+                <th className="py-3 px-4">{isMs ? 'Tarikh' : 'Date'}</th>
+                <th className="py-3 px-4">{isMs ? 'Staf Klinikal' : 'Clinical Staff'}</th>
+                <th className="py-3 px-4">{isMs ? 'Kategori & Prosedur' : 'Category & Procedure'}</th>
+                <th className="py-3 px-4">{isMs ? 'Pengawasan' : 'Supervision Level'}</th>
+                <th className="py-3 px-4">{isMs ? 'Status & Kelulusan' : 'Status & Approval'}</th>
+                <th className="py-3 px-4 text-right">{isMs ? 'Tindakan' : 'Actions'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -294,7 +301,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                     </p>
                     {sub.review?.adminNotes && sub.status === 'changes_requested' && (
                       <p className="text-[11px] text-rose-700 dark:text-rose-300 font-medium mt-1 bg-rose-50 dark:bg-rose-950/40 p-1.5 rounded-lg border border-rose-200 dark:border-rose-800">
-                        Nota JKCP: {sub.review.adminNotes}
+                        {isMs ? 'Nota JKCP: ' : 'JKCP Notes: '} {sub.review.adminNotes}
                       </p>
                     )}
                   </td>
@@ -309,7 +316,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                     {renderStatusBadge(sub.status)}
                     {sub.review?.validityEndDate && sub.status === 'approved' && (
                       <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
-                        Sahlaku: {sub.review.validityEndDate}
+                        {isMs ? 'Sahlaku: ' : 'Valid until: '} {sub.review.validityEndDate}
                       </div>
                     )}
                   </td>
@@ -325,7 +332,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                           className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-2xs transition-all flex items-center gap-1 active:scale-95 text-[11px]"
                         >
                           <Award className="w-3.5 h-3.5" />
-                          <span>Semak & Luluskan</span>
+                          <span>{isMs ? 'Semak & Luluskan' : 'Review & Endorse'}</span>
                         </button>
                       )}
 
@@ -337,7 +344,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                               type="button"
                               onClick={() => onEditSubmission(sub)}
                               className="p-1.5 text-slate-600 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800 rounded-lg"
-                              title="Sunting Draf"
+                              title={isMs ? 'Sunting Draf' : 'Edit Draft'}
                             >
                               <FileEdit className="w-3.5 h-3.5" />
                             </button>
@@ -347,10 +354,10 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                               type="button"
                               onClick={() => onSubmitDraft(sub.id)}
                               className="px-2.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-lg text-[11px] flex items-center gap-1"
-                              title="Hantar untuk Semakan"
+                              title={isMs ? 'Hantar untuk Semakan' : 'Submit for Review'}
                             >
                               <Send className="w-3 h-3" />
-                              <span>Hantar</span>
+                              <span>{isMs ? 'Hantar' : 'Submit'}</span>
                             </button>
                           )}
                           {onDeleteSubmission && (
@@ -358,7 +365,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                               type="button"
                               onClick={() => onDeleteSubmission(sub.id)}
                               className="p-1.5 text-rose-600 hover:text-rose-800 bg-rose-50 dark:bg-rose-950/40 rounded-lg"
-                              title="Padam Draf"
+                              title={isMs ? 'Padam Draf' : 'Delete Draft'}
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -374,7 +381,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                           className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-[11px] flex items-center gap-1 shadow-2xs"
                         >
                           <FileEdit className="w-3.5 h-3.5" />
-                          <span>Pinda & Hantar Semula</span>
+                          <span>{isMs ? 'Pinda & Hantar Semula' : 'Revise & Resubmit'}</span>
                         </button>
                       )}
 
@@ -386,7 +393,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                           className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 font-semibold rounded-lg text-[11px] flex items-center gap-1 border border-slate-200 dark:border-slate-700"
                         >
                           <Printer className="w-3 h-3 text-slate-500" />
-                          <span>Sijil</span>
+                          <span>{isMs ? 'Sijil' : 'Certificate'}</span>
                         </button>
                       )}
                     </div>

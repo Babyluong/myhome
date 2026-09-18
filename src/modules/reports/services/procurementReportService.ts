@@ -187,19 +187,21 @@ export async function generateProcurementReport(
       .lte('cn_date', dateTo)
 
     // 6. Penalties
+    const endIso = dateTo.includes('T') ? dateTo : `${dateTo}T23:59:59.999Z`
+
     const penaltyPromise = supabase
       .from('pharmacy_penalties')
       .select('id, penalty_amount, status, penalty_type, days_delayed, item_name, item_code, expected_delivery_date, actual_delivery_date, issue_date, penalty_paid, payment_kaedah, po_id, lpo_id, supplier_id, supplier:suppliers(company_name), purchase_order:pharmacy_purchase_orders(vote_code, manual_supplier_name, supplier:suppliers(company_name)), created_at')
       .eq('hospital_id', hospitalId)
       .gte('created_at', dateFrom)
-      .lte('created_at', `${dateTo}T23:59:59.999Z`)
+      .lte('created_at', endIso)
 
     // 7. LOUs
     const louPromise = supabase
       .from('pharmacy_lou')
       .select('id, lou_number, valid_until, amount, status, created_at')
       .gte('created_at', dateFrom)
-      .lte('created_at', `${dateTo}T23:59:59.999Z`)
+      .lte('created_at', endIso)
 
     // 8. Supplier Assessments
     const evalPromise = supabase
@@ -219,7 +221,7 @@ export async function generateProcurementReport(
       `)
       .eq('lpo.hospital_id', hospitalId)
       .gte('created_at', dateFrom)
-      .lte('created_at', `${dateTo}T23:59:59.999Z`)
+      .lte('created_at', endIso)
 
     // Await all
     const [poRes, lpoRes, trackingRes, grRes, cnRes, penaltyRes, louRes, evalRes] = await Promise.all([

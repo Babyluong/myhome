@@ -73,7 +73,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/pharmacy/dashboard',
     iconName: 'Banknote',
     description: 'Pengurusan waran KKM, bajet pengurusan, perolehan LPO, dan pemantauan perbelanjaan farmasi.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'pharmacy_assistant'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'pharmacy_assistant', 'assistant_pharmacist', 'procurement_officer', 'budget_officer', 'inventory_manager'],
     features: [
       {
         code: 'warrant_allocation',
@@ -109,7 +109,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/pharmacy/inventory',
     iconName: 'Package',
     description: 'Pengurusan stok ubat & bukan ubat, lejar KEW.PS-4, inden wad, dan verifikasi stok.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'pharmacy_assistant', 'pharmacy_storekeeper'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'pharmacy_assistant', 'assistant_pharmacist', 'pharmacy_storekeeper', 'pharmacy_staff', 'procurement_officer', 'inventory_manager'],
     features: [
       {
         code: 'stock_catalog',
@@ -145,7 +145,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/pharmacy/oxygen',
     iconName: 'Wind',
     description: 'Kawalan silinder gas oksigen perubatan, rekod pergerakan wad, imbasan QR, dan keselamatan tangki.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'pharmacy_assistant', 'pharmacy_storekeeper', 'nurse', 'assistant_medical_officer'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'pharmacy_assistant', 'assistant_pharmacist', 'pharmacy_storekeeper', 'pharmacy_staff', 'nurse', 'sister', 'matron', 'assistant_medical_officer', 'senior_assistant_medical_officer', 'doctor', 'medical_officer', 'inventory_manager', 'staff'],
     features: [
       {
         code: 'cylinder_tracking',
@@ -175,7 +175,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/suhu/dashboard',
     iconName: 'Thermometer',
     description: 'Pemantauan IoT suhu peti sejuk farmasi, amaran pelanggaran had suhu, dan tindakan pembetulan.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'pharmacy_assistant', 'nurse'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'pharmacy_assistant', 'assistant_pharmacist', 'nurse', 'sister', 'matron', 'assistant_medical_officer', 'senior_assistant_medical_officer', 'medical_lab_technician', 'pathologist'],
     features: [
       {
         code: 'temperature_logging',
@@ -205,7 +205,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/formulari/dashboard',
     iconName: 'BookOpen',
     description: 'Katalog formulari ubat hospital, ubat berisiko tinggi (HAM), daftar LASA, dan protokol pelarutan.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'doctor', 'medical_officer', 'nurse'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'pharmacy_assistant', 'assistant_pharmacist', 'doctor', 'medical_officer', 'nurse', 'sister', 'matron', 'assistant_medical_officer', 'senior_assistant_medical_officer', 'pathologist', 'staff'],
     features: [
       {
         code: 'formulari_catalog',
@@ -225,6 +225,12 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
         description: 'Panduan pencairan dos ubat suntikan dan garis panduan antibiotik kebangsaan.',
         supportedActions: ['view', 'create', 'edit', 'export'],
       },
+      {
+        code: 'hospital_lawas_formulary',
+        name: 'Formulari Hospital Lawas',
+        description: 'Pangkalan data formulari ubat rasmi Hospital Lawas — diasingkan mengikut kumpulan Eyedrop, Eardrop, Insulin, MDI, Antikoagulan dan kelas klinikal, diselaraskan terus dari inventori fasiliti.',
+        supportedActions: ['view', 'export'],
+      },
     ],
   },
   {
@@ -235,7 +241,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/perolehan/dashboard',
     iconName: 'ShoppingBag',
     description: 'Pengurusan perolehan bukan ubat, perbelanjaan pembangunan (P), dan bekalan pentadbiran.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'staff'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'procurement_officer', 'budget_officer', 'department_head', 'inventory_manager', 'staff'],
     features: [
       {
         code: 'pengurusan_budget',
@@ -265,7 +271,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/transporter/dashboard',
     iconName: 'Truck',
     description: 'Tempahan kenderaan rasmi hospital, pengurusan ambulans, pemeriksaan kenderaan, dan jadual pemandu.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'transport_admin', 'transport_driver', 'staff', 'nurse', 'medical_officer'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'transport_admin', 'transport_driver', 'hospital_driver', 'staff', 'nurse', 'sister', 'matron', 'assistant_medical_officer', 'senior_assistant_medical_officer', 'doctor', 'medical_officer', 'general_service_assistant'],
     features: [
       {
         code: 'transport_booking',
@@ -295,7 +301,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/kunci/dashboard',
     iconName: 'Key',
     description: 'Daftar induk kunci fizikal, rekod pinjaman/pemulangan, audit integriti sampul meterai mengikut KKM.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'staff', 'nurse', 'pharmacist'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'staff', 'nurse', 'sister', 'matron', 'assistant_medical_officer', 'senior_assistant_medical_officer', 'pharmacist', 'physiotherapist', 'radiographer', 'medical_lab_technician', 'occupational_therapist', 'pathologist', 'general_service_assistant'],
     features: [
       {
         code: 'key_registry',
@@ -325,7 +331,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/staff/dashboard',
     iconName: 'Users',
     description: 'Log pergerakan tugas harian staf, kalendar jabatan, cuti anggota, dan carta organisasi.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'staff', 'nurse', 'doctor', 'medical_officer', 'pharmacist'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'staff', 'nurse', 'sister', 'matron', 'doctor', 'medical_officer', 'assistant_medical_officer', 'senior_assistant_medical_officer', 'pharmacist', 'assistant_pharmacist', 'pharmacy_staff', 'physiotherapist', 'radiographer', 'medical_lab_technician', 'occupational_therapist', 'pathologist', 'procurement_officer', 'budget_officer', 'inventory_manager', 'general_service_assistant', 'hospital_driver', 'department_head'],
     features: [
       {
         code: 'staff_movement',
@@ -355,7 +361,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/crossborder/dashboard',
     iconName: 'PlaneTakeoff',
     description: 'Permit pergerakan perubatan merentas sempadan, rekod pesakit rujukan, dan pasukan pengiring.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'doctor', 'medical_officer', 'nurse'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'doctor', 'medical_officer', 'nurse', 'sister', 'matron', 'assistant_medical_officer', 'senior_assistant_medical_officer'],
     features: [
       {
         code: 'permit_application',
@@ -379,7 +385,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/hub/myphis',
     iconName: 'Server',
     description: 'Log pertukaran pita/cakera sandaran pelayan PHiS hospital dan jejak integrasi.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'pharmacist', 'pharmacy_assistant'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'pharmacy_director', 'pharmacy_manager', 'pharmacist', 'pharmacy_assistant', 'assistant_pharmacist'],
     features: [
       {
         code: 'backup_disk_rotation',
@@ -397,7 +403,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/hub/mymsds',
     iconName: 'FileText',
     description: 'Arkib helaian data keselamatan bahan kimia (MSDS/CSDS) dan prosedur kecemasan tumpahan.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'pharmacist', 'pharmacy_assistant', 'nurse', 'staff'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'pharmacist', 'pharmacy_assistant', 'assistant_pharmacist', 'nurse', 'sister', 'matron', 'assistant_medical_officer', 'senior_assistant_medical_officer', 'doctor', 'medical_officer', 'medical_lab_technician', 'pathologist', 'physiotherapist', 'radiographer', 'staff'],
     features: [
       {
         code: 'msds_directory',
@@ -415,7 +421,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/tempahan',
     iconName: 'CalendarDays',
     description: 'Pengurusan tempahan bilik mesyuarat, dewan seminar, auditorium, dan peralatan AV hospital.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'staff', 'nurse', 'doctor', 'medical_officer', 'pharmacist'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director', 'staff', 'nurse', 'sister', 'matron', 'doctor', 'medical_officer', 'assistant_medical_officer', 'senior_assistant_medical_officer', 'pharmacist', 'assistant_pharmacist', 'physiotherapist', 'radiographer', 'medical_lab_technician', 'occupational_therapist', 'pathologist', 'procurement_officer', 'budget_officer', 'department_head'],
     features: [
       {
         code: 'venue_booking',
@@ -451,7 +457,7 @@ export const SYSTEM_MODULE_REGISTRY: ModuleDefinition[] = [
     routePath: '/hub/admin',
     iconName: 'ShieldAlert',
     description: 'Pusat kawalan utama keselamatan, pendaftaran anggota, matriks RBAC, dan audit log KKM.',
-    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator'],
+    defaultRoles: ['system_admin', 'hospital_admin', 'hospital_administrator', 'hospital_director'],
     isCore: true,
     features: [
       {

@@ -9,7 +9,8 @@ import {
   Users,
   Building2,
   Lock,
-  Settings
+  Settings,
+  ScrollText
 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { useAuthStore } from '@/stores/authStore'
@@ -21,6 +22,7 @@ import { AdminApprovalsTab } from './AdminApprovalsTab'
 import { AdminUsersTab } from './AdminUsersTab'
 import { AdminDepartmentsTab } from './AdminDepartmentsTab'
 import { AdminRbacTab } from './AdminRbacTab'
+import { AdminSystemLogsTab } from './AdminSystemLogsTab'
 
 export const MyAdminDashboard: React.FC = () => {
   const navigate = useNavigate()
@@ -33,7 +35,8 @@ export const MyAdminDashboard: React.FC = () => {
     { id: 'approvals', label: 'Kelulusan Akses', icon: UserCheck },
     { id: 'users', label: 'Urus Pengguna', icon: Users },
     { id: 'departments', label: 'Pemantauan Jabatan', icon: Building2 },
-    { id: 'rbac', label: 'Had Kuasa (RBAC)', icon: Lock }
+    { id: 'rbac', label: 'Had Kuasa (RBAC)', icon: Lock },
+    { id: 'logs', label: 'Log Sistem', icon: ScrollText }
   ]
 
   const renderActiveTab = () => {
@@ -48,6 +51,8 @@ export const MyAdminDashboard: React.FC = () => {
         return <AdminDepartmentsTab />
       case 'rbac':
         return <AdminRbacTab />
+      case 'logs':
+        return <AdminSystemLogsTab />
       default:
         return <AdminOverviewTab onTabChange={setActiveTab} />
     }

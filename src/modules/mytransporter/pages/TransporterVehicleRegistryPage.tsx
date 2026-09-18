@@ -7,17 +7,17 @@ import {
   Plus, 
   Edit, 
   Check, 
-  AlertTriangle,
-  FileText,
-  Calendar,
-  Settings,
-  Truck,
-  Trash2
+  AlertTriangle, 
+  FileText, 
+  Calendar, 
+  Settings, 
+  Truck, 
+  Trash2 
 } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
-
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { 
   getVehicles, 
   registerVehicle, 
@@ -30,14 +30,16 @@ import {
   CardTitle, 
   CardContent, 
   Button, 
-  Input,
-  Badge,
-  Modal
+  Input, 
+  Badge, 
+  Modal 
 } from '@/components/ui'
 
 const TransporterVehicleRegistryPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
+  const { language } = useLanguage()
+  const isEn = language !== 'ms'
   const toast = useToast()
 
   const [vehicles, setVehicles] = useState<TransportVehicle[]>([])
@@ -74,7 +76,10 @@ const TransporterVehicleRegistryPage: React.FC = () => {
       const res = await getVehicles()
       if (res.data) setVehicles(res.data)
     } catch (err: any) {
-      toast.error('Gagal Memuatkan Kenderaan', err.message || 'Sila cuba lagi.')
+      toast.error(
+        isEn ? 'Failed to Load Vehicles' : 'Gagal Memuatkan Kenderaan', 
+        err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
+      )
     } finally {
       setLoading(false)
     }
@@ -114,7 +119,10 @@ const TransporterVehicleRegistryPage: React.FC = () => {
     e.preventDefault()
 
     if (!noKenderaan || !noChasis || !model || !cukaiJalan) {
-      toast.error('Borang Tidak Lengkap', 'Sila isi semua butiran kenderaan.')
+      toast.error(
+        isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+        isEn ? 'Please fill in all required vehicle details.' : 'Sila isi semua butiran kenderaan.'
+      )
       return
     }
 
@@ -135,17 +143,26 @@ const TransporterVehicleRegistryPage: React.FC = () => {
       if (modalMode === 'create') {
         const res = await registerVehicle(payload)
         if (res.error) throw new Error(res.error)
-        toast.success('Pendaftaran Berjaya', `Kenderaan ${noKenderaan} berjaya didaftarkan.`)
+        toast.success(
+          isEn ? 'Registration Successful' : 'Pendaftaran Berjaya', 
+          isEn ? `Vehicle ${noKenderaan} registered successfully.` : `Kenderaan ${noKenderaan} berjaya didaftarkan.`
+        )
       } else {
         const res = await updateVehicle(editingId!, payload)
         if (res.error) throw new Error(res.error)
-        toast.success('Kemaskini Berjaya', `Butiran kenderaan ${noKenderaan} berjaya dikemaskini.`)
+        toast.success(
+          isEn ? 'Update Successful' : 'Kemaskini Berjaya', 
+          isEn ? `Vehicle ${noKenderaan} details updated successfully.` : `Butiran kenderaan ${noKenderaan} berjaya dikemaskini.`
+        )
       }
 
       setIsModalOpen(false)
       fetchVehicles()
     } catch (err: any) {
-      toast.error('Gagal Menyimpan Kenderaan', err.message || 'Sila cuba lagi.')
+      toast.error(
+        isEn ? 'Failed to Save Vehicle' : 'Gagal Menyimpan Kenderaan', 
+        err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
+      )
     }
   }
 
@@ -155,10 +172,10 @@ const TransporterVehicleRegistryPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Papan Pemuka</span>
+        <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
       </button>
 
       {/* Header */}
@@ -166,18 +183,20 @@ const TransporterVehicleRegistryPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <Truck className="w-8 h-8 text-indigo-600" />
-            Daftar & Pengurusan Kenderaan (Fleet Registry)
+            {isEn ? 'Fleet Vehicle Registry & Management' : 'Daftar & Pengurusan Kenderaan (Fleet Registry)'}
           </h1>
           <p className="text-slate-500 text-sm">
-            Daftar ambulans ICU, ambulans am, dan kereta jabatan hospital. Pantau status penyelenggaraan serta cukai jalan.
+            {isEn 
+              ? 'Register ICU ambulances, general transit vehicles, and departmental vehicles. Monitor road tax and maintenance status.' 
+              : 'Daftar ambulans ICU, ambulans am, dan kereta jabatan hospital. Pantau status penyelenggaraan serta cukai jalan.'}
           </p>
         </div>
         <Button 
           onClick={handleOpenCreate}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Daftar Kenderaan</span>
+          <span>{isEn ? 'Register Vehicle' : 'Daftar Kenderaan'}</span>
         </Button>
       </div>
 
@@ -185,21 +204,26 @@ const TransporterVehicleRegistryPage: React.FC = () => {
       <Card className="border border-slate-200 shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">Memuatkan senarai kenderaan...</div>
+            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+              {isEn ? 'Loading fleet registry...' : 'Memuatkan senarai kenderaan...'}
+            </div>
           ) : vehicles.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">Tiada kenderaan berdaftar dalam hospital anda.</div>
+            <div className="p-12 text-center text-slate-500">
+              {isEn ? 'No vehicles registered in your facility.' : 'Tiada kenderaan berdaftar dalam hospital anda.'}
+            </div>
           ) : (
-            <div className="overflow-x-auto">
+            <>
+              <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    <th className="px-6 py-4">Kenderaan / No. Plat</th>
-                    <th className="px-6 py-4">Model Kenderaan</th>
-                    <th className="px-6 py-4">No. Chasis</th>
-                    <th className="px-6 py-4">Kategori</th>
-                    <th className="px-6 py-4">Tamat Cukai Jalan</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-right">Tindakan</th>
+                    <th className="px-6 py-4">{isEn ? 'Vehicle / Plate No' : 'Kenderaan / No. Plat'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Vehicle Model' : 'Model Kenderaan'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Chassis No' : 'No. Chasis'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Category' : 'Kategori'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Road Tax Expiry' : 'Tamat Cukai Jalan'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Status' : 'Status'}</th>
+                    <th className="px-6 py-4 text-right">{isEn ? 'Action' : 'Tindakan'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
@@ -242,32 +266,32 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                            )}
                            <span className="capitalize">
                              {v.jenis_kenderaan === 'sg' 
-                               ? 'SG (Kereta Jabatan)' 
+                               ? (isEn ? 'Official Vehicle (SG)' : 'SG (Kereta Jabatan)') 
                                : v.jenis_kenderaan === 'van_jenazah' 
-                               ? 'Van Jenazah' 
-                               : 'Ambulans'}
+                               ? (isEn ? 'Hearse Van' : 'Van Jenazah') 
+                               : (isEn ? 'Ambulance' : 'Ambulans')}
                            </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 font-medium">
                         <div className="flex items-center gap-1.5 text-xs text-slate-600">
                           <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          {new Date(v.tarikh_tamat_cukai_jalan).toLocaleDateString('ms-MY')}
+                          {new Date(v.tarikh_tamat_cukai_jalan).toLocaleDateString(isEn ? 'en-US' : 'ms-MY')}
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        {v.status === 'active' && <Badge variant="success">Aktif (Sedia)</Badge>}
-                        {v.status === 'maintenance' && <Badge variant="warning">Penyelenggaraan</Badge>}
-                        {v.status === 'retired' && <Badge variant="gray">Bersara (Retired)</Badge>}
+                        {v.status === 'active' && <Badge variant="success">{isEn ? 'Active (Ready)' : 'Aktif (Sedia)'}</Badge>}
+                        {v.status === 'maintenance' && <Badge variant="warning">{isEn ? 'Maintenance' : 'Penyelenggaraan'}</Badge>}
+                        {v.status === 'retired' && <Badge variant="gray">{isEn ? 'Retired' : 'Bersara (Retired)'}</Badge>}
                       </td>
                       <td className="px-6 py-4 text-right whitespace-nowrap space-x-2">
                         <Button 
                           variant="ghost" 
                           onClick={() => handleOpenEdit(v)}
-                          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1"
+                          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1 cursor-pointer"
                         >
                           <Edit className="w-3.5 h-3.5 mr-1 inline" />
-                          Edit
+                          {isEn ? 'Edit' : 'Edit'}
                         </Button>
                       </td>
                     </tr>
@@ -275,6 +299,80 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile View: High-End Native Vehicle Cards */}
+            <div className="md:hidden divide-y divide-slate-100">
+              {vehicles.map((v) => (
+                <div key={v.id} className="p-4 space-y-3 hover:bg-slate-50/50 transition">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-3">
+                      {v.foto_kenderaan ? (
+                        <img 
+                          src={v.foto_kenderaan} 
+                          alt={v.no_kenderaan} 
+                          className="w-12 h-12 rounded-xl object-cover border border-slate-200 flex-shrink-0" 
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-400 flex-shrink-0">
+                          {v.jenis_kenderaan === 'ambulance' ? (
+                            <Ambulance className="w-6 h-6 opacity-50 text-rose-600" />
+                          ) : v.jenis_kenderaan === 'van_jenazah' ? (
+                            <Truck className="w-6 h-6 opacity-50 text-slate-700" />
+                          ) : (
+                            <Car className="w-6 h-6 opacity-50 text-blue-600" />
+                          )}
+                        </div>
+                      )}
+                      <div>
+                        <span className="font-mono font-bold text-slate-900 text-sm block">{v.no_kenderaan}</span>
+                        <p className="font-semibold text-slate-700 text-xs">{v.model}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex-shrink-0">
+                      {v.status === 'active' && <Badge variant="success">{isEn ? 'Active' : 'Aktif'}</Badge>}
+                      {v.status === 'maintenance' && <Badge variant="warning">{isEn ? 'Maintenance' : 'Selenggara'}</Badge>}
+                      {v.status === 'retired' && <Badge variant="gray">{isEn ? 'Retired' : 'Bersara'}</Badge>}
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-100 text-xs space-y-1">
+                    <div className="flex items-center justify-between text-slate-600">
+                      <span>Kategori:</span>
+                      <span className="font-medium text-slate-800">
+                        {v.jenis_kenderaan === 'sg' 
+                          ? (isEn ? 'Official Vehicle (SG)' : 'SG (Kereta Jabatan)') 
+                          : v.jenis_kenderaan === 'van_jenazah' 
+                          ? (isEn ? 'Hearse Van' : 'Van Jenazah') 
+                          : (isEn ? 'Ambulance' : 'Ambulans')}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-600">
+                      <span>No. Chasis:</span>
+                      <span className="font-mono text-[11px] text-slate-500">{v.no_chasis}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-600">
+                      <span>Tamat Cukai Jalan:</span>
+                      <span className="font-mono text-[11px] text-slate-700 font-semibold">
+                        {new Date(v.tarikh_tamat_cukai_jalan).toLocaleDateString(isEn ? 'en-US' : 'ms-MY')}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-0.5">
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => handleOpenEdit(v)}
+                      className="text-xs text-slate-700 hover:text-slate-900 border border-slate-200 rounded-lg px-3 py-1.5"
+                    >
+                      <Edit className="w-3.5 h-3.5 mr-1 inline" />
+                      {isEn ? 'Edit Vehicle' : 'Kemaskini Kenderaan'}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
           )}
         </CardContent>
       </Card>
@@ -286,7 +384,9 @@ const TransporterVehicleRegistryPage: React.FC = () => {
             
             <div className="bg-slate-50 border-b border-slate-100 px-6 py-4 flex justify-between items-center">
               <h3 className="text-lg font-bold text-slate-800">
-                {modalMode === 'create' ? 'Daftar Kenderaan Baru' : 'Kemaskini Butiran Kenderaan'}
+                {modalMode === 'create' 
+                  ? (isEn ? 'Register New Vehicle' : 'Daftar Kenderaan Baru') 
+                  : (isEn ? 'Update Vehicle Details' : 'Kemaskini Butiran Kenderaan')}
               </h3>
             </div>
 
@@ -294,9 +394,11 @@ const TransporterVehicleRegistryPage: React.FC = () => {
               
               {/* Plate No */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">No. Pendaftaran (Plate No)</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  {isEn ? 'Registration Plate No' : 'No. Pendaftaran (Plate No)'}
+                </label>
                 <Input 
-                  placeholder="Contoh: WXD 4291"
+                  placeholder={isEn ? 'E.g., WXD 4291' : 'Contoh: WXD 4291'}
                   value={noKenderaan}
                   onChange={(e) => setNoKenderaan(e.target.value)}
                   required
@@ -305,9 +407,11 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
               {/* Chassis No */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">No. Chasis</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  {isEn ? 'Chassis Number' : 'No. Chasis'}
+                </label>
                 <Input 
-                  placeholder="Contoh: CHS-AMB-01-KKM"
+                  placeholder={isEn ? 'E.g., CHS-AMB-01-KKM' : 'Contoh: CHS-AMB-01-KKM'}
                   value={noChasis}
                   onChange={(e) => setNoChasis(e.target.value)}
                   required
@@ -316,24 +420,28 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
               {/* Vehicle Type */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori Perkhidmatan</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  {isEn ? 'Service Category' : 'Kategori Perkhidmatan'}
+                </label>
                 <select
                   value={jenisKenderaan}
                   onChange={(e) => setJenisKenderaan(e.target.value as any)}
-                  className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
                   required
                 >
-                  <option value="ambulance">Ambulans</option>
-                  <option value="sg">Kereta Jabatan (SG)</option>
-                  <option value="van_jenazah">Van Jenazah</option>
+                  <option value="ambulance">{isEn ? 'Ambulance' : 'Ambulans'}</option>
+                  <option value="sg">{isEn ? 'Official Vehicle (SG)' : 'Kereta Jabatan (SG)'}</option>
+                  <option value="van_jenazah">{isEn ? 'Hearse Van' : 'Van Jenazah'}</option>
                 </select>
               </div>
 
               {/* Model */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Model Kenderaan</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  {isEn ? 'Vehicle Model' : 'Model Kenderaan'}
+                </label>
                 <Input 
-                  placeholder="Contoh: Toyota Hiace Ambulance Spec-B"
+                  placeholder={isEn ? 'E.g., Toyota Hiace Ambulance Spec-B' : 'Contoh: Toyota Hiace Ambulance Spec-B'}
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
                   required
@@ -342,7 +450,9 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
               {/* Roadtax Expiry Date */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tarikh Tamat Cukai Jalan</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  {isEn ? 'Road Tax Expiry Date' : 'Tarikh Tamat Cukai Jalan'}
+                </label>
                 <Input 
                   type="date"
                   value={cukaiJalan}
@@ -353,22 +463,26 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
               {/* Vehicle Status */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status Semasa</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  {isEn ? 'Operational Status' : 'Status Semasa'}
+                </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as any)}
-                  className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
                   required
                 >
-                  <option value="active">Aktif (Good to Go)</option>
-                  <option value="maintenance">Penyelenggaraan (Maintenance)</option>
-                  <option value="retired">Bersara (Retired)</option>
+                  <option value="active">{isEn ? 'Active (Good to Go)' : 'Aktif (Good to Go)'}</option>
+                  <option value="maintenance">{isEn ? 'Under Maintenance' : 'Penyelenggaraan (Maintenance)'}</option>
+                  <option value="retired">{isEn ? 'Retired' : 'Bersara (Retired)'}</option>
                 </select>
               </div>
 
               {/* Photo Upload */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Foto Kenderaan (Pilihan)</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                  {isEn ? 'Vehicle Photo (Optional)' : 'Foto Kenderaan (Pilihan)'}
+                </label>
                 <div className="flex items-center gap-4">
                   {fotoKenderaan ? (
                     <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
@@ -376,9 +490,9 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setFotoKenderaan('')}
-                        className="absolute inset-0 bg-black/45 flex items-center justify-center text-white opacity-0 hover:opacity-100 transition-opacity text-xs font-bold"
+                        className="absolute inset-0 bg-black/45 flex items-center justify-center text-white opacity-0 hover:opacity-100 transition-opacity text-xs font-bold cursor-pointer"
                       >
-                        Hapus
+                        {isEn ? 'Remove' : 'Hapus'}
                       </button>
                     </div>
                   ) : (
@@ -396,11 +510,13 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                     />
                     <label
                       htmlFor="vehiclePhotoUpload"
-                      className="inline-flex px-3.5 py-2 border border-slate-200 hover:border-slate-355 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-700 cursor-pointer transition-colors"
+                      className="inline-flex px-3.5 py-2 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-700 cursor-pointer transition-colors"
                     >
-                      Muat Naik Foto
+                      {isEn ? 'Upload Photo' : 'Muat Naik Foto'}
                     </label>
-                    <p className="text-[10px] text-slate-400 mt-1">Syor format landskap, maks 2MB.</p>
+                    <p className="text-[10px] text-slate-400 mt-1">
+                      {isEn ? 'Landscape photo recommended, max 2MB.' : 'Syor format landskap, maks 2MB.'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -410,15 +526,15 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                   type="button" 
                   variant="outline" 
                   onClick={() => setIsModalOpen(false)}
-                  className="border-slate-200 text-slate-700"
+                  className="border-slate-200 text-slate-700 cursor-pointer"
                 >
-                  Batal
+                  {isEn ? 'Cancel' : 'Batal'}
                 </Button>
                 <Button 
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer"
                 >
-                  Simpan Kenderaan
+                  {isEn ? 'Save Vehicle' : 'Simpan Kenderaan'}
                 </Button>
               </div>
 

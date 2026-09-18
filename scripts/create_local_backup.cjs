@@ -30,7 +30,7 @@ const zipPath = path.join(outsideBackupDir, `source_backup_${timestamp}.zip`);
 console.log(`Creating ZIP Archive of source files to: ${zipPath}`);
 try {
   // Use PowerShell with safe single-quoted or properly escaped arguments
-  const items = ['src', 'public', 'supabase', 'scripts', 'backups', 'package.json', 'tsconfig.json', 'vite.config.ts', 'tailwind.config.js', 'index.html', '.env.example'];
+  const items = ['src', 'public', 'supabase', 'scripts', 'docs', 'backups', 'package.json', 'tsconfig.json', 'vite.config.ts', 'tailwind.config.js', 'index.html', '.env.example'];
   const itemsExisting = items.filter(item => fs.existsSync(path.join(rootDir, item)));
   const pathArgs = itemsExisting.map(i => `'${path.join(rootDir, i)}'`).join(',');
   const destArg = `'${zipPath}'`;

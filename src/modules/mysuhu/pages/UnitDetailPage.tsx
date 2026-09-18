@@ -499,7 +499,7 @@ export const UnitDetailPage: React.FC = () => {
           <span>Temperature Log Records</span>
         </h3>
 
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
             <thead className="bg-slate-50 text-[10px] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
               <tr>
@@ -564,6 +564,61 @@ export const UnitDetailPage: React.FC = () => {
               })}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View: High-End Native Cards */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {filteredReadings.map((reading) => {
+            const status = reading.status_bacaan;
+            let badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200/50';
+            if (status === 'warning') badgeClass = 'bg-amber-50 text-amber-700 border-amber-200/50';
+            if (status === 'breach') badgeClass = 'bg-rose-50 text-rose-700 border-rose-200/50';
+
+            return (
+              <div key={reading.id} className="p-4 space-y-2 hover:bg-slate-50/50 transition">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <span className="font-mono text-base font-black text-slate-900 block">
+                      {reading.suhu.toFixed(1)}°C
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      Sasaran: {reading.ambang?.min_suhu}°C - {reading.ambang?.max_suhu}°C
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Badge className={`${badgeClass} text-[9px] font-bold px-2 py-0.5 border rounded-md`}>
+                      {status.toUpperCase()}
+                    </Badge>
+                    <button 
+                      onClick={() => {
+                        setCorrectReadingId(reading.id)
+                        setCorrectNote(reading.correction_note || '')
+                        setShowCorrectModal(true)
+                      }}
+                      className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition"
+                      title="Betulkan"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {reading.nota && reading.nota !== 'Auto-plotted compliance reading' && (
+                  <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                    {reading.is_corrected && (
+                      <span className="text-rose-600 font-bold mr-1">[DIKEMAS KINI]</span>
+                    )}
+                    {reading.nota}
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
+                  <span>{format(new Date(reading.tarikh_masa), 'dd/MM/yyyy HH:mm')}</span>
+                  <span>{reading.dicatat_oleh_user?.full_name || 'Authorized Staff'}</span>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
 

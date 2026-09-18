@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Bell, Search, Menu, Settings, Home } from 'lucide-react'
+import { Bell, Search, Settings, Home } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { useSidebar } from '@/stores/uiStore'
 import { Avatar, Badge } from '@/components/ui'
 import { SYSTEM_ROLES, MODULE_DEFINITIONS, ROLE_DISPLAY_NAMES, ROUTES } from '@/lib/constants'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -45,6 +44,11 @@ const getCurrentModule = (pathname: string): { name: string; code?: string } | n
   // MyStaff
   if (pathname.startsWith('/staff') || pathname.startsWith('/hub/staff')) {
     return { name: 'MyStaff', code: 'staff' }
+  }
+
+  // MyTimeOff
+  if (pathname.startsWith('/timeoff') || pathname.startsWith('/hub/time-off')) {
+    return { name: 'MyTimeOff', code: 'timeoff' }
   }
 
   // MyPerolehan
@@ -143,7 +147,6 @@ const getModuleFromRole = (roleCode?: string): string | null => {
 
 export const Header: React.FC = () => {
   const { user } = useAuthStore()
-  const { toggleSidebar } = useSidebar()
   const location = useLocation()
   const navigate = useNavigate()
   const { t } = useLanguage()
@@ -171,23 +174,16 @@ export const Header: React.FC = () => {
   }, [user?.role])
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-slate-950/90 backdrop-blur-xl border-b border-slate-800/80 text-white z-40 shadow-2xl shadow-slate-950/40">
+    <header className="fixed top-0 left-0 right-0 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800/80 text-white z-[70] shadow-2xl shadow-slate-950/40">
       <div className="h-16 sm:h-20 lg:h-24 px-3 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Left Side - Branding */}
         <div className="flex items-center gap-2.5 sm:gap-4 lg:gap-6 min-w-0">
-          <button
-            onClick={toggleSidebar}
-            className="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-colors flex-shrink-0"
-            aria-label="Toggle Sidebar"
-          >
-            <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
-          </button>
 
           {/* Jata Negara & Branding - Clickable to return home */}
           <div 
-            className="flex items-center gap-2.5 sm:gap-4 lg:gap-5 cursor-pointer group min-w-0"
+            className="flex items-center gap-2 sm:gap-4 lg:gap-5 cursor-pointer group min-w-0"
             onClick={() => navigate('/')}
-            title="Return to Landing Page"
+            title="Kembali ke Laman Utama"
           >
             <div className="relative flex-shrink-0">
               <div className="absolute -inset-1 bg-gradient-to-r from-teal-500/20 to-emerald-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -198,8 +194,8 @@ export const Header: React.FC = () => {
               />
             </div>
             <div className="flex flex-col min-w-0 justify-center">
-              <div className="flex items-baseline gap-2">
-                <h1 className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-teal-200 bg-clip-text text-transparent group-hover:from-white group-hover:to-teal-300 transition-all duration-300 whitespace-nowrap">
+              <div className="flex items-baseline gap-1.5 sm:gap-2">
+                <h1 className="text-base sm:text-2xl lg:text-3xl font-black tracking-tight bg-gradient-to-r from-white via-slate-100 to-teal-200 bg-clip-text text-transparent group-hover:from-white group-hover:to-teal-300 transition-all duration-300 whitespace-nowrap">
                   H.O.M.E.
                 </h1>
               </div>
@@ -218,14 +214,14 @@ export const Header: React.FC = () => {
           {/* Module & Role Info */}
           <div className="hidden xl:flex flex-col gap-1 flex-shrink-0">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">MODULE:</span>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">MODUL:</span>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-500/10 text-teal-300 border border-teal-500/25 shadow-[0_0_12px_rgba(20,184,166,0.15)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse mr-1.5" />
                 {currentModule.name}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">ROLE:</span>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">PERANAN:</span>
               <span className="text-xs font-semibold text-slate-200 bg-slate-800/70 px-2.5 py-0.5 rounded-md border border-slate-700/60 truncate max-w-[180px]">
                 {roleDisplayName}
               </span>
@@ -235,31 +231,38 @@ export const Header: React.FC = () => {
 
         {/* Right Side */}
         <div className="flex items-center gap-1 sm:gap-2.5 lg:gap-3 flex-shrink-0">
-          {/* Home / Landing Page */}
+          {/* Home / Landing Page - Hidden on extra small mobile to prevent crowding, accessible via bottom nav / drawer */}
           <button 
             onClick={() => navigate('/')}
-            className="p-1.5 sm:p-2.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-all duration-200 hover:scale-105 flex-shrink-0"
-            title="Return to Landing Page"
+            className="hidden xs:flex w-10 h-10 items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 flex-shrink-0"
+            title="Kembali ke Laman Utama"
+            aria-label="Kembali ke Laman Utama"
           >
             <Home className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           {/* Search - Hidden on mobile */}
-          <button className="hidden sm:block p-2.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-all duration-200 hover:scale-105 flex-shrink-0">
+          <button 
+            className="hidden sm:flex w-10 h-10 items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 flex-shrink-0"
+            aria-label="Carian"
+          >
             <Search className="w-5 h-5" />
           </button>
 
           {/* Notifications */}
-          <button className="relative p-1.5 sm:p-2.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-all duration-200 hover:scale-105 flex-shrink-0">
+          <button 
+            className="relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 flex-shrink-0"
+            aria-label="Pemberitahuan"
+          >
             <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="absolute top-1 right-1 sm:top-2 sm:right-2 flex h-2 w-2">
+            <span className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
             </span>
           </button>
 
           {/* Language Selector */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-0.5 flex-shrink-0">
+          <div className="hidden xs:block bg-slate-900/80 border border-slate-800 rounded-xl p-0.5 flex-shrink-0">
             <LanguageSelector variant="header" />
           </div>
 
@@ -269,7 +272,8 @@ export const Header: React.FC = () => {
           {/* User Profile Trigger */}
           <button
             onClick={() => navigate(ROUTES.PROFILE, { state: { fromModule: currentModule } })}
-            className="flex items-center gap-2 sm:gap-3 hover:bg-slate-900/90 border border-transparent hover:border-slate-800 rounded-xl px-1.5 sm:px-2.5 py-1.5 transition-all duration-200 group flex-shrink-0"
+            className="flex items-center gap-2 sm:gap-3 hover:bg-slate-900/90 active:bg-slate-900 border border-transparent hover:border-slate-800 rounded-xl px-1 sm:px-2.5 py-1.5 transition-all duration-200 group flex-shrink-0 min-h-[44px]"
+            aria-label="Profil Pengguna"
           >
             <div className="text-right hidden sm:block">
               <p className="text-xs font-semibold text-slate-100 group-hover:text-teal-300 transition-colors">
@@ -283,7 +287,7 @@ export const Header: React.FC = () => {
               src={user?.profile_photo_url}
               name={user?.full_name}
               size="sm"
-              className="w-7 h-7 sm:w-10 sm:h-10 ring-2 ring-teal-500/30 group-hover:ring-teal-400/60 transition-all duration-200 flex-shrink-0"
+              className="w-8 h-8 sm:w-10 sm:h-10 ring-2 ring-teal-500/30 group-hover:ring-teal-400/60 transition-all duration-200 flex-shrink-0"
             />
           </button>
         </div>

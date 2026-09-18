@@ -1,10 +1,35 @@
 // @ts-nocheck
 import React, { useEffect, useState, useCallback } from 'react'
-import { AlertTriangle, Package, Search, Filter, ChevronLeft, ChevronRight, QrCode, Printer, RefreshCw, Edit, CheckCircle, XCircle, ArrowRightLeft } from 'lucide-react'
+import { 
+  AlertTriangle, 
+  Package, 
+  Search, 
+  Filter, 
+  ChevronLeft, 
+  ChevronRight, 
+  QrCode, 
+  Printer, 
+  RefreshCw, 
+  Edit, 
+  CheckCircle, 
+  XCircle, 
+  ArrowRightLeft 
+} from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { Table, Spinner, Input, Badge, Select, Modal, Button, SlideOver } from '@/components/ui'
-import { getNonDrugs, getNonDrugCategories, triggerApplSync, triggerLpSync, triggerCcSync, importCcSyncCsv, moveNonDrugToDrug, updateNonDrug, batchUpdateNonDrugStatus } from '@/services/pharmacy/inventoryService'
+import { 
+  getNonDrugs, 
+  getNonDrugCategories, 
+  triggerApplSync, 
+  triggerLpSync, 
+  triggerCcSync, 
+  importCcSyncCsv, 
+  moveNonDrugToDrug, 
+  updateNonDrug, 
+  batchUpdateNonDrugStatus 
+} from '@/services/pharmacy/inventoryService'
 import { getSuppliers } from '@/services/pharmacy/procurementService'
 import type { NonDrugWithRelations, NonDrugCategory, Supplier, InventoryFilter } from '@/types/pharmacy'
 import { parseAndNormalizeDate, getFallbackContractDates } from '@/lib/utils'
@@ -14,6 +39,8 @@ export const NonDrugInventoryPage: React.FC = () => {
   const { user } = useAuthStore()
   const hospitalId = user?.hospital_id
   const { success: showSuccess, error: showError } = useToastStore()
+  const { language } = useLanguage()
+  const isEn = language !== 'ms'
 
   const [items, setItems] = useState<NonDrugWithRelations[]>([])
   const [categories, setCategories] = useState<NonDrugCategory[]>([])
@@ -48,13 +75,15 @@ export const NonDrugInventoryPage: React.FC = () => {
 
       if (res.data) {
         setSyncSuccessMessage(
-          `Penyelarasan APPL Berjaya! Memproses ${res.data.rows_processed} baris jadual Lampiran B (${res.data.non_drugs_upserted || 0} bukan ubat dikemaskini).`
+          isEn 
+            ? `APPL Sync Successful! Processed ${res.data.rows_processed} rows from Appendix B (${res.data.non_drugs_upserted || 0} non-drugs updated).`
+            : `Penyelarasan APPL Berjaya! Memproses ${res.data.rows_processed} baris jadual Lampiran B (${res.data.non_drugs_upserted || 0} bukan ubat dikemaskini).`
         )
         void loadItems()
       }
     } catch (err: any) {
       console.error(err)
-      setSyncError(err.message || 'Gagal menyelaraskan katalog bukan ubat APPL')
+      setSyncError(err.message || (isEn ? 'Failed to synchronize APPL non-drug catalog' : 'Gagal menyelaraskan katalog bukan ubat APPL'))
     } finally {
       setIsSyncing(false)
     }
@@ -72,14 +101,16 @@ export const NonDrugInventoryPage: React.FC = () => {
 
       if (res.data) {
         setSyncSuccessMessage(
-          `Penyelarasan LP Berjaya! Memproses ${res.data.total_rows_processed} baris dari Google Docs. ${res.data.drugs_upserted} ubat & ${res.data.non_drugs_upserted} bukan ubat dikemaskini.`
+          isEn
+            ? `LP Sync Successful! Processed ${res.data.total_rows_processed} rows from Google Docs. ${res.data.drugs_upserted} drugs & ${res.data.non_drugs_upserted} non-drugs updated.`
+            : `Penyelarasan LP Berjaya! Memproses ${res.data.total_rows_processed} baris dari Google Docs. ${res.data.drugs_upserted} ubat & ${res.data.non_drugs_upserted} bukan ubat dikemaskini.`
         )
         setProcurementVote('lp')
         void loadItems()
       }
     } catch (err: any) {
       console.error(err)
-      setSyncError(err.message || 'Gagal menyelaraskan katalog bukan ubat LP')
+      setSyncError(err.message || (isEn ? 'Failed to synchronize LP non-drug catalog' : 'Gagal menyelaraskan katalog bukan ubat LP'))
     } finally {
       setIsLpSyncing(false)
     }
@@ -97,14 +128,16 @@ export const NonDrugInventoryPage: React.FC = () => {
 
       if (res.data) {
         setSyncSuccessMessage(
-          `Penyelarasan CC Berjaya! Memproses ${res.data.total_rows_processed} baris dari Google Docs. ${res.data.drugs_upserted} ubat dikemaskini.`
+          isEn
+            ? `CC Sync Successful! Processed ${res.data.total_rows_processed} rows from Google Docs. ${res.data.drugs_upserted} items updated.`
+            : `Penyelarasan CC Berjaya! Memproses ${res.data.total_rows_processed} baris dari Google Docs. ${res.data.drugs_upserted} ubat dikemaskini.`
         )
         setProcurementVote('cc')
         void loadItems()
       }
     } catch (err: any) {
       console.error(err)
-      setSyncError(err.message || 'Gagal menyelaraskan katalog bukan ubat CC')
+      setSyncError(err.message || (isEn ? 'Failed to synchronize CC non-drug catalog' : 'Gagal menyelaraskan katalog bukan ubat CC'))
     } finally {
       setIsCcSyncing(false)
     }
@@ -168,13 +201,16 @@ export const NonDrugInventoryPage: React.FC = () => {
     try {
       const result = await updateNonDrug(item.id, { status: nextStatus })
       if (result.error) {
-        showError('Ralat', result.error)
+        showError(isEn ? 'Error' : 'Ralat', result.error)
         return
       }
-      showSuccess('Berjaya', `Status item dikemaskini kepada ${nextStatus}`)
+      showSuccess(
+        isEn ? 'Success' : 'Berjaya', 
+        isEn ? `Item status updated to ${nextStatus}` : `Status bukan ubat dikemaskini kepada ${nextStatus}`
+      )
       void loadItems()
     } catch (error) {
-      showError('Ralat', 'Gagal mengemaskini status item')
+      showError(isEn ? 'Error' : 'Ralat', isEn ? 'Failed to update item status' : 'Gagal mengemaskini status bukan ubat')
     }
   }
 
@@ -184,17 +220,19 @@ export const NonDrugInventoryPage: React.FC = () => {
     try {
       const result = await batchUpdateNonDrugStatus(selectedIds, targetStatus)
       if (result.error) {
-        showError('Ralat', result.error)
+        showError(isEn ? 'Error' : 'Ralat', result.error)
         return
       }
       showSuccess(
-        'Berjaya',
-        `Berjaya ${targetStatus === 'active' ? 'mengaktifkan' : 'Nyahaktifkan'} ${result.data?.successCount || selectedIds.length} item`
+        isEn ? 'Success' : 'Berjaya',
+        isEn 
+          ? `Successfully ${targetStatus === 'active' ? 'activated' : 'deactivated'} ${result.data?.successCount || selectedIds.length} items`
+          : `Berjaya ${targetStatus === 'active' ? 'mengaktifkan' : 'nyahaktifkan'} ${result.data?.successCount || selectedIds.length} bukan ubat`
       )
       setSelectedIds([])
       void loadItems()
     } catch (error) {
-      showError('Ralat', 'Gagal mengemaskini status pukal')
+      showError(isEn ? 'Error' : 'Ralat', isEn ? 'Failed to update bulk status' : 'Gagal mengemaskini status pukal')
     } finally {
       setIsBulkUpdating(false)
     }
@@ -205,15 +243,15 @@ export const NonDrugInventoryPage: React.FC = () => {
     try {
       const res = await updateNonDrug(selectedItemForEdit.id, updatedData)
       if (res.error) {
-        showError('Ralat', res.error)
+        showError(isEn ? 'Error' : 'Ralat', res.error)
         return
       }
-      showSuccess('Berjaya', 'Maklumat bukan ubat berjaya dikemaskini!')
+      showSuccess(isEn ? 'Success' : 'Berjaya', isEn ? 'Item updated successfully!' : 'Maklumat bukan ubat berjaya dikemaskini!')
       setIsEditModalOpen(false)
       setSelectedItemForEdit(null)
       void loadItems()
     } catch (err: any) {
-      showError('Ralat', err.message || 'Gagal menyimpan maklumat item')
+      showError(isEn ? 'Error' : 'Ralat', err.message || (isEn ? 'Failed to save item information' : 'Gagal menyimpan maklumat bukan ubat'))
     }
   }
 
@@ -257,7 +295,7 @@ export const NonDrugInventoryPage: React.FC = () => {
   // Generate QR Code URL
   useEffect(() => {
     if (selectedItemForQr) {
-      const payload = `MYINV:NON_DRUG:${selectedItemForQr.id}:${selectedItemForQr.item_code}`
+      const payload = `MYINV:NONDRUG:${selectedItemForQr.id}:${selectedItemForQr.item_code}`
       QRCode.toDataURL(payload, { width: 256, margin: 2 })
         .then(url => setQrCodeUrl(url))
         .catch(err => console.error('Failed to generate QR data URL', err))
@@ -268,9 +306,9 @@ export const NonDrugInventoryPage: React.FC = () => {
 
   const renderStatusBadge = (itemStatus: 'active' | 'inactive') => {
     return itemStatus === 'active' ? (
-      <Badge variant="success">Active</Badge>
+      <Badge variant="success">{isEn ? 'Active' : 'Aktif'}</Badge>
     ) : (
-      <Badge variant="secondary">Inactive</Badge>
+      <Badge variant="secondary">{isEn ? 'Inactive' : 'Tidak Aktif'}</Badge>
     )
   }
 
@@ -281,7 +319,7 @@ export const NonDrugInventoryPage: React.FC = () => {
     try {
       const d = new Date(normalized)
       if (isNaN(d.getTime())) return dateStr
-      return d.toLocaleDateString('ms-MY', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      return d.toLocaleDateString(isEn ? 'en-US' : 'ms-MY', { day: '2-digit', month: '2-digit', year: 'numeric' })
     } catch {
       return dateStr
     }
@@ -296,9 +334,9 @@ export const NonDrugInventoryPage: React.FC = () => {
     const end = new Date(normEnd)
     const today = new Date()
     if (isNaN(start.getTime()) || isNaN(end.getTime())) return '-'
-    if (today >= start && today <= end) return 'Aktif'
-    if (today > end) return 'Tamat'
-    if (today < start) return 'Belum Mula'
+    if (today >= start && today <= end) return isEn ? 'Active' : 'Aktif'
+    if (today > end) return isEn ? 'Expired' : 'Tamat'
+    if (today < start) return isEn ? 'Pending' : 'Belum Mula'
     return '-'
   }
 
@@ -327,10 +365,10 @@ export const NonDrugInventoryPage: React.FC = () => {
   const renderStockBadge = (stockStatus?: string) => {
     if (!stockStatus) return <Badge variant="secondary">—</Badge>
     const map: Record<string, { color: 'success' | 'warning' | 'error' | 'secondary'; label: string }> = {
-      in_stock: { color: 'success', label: 'In Stock' },
-      low_stock: { color: 'warning', label: 'Low' },
-      critical: { color: 'error', label: 'Critical' },
-      out_of_stock: { color: 'secondary', label: 'Out' },
+      in_stock: { color: 'success', label: isEn ? 'In Stock' : 'Ada Stok' },
+      low_stock: { color: 'warning', label: isEn ? 'Low' : 'Rendah' },
+      critical: { color: 'error', label: isEn ? 'Critical' : 'Kritikal' },
+      out_of_stock: { color: 'secondary', label: isEn ? 'Out' : 'Habis' },
     }
     const cfg = map[stockStatus] || { color: 'secondary', label: stockStatus }
     return <Badge variant={cfg.color}>{cfg.label}</Badge>
@@ -344,7 +382,7 @@ export const NonDrugInventoryPage: React.FC = () => {
 
     const itemCode = selectedItemForQr.item_code
     const itemName = selectedItemForQr.item_name
-    const details = selectedItemForQr.unit_of_measure
+    const details = `${selectedItemForQr.category?.category_name || ''} - UOM: ${selectedItemForQr.unit_of_measure || ''}`
 
     printWindow.document.write(`
       <html>
@@ -434,36 +472,38 @@ export const NonDrugInventoryPage: React.FC = () => {
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
               <Package className="w-6 h-6 text-indigo-600 animate-pulse" />
-              <span>Non-Drug Catalog / Inventori Bukan Ubat</span>
+              <span>{isEn ? 'Non-Drug Catalog & Consumables' : 'Katalog & Inventori Bukan Ubat'}</span>
             </h1>
             <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              Urus stok alat pakai buang, bahan habis guna dan kelengkapan bukan ubat
+              {isEn 
+                ? 'Manage disposables, medical consumables, and hospital non-drug supply contracts' 
+                : 'Urus stok alat pakai buang, bahan habis guna dan kelengkapan bukan ubat'}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Button
               onClick={handleSync}
               disabled={isSyncing || isLpSyncing || isCcSyncing}
-              className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-all duration-200"
+              className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-all duration-200 cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
-              {isSyncing ? 'Menyelaras...' : 'Selaras APPL'}
+              {isSyncing ? (isEn ? 'Syncing...' : 'Menyelaras...') : (isEn ? 'Sync APPL' : 'Selaras APPL')}
             </Button>
             <Button
               onClick={handleLpSync}
               disabled={isSyncing || isLpSyncing || isCcSyncing}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-all duration-200"
+              className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-all duration-200 cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${isLpSyncing ? 'animate-spin' : ''}`} />
-              {isLpSyncing ? 'Menyelaras...' : 'Selaras LP'}
+              {isLpSyncing ? (isEn ? 'Syncing...' : 'Menyelaras...') : (isEn ? 'Sync LP' : 'Selaras LP')}
             </Button>
             <Button
               onClick={() => setIsCcModalOpen(true)}
               disabled={isSyncing || isLpSyncing || isCcSyncing}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-all duration-200"
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-all duration-200 cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${isCcSyncing ? 'animate-spin' : ''}`} />
-              {isCcSyncing ? 'Menyelaras...' : 'Selaras CC'}
+              {isCcSyncing ? (isEn ? 'Syncing...' : 'Menyelaras...') : (isEn ? 'Sync CC' : 'Selaras CC')}
             </Button>
           </div>
         </div>
@@ -472,11 +512,11 @@ export const NonDrugInventoryPage: React.FC = () => {
       {/* Sync Alerts */}
       {syncSuccessMessage && (
         <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4 text-xs font-semibold text-emerald-800 shadow-sm relative pr-10">
-          <Badge variant="success">Berjaya</Badge>
+          <Badge variant="success">{isEn ? 'Success' : 'Berjaya'}</Badge>
           <span className="leading-relaxed">{syncSuccessMessage}</span>
           <button 
             onClick={() => setSyncSuccessMessage(null)}
-            className="absolute top-3.5 right-4 text-emerald-600 hover:text-emerald-800 text-lg font-black"
+            className="absolute top-3.5 right-4 text-emerald-600 hover:text-emerald-800 text-lg font-black cursor-pointer"
           >
             ×
           </button>
@@ -485,11 +525,11 @@ export const NonDrugInventoryPage: React.FC = () => {
 
       {syncError && (
         <div className="flex items-center gap-2.5 rounded-2xl border border-rose-100 bg-rose-50/50 p-4 text-xs font-semibold text-rose-800 shadow-sm relative pr-10">
-          <Badge variant="error">Ralat</Badge>
+          <Badge variant="error">{isEn ? 'Error' : 'Ralat'}</Badge>
           <span className="leading-relaxed">{syncError}</span>
           <button 
             onClick={() => setSyncError(null)}
-            className="absolute top-3.5 right-4 text-rose-600 hover:text-rose-800 text-lg font-black"
+            className="absolute top-3.5 right-4 text-rose-600 hover:text-rose-800 text-lg font-black cursor-pointer"
           >
             ×
           </button>
@@ -499,11 +539,13 @@ export const NonDrugInventoryPage: React.FC = () => {
       {/* Filters */}
       <div className="flex flex-col md:flex-row md:items-end gap-4 bg-white border border-slate-100 p-5 rounded-3xl shadow-soft">
         <div className="flex-1">
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Carian</label>
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+            {isEn ? 'Search' : 'Carian'}
+          </label>
           <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
             <Input
-              placeholder="Kod barang atau nama..."
+              placeholder={isEn ? 'Item code or name...' : 'Kod barang atau nama...'}
               className="pl-10 rounded-xl"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -512,9 +554,11 @@ export const NonDrugInventoryPage: React.FC = () => {
         </div>
 
         <div className="w-full md:w-44">
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Skim Perolehan</label>
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+            {isEn ? 'Procurement Scheme' : 'Skim Perolehan'}
+          </label>
           <Select value={procurementVote} onChange={(e) => setProcurementVote(e.target.value)} className="rounded-xl">
-            <option value="all">Semua Skim</option>
+            <option value="all">{isEn ? 'All Schemes' : 'Semua Skim'}</option>
             <option value="appl">APPL</option>
             <option value="cc">CC</option>
             <option value="dp">DP</option>
@@ -523,17 +567,19 @@ export const NonDrugInventoryPage: React.FC = () => {
         </div>
 
         <div className="w-full md:w-44">
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Status</label>
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+            {isEn ? 'Status' : 'Status'}
+          </label>
           <Select value={status} onChange={(e) => setStatus(e.target.value as 'all' | 'active' | 'inactive')} className="rounded-xl">
-            <option value="all">Semua Status</option>
-            <option value="active">Aktif</option>
-            <option value="inactive">Tidak Aktif</option>
+            <option value="all">{isEn ? 'All Status' : 'Semua Status'}</option>
+            <option value="active">{isEn ? 'Active' : 'Aktif'}</option>
+            <option value="inactive">{isEn ? 'Inactive' : 'Tidak Aktif'}</option>
           </Select>
         </div>
 
         <div className="flex items-center gap-1.5 text-xs text-slate-400 font-bold font-mono py-3">
           <Filter className="w-3.5 h-3.5" />
-          <span>{total} BARANG</span>
+          <span>{total} {isEn ? 'ITEMS' : 'BARANG'}</span>
         </div>
       </div>
 
@@ -549,7 +595,7 @@ export const NonDrugInventoryPage: React.FC = () => {
         <div className="flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700">
           <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500 mt-0.5" />
           <div>
-            <p className="font-bold">Gagal memuatkan katalog bukan ubat</p>
+            <p className="font-bold">{isEn ? 'Failed to load non-drug catalog' : 'Gagal memuatkan katalog bukan ubat'}</p>
             <p className="mt-0.5 text-xs font-medium">{error}</p>
           </div>
         </div>
@@ -560,34 +606,34 @@ export const NonDrugInventoryPage: React.FC = () => {
         <div className="bg-slate-900 text-white p-4 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-4 mb-4 border border-slate-800">
           <div className="flex items-center gap-3">
             <span className="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-extrabold tracking-wide">
-              {selectedIds.length} Dipilih
+              {selectedIds.length} {isEn ? 'Selected' : 'Dipilih'}
             </span>
             <span className="text-xs text-slate-300 font-medium hidden sm:inline">
-              Pilih tindakan pukal untuk mengaktifkan atau me-nyahaktifkan item bukan ubat
+              {isEn ? 'Select bulk action to activate or deactivate non-drug items' : 'Pilih tindakan pukal untuk mengaktifkan atau me-nyahaktifkan item bukan ubat'}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => handleBulkStatusChange('active')}
               disabled={isBulkUpdating}
-              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
             >
               <CheckCircle className="w-4 h-4" />
-              Aktifkan Dipilih ({selectedIds.length})
+              {isEn ? `Activate Selected (${selectedIds.length})` : `Aktifkan Dipilih (${selectedIds.length})`}
             </button>
             <button
               onClick={() => handleBulkStatusChange('inactive')}
               disabled={isBulkUpdating}
-              className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+              className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
             >
               <XCircle className="w-4 h-4" />
-              Nyahaktifkan Dipilih ({selectedIds.length})
+              {isEn ? `Deactivate Selected (${selectedIds.length})` : `Nyahaktifkan Dipilih (${selectedIds.length})`}
             </button>
             <button
               onClick={() => setSelectedIds([])}
-              className="px-3 py-1.5 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-all"
+              className="px-3 py-1.5 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
             >
-              Batal Pilihan
+              {isEn ? 'Deselect All' : 'Batal Pilihan'}
             </button>
           </div>
         </div>
@@ -609,16 +655,16 @@ export const NonDrugInventoryPage: React.FC = () => {
                         className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
                       />
                     </Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Nama Barang / Kod</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Pembungkusan</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Pembekal</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">No. Kontrak</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Tarikh Mula</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Tarikh Tamat</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Status Kontrak</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-right">Harga (RM)</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Status</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Tindakan</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Item Name / Code' : 'Nama Barang / Kod'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Packaging' : 'Pembungkusan'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Supplier' : 'Pembekal'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Contract No.' : 'No. Kontrak'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Start Date' : 'Tarikh Mula'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'End Date' : 'Tarikh Tamat'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Contract Status' : 'Status Kontrak'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-right">{isEn ? 'Price (RM)' : 'Harga (RM)'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Status' : 'Status'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Actions' : 'Tindakan'}</Table.Cell>
                   </Table.Row>
                 ) : (
                   <Table.Row className="bg-slate-50 border-b border-slate-100">
@@ -630,16 +676,16 @@ export const NonDrugInventoryPage: React.FC = () => {
                         className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
                       />
                     </Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Kod</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Nama Barang</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Bentuk / UOM</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Pembungkusan</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Skim</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-right">Harga (RM)</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Kategori</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Stok</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Status</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Tindakan</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Code' : 'Kod'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Item Name' : 'Nama Barang'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'UOM' : 'Bentuk / UOM'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Packaging' : 'Pembungkusan'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Scheme' : 'Skim'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-right">{isEn ? 'Price (RM)' : 'Harga (RM)'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Category' : 'Kategori'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Stock' : 'Stok'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Status' : 'Status'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Actions' : 'Tindakan'}</Table.Cell>
                   </Table.Row>
                 )}
               </Table.Header>
@@ -647,7 +693,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                 {items.length === 0 && (
                   <Table.Row>
                     <Table.Cell colSpan={procurementVote === 'cc' ? 11 : 11} className="text-center text-sm text-slate-400 py-12 font-medium">
-                      Tiada barang bukan ubat dijumpai sepadan dengan tapisan anda.
+                      {isEn ? 'No non-drug items found matching your filter criteria.' : 'Tiada barang bukan ubat dijumpai sepadan dengan tapisan anda.'}
                     </Table.Cell>
                   </Table.Row>
                 )}
@@ -754,7 +800,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                           e.stopPropagation()
                           handleToggleSingleStatus(item)
                         }}
-                        title={item.status === 'active' ? 'Klik untuk nyahaktifkan' : 'Klik untuk aktifkan'}
+                        title={item.status === 'active' ? (isEn ? 'Click to deactivate' : 'Klik untuk nyahaktifkan') : (isEn ? 'Click to activate' : 'Klik untuk aktifkan')}
                         className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all cursor-pointer shadow-sm ${
                           item.status === 'active'
                             ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
@@ -762,7 +808,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                         }`}
                       >
                         <span className={`w-1.5 h-1.5 rounded-full ${item.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-                        {item.status === 'active' ? 'Aktif' : 'Tidak Aktif'}
+                        {item.status === 'active' ? (isEn ? 'Active' : 'Aktif') : (isEn ? 'Inactive' : 'Tidak Aktif')}
                       </button>
                     </Table.Cell>
                     <Table.Cell className="text-center">
@@ -774,11 +820,11 @@ export const NonDrugInventoryPage: React.FC = () => {
                           setSelectedItemForEdit(item)
                           setIsEditModalOpen(true)
                         }}
-                        className="rounded-xl hover:bg-indigo-50 text-indigo-600 font-bold text-xs gap-1.5"
-                        title="Sunting maklumat bukan ubat"
+                        className="rounded-xl hover:bg-indigo-50 text-indigo-600 font-bold text-xs gap-1.5 cursor-pointer"
+                        title={isEn ? 'Edit non-drug details' : 'Sunting maklumat bukan ubat'}
                       >
                         <Edit className="w-3.5 h-3.5" />
-                        Sunting
+                        {isEn ? 'Edit' : 'Sunting'}
                       </Button>
                     </Table.Cell>
                   </Table.Row>
@@ -791,7 +837,7 @@ export const NonDrugInventoryPage: React.FC = () => {
           {totalPages > 1 && (
             <div className="flex items-center justify-between text-xs text-slate-500 font-bold font-mono px-2">
               <span>
-                HALAMAN {page} DARI {totalPages}
+                {isEn ? `PAGE ${page} OF ${totalPages}` : `HALAMAN ${page} DARI ${totalPages}`}
               </span>
               <div className="flex items-center gap-2">
                 <Button
@@ -799,7 +845,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                   disabled={page === 1}
                   variant="outline"
                   size="sm"
-                  className="rounded-xl p-2 min-w-0"
+                  className="rounded-xl p-2 min-w-0 cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
@@ -808,7 +854,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                   disabled={page === totalPages}
                   variant="outline"
                   size="sm"
-                  className="rounded-xl p-2 min-w-0"
+                  className="rounded-xl p-2 min-w-0 cursor-pointer"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </Button>
@@ -823,8 +869,8 @@ export const NonDrugInventoryPage: React.FC = () => {
         {selectedItemForQr && (
           <div className="p-6 text-center space-y-6">
             <div className="border-b border-slate-100 pb-4">
-              <h2 className="text-lg font-black text-slate-800">Jana Label QR Kod</h2>
-              <p className="text-xs text-slate-400 mt-1 font-medium">Imbasan label untuk transaksi stor automatik</p>
+              <h2 className="text-lg font-black text-slate-800">{isEn ? 'Generate QR Code Label' : 'Jana Label QR Kod'}</h2>
+              <p className="text-xs text-slate-400 mt-1 font-medium">{isEn ? 'Scan label for automated store transactions' : 'Imbasan label untuk transaksi stor automatik'}</p>
             </div>
 
             {/* Simulated Printed Tag */}
@@ -833,7 +879,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                 <img src={qrCodeUrl} alt="QR Code" className="w-24 h-24 flex-shrink-0" />
               ) : (
                 <div className="w-24 h-24 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300">
-                  Loading...
+                  {isEn ? 'Loading...' : 'Memuatkan...'}
                 </div>
               )}
               <div className="min-w-0">
@@ -847,18 +893,18 @@ export const NonDrugInventoryPage: React.FC = () => {
             <div className="flex gap-3 justify-center pt-2">
               <Button
                 variant="outline"
-                className="rounded-xl font-bold flex-1"
+                className="rounded-xl font-bold flex-1 cursor-pointer"
                 onClick={() => setSelectedItemForQr(null)}
               >
-                Tutup
+                {isEn ? 'Close' : 'Tutup'}
               </Button>
               <Button
-                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold flex-1 gap-1.5"
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold flex-1 gap-1.5 cursor-pointer"
                 onClick={handlePrintLabel}
                 disabled={!qrCodeUrl}
               >
                 <Printer className="w-4 h-4" />
-                Cetak Label
+                {isEn ? 'Print Label' : 'Cetak Label'}
               </Button>
             </div>
           </div>
@@ -871,18 +917,20 @@ export const NonDrugInventoryPage: React.FC = () => {
           <div className="border-b border-slate-100 pb-4">
             <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
               <RefreshCw className="w-5 h-5 text-indigo-600" />
-              <span>Penyelarasan Kontrak CC</span>
+              <span>{isEn ? 'Cost Center (CC) Contract Sync' : 'Penyelarasan Kontrak CC'}</span>
             </h2>
             <p className="text-xs text-slate-400 mt-1 font-medium">
-              Ubah suai kaedah untuk menyelaraskan data kontrak Cost Center
+              {isEn ? 'Choose sync method for Cost Center contract items' : 'Ubah suai kaedah untuk menyelaraskan data kontrak Cost Center'}
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Kaedah 1: Selaras Automatik</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">{isEn ? 'Method 1: Automatic Sync' : 'Kaedah 1: Selaras Automatik'}</h4>
               <p className="text-xs text-slate-500 font-medium">
-                Penyelarasan automatik terus dari Google Docs. Ini memerlukan fail Google Sheet dikongsi secara awam ("Anyone with the link can view").
+                {isEn 
+                  ? 'Automatic synchronization directly from Google Docs. Requires Google Sheet sharing permission ("Anyone with link can view").'
+                  : 'Penyelarasan automatik terus dari Google Docs. Ini memerlukan fail Google Sheet dikongsi secara awam ("Anyone with the link can view").'}
               </p>
               <Button
                 size="sm"
@@ -891,17 +939,19 @@ export const NonDrugInventoryPage: React.FC = () => {
                   await handleCcSync()
                 }}
                 disabled={isSyncing || isLpSyncing || isCcSyncing}
-                className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white rounded-xl font-bold text-xs gap-1.5"
+                className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white rounded-xl font-bold text-xs gap-1.5 cursor-pointer"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isCcSyncing ? 'animate-spin' : ''}`} />
-                Selaras Automatik
+                {isEn ? 'Sync Automatically' : 'Selaras Automatik'}
               </Button>
             </div>
 
             <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Kaedah 2: Muat Naik Fail CSV Manual</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">{isEn ? 'Method 2: Manual CSV Upload' : 'Kaedah 2: Muat Naik Fail CSV Manual'}</h4>
               <p className="text-xs text-slate-500 font-medium">
-                Jika Google Sheet adalah sulit (private), buka Google Sheet, klik <b>File &gt; Download &gt; Comma Separated Values (.csv)</b> (Tab semasa: <i>Kontrak Aktif</i>), dan muat naik di bawah:
+                {isEn 
+                  ? 'If Google Sheet is restricted (private), open Google Sheet, click File > Download > Comma Separated Values (.csv) (Active Contract tab), and upload below:'
+                  : 'Jika Google Sheet adalah sulit (private), buka Google Sheet, klik File > Download > Comma Separated Values (.csv) (Tab semasa: Kontrak Aktif), dan muat naik di bawah:'}
               </p>
               <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-indigo-400 transition-colors relative cursor-pointer bg-white">
                 <input
@@ -922,7 +972,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                       reader.onload = async (evt) => {
                         const csvText = evt.target?.result as string
                         if (!csvText) {
-                          setSyncError('Fail CSV kosong atau gagal dibaca.')
+                          setSyncError(isEn ? 'CSV file is empty or unreadable.' : 'Fail CSV kosong atau gagal dibaca.')
                           setIsCcSyncing(false)
                           return
                         }
@@ -932,7 +982,9 @@ export const NonDrugInventoryPage: React.FC = () => {
                         
                         if (res.data) {
                           setSyncSuccessMessage(
-                            `Penyelarasan CC Manual Berjaya! Memproses ${res.data.total_rows_processed} baris dari fail CSV. ${res.data.drugs_upserted} ubat dikemaskini.`
+                            isEn
+                              ? `Manual CC Sync Successful! Processed ${res.data.total_rows_processed} rows from CSV. ${res.data.drugs_upserted} items updated.`
+                              : `Penyelarasan CC Manual Berjaya! Memproses ${res.data.total_rows_processed} baris dari fail CSV. ${res.data.drugs_upserted} ubat dikemaskini.`
                           )
                           setProcurementVote('cc')
                           void loadItems()
@@ -942,14 +994,14 @@ export const NonDrugInventoryPage: React.FC = () => {
                       reader.readAsText(file)
                     } catch (err: any) {
                       console.error(err)
-                      setSyncError(err.message || 'Gagal mengimport fail CSV CC')
+                      setSyncError(err.message || (isEn ? 'Failed to import CC CSV file' : 'Gagal mengimport fail CSV CC'))
                       setIsCcSyncing(false)
                     }
                   }}
                 />
                 <div className="space-y-1">
-                  <span className="text-xs font-bold text-indigo-600 block">Pilih Fail CSV Kontrak Aktif</span>
-                  <span className="text-[10px] text-slate-400 block font-medium">Klik atau heret fail di sini (.csv sahaja)</span>
+                  <span className="text-xs font-bold text-indigo-600 block">{isEn ? 'Select Active Contract CSV File' : 'Pilih Fail CSV Kontrak Aktif'}</span>
+                  <span className="text-[10px] text-slate-400 block font-medium">{isEn ? 'Click or drag CSV file here' : 'Klik atau heret fail di sini (.csv sahaja)'}</span>
                 </div>
               </div>
             </div>
@@ -959,10 +1011,10 @@ export const NonDrugInventoryPage: React.FC = () => {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-xl font-bold px-5"
+              className="rounded-xl font-bold px-5 cursor-pointer"
               onClick={() => setIsCcModalOpen(false)}
             >
-              Tutup
+              {isEn ? 'Close' : 'Tutup'}
             </Button>
           </div>
         </div>
@@ -973,7 +1025,7 @@ export const NonDrugInventoryPage: React.FC = () => {
         <SlideOver
           isOpen={isEditModalOpen}
           onClose={() => { setIsEditModalOpen(false); setSelectedItemForEdit(null); }}
-          title="Sunting Maklumat Bukan Ubat"
+          title={isEn ? 'Edit Non-Drug Details' : 'Sunting Maklumat Bukan Ubat'}
           description={`${selectedItemForEdit.item_code || ''} • ${selectedItemForEdit.item_name || ''}`}
           size="3xl"
         >
@@ -1012,22 +1064,24 @@ export const NonDrugInventoryPage: React.FC = () => {
           }} className="p-6 space-y-6">
             {/* Basic Info */}
             <div className="space-y-3">
-              <h3 className="text-xs font-black uppercase text-indigo-600 tracking-wider">Maklumat Asas</h3>
+              <h3 className="text-xs font-black uppercase text-indigo-600 tracking-wider">
+                {isEn ? 'Basic Information' : 'Maklumat Asas'}
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Kod Bukan Ubat *</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Non-Drug Code *' : 'Kod Bukan Ubat *'}</label>
                   <Input name="item_code" defaultValue={selectedItemForEdit.item_code || ''} required />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Nama Barang *</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Item Name *' : 'Nama Barang *'}</label>
                   <Input name="item_name" defaultValue={selectedItemForEdit.item_name || ''} required />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Unit Ukuran (UOM)</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Unit of Measure (UOM)' : 'Unit Ukuran (UOM)'}</label>
                   <Input name="unit_of_measure" defaultValue={selectedItemForEdit.unit_of_measure || ''} />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">SKU / PKU</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'SKU / PKU' : 'SKU / PKU'}</label>
                   <div className="grid grid-cols-2 gap-2">
                     <Input name="sku" defaultValue={selectedItemForEdit.sku || ''} placeholder="SKU" />
                     <Input name="pku" defaultValue={selectedItemForEdit.pku || ''} placeholder="PKU" />
@@ -1038,14 +1092,16 @@ export const NonDrugInventoryPage: React.FC = () => {
 
             {/* Price & Contract */}
             <div className="space-y-3">
-              <h3 className="text-xs font-black uppercase text-indigo-600 tracking-wider">Harga & Kontrak</h3>
+              <h3 className="text-xs font-black uppercase text-indigo-600 tracking-wider">
+                {isEn ? 'Pricing & Contract Details' : 'Harga & Kontrak'}
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Harga Unit (RM)</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Unit Price (RM)' : 'Harga Unit (RM)'}</label>
                   <Input name="price" type="number" step="0.01" defaultValue={selectedItemForEdit.price || 0} />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Nama Pembekal (Supplier)</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Supplier Name' : 'Nama Pembekal (Supplier)'}</label>
                   <Select
                     name="supplier_id"
                     defaultValue={
@@ -1059,7 +1115,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                       ''
                     }
                   >
-                    <option value="">-- Pilih Pembekal Dalam Sistem --</option>
+                    <option value="">{isEn ? '-- Select Supplier in System --' : '-- Pilih Pembekal Dalam Sistem --'}</option>
                     {suppliers.map((sup) => (
                       <option key={sup.id} value={sup.id}>
                         {sup.company_name || (sup as any).supplier_name || 'Pembekal'} {sup.supplier_code ? `(${sup.supplier_code})` : ''}
@@ -1068,29 +1124,31 @@ export const NonDrugInventoryPage: React.FC = () => {
                   </Select>
                   {selectedItemForEdit.cc_supplier_name && !suppliers.some(s => s.company_name?.toLowerCase().trim() === selectedItemForEdit.cc_supplier_name?.toLowerCase().trim() || s.id === selectedItemForEdit.supplier_id) && (
                     <p className="text-[11px] text-amber-600 font-medium mt-1">
-                      Rekod asal pembekal: <span className="font-bold">{selectedItemForEdit.cc_supplier_name}</span> (belum dipadankan dalam senarai pembekal berdaftar)
+                      {isEn 
+                        ? `Original Supplier Record: "${selectedItemForEdit.cc_supplier_name}" (not yet matched with registered vendor).` 
+                        : `Rekod asal pembekal: "${selectedItemForEdit.cc_supplier_name}" (belum dipadankan dalam senarai pembekal berdaftar)`}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">No. Kontrak (CC)</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Contract No. (CC)' : 'No. Kontrak (CC)'}</label>
                   <Input name="cc_contract_number" defaultValue={selectedItemForEdit.cc_contract_number || ''} placeholder="e.g. KK/SUM/2024/001" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Status Kontrak</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Contract Status' : 'Status Kontrak'}</label>
                   <Select name="cc_contract_status" defaultValue={selectedItemForEdit.cc_contract_status || 'active'}>
-                    <option value="active">Aktif</option>
-                    <option value="pending">Pending</option>
-                    <option value="expired">Tamat Tempoh</option>
-                    <option value="terminated">Dibatalkan</option>
+                    <option value="active">{isEn ? 'Active' : 'Aktif'}</option>
+                    <option value="pending">{isEn ? 'Pending' : 'Pending'}</option>
+                    <option value="expired">{isEn ? 'Expired' : 'Tamat Tempoh'}</option>
+                    <option value="terminated">{isEn ? 'Terminated' : 'Dibatalkan'}</option>
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Tarikh Mula Kontrak</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Contract Start Date' : 'Tarikh Mula Kontrak'}</label>
                   <Input name="cc_contract_start_date" type="date" defaultValue={parseAndNormalizeDate(selectedItemForEdit.cc_contract_start_date || getFallbackContractDates(selectedItemForEdit).startDate)} />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Tarikh Tamat Kontrak</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Contract End Date' : 'Tarikh Tamat Kontrak'}</label>
                   <Input name="cc_contract_end_date" type="date" defaultValue={parseAndNormalizeDate(selectedItemForEdit.cc_contract_end_date || getFallbackContractDates(selectedItemForEdit).endDate)} />
                 </div>
               </div>
@@ -1098,15 +1156,17 @@ export const NonDrugInventoryPage: React.FC = () => {
 
             {/* Skim Perolehan Switcher */}
             <div className="space-y-3">
-              <h3 className="text-xs font-black uppercase text-teal-600 tracking-wider">Tukar Skim Perolehan</h3>
+              <h3 className="text-xs font-black uppercase text-teal-600 tracking-wider">
+                {isEn ? 'Change Procurement Scheme' : 'Tukar Skim Perolehan'}
+              </h3>
               <input type="hidden" name="procurement_vote" value={editSkim} />
               {editSkim !== (selectedItemForEdit.procurement_vote || 'appl') && (
                 <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5">
                   <span className="text-amber-600 font-black text-sm">⚠</span>
                   <span className="text-xs font-bold text-amber-800">
-                    Skim akan ditukar daripada{' '}
+                    {isEn ? 'Scheme will be changed from ' : 'Skim akan ditukar daripada '}
                     <span className="uppercase font-black">{(selectedItemForEdit.procurement_vote || 'appl').toUpperCase()}</span>{' '}
-                    kepada{' '}
+                    {isEn ? 'to ' : 'kepada '}
                     <span className="uppercase font-black text-teal-700">{editSkim.toUpperCase()}</span>
                   </span>
                 </div>
@@ -1116,7 +1176,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                   const isCurrentSkim = skim === (selectedItemForEdit.procurement_vote || 'appl')
                   const isSelected = skim === editSkim
                   const skimMeta = {
-                    appl: { label: 'APPL', desc: 'Lampiran B', color: isSelected ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50' },
+                    appl: { label: 'APPL', desc: isEn ? 'Appendix B' : 'Lampiran B', color: isSelected ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50' },
                     cc: { label: 'CC', desc: 'Cost Center', color: isSelected ? 'bg-sky-600 text-white border-sky-600' : 'bg-white text-slate-600 border-slate-200 hover:border-sky-300 hover:bg-sky-50' },
                     lp: { label: 'LP', desc: 'Local Purchase', color: isSelected ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-slate-600 border-slate-200 hover:border-purple-300 hover:bg-purple-50' },
                     dp: { label: 'DP', desc: 'Direct Purchase', color: isSelected ? 'bg-rose-600 text-white border-rose-600' : 'bg-white text-slate-600 border-slate-200 hover:border-rose-300 hover:bg-rose-50' },
@@ -1126,10 +1186,12 @@ export const NonDrugInventoryPage: React.FC = () => {
                       key={skim}
                       type="button"
                       onClick={() => setEditSkim(skim)}
-                      className={`relative flex flex-col items-center justify-center rounded-2xl border-2 p-3 text-center transition-all duration-200 font-bold shadow-sm ${skimMeta.color}`}
+                      className={`relative flex flex-col items-center justify-center rounded-2xl border-2 p-3 text-center transition-all duration-200 font-bold shadow-sm cursor-pointer ${skimMeta.color}`}
                     >
                       {isCurrentSkim && (
-                        <span className="absolute -top-2 -right-2 bg-teal-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wide">Kini</span>
+                        <span className="absolute -top-2 -right-2 bg-teal-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+                          {isEn ? 'Current' : 'Kini'}
+                        </span>
                       )}
                       <span className="text-lg font-black">{skimMeta.label}</span>
                       <span className={`text-[10px] font-semibold mt-0.5 ${isSelected ? 'text-white/80' : 'text-slate-400'}`}>{skimMeta.desc}</span>
@@ -1141,26 +1203,28 @@ export const NonDrugInventoryPage: React.FC = () => {
 
             {/* Specifications & Category */}
             <div className="space-y-3">
-              <h3 className="text-xs font-black uppercase text-indigo-600 tracking-wider">Kategori & Pembungkusan</h3>
+              <h3 className="text-xs font-black uppercase text-indigo-600 tracking-wider">
+                {isEn ? 'Category & Packaging' : 'Kategori & Pembungkusan'}
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Kategori Barang</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Item Category' : 'Kategori Barang'}</label>
                   <Select name="category_id" defaultValue={selectedItemForEdit.category_id || ''}>
-                    <option value="">Pilih Kategori</option>
+                    <option value="">{isEn ? 'Select Category' : 'Pilih Kategori'}</option>
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>{c.category_name}</option>
                     ))}
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Pembungkusan</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Packaging Description' : 'Pembungkusan'}</label>
                   <Input name="packaging_description" defaultValue={selectedItemForEdit.packaging_description || ''} placeholder="Pack of 10 Units" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Status Item</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Item Status' : 'Status Item'}</label>
                   <Select name="status" defaultValue={selectedItemForEdit.status || 'active'}>
-                    <option value="active">Aktif</option>
-                    <option value="inactive">Tidak Aktif</option>
+                    <option value="active">{isEn ? 'Active' : 'Aktif'}</option>
+                    <option value="inactive">{isEn ? 'Inactive' : 'Tidak Aktif'}</option>
                   </Select>
                 </div>
               </div>
@@ -1172,26 +1236,37 @@ export const NonDrugInventoryPage: React.FC = () => {
                 variant="outline"
                 onClick={async () => {
                   if (!hospitalId || !selectedItemForEdit) return
-                  if (window.confirm(`Adakah anda pasti untuk memindahkan "${selectedItemForEdit.item_name}" ke Inventori Ubat?`)) {
+                  const confirmMsg = isEn 
+                    ? `Are you sure you want to move "${selectedItemForEdit.item_name}" to Drug Inventory?`
+                    : `Adakah anda pasti untuk memindahkan "${selectedItemForEdit.item_name}" ke Inventori Ubat?`
+                  if (window.confirm(confirmMsg)) {
                     const res = await moveNonDrugToDrug(selectedItemForEdit.id, hospitalId)
                     if (res.error) {
                       showError(res.error)
                     } else {
-                      showSuccess(`"${selectedItemForEdit.item_name}" telah dipindahkan ke Inventori Ubat!`)
+                      showSuccess(
+                        isEn 
+                          ? `"${selectedItemForEdit.item_name}" moved to Drug Inventory!`
+                          : `"${selectedItemForEdit.item_name}" telah dipindahkan ke Inventori Ubat!`
+                      )
                       setIsEditModalOpen(false)
                       setSelectedItemForEdit(null)
                       void loadItems()
                     }
                   }
                 }}
-                className="border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-bold text-xs gap-1.5"
+                className="border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-bold text-xs gap-1.5 cursor-pointer"
               >
                 <ArrowRightLeft className="w-3.5 h-3.5" />
-                Pindah ke Inventori Ubat
+                {isEn ? 'Move to Drug Inventory' : 'Pindah ke Inventori Ubat'}
               </Button>
               <div className="flex items-center gap-3">
-                <Button type="button" variant="outline" onClick={() => { setIsEditModalOpen(false); setSelectedItemForEdit(null); }}>Batal</Button>
-                <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Simpan Perubahan</Button>
+                <Button type="button" variant="outline" onClick={() => { setIsEditModalOpen(false); setSelectedItemForEdit(null); }} className="cursor-pointer">
+                  {isEn ? 'Cancel' : 'Batal'}
+                </Button>
+                <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold cursor-pointer">
+                  {isEn ? 'Save Changes' : 'Simpan Perubahan'}
+                </Button>
               </div>
             </div>
           </form>

@@ -321,7 +321,7 @@ const MODULES = [
     name: 'MyTimeOff',
     description: 'Time Management System',
     icon: Clock,
-    path: ROUTES.HUB_TIMEOFF,
+    path: '/timeoff',
     colorKey: 'blue'
   },
   {
@@ -592,7 +592,7 @@ export const ModuleHubPage: React.FC = () => {
             <button 
               onClick={handleLogout}
               className="p-2 sm:p-4 hover:bg-red-500/10 rounded-xl sm:rounded-2xl text-slate-500 hover:text-red-400 transition-all border border-white/5 hover:border-red-500/20"
-              title="Log Keluar"
+              title={language === 'ms' ? 'Log Keluar' : 'Logout'}
             >
               <LogOut className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
@@ -611,13 +611,15 @@ export const ModuleHubPage: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
           >
             <h2 className="text-lg sm:text-2xl font-black text-white mb-1 sm:mb-2 tracking-tighter flex flex-wrap items-center gap-x-2 sm:gap-x-4">
-              <span>Selamat Datang,</span>
+              <span>{language === 'ms' ? 'Selamat Datang,' : 'Welcome,'}</span>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-400 italic">
                 {user?.full_name}
               </span>
             </h2>
             <p className="text-xs sm:text-sm font-medium text-slate-400 tracking-wide">
-              Sistem Pengurusan Operasi Hospital Bersepadu
+              {language === 'ms'
+                ? 'Sistem Pengurusan Operasi Hospital Bersepadu'
+                : 'Integrated Hospital Operations Management Ecosystem'}
             </p>
           </motion.div>
 
@@ -636,11 +638,15 @@ export const ModuleHubPage: React.FC = () => {
                 <div className="p-2 bg-amber-500/20 rounded-xl">
                   <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">Notis & Isu Utama</h3>
+                <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                  {language === 'ms' ? 'Notis & Isu Utama' : 'Key Notices & Critical Alerts'}
+                </h3>
               </div>
               <div className="flex items-center gap-2">
                 <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[8px] sm:text-[10px] font-black text-emerald-500 uppercase tracking-widest">Sistem Aktif</span>
+                <span className="text-[8px] sm:text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+                  {language === 'ms' ? 'Sistem Aktif' : 'System Active'}
+                </span>
               </div>
             </div>
 
@@ -648,30 +654,42 @@ export const ModuleHubPage: React.FC = () => {
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
                   <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="text-[8px] font-black text-amber-400 uppercase tracking-widest">Penyelenggaraan</span>
+                  <span className="text-[8px] font-black text-amber-400 uppercase tracking-widest">
+                    {language === 'ms' ? 'Penyelenggaraan' : 'Maintenance'}
+                  </span>
                 </div>
                 <p className="text-[10px] sm:text-xs text-slate-300 leading-tight font-medium">
-                  Bekalan oksigen di Blok B terjejas sehingga <span className="text-white font-bold">4:00 PM</span>.
+                  {language === 'ms'
+                    ? <>Bekalan oksigen di Blok B terjejas sehingga <span className="text-white font-bold">4:00 PM</span>.</>
+                    : <>Oxygen supply in Block B is affected until <span className="text-white font-bold">4:00 PM</span>.</>}
                 </p>
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
                   <AlertCircle className="w-3.5 h-3.5 text-red-400" />
-                  <span className="text-[8px] font-black text-red-400 uppercase tracking-widest">Kecemasan</span>
+                  <span className="text-[8px] font-black text-red-400 uppercase tracking-widest">
+                    {language === 'ms' ? 'Kecemasan' : 'Emergency'}
+                  </span>
                 </div>
                 <p className="text-[10px] sm:text-xs text-slate-300 leading-tight font-medium">
-                  Stok silinder saiz D kritikal. Sila pulangkan silinder kosong segera.
+                  {language === 'ms'
+                    ? 'Stok silinder saiz D kritikal. Sila pulangkan silinder kosong segera.'
+                    : 'Size D oxygen cylinder stock is critical. Please return empty cylinders promptly.'}
                 </p>
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
                   <Megaphone className="w-3.5 h-3.5 text-teal-400" />
-                  <span className="text-[8px] font-black text-teal-400 uppercase tracking-widest">Pengumuman</span>
+                  <span className="text-[8px] font-black text-teal-400 uppercase tracking-widest">
+                    {language === 'ms' ? 'Pengumuman' : 'Announcement'}
+                  </span>
                 </div>
                 <p className="text-[10px] sm:text-xs text-slate-300 leading-tight font-medium">
-                  Audit Kualiti (MSQH) Isnin depan. Pastikan log dikemaskini.
+                  {language === 'ms'
+                    ? 'Audit Kualiti (MSQH) Isnin depan. Pastikan log dikemaskini.'
+                    : 'Quality Audit (MSQH) next Monday. Please ensure all logbooks are up to date.'}
                 </p>
               </div>
             </div>
@@ -705,6 +723,7 @@ export const ModuleHubPage: React.FC = () => {
                       module.id === 'inventory' ||
                       module.id === 'staff' ||
                       module.id === 'cuti' ||
+                      module.id === 'timeoff' ||
                       module.id === 'formulari' ||
                       module.id === 'porter' ||
                       module.id === 'priviledging' ||

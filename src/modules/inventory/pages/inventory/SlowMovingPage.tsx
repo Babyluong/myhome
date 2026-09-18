@@ -245,7 +245,7 @@ export const SlowMovingPage: React.FC = () => {
             </span>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-800 bg-slate-950/40 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
@@ -328,6 +328,76 @@ export const SlowMovingPage: React.FC = () => {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile View: High-End Bento Cards (Zero Horizontal Scroll!) */}
+          <div className="md:hidden divide-y divide-slate-800/60">
+            {items.length === 0 ? (
+              <div className="py-12 px-4 text-center">
+                <div className="max-w-xs mx-auto flex flex-col items-center justify-center space-y-2">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <h4 className="text-sm font-bold text-white">Tiada Item Lambat Bergerak</h4>
+                  <p className="text-xs text-slate-400">
+                    Semua item inventori aktif bergerak dalam tempoh {daysSinceMovement} hari.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              items.map((item) => (
+                <div key={item.item_id} className="p-4 space-y-3 hover:bg-slate-800/30 transition">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="font-mono text-xs font-bold text-slate-400">
+                        {item.item_code}
+                      </span>
+                      <h4 className="font-bold text-white text-sm mt-0.5">
+                        {item.item_name}
+                      </h4>
+                    </div>
+                    <div className="flex-shrink-0">
+                      {renderAgeBadge(item.days_since_movement)}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className={cn(
+                      "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider",
+                      item.item_type === 'drug'
+                        ? "bg-purple-500/10 text-purple-400 border border-purple-500/20"
+                        : "bg-slate-800 text-slate-300 border border-slate-700"
+                    )}>
+                      {item.item_type === 'drug' ? 'Ubat' : 'Bukan Ubat'}
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      Transaksi: <strong className="text-slate-300">{formatDate(item.last_movement_date)}</strong>
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80 text-center">
+                    <div>
+                      <div className="text-[10px] text-slate-400 uppercase">Stok</div>
+                      <div className="text-xs font-bold text-white tabular-nums mt-0.5">
+                        {item.current_stock?.toLocaleString()}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-slate-400 uppercase">Nilai Unit</div>
+                      <div className="text-xs font-semibold text-slate-300 tabular-nums mt-0.5">
+                        {formatCurrency(item.unit_value)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-amber-400 uppercase">Jumlah Nilai</div>
+                      <div className="text-xs font-extrabold text-amber-400 tabular-nums mt-0.5">
+                        {formatCurrency(item.total_value)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}

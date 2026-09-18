@@ -212,77 +212,140 @@ export const BreachLogPage: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-700">
-              <thead className="bg-slate-50 text-[10px] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
-                <tr>
-                  <th className="px-4 py-3">No.</th>
-                  <th className="px-4 py-3">Equipment (Unit ID)</th>
-                  <th className="px-4 py-3">Physical Location</th>
-                  <th className="px-4 py-3">Recorded Temp</th>
-                  <th className="px-4 py-3">Threshold Range</th>
-                  <th className="px-4 py-3">Incident Date & Time</th>
-                  <th className="px-4 py-3">Comments / Notes</th>
-                  <th className="px-4 py-3">Logged By</th>
-                  <th className="px-4 py-3 text-right">Edit</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredBreaches.map((b, i) => (
-                  <tr key={b.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="px-4 py-3 font-bold text-slate-400">{i + 1}</td>
-                    <td className="px-4 py-3 text-slate-800">
+          <>
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-700">
+                <thead className="bg-slate-50 text-[10px] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
+                  <tr>
+                    <th className="px-4 py-3">No.</th>
+                    <th className="px-4 py-3">Equipment (Unit ID)</th>
+                    <th className="px-4 py-3">Physical Location</th>
+                    <th className="px-4 py-3">Recorded Temp</th>
+                    <th className="px-4 py-3">Threshold Range</th>
+                    <th className="px-4 py-3">Incident Date & Time</th>
+                    <th className="px-4 py-3">Comments / Notes</th>
+                    <th className="px-4 py-3">Logged By</th>
+                    <th className="px-4 py-3 text-right">Edit</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredBreaches.map((b, i) => (
+                    <tr key={b.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-4 py-3 font-bold text-slate-400">{i + 1}</td>
+                      <td className="px-4 py-3 text-slate-800">
+                        <span 
+                          onClick={() => navigate(`/suhu/unit/${b.unit_id}`)}
+                          className="hover:underline hover:text-[#00a68a] cursor-pointer font-extrabold block"
+                        >
+                          {b.unit?.nama_unit}
+                        </span>
+                        <span className="text-[9px] font-mono text-slate-400">{b.unit?.unit_id}</span>
+                      </td>
+                      <td className="px-4 py-3 font-medium">
+                        <div className="text-slate-700">{b.unit?.lokasi?.nama_lokasi}</div>
+                        <div className="text-[9px] text-slate-450">{b.unit?.lokasi?.jabatan}</div>
+                      </td>
+                      <td className="px-4 py-3 font-black text-rose-600 text-sm font-mono whitespace-nowrap">
+                        {b.suhu.toFixed(1)}°C
+                      </td>
+                      <td className="px-4 py-3 font-mono text-[10px] text-slate-400 whitespace-nowrap">
+                        {b.ambang?.min_suhu}°C to {b.ambang?.max_suhu}°C
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-slate-500 font-semibold">
+                        {format(new Date(b.tarikh_masa), 'dd/MM/yyyy HH:mm')}
+                      </td>
+                      <td className="px-4 py-3 max-w-[200px] truncate font-medium text-slate-500" title={b.nota || ''}>
+                        {b.is_corrected && (
+                          <div className="text-[9px] text-rose-600 font-bold mb-0.5">[CORRECTIVE ACTION]</div>
+                        )}
+                        {b.nota || '—'}
+                        {b.is_corrected && b.correction_note && (
+                          <div className="text-[9px] text-slate-400 italic mt-0.5">Correction Note: {b.correction_note}</div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-slate-500 font-semibold whitespace-nowrap">
+                        {b.dicatat_oleh_user?.full_name || 'Duty Staff'}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <button 
+                          onClick={() => {
+                            setCorrectReadingId(b.id)
+                            setCorrectNote(b.correction_note || '')
+                            setShowCorrectModal(true)
+                          }}
+                          className="p-1.5 bg-white border border-slate-200 hover:border-slate-350 text-slate-450 hover:text-slate-800 rounded-lg transition-colors shadow-sm"
+                          title="Edit breach record"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile View: High-End Native Cards */}
+            <div className="md:hidden divide-y divide-slate-100">
+              {filteredBreaches.map((b) => (
+                <div key={b.id} className="p-4 space-y-2.5 hover:bg-slate-50/50 transition">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
                       <span 
                         onClick={() => navigate(`/suhu/unit/${b.unit_id}`)}
-                        className="hover:underline hover:text-[#00a68a] cursor-pointer font-extrabold block"
+                        className="font-extrabold text-slate-800 text-sm hover:underline hover:text-[#00a68a] cursor-pointer block"
                       >
                         {b.unit?.nama_unit}
                       </span>
-                      <span className="text-[9px] font-mono text-slate-400">{b.unit?.unit_id}</span>
-                    </td>
-                    <td className="px-4 py-3 font-medium">
-                      <div className="text-slate-700">{b.unit?.lokasi?.nama_lokasi}</div>
-                      <div className="text-[9px] text-slate-450">{b.unit?.lokasi?.jabatan}</div>
-                    </td>
-                    <td className="px-4 py-3 font-black text-rose-600 text-sm font-mono whitespace-nowrap">
-                      {b.suhu.toFixed(1)}°C
-                    </td>
-                    <td className="px-4 py-3 font-mono text-[10px] text-slate-400 whitespace-nowrap">
-                      {b.ambang?.min_suhu}°C to {b.ambang?.max_suhu}°C
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-slate-500 font-semibold">
-                      {format(new Date(b.tarikh_masa), 'dd/MM/yyyy HH:mm')}
-                    </td>
-                    <td className="px-4 py-3 max-w-[200px] truncate font-medium text-slate-500" title={b.nota || ''}>
-                      {b.is_corrected && (
-                        <div className="text-[9px] text-rose-600 font-bold mb-0.5">[CORRECTIVE ACTION]</div>
-                      )}
-                      {b.nota || '—'}
-                      {b.is_corrected && b.correction_note && (
-                        <div className="text-[9px] text-slate-400 italic mt-0.5">Correction Note: {b.correction_note}</div>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-slate-500 font-semibold whitespace-nowrap">
-                      {b.dicatat_oleh_user?.full_name || 'Duty Staff'}
-                    </td>
-                    <td className="px-4 py-3 text-right">
+                      <span className="text-[10px] font-mono text-slate-400">{b.unit?.unit_id}</span>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="px-2.5 py-1 bg-rose-50 border border-rose-200 text-rose-700 font-mono font-black text-xs rounded-lg">
+                        {b.suhu.toFixed(1)}°C
+                      </span>
                       <button 
                         onClick={() => {
                           setCorrectReadingId(b.id)
                           setCorrectNote(b.correction_note || '')
                           setShowCorrectModal(true)
                         }}
-                        className="p-1.5 bg-white border border-slate-200 hover:border-slate-350 text-slate-450 hover:text-slate-800 rounded-lg transition-colors shadow-sm"
-                        title="Edit breach record"
+                        className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition"
+                        title="Edit"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-50/80 rounded-xl p-2.5 border border-slate-100 text-xs">
+                    <div className="flex items-center justify-between text-[11px] text-slate-600 font-medium">
+                      <span>{b.unit?.lokasi?.nama_lokasi} ({b.unit?.lokasi?.jabatan})</span>
+                      <span className="text-slate-400 font-mono">
+                        Had: {b.ambang?.min_suhu}°C - {b.ambang?.max_suhu}°C
+                      </span>
+                    </div>
+                  </div>
+
+                  {b.nota && (
+                    <div className="text-xs text-slate-500 bg-amber-50/60 p-2 rounded-lg border border-amber-100">
+                      {b.is_corrected && (
+                        <span className="text-[10px] font-bold text-rose-600 mr-1">[TINDAKAN PEMBETULAN]</span>
+                      )}
+                      {b.nota}
+                      {b.is_corrected && b.correction_note && (
+                        <div className="text-[10px] text-slate-400 italic mt-0.5">Nota: {b.correction_note}</div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
+                    <span>{format(new Date(b.tarikh_masa), 'dd/MM/yyyy HH:mm')}</span>
+                    <span>Dicatat: <strong className="text-slate-600">{b.dicatat_oleh_user?.full_name || 'Duty Staff'}</strong></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 

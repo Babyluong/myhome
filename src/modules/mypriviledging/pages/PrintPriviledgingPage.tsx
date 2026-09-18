@@ -56,7 +56,7 @@ export const PrintPriviledgingPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <User className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
             <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              Pilih Pegawai Untuk Cetakan Sijil:
+              Select Officer for Certificate Printing:
             </span>
           </div>
 
@@ -67,7 +67,7 @@ export const PrintPriviledgingPage: React.FC = () => {
           >
             {staffProfiles.map((s) => (
               <option key={s.id} value={s.id}>
-                {s.fullName} ({s.position} - {s.grade}) [Diluluskan: {s.approvedCount}]
+                {s.fullName} ({s.position} - {s.grade}) [Approved: {s.approvedCount}]
               </option>
             ))}
           </select>
@@ -83,7 +83,7 @@ export const PrintPriviledgingPage: React.FC = () => {
       ) : (
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center">
           <p className="text-sm font-bold text-slate-600 dark:text-slate-400">
-            Maklumat pegawai tidak dijumpai.
+            Officer profile not found.
           </p>
         </div>
       )}

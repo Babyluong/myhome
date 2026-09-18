@@ -184,24 +184,26 @@ export const KunciSubMenu: React.FC = () => {
           <p className="text-3xl font-bold font-mono mt-2 text-rose-400">
             {stats.loading ? '...' : stats.overdueBorrows}
           </p>
-          <p className="text-xs text-slate-500 mt-1">Melebihi had syif</p>
+          <p className="text-xs text-slate-500 mt-1">{language === 'ms' ? 'Melebihi had syif' : 'Exceeding shift duration'}</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-5 rounded-2xl">
           <div className="flex justify-between items-start text-slate-500">
-            <span className="text-sm font-medium">Tersedia Simpan</span>
+            <span className="text-sm font-medium">{language === 'ms' ? 'Tersedia Simpan' : 'Available in Storage'}</span>
             <Key className="w-4 h-4 text-emerald-400" />
           </div>
           <p className="text-3xl font-bold font-mono mt-2 text-emerald-400">
             {stats.loading ? '...' : stats.normalKeys}
           </p>
-          <p className="text-xs text-slate-500 mt-1">Di dalam peti kunci</p>
+          <p className="text-xs text-slate-500 mt-1">{language === 'ms' ? 'Di dalam peti kunci' : 'Inside key cabinet'}</p>
         </div>
       </div>
 
       {/* Action choices list */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-white tracking-wide">PILIHAN OPERASI & REKOD</h2>
+        <h2 className="text-lg font-semibold text-white tracking-wide">
+          {language === 'ms' ? 'PILIHAN OPERASI & REKOD' : 'KEY OPERATIONS & AUDIT LOGS'}
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {menuItems.map((item, idx) => {
             const Icon = item.icon
@@ -231,7 +233,7 @@ export const KunciSubMenu: React.FC = () => {
                 </div>
                 
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-500/80 group-hover:text-amber-400 transition-colors mt-auto">
-                  <span>Masuk Menu</span>
+                  <span>{language === 'ms' ? 'Masuk Menu' : 'Open Module'}</span>
                   <span className="transform group-hover:translate-x-1 transition-transform">→</span>
                 </div>
               </button>

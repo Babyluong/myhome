@@ -51,6 +51,8 @@ import { AuditLogDrawer } from '../components/AuditLogDrawer'
 export const StaffReminderPage: React.FC = () => {
   const navigate = useNavigate()
   const { language } = useLanguage()
+  const isEn = language !== 'ms'
+  const isMs = language === 'ms'
   const toast = useToast()
   const user = useAuthStore(state => state.user)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -502,12 +504,12 @@ export const StaffReminderPage: React.FC = () => {
               <div className={`text-xs font-black uppercase tracking-wider ${
                 statusFilter === 'completed' ? 'text-emerald-950' : 'text-slate-800'
               }`}>
-                Telah Selesai
+                {isMs ? 'Telah Selesai' : 'Completed'}
               </div>
               <div className={`text-xs font-medium mt-0.5 ${
                 statusFilter === 'completed' ? 'text-emerald-800' : 'text-slate-500'
               }`}>
-                Selesai / Laporan dihantar
+                {isMs ? 'Selesai / Laporan dihantar' : 'Completed / Report submitted'}
               </div>
             </div>
           </div>
@@ -539,12 +541,12 @@ export const StaffReminderPage: React.FC = () => {
               <div className={`text-xs font-black uppercase tracking-wider ${
                 statusFilter === 'all' ? 'text-purple-950' : 'text-slate-800'
               }`}>
-                Semua Rekod
+                {isMs ? 'Semua Rekod' : 'All Records'}
               </div>
               <div className={`text-xs font-medium mt-0.5 ${
                 statusFilter === 'all' ? 'text-purple-800' : 'text-slate-500'
               }`}>
-                Keseluruhan aktiviti jabatan
+                {isMs ? 'Keseluruhan aktiviti jabatan' : 'All department activities'}
               </div>
             </div>
           </div>
@@ -566,7 +568,7 @@ export const StaffReminderPage: React.FC = () => {
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Cari tajuk program, kategori, penceramah, dokumen..."
+              placeholder={isMs ? "Cari tajuk program, kategori, penceramah, dokumen..." : "Search event title, category, speaker, document..."}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 font-medium placeholder:text-slate-400"
@@ -576,13 +578,13 @@ export const StaffReminderPage: React.FC = () => {
           {/* Category Filter Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0">
             {[
-              { id: 'ALL', label: 'Semua Kategori' },
+              { id: 'ALL', label: isMs ? 'Semua Kategori' : 'All Categories' },
               { id: 'cme', label: 'CME / CPD' },
-              { id: 'meeting', label: 'Mesyuarat' },
-              { id: 'course', label: 'Kursus / Latihan' },
-              { id: 'deadline', label: 'Tarikh Akhir' },
-              { id: 'submission', label: 'Laporan' },
-              { id: 'other', label: 'Umum' }
+              { id: 'meeting', label: isMs ? 'Mesyuarat' : 'Meetings' },
+              { id: 'course', label: isMs ? 'Kursus / Latihan' : 'Courses / Training' },
+              { id: 'deadline', label: isMs ? 'Tarikh Akhir' : 'Deadlines' },
+              { id: 'submission', label: isMs ? 'Laporan' : 'Submissions' },
+              { id: 'other', label: isMs ? 'Umum' : 'General' }
             ].map(cat => (
               <button
                 key={cat.id}
@@ -601,13 +603,15 @@ export const StaffReminderPage: React.FC = () => {
 
         {/* Priority Filter Sub-Row */}
         <div className="flex items-center gap-2 pt-2 border-t border-slate-100 flex-wrap text-xs">
-          <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Tapis Keutamaan:</span>
+          <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+            {isMs ? 'Tapis Keutamaan:' : 'Priority Filter:'}
+          </span>
           {[
-            { id: 'ALL', label: 'Semua' },
-            { id: 'critical', label: 'Kritikal', dot: 'bg-rose-500' },
-            { id: 'high', label: 'Tinggi', dot: 'bg-amber-500' },
-            { id: 'medium', label: 'Biasa', dot: 'bg-sky-500' },
-            { id: 'low', label: 'Rendah', dot: 'bg-slate-400' }
+            { id: 'ALL', label: isMs ? 'Semua' : 'All' },
+            { id: 'critical', label: isMs ? 'Kritikal' : 'Critical', dot: 'bg-rose-500' },
+            { id: 'high', label: isMs ? 'Tinggi' : 'High', dot: 'bg-amber-500' },
+            { id: 'medium', label: isMs ? 'Biasa' : 'Medium', dot: 'bg-sky-500' },
+            { id: 'low', label: isMs ? 'Rendah' : 'Low', dot: 'bg-slate-400' }
           ].map(p => (
             <button
               key={p.id}
@@ -631,14 +635,14 @@ export const StaffReminderPage: React.FC = () => {
           <table className="w-full text-left text-sm text-slate-800">
             <thead className="bg-slate-100 border-b border-slate-200 text-xs uppercase font-black text-slate-800 tracking-wider font-mono">
               <tr>
-                <th className="px-6 py-4">Kategori & Keutamaan</th>
-                <th className="px-6 py-4">Tajuk Acara / Sesi & Sinopsis</th>
-                <th className="px-6 py-4">Tarikh & Masa</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Pautan Sesi (1-Click)</th>
-                <th className="px-6 py-4">Dokumen Rujukan (1-Click)</th>
-                <th className="px-6 py-4">Didaftarkan Oleh</th>
-                <th className="px-6 py-4 text-right">Tindakan</th>
+                <th className="px-6 py-4">{isMs ? 'Kategori & Keutamaan' : 'Category & Priority'}</th>
+                <th className="px-6 py-4">{isMs ? 'Tajuk Acara / Sesi & Sinopsis' : 'Event / Session Title & Synopsis'}</th>
+                <th className="px-6 py-4">{isMs ? 'Tarikh & Masa' : 'Date & Time'}</th>
+                <th className="px-6 py-4">{isMs ? 'Status' : 'Status'}</th>
+                <th className="px-6 py-4">{isMs ? 'Pautan Sesi (1-Click)' : 'Session Link (1-Click)'}</th>
+                <th className="px-6 py-4">{isMs ? 'Dokumen Rujukan (1-Click)' : 'Reference Document (1-Click)'}</th>
+                <th className="px-6 py-4">{isMs ? 'Didaftarkan Oleh' : 'Registered By'}</th>
+                <th className="px-6 py-4 text-right">{isMs ? 'Tindakan' : 'Actions'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">

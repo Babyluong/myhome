@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { 
@@ -58,15 +58,25 @@ export const MyWarrantDashboard: React.FC = () => {
         
         const totalBudget = warrantData?.reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0) || 0
 
-        // 2. Fetch Utilized Budget (Approved POs)
-        const { data: poData } = await supabase
-          .from('pharmacy_purchase_orders')
-          .select('total_amount, status')
+        // 2. Fetch Utilized Budget (Approved POs + Completed Oxygen Receptions)
+        const [poRes, oxyRes] = await Promise.all([
+          supabase
+            .from('pharmacy_purchase_orders')
+            .select('total_amount, status'),
+          supabase
+            .from('pharmacy_oxygen_reception_records')
+            .select('total_amount, status')
+            .eq('status', 'completed')
+        ])
         
-        const utilizedBudget = poData?.filter(po => po.status === 'approved' || po.status === 'sent')
+        const poSpent = poRes.data?.filter(po => po.status === 'approved' || po.status === 'sent' || po.status === 'partial_received' || po.status === 'completed')
           .reduce((acc, curr) => acc + parseFloat(curr.total_amount || 0), 0) || 0
+
+        const oxySpent = oxyRes.data?.reduce((acc, curr) => acc + parseFloat(curr.total_amount || 0), 0) || 0
+
+        const utilizedBudget = poSpent + oxySpent
         
-        const pendingApprovals = poData?.filter(po => po.status === 'draft').length || 0
+        const pendingApprovals = poRes.data?.filter(po => po.status === 'draft').length || 0
 
         const utilizationPercent = totalBudget > 0 ? Math.round((utilizedBudget / totalBudget) * 100) : 0
 

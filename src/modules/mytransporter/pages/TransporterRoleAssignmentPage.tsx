@@ -6,13 +6,14 @@ import {
   Users, 
   Shield, 
   Check, 
-  Search,
-  UserCheck,
-  UserX,
-  Plus
+  Search, 
+  UserCheck, 
+  UserX, 
+  Plus 
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { getUsers } from '@/services/userService'
 import { getTransporterRoles, assignTransporterRole } from '../services/transporterService'
 import type { UserWithRelations } from '@/shared/types/auth'
@@ -22,13 +23,15 @@ import {
   CardTitle, 
   CardContent, 
   Button, 
-  Badge,
-  Input
+  Badge, 
+  Input 
 } from '@/components/ui'
 
 const TransporterRoleAssignmentPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
+  const { language } = useLanguage()
+  const isEn = language !== 'ms'
   const toast = useToast()
 
   const [users, setUsers] = useState<UserWithRelations[]>([])
@@ -51,7 +54,10 @@ const TransporterRoleAssignmentPage: React.FC = () => {
         setTransporterRoles(roleRes.data)
       }
     } catch (err: any) {
-      toast.error('Gagal Memuatkan Pengguna', err.message || 'Sila cuba lagi.')
+      toast.error(
+        isEn ? 'Failed to Load Users' : 'Gagal Memuatkan Pengguna', 
+        err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
+      )
     } finally {
       setLoading(false)
     }
@@ -66,7 +72,10 @@ const TransporterRoleAssignmentPage: React.FC = () => {
       const res = await assignTransporterRole(userId, newRole)
       if (res.error) throw new Error(res.error)
       
-      toast.success('Kemaskini Berjaya', 'Kebenaran peranan pengguna berjaya dikemaskini.')
+      toast.success(
+        isEn ? 'Update Successful' : 'Kemaskini Berjaya', 
+        isEn ? 'User module access role updated successfully.' : 'Kebenaran peranan pengguna berjaya dikemaskini.'
+      )
       
       // Update local state
       setTransporterRoles(prev => {
@@ -79,7 +88,10 @@ const TransporterRoleAssignmentPage: React.FC = () => {
         return next
       })
     } catch (err: any) {
-      toast.error('Ralat Mengemaskini', err.message || 'Sila cuba lagi.')
+      toast.error(
+        isEn ? 'Update Failed' : 'Ralat Mengemaskini', 
+        err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
+      )
     }
   }
 
@@ -91,9 +103,9 @@ const TransporterRoleAssignmentPage: React.FC = () => {
   )
 
   const getTransporterRoleLabel = (role: string | null) => {
-    if (role === 'transport_driver') return <Badge variant="success">Pemandu Bertugas</Badge>
-    if (role === 'transport_admin') return <Badge variant="error">Pentadbir Transport</Badge>
-    return <Badge variant="gray">Staff Biasa (Pemohon)</Badge>
+    if (role === 'transport_driver') return <Badge variant="success">{isEn ? 'Duty Driver' : 'Pemandu Bertugas'}</Badge>
+    if (role === 'transport_admin') return <Badge variant="error">{isEn ? 'Transport Admin' : 'Pentadbir Transport'}</Badge>
+    return <Badge variant="gray">{isEn ? 'Standard Staff (Requester)' : 'Staff Biasa (Pemohon)'}</Badge>
   }
 
   return (
@@ -102,20 +114,22 @@ const TransporterRoleAssignmentPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Papan Pemuka</span>
+        <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
       </button>
 
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
           <Shield className="w-8 h-8 text-indigo-600 animate-pulse" />
-          Kebenaran & Peranan Kakitangan (Module Access Controls)
+          {isEn ? 'Staff Roles & Permission Assignments' : 'Kebenaran & Peranan Kakitangan (Module Access Controls)'}
         </h1>
         <p className="text-slate-500 text-sm">
-          Tentukan kakitangan yang mempunyai peranan sebagai Pemandu Bertugas atau Pentadbir Pengangkutan untuk meluluskan permohonan.
+          {isEn 
+            ? 'Assign designated hospital staff as Duty Drivers (for vehicle pre-trip logs) or Transport Administrators (for dispatch approvals).' 
+            : 'Tentukan kakitangan yang mempunyai peranan sebagai Pemandu Bertugas atau Pentadbir Pengangkutan untuk meluluskan permohonan.'}
         </p>
       </div>
 
@@ -127,14 +141,14 @@ const TransporterRoleAssignmentPage: React.FC = () => {
               <Search className="w-4 h-4" />
             </span>
             <Input 
-              placeholder="Cari Pengguna melalui Nama / ID Pekerja / Jabatan"
+              placeholder={isEn ? 'Search Staff by Name / Employee ID / Department' : 'Cari Pengguna melalui Nama / ID Pekerja / Jabatan'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"
             />
           </div>
           <div className="text-xs text-slate-400 flex items-center italic justify-end">
-            * Perubahan peranan berkuatkuasa serta-merta pada sesi pengguna.
+            {isEn ? '* Role changes take effect immediately on active sessions.' : '* Perubahan peranan berkuatkuasa serta-merta pada sesi pengguna.'}
           </div>
         </CardContent>
       </Card>
@@ -143,19 +157,23 @@ const TransporterRoleAssignmentPage: React.FC = () => {
       <Card className="border border-slate-200 shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">Memuatkan maklumat kakitangan hospital...</div>
+            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+              {isEn ? 'Loading hospital staff roster...' : 'Memuatkan maklumat kakitangan hospital...'}
+            </div>
           ) : filteredUsers.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">Tiada kakitangan sepadan dijumpai.</div>
+            <div className="p-12 text-center text-slate-500">
+              {isEn ? 'No matching staff members found.' : 'Tiada kakitangan sepadan dijumpai.'}
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    <th className="px-6 py-4">Kakitangan</th>
-                    <th className="px-6 py-4">ID Pekerja / Email</th>
-                    <th className="px-6 py-4">Jabatan Asal</th>
-                    <th className="px-6 py-4">Akses Pengangkutan Semasa</th>
-                    <th className="px-6 py-4 text-right">Tukar Peranan Transporter</th>
+                    <th className="px-6 py-4">{isEn ? 'Staff Member' : 'Kakitangan'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Employee ID / Email' : 'ID Pekerja / Email'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Department' : 'Jabatan Asal'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Current Transport Access' : 'Akses Pengangkutan Semasa'}</th>
+                    <th className="px-6 py-4 text-right">{isEn ? 'Change Role' : 'Tukar Peranan Transporter'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
@@ -165,7 +183,7 @@ const TransporterRoleAssignmentPage: React.FC = () => {
                       <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-6 py-4">
                           <div className="font-bold text-slate-800">{u.full_name}</div>
-                          <div className="text-xxs text-slate-400 font-semibold">{u.jawatan || 'Kakitangan'}</div>
+                          <div className="text-xxs text-slate-400 font-semibold">{u.jawatan || (isEn ? 'Staff' : 'Kakitangan')}</div>
                         </td>
                         <td className="px-6 py-4">
                           <div className="font-mono text-xs">{u.employee_id}</div>
@@ -184,11 +202,11 @@ const TransporterRoleAssignmentPage: React.FC = () => {
                               const val = e.target.value
                               handleRoleChange(u.id, val === '' ? null : val)
                             }}
-                            className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-bold outline-none"
+                            className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-bold outline-none cursor-pointer"
                           >
-                            <option value="">Tiada (Akses Pemohon Sahaja)</option>
-                            <option value="transport_driver">Pemandu Bertugas (Driver)</option>
-                            <option value="transport_admin">Pentadbir Transport (Admin)</option>
+                            <option value="">{isEn ? 'None (Standard Requester Access)' : 'Tiada (Akses Pemohon Sahaja)'}</option>
+                            <option value="transport_driver">{isEn ? 'Duty Driver (Driver Panel)' : 'Pemandu Bertugas (Driver)'}</option>
+                            <option value="transport_admin">{isEn ? 'Transport Admin (Approvals)' : 'Pentadbir Transport (Admin)'}</option>
                           </select>
                         </td>
                       </tr>

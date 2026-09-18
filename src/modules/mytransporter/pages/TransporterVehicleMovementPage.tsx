@@ -6,22 +6,22 @@ import {
   Car, 
   Printer, 
   Search, 
-  Calendar,
-  TrendingUp,
-  MapPin,
-  Clock,
-  User,
-  Activity
+  Calendar, 
+  TrendingUp, 
+  MapPin, 
+  Clock, 
+  User, 
+  Activity 
 } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
-
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { 
-  getTransporterRoles,
-  getDriverMovementReport
+  getTransporterRoles, 
+  getDriverMovementReport 
 } from '../services/transporterService'
 import { getUsers } from '@/services/userService'
 import { 
@@ -30,12 +30,14 @@ import {
   CardTitle, 
   CardContent, 
   Button, 
-  Input
+  Input 
 } from '@/components/ui'
 
 const TransporterVehicleMovementPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
+  const { language } = useLanguage()
+  const isEn = language !== 'ms'
   const toast = useToast()
 
   const [drivers, setDrivers] = useState<any[]>([])
@@ -94,7 +96,10 @@ const TransporterVehicleMovementPage: React.FC = () => {
           setReportData(res.data)
         }
       } catch (err: any) {
-        toast.error('Gagal Memuatkan Rekod', err.message || 'Ralat semasa memproses laporan.')
+        toast.error(
+          isEn ? 'Failed to Load Records' : 'Gagal Memuatkan Rekod', 
+          err.message || (isEn ? 'Error while processing movement report.' : 'Ralat semasa memproses laporan.')
+        )
       } finally {
         setLoading(false)
       }
@@ -184,18 +189,18 @@ const TransporterVehicleMovementPage: React.FC = () => {
     doc.setFont('Helvetica', 'bold')
     doc.setFontSize(12)
     doc.setTextColor(15, 23, 42)
-    doc.text('JURNAL & LOG PERGERAKAN BULANAN PEMANDU', 105, 45, { align: 'center' })
+    doc.text('MONTHLY DRIVER LOGBOOK & VEHICLE MOVEMENT JOURNAL', 105, 45, { align: 'center' })
 
     // Driver statistics
     doc.setFontSize(10)
     doc.setFont('Helvetica', 'bold')
-    doc.text(`NAMA PEMANDU: ${reportData.driver?.full_name?.toUpperCase() || 'DRIVER'}`, 15, 54)
-    doc.text(`TEMPOH: ${month}/${year}`, 15, 60)
-    doc.text(`JUMLAH TRIP: ${reportData.totalTrips}`, 120, 54)
-    doc.text(`JUMLAH JARAK TEMPUH: ${reportData.totalKm} km`, 120, 60)
+    doc.text(`DRIVER NAME: ${reportData.driver?.full_name?.toUpperCase() || 'DRIVER'}`, 15, 54)
+    doc.text(`PERIOD: ${month}/${year}`, 15, 60)
+    doc.text(`TOTAL TRIPS: ${reportData.totalTrips}`, 120, 54)
+    doc.text(`TOTAL DISTANCE: ${reportData.totalKm} km`, 120, 60)
 
     // Table rows
-    const tableHeaders = [['Tarikh', 'Rujukan', 'Kenderaan', 'Destinasi & Tujuan', 'Odo Mula', 'Odo Tamat', 'Tempoh', 'Jarak (km)']]
+    const tableHeaders = [['Date', 'Ref No', 'Vehicle', 'Destination & Purpose', 'Odo Start', 'Odo End', 'Duration', 'Distance (km)']]
     const tableBody = reportData.trips.map((t: any) => [
       t.date,
       t.referenceNo,
@@ -203,7 +208,7 @@ const TransporterVehicleMovementPage: React.FC = () => {
       `${t.destination} (${t.purpose})`,
       `${t.odometerStart} km`,
       `${t.odometerEnd} km`,
-      t.durationHours !== undefined ? `${t.durationHours} jam` : '-',
+      t.durationHours !== undefined ? `${t.durationHours} hrs` : '-',
       `+${t.distanceKm} km`
     ])
 
@@ -218,17 +223,20 @@ const TransporterVehicleMovementPage: React.FC = () => {
 
     const finalY = (doc as any).lastAutoTable.finalY + 15
     doc.setFontSize(9)
-    doc.text('Disediakan Oleh:', 25, finalY)
+    doc.text('Prepared By:', 25, finalY)
     doc.text('______________________________', 25, finalY + 15)
-    doc.text('Tandatangan Pemandu Bertugas', 25, finalY + 20)
+    doc.text('Duty Driver Signature', 25, finalY + 20)
 
-    doc.text('Disahkan Oleh:', 135, finalY)
+    doc.text('Verified By:', 135, finalY)
     doc.text('______________________________', 135, finalY + 15)
-    doc.text('Tandatangan Pentadbir Pengangkutan', 135, finalY + 20)
+    doc.text('Transport Officer Signature', 135, finalY + 20)
 
     const driverNameClean = (reportData.driver?.full_name || 'Driver').replace(/\s+/g, '_')
-    doc.save(`Log_Pergerakan_Pemandu_${driverNameClean}_${month}_${year}.pdf`)
-    toast.success('PDF Dimuat Turun', `Laporan log pergerakan pemandu ${reportData.driver?.full_name || 'Driver'} berjaya dijana.`)
+    doc.save(`Driver_Movement_Log_${driverNameClean}_${month}_${year}.pdf`)
+    toast.success(
+      isEn ? 'PDF Downloaded' : 'PDF Dimuat Turun', 
+      isEn ? `Movement log for driver ${reportData.driver?.full_name || 'Driver'} generated.` : `Laporan log pergerakan pemandu ${reportData.driver?.full_name || 'Driver'} berjaya dijana.`
+    )
   }
 
   return (
@@ -237,10 +245,10 @@ const TransporterVehicleMovementPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Papan Pemuka</span>
+        <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
       </button>
 
       {/* Header */}
@@ -248,19 +256,21 @@ const TransporterVehicleMovementPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <Activity className="w-8 h-8 text-emerald-600" />
-            Log & Jurnal Pergerakan Kenderaan
+            {isEn ? 'Vehicle Movement Journal & Mileage Log' : 'Log & Jurnal Pergerakan Kenderaan'}
           </h1>
           <p className="text-slate-500 text-sm">
-            Semak odometer perjalanan, pemandu bertugas, destinasi, dan jumlah kilometer bulanan untuk tujuan claims/rekod petrol.
+            {isEn 
+              ? 'Review trip odometers, duty drivers, destinations, and monthly total mileage for audit verification and fuel claims.' 
+              : 'Semak odometer perjalanan, pemandu bertugas, destinasi, dan jumlah kilometer bulanan untuk tujuan claims/rekod petrol.'}
           </p>
         </div>
         <Button 
           disabled={!reportData || reportData.trips.length === 0}
           onClick={handlePrintPDF}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-2"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-2 cursor-pointer"
         >
           <Printer className="w-4 h-4" />
-          <span>Cetak Laporan Log</span>
+          <span>{isEn ? 'Print Log Report' : 'Cetak Laporan Log'}</span>
         </Button>
       </div>
 
@@ -270,11 +280,13 @@ const TransporterVehicleMovementPage: React.FC = () => {
           
           {/* Driver Dropdown */}
           <div className="space-y-1">
-            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">Pilih Pemandu</label>
+            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+              {isEn ? 'Select Driver' : 'Pilih Pemandu'}
+            </label>
             <select
               value={selectedDriverId}
               onChange={(e) => setSelectedDriverId(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-650 transition-colors"
+              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
             >
               {drivers.map(d => (
                 <option key={d.id} value={d.id}>
@@ -286,15 +298,17 @@ const TransporterVehicleMovementPage: React.FC = () => {
 
           {/* Month */}
           <div className="space-y-1">
-            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">Bulan</label>
+            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+              {isEn ? 'Month' : 'Bulan'}
+            </label>
             <select
               value={month}
               onChange={(e) => setMonth(parseInt(e.target.value, 10))}
-              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors"
+              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
             >
               {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => (
                 <option key={m} value={m}>
-                  {new Date(2026, m - 1, 1).toLocaleString('ms-MY', { month: 'long' })}
+                  {new Date(2026, m - 1, 1).toLocaleString(isEn ? 'en-US' : 'ms-MY', { month: 'long' })}
                 </option>
               ))}
             </select>
@@ -302,11 +316,13 @@ const TransporterVehicleMovementPage: React.FC = () => {
 
           {/* Year */}
           <div className="space-y-1">
-            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">Tahun</label>
+            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+              {isEn ? 'Year' : 'Tahun'}
+            </label>
             <select
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value, 10))}
-              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors"
+              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
             >
               {[2025, 2026, 2027].map(y => (
                 <option key={y} value={y}>{y}</option>
@@ -316,7 +332,7 @@ const TransporterVehicleMovementPage: React.FC = () => {
 
           <div className="flex items-end">
             <div className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-center text-xs font-bold text-slate-600">
-              Total: {reportData?.totalKm || 0} km driven
+              {isEn ? 'Total:' : 'Jumlah:'} {reportData?.totalKm || 0} km {isEn ? 'driven' : 'jarak tempuh'}
             </div>
           </div>
 
@@ -327,22 +343,27 @@ const TransporterVehicleMovementPage: React.FC = () => {
       <Card className="border border-slate-200 shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">Memuatkan log pergerakan...</div>
+            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+              {isEn ? 'Loading movement log...' : 'Memuatkan log pergerakan...'}
+            </div>
           ) : !reportData || reportData.trips.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">Tiada pergerakan trip direkodkan bagi pemandu ini pada tempoh tersebut.</div>
+            <div className="p-12 text-center text-slate-500">
+              {isEn ? 'No trips recorded for this driver during the selected period.' : 'Tiada pergerakan trip direkodkan bagi pemandu ini pada tempoh tersebut.'}
+            </div>
           ) : (
-            <div className="overflow-x-auto">
+            <>
+              <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    <th className="px-6 py-4">Tarikh</th>
-                    <th className="px-6 py-4">No. Rujukan</th>
-                    <th className="px-6 py-4">Kenderaan</th>
-                    <th className="px-6 py-4">Tujuan & Destinasi</th>
-                    <th className="px-6 py-4">Odometer Mula</th>
-                    <th className="px-6 py-4">Odometer Tamat</th>
-                    <th className="px-6 py-4">Tempoh (Jam)</th>
-                    <th className="px-6 py-4">Jarak (km)</th>
+                    <th className="px-6 py-4">{isEn ? 'Date' : 'Tarikh'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Ref No' : 'No. Rujukan'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Vehicle' : 'Kenderaan'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Destination & Purpose' : 'Tujuan & Destinasi'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Odometer Start' : 'Odometer Mula'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Odometer End' : 'Odometer Tamat'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Duration (Hours)' : 'Tempoh (Jam)'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Distance (km)' : 'Jarak (km)'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
@@ -359,13 +380,56 @@ const TransporterVehicleMovementPage: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 font-mono text-slate-600 tabular-nums">{trip.odometerStart} km</td>
                       <td className="px-6 py-4 font-mono text-slate-600 tabular-nums">{trip.odometerEnd} km</td>
-                      <td className="px-6 py-4 font-mono text-slate-600 tabular-nums">{trip.durationHours !== undefined ? `${trip.durationHours} jam` : '-'}</td>
+                      <td className="px-6 py-4 font-mono text-slate-600 tabular-nums">
+                        {trip.durationHours !== undefined ? `${trip.durationHours} ${isEn ? 'hrs' : 'jam'}` : '-'}
+                      </td>
                       <td className="px-6 py-4 font-mono font-bold text-emerald-600 tabular-nums">+{trip.distanceKm} km</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile View: High-End Native Trip Cards */}
+            <div className="md:hidden divide-y divide-slate-100">
+              {reportData.trips.map((trip: any, idx: number) => (
+                <div key={idx} className="p-4 space-y-2.5 hover:bg-slate-50/50 transition">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="font-mono text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 inline-block">
+                        {trip.referenceNo}
+                      </span>
+                      <h4 className="font-bold text-slate-900 text-sm mt-1">{trip.destination}</h4>
+                      <p className="text-xs text-slate-400 mt-0.5">{trip.purpose}</p>
+                    </div>
+                    <span className="font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg text-xs tabular-nums flex-shrink-0">
+                      +{trip.distanceKm} km
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 bg-slate-50 rounded-xl p-2.5 border border-slate-100 text-xs">
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase">Odometer Mula - Tamat</span>
+                      <div className="font-mono text-slate-700 font-semibold mt-0.5">
+                        {trip.odometerStart} → {trip.odometerEnd} km
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase">Tempoh Perjalanan</span>
+                      <div className="font-mono text-slate-700 font-semibold mt-0.5">
+                        {trip.durationHours !== undefined ? `${trip.durationHours} ${isEn ? 'hrs' : 'jam'}` : '-'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
+                    <span>{trip.date}</span>
+                    <span>Pemandu: <strong className="text-slate-600">{trip.driverName}</strong></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
           )}
         </CardContent>
       </Card>

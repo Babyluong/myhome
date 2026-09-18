@@ -1,4 +1,4 @@
-﻿// src/modules/myporter/pages/PorterManagerDispatchPage.tsx
+// src/modules/myporter/pages/PorterManagerDispatchPage.tsx
 import React, { useEffect, useState } from 'react'
 import { 
   Shield, 
@@ -59,7 +59,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
       if (jobsRes.data) setJobs(jobsRes.data)
       if (profRes.data) setPorters(profRes.data)
     } catch (err: any) {
-      toast.error('Ralat Memuatkan Data Dispatch', err.message)
+      toast.error('Error Loading Dispatch Data', err.message)
     } finally {
       setLoading(false)
     }
@@ -77,14 +77,14 @@ export const PorterManagerDispatchPage: React.FC = () => {
       const res = await managerAssignJob(selectedJob.id, selectedPorterId)
       if (res.data) {
         soundAlert.playSuccessTone()
-        toast.success('Tugasan Berjaya Diagihkan', `PPK ${res.data.assigned_porter_name} telah ditugaskan untuk ${res.data.no_rujukan}.`)
+        toast.success('Task Successfully Assigned', `Porter ${res.data.assigned_porter_name} has been dispatched for ${res.data.no_rujukan}.`)
         setIsAssignModalOpen(false)
         setSelectedJob(null)
         setSelectedPorterId('')
         fetchManagerData()
       }
     } catch (err: any) {
-      toast.error('Gagal Mengagihkan Tugasan', err.message)
+      toast.error('Failed to Assign Task', err.message)
     }
   }
 
@@ -103,10 +103,10 @@ export const PorterManagerDispatchPage: React.FC = () => {
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-3">
             <Shield className="w-8 h-8 text-amber-400" />
-            <span>Pusat Kawalan Dispatch & Operasi PPK</span>
+            <span>Porter Operations & Dispatch Control Center</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Papan pemantauan masa-nyata pergerakan logistik, pemindahan pesakit dan pengagihan manual PPK
+            Real-time monitoring console for hospital logistics, patient transit and manual porter assignment
           </p>
         </div>
 
@@ -116,7 +116,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
           className="border-slate-700 bg-slate-900 text-slate-300 hover:text-white flex items-center gap-2 text-xs"
         >
           <RefreshCw className="w-3.5 h-3.5" />
-          <span>Kemas Kini Langsung</span>
+          <span>Live Refresh</span>
         </Button>
       </div>
 
@@ -126,8 +126,8 @@ export const PorterManagerDispatchPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <AlertTriangle className="w-6 h-6 text-rose-400 shrink-0" />
             <div>
-              <p className="text-sm font-black text-rose-200">AMARAN SLA: Terdapat Permohonan STAT Kritis Belum Diambil!</p>
-              <p className="text-xs text-rose-300/80">Sila buat penugasan manual segera kepada mana-mana PPK yang tersedia.</p>
+              <p className="text-sm font-black text-rose-200">SLA ALERT: Unaccepted Critical STAT Requests Present!</p>
+              <p className="text-xs text-rose-300/80">Please assign immediately to an available porter on duty.</p>
             </div>
           </div>
           <Button
@@ -140,7 +140,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
             }}
             className="bg-rose-600 hover:bg-rose-700 text-white font-black text-xs px-4"
           >
-            Tugaskan Segera
+            Assign Immediately
           </Button>
         </div>
       )}
@@ -149,14 +149,14 @@ export const PorterManagerDispatchPage: React.FC = () => {
       <div className="space-y-4">
         <h2 className="text-base font-bold text-white flex items-center gap-2">
           <Radio className="w-5 h-5 text-sky-400 animate-pulse" />
-          <span>Papan Pergerakan Langsung (Live Kanban Matrix)</span>
+          <span>Live Movement Matrix (Kanban)</span>
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Col 1: Broadcasting Pool */}
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 space-y-3 flex flex-col">
             <div className="flex justify-between items-center pb-2 border-b border-slate-800">
-              <span className="text-xs font-black text-sky-400 uppercase tracking-wider">Menunggu (Pool)</span>
+              <span className="text-xs font-black text-sky-400 uppercase tracking-wider">Broadcast Pool</span>
               <span className="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 text-xs font-bold flex items-center justify-center">
                 {poolJobs.length}
               </span>
@@ -164,7 +164,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
 
             <div className="space-y-3 flex-1 overflow-y-auto max-h-[600px] pr-1">
               {poolJobs.length === 0 ? (
-                <div className="p-8 text-center text-slate-600 text-xs">Tiada permohonan dalam kolam</div>
+                <div className="p-8 text-center text-slate-600 text-xs">No requests in pool</div>
               ) : (
                 poolJobs.map((job) => (
                   <div key={job.id} className="p-4 bg-slate-950 border border-slate-800 hover:border-sky-500/50 rounded-2xl space-y-3 shadow-md">
@@ -174,8 +174,8 @@ export const PorterManagerDispatchPage: React.FC = () => {
                     </div>
                     <div>
                       <h4 className="text-xs font-extrabold text-white">{job.sub_category || job.category}</h4>
-                      <p className="text-[11px] text-slate-400 mt-1">Dari: {job.origin_department_name}</p>
-                      <p className="text-[11px] text-slate-400">Ke: {job.destination_department_name}</p>
+                      <p className="text-[11px] text-slate-400 mt-1">From: {job.origin_department_name}</p>
+                      <p className="text-[11px] text-slate-400">To: {job.destination_department_name}</p>
                     </div>
                     <Button
                       onClick={() => {
@@ -185,7 +185,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
                       className="w-full py-2 bg-sky-600/30 hover:bg-sky-600 text-sky-300 hover:text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5"
                     >
                       <UserPlus className="w-3.5 h-3.5" />
-                      <span>Agih Manual</span>
+                      <span>Manual Assign</span>
                     </Button>
                   </div>
                 ))
@@ -196,7 +196,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
           {/* Col 2: In Progress & In Transit */}
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 space-y-3 flex flex-col">
             <div className="flex justify-between items-center pb-2 border-b border-slate-800">
-              <span className="text-xs font-black text-blue-400 uppercase tracking-wider">Sedang Bergerak</span>
+              <span className="text-xs font-black text-blue-400 uppercase tracking-wider">In Transit</span>
               <span className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold flex items-center justify-center">
                 {inProgressJobs.length}
               </span>
@@ -204,7 +204,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
 
             <div className="space-y-3 flex-1 overflow-y-auto max-h-[600px] pr-1">
               {inProgressJobs.length === 0 ? (
-                <div className="p-8 text-center text-slate-600 text-xs">Tiada pergerakan aktif</div>
+                <div className="p-8 text-center text-slate-600 text-xs">No active transit</div>
               ) : (
                 inProgressJobs.map((job) => (
                   <div key={job.id} className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-2.5 shadow-md">
@@ -214,8 +214,8 @@ export const PorterManagerDispatchPage: React.FC = () => {
                     </div>
                     <div>
                       <h4 className="text-xs font-extrabold text-white">{job.sub_category || job.category}</h4>
-                      <p className="text-[11px] text-slate-400 mt-0.5">PPK: <strong className="text-slate-200">{job.assigned_porter_name}</strong></p>
-                      <p className="text-[10px] text-slate-500">Laluan: {job.origin_department_name} ➔ {job.destination_department_name}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Porter: <strong className="text-slate-200">{job.assigned_porter_name}</strong></p>
+                      <p className="text-[10px] text-slate-500">Route: {job.origin_department_name} ➔ {job.destination_department_name}</p>
                     </div>
                   </div>
                 ))
@@ -226,7 +226,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
           {/* Col 3: Pending Receiver Confirmation */}
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 space-y-3 flex flex-col">
             <div className="flex justify-between items-center pb-2 border-b border-slate-800">
-              <span className="text-xs font-black text-amber-400 uppercase tracking-wider">Tiba & Pengesahan</span>
+              <span className="text-xs font-black text-amber-400 uppercase tracking-wider">Arrived & Awaiting Sign</span>
               <span className="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold flex items-center justify-center">
                 {pendingConfirmationJobs.length}
               </span>
@@ -234,19 +234,19 @@ export const PorterManagerDispatchPage: React.FC = () => {
 
             <div className="space-y-3 flex-1 overflow-y-auto max-h-[600px] pr-1">
               {pendingConfirmationJobs.length === 0 ? (
-                <div className="p-8 text-center text-slate-600 text-xs">Tiada menunggu pengesahan</div>
+                <div className="p-8 text-center text-slate-600 text-xs">No pending verifications</div>
               ) : (
                 pendingConfirmationJobs.map((job) => (
                   <div key={job.id} className="p-4 bg-slate-950 border border-amber-500/30 rounded-2xl space-y-2 shadow-md">
                     <div className="flex justify-between items-start">
                       <span className="font-mono text-xs font-bold text-sky-400">{job.no_rujukan}</span>
                       <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[10px] font-bold rounded-full animate-pulse">
-                        Menunggu Wad
+                        Awaiting Ward
                       </span>
                     </div>
                     <h4 className="text-xs font-extrabold text-white">{job.sub_category || job.category}</h4>
-                    <p className="text-[11px] text-slate-400">Destinasi: <strong className="text-white">{job.destination_department_name}</strong></p>
-                    <p className="text-[10px] text-slate-500">PPK: {job.assigned_porter_name}</p>
+                    <p className="text-[11px] text-slate-400">Destination: <strong className="text-white">{job.destination_department_name}</strong></p>
+                    <p className="text-[10px] text-slate-500">Porter: {job.assigned_porter_name}</p>
                   </div>
                 ))
               )}
@@ -256,7 +256,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
           {/* Col 4: Completed Today */}
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 space-y-3 flex flex-col">
             <div className="flex justify-between items-center pb-2 border-b border-slate-800">
-              <span className="text-xs font-black text-emerald-400 uppercase tracking-wider">Selesai Hari Ini</span>
+              <span className="text-xs font-black text-emerald-400 uppercase tracking-wider">Completed Today</span>
               <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center">
                 {completedJobs.length}
               </span>
@@ -283,7 +283,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-base font-bold text-white flex items-center gap-2">
             <Users className="w-5 h-5 text-emerald-400" />
-            <span>Matriks Keberadaan Petugas PPK</span>
+            <span>Porter Availability & Duty Matrix</span>
           </h2>
 
           <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
@@ -302,7 +302,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
                         <span className="font-mono text-[10px] text-slate-400">{p.staff_no} ({p.gred})</span>
                       </div>
                       <p className="text-slate-400">{p.assigned_zone} • {p.phone_number}</p>
-                      <p className="text-slate-500 text-[10px]">Lokasi Terkini: {p.current_location}</p>
+                      <p className="text-slate-500 text-[10px]">Current Location: {p.current_location}</p>
                     </div>
                   </div>
 
@@ -320,22 +320,22 @@ export const PorterManagerDispatchPage: React.FC = () => {
         <div className="space-y-4">
           <h2 className="text-base font-bold text-white flex items-center gap-2">
             <Flame className="w-5 h-5 text-rose-500" />
-            <span>Kepadatan Permohonan Wad (Demand)</span>
+            <span>Ward Demand Concentration (Heatmap)</span>
           </h2>
 
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-xl text-xs">
-            <p className="text-slate-400">Kepekatan zon permohonan logistik tertinggi:</p>
+            <p className="text-slate-400">Highest logistical request concentration zones:</p>
             {[
-              { zone: 'Jabatan Kecemasan (ED)', count: 18, pct: 85, color: 'bg-rose-500' },
-              { zone: 'Dewan Bedah Utama (OT)', count: 14, pct: 68, color: 'bg-amber-500' },
-              { zone: 'Wad Kenanga (Wad 4A)', count: 11, pct: 52, color: 'bg-blue-500' },
-              { zone: 'Makmal Patologi & Tabung Darah', count: 9, pct: 44, color: 'bg-teal-500' },
-              { zone: 'Unit Rawatan Rapi (ICU)', count: 7, pct: 35, color: 'bg-indigo-500' }
+              { zone: 'Emergency & Trauma Department (ED)', count: 18, pct: 85, color: 'bg-rose-500' },
+              { zone: 'Main Operating Theatre (OT)', count: 14, pct: 68, color: 'bg-amber-500' },
+              { zone: 'Kenanga Ward (Ward 4A)', count: 11, pct: 52, color: 'bg-blue-500' },
+              { zone: 'Pathology & Blood Bank Lab', count: 9, pct: 44, color: 'bg-teal-500' },
+              { zone: 'Intensive Care Unit (ICU)', count: 7, pct: 35, color: 'bg-indigo-500' }
             ].map((z) => (
               <div key={z.zone} className="space-y-1.5">
                 <div className="flex justify-between font-semibold text-slate-300">
                   <span>{z.zone}</span>
-                  <span className="font-mono">{z.count} Tugas</span>
+                  <span className="font-mono">{z.count} Tasks</span>
                 </div>
                 <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
                   <div className={`h-full ${z.color} rounded-full`} style={{ width: `${z.pct}%` }} />
@@ -350,7 +350,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
       <Modal
         isOpen={isAssignModalOpen}
         onClose={() => setIsAssignModalOpen(false)}
-        title="Agihan Manual Tugasan PPK"
+        title="Manual Porter Task Assignment"
       >
         <div className="space-y-4 p-2">
           {selectedJob && (
@@ -360,18 +360,18 @@ export const PorterManagerDispatchPage: React.FC = () => {
                 <UrgencyBadge urgency={selectedJob.urgency} />
               </div>
               <p className="font-bold text-white">{selectedJob.sub_category || selectedJob.category}</p>
-              <p className="text-slate-400">Dari: {selectedJob.origin_department_name} ➔ Ke: {selectedJob.destination_department_name}</p>
+              <p className="text-slate-400">From: {selectedJob.origin_department_name} ➔ To: {selectedJob.destination_department_name}</p>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1">Pilih PPK untuk Ditugaskan *</label>
+            <label className="block text-xs font-bold text-slate-300 mb-1">Select Porter for Assignment *</label>
             <select
               className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-200"
               value={selectedPorterId}
               onChange={(e) => setSelectedPorterId(e.target.value)}
             >
-              <option value="">-- Pilih PPK --</option>
+              <option value="">-- Select Porter --</option>
               {porters.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.full_name} ({p.staff_no}) - {p.current_status.toUpperCase()} ({p.assigned_zone})
@@ -386,14 +386,14 @@ export const PorterManagerDispatchPage: React.FC = () => {
               onClick={() => setIsAssignModalOpen(false)}
               className="border-slate-700 text-slate-300"
             >
-              Batal
+              Cancel
             </Button>
             <Button
               disabled={!selectedPorterId}
               onClick={handleManualAssign}
               className="bg-sky-600 hover:bg-sky-700 text-white font-bold"
             >
-              Sahkan Penugasan
+              Confirm Assignment
             </Button>
           </div>
         </div>

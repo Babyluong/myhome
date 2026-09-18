@@ -80,7 +80,7 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!perihalName.trim()) {
-      toast.error('Sila masukkan nama perihal item.')
+      toast.error('Please enter the item name / perihal.')
       return
     }
 
@@ -98,7 +98,7 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
           unit_price: Number(unitPrice)
         })
         if (error) throw error
-        toast.success('Item Katalog Berjaya Dikemaskini!')
+        toast.success('Catalog Item Successfully Updated!')
       } else {
         const { error } = await createPerihalItem({
           perihal_name: perihalName.trim(),
@@ -112,14 +112,14 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
           created_by: user?.id
         })
         if (error) throw error
-        toast.success('Item Katalog Baharu Berjaya Ditambah!')
+        toast.success('New Catalog Item Successfully Created!')
       }
 
       onSuccess()
       onClose()
     } catch (err: any) {
       console.error('Error saving perihal item:', err)
-      toast.error('Gagal menyimpan item katalog', err.message || 'Ralat sistem.')
+      toast.error('Failed to save catalog item', err.message || 'System error.')
     } finally {
       setIsSubmitting(false)
     }
@@ -140,10 +140,10 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
             </div>
             <div>
               <h3 className="text-lg font-black text-slate-900">
-                {itemToEdit ? 'Kemaskini Item Katalog' : 'Tambah Item Katalog Perihal'}
+                {itemToEdit ? 'Update Catalog Item' : 'Add Perihal Catalog Item'}
               </h3>
               <p className="text-xs text-slate-500">
-                {itemToEdit ? `ID: ${itemToEdit.id.slice(0, 8)}...` : 'Daftar item perihal & harga kontrak baharu'}
+                {itemToEdit ? `ID: ${itemToEdit.id.slice(0, 8)}...` : 'Register new perihal item & contract rate'}
               </p>
             </div>
           </div>
@@ -157,10 +157,10 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Perihal / Nama Item</label>
+            <label className="block font-bold text-slate-700 mb-1">Item Name / Perihal</label>
             <input
               type="text"
-              placeholder="cth: Diet Blenderised / Sewaan Mesin / Bacaan Meter"
+              placeholder="e.g. Blenderised Diet / Equipment Lease / Meter Reading"
               value={perihalName}
               onChange={(e) => setPerihalName(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none font-semibold"
@@ -169,10 +169,10 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
           </div>
 
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Keterangan / Spesifikasi</label>
+            <label className="block font-bold text-slate-700 mb-1">Description / Specifications</label>
             <textarea
               rows={2}
-              placeholder="cth: Sajian diet pemulihan klinikal pesakit..."
+              placeholder="e.g. Clinical rehabilitation inpatient diet..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none resize-none"
@@ -187,14 +187,14 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
                 onChange={(e) => setProgramCode(e.target.value)}
                 className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 focus:border-indigo-500 focus:outline-none"
               >
-                <option value="020200">020200 (Pengurusan)</option>
-                <option value="022300">022300 (Dietetik)</option>
-                <option value="P42">P42 (Pembangunan)</option>
+                <option value="020200">020200 (Hospital Management)</option>
+                <option value="022300">022300 (Dietetics & Food Services)</option>
+                <option value="P42">P42 (Development)</option>
               </select>
             </div>
 
             <div>
-              <label className="block font-bold text-slate-600 mb-1 text-[11px]">Kod Objek</label>
+              <label className="block font-bold text-slate-600 mb-1 text-[11px]">Object Code</label>
               <input
                 type="text"
                 placeholder="29000 / 24000"
@@ -206,7 +206,7 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
             </div>
 
             <div>
-              <label className="block font-bold text-slate-600 mb-1 text-[11px]">Kod Kategori</label>
+              <label className="block font-bold text-slate-600 mb-1 text-[11px]">Category Code</label>
               <input
                 type="text"
                 placeholder="29126 / 24202"
@@ -220,10 +220,10 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Sesi Makanan / Sesi</label>
+              <label className="block font-bold text-slate-700 mb-1">Meal Session / Classification</label>
               <input
                 type="text"
-                placeholder="cth: Makan Tengah Hari / Sarapan Pagi / UNIT"
+                placeholder="e.g. Lunch / Breakfast / UNIT"
                 value={mealSession}
                 onChange={(e) => setMealSession(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none"
@@ -231,7 +231,7 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Harga Kontrak / Unit (RM)</label>
+              <label className="block font-bold text-slate-700 mb-1">Contract / Unit Price (RM)</label>
               <input
                 type="number"
                 step="0.01"
@@ -251,14 +251,14 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
               onClick={onClose}
               className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold"
             >
-              Batal
+              Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
               className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 rounded-xl shadow-sm"
             >
-              {isSubmitting ? 'Menyimpan...' : itemToEdit ? 'Simpan Perubahan' : 'Tambah Item'}
+              {isSubmitting ? 'Saving...' : itemToEdit ? 'Save Changes' : 'Add Item'}
             </Button>
           </div>
         </form>

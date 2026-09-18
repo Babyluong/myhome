@@ -34,12 +34,17 @@ export interface OxygenPdfItem {
 }
 
 const getCylinderVolume = (sizeCode: string): string => {
-  const code = sizeCode.toUpperCase()
-  if (code.includes('HS')) return '6.4M³'
-  if (code.includes('D')) return '0.5M³'
-  if (code.includes('E')) return '0.7M³'
+  const code = (sizeCode || '').toUpperCase().trim()
+  if (code.includes('HS') || code.includes('6.4')) return '6.4M³'
+  if (code.includes('-F') || /(?:^|[_\-\s])F(?:[_\-\s]|$)/i.test(code) || code.includes('1.4')) return '1.4M³'
+  if (code.includes('-E') || /(?:^|[_\-\s])E(?:[_\-\s]|$)/i.test(code) || code.includes('0.7')) return '0.7M³'
+  if (code.includes('-D') || /(?:^|[_\-\s])D(?:[_\-\s]|$)/i.test(code) || code.includes('0.5')) return '0.5M³'
+  if (code.includes('-N') || /(?:^|[_\-\s])N(?:[_\-\s]|$)/i.test(code) || code.includes('8.0') || code.includes('8M3')) return '8.0M³'
+  
   if (code.includes('F')) return '1.4M³'
-  if (code.includes('N')) return '8.0M³'
+  if (code.includes('E')) return '0.7M³'
+  if (code.includes('D')) return '0.5M³'
+  if (code.includes('N') && !code.includes('BN')) return '8.0M³'
   return '-'
 }
 
@@ -75,6 +80,7 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
     supplierName = 'LINDE EOX SDN BHD (CAW. MIRI)',
     supplierAddress = 'Lot 1525, Block 3 Piasau Industrial Estate, MCLD 98008 Miri Sarawak Bumi Kenyalang',
     supplierPhone = '+60-3-7803-4567',
+    balanceBefore = null,
     balanceAfter = null,
     loanRates = {},
   } = options
@@ -139,8 +145,9 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
   
   const targetItems = refillItems.length > 0 ? refillItems : items
   targetItems.forEach(itm => {
-    const size = itm.size_code === '101-F' ? 'P101-F' : itm.size_code
-    const refillPrice = itm.unit_price > 30 ? itm.unit_price : 250.00
+    const isLiquid = (itm.size_code || '').toLowerCase().includes('liquid') || (itm.size_code || '').toLowerCase().includes('vie')
+    const size = isLiquid ? 'Liquid Medical Oxygen (VIE Tank)' : (itm.size_code === '101-F' ? 'P101-F' : itm.size_code)
+    const refillPrice = isLiquid ? (itm.unit_price > 0 ? itm.unit_price : 3.60) : (itm.unit_price > 30 ? itm.unit_price : 250.00)
     
     if (!refillGroups[size]) refillGroups[size] = []
     refillGroups[size].push({
@@ -212,12 +219,16 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
   // 3. Calculate sequential budget balance deductions for refills
   const refillBlocks = blocks.filter(b => b.type === 'refill')
   
-  const finalBalanceAfter = balanceAfter !== null && balanceAfter !== undefined 
-    ? balanceAfter 
-    : 12962.30 // fallback to current balance in user screenshot
-
   const totalRefillAmount = reception?.refill_amount || items.filter(itm => !itm.is_loan).reduce((sum, itm) => sum + itm.total_price, 0)
-  let runningBalance = finalBalanceAfter + totalRefillAmount
+
+  let runningBalance: number
+  if (balanceBefore !== null && balanceBefore !== undefined) {
+    runningBalance = balanceBefore
+  } else if (balanceAfter !== null && balanceAfter !== undefined) {
+    runningBalance = balanceAfter + totalRefillAmount
+  } else {
+    runningBalance = 12962.30 + totalRefillAmount
+  }
 
   refillBlocks.forEach(b => {
     b.balanceBefore = runningBalance
@@ -355,18 +366,25 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
     // 9. Table of Items (Consolidated dynamically from block.items)
     const tableData: any[][] = block.items.map((itm, idx) => {
       const displaySize = itm.size_code
+      const isLiquid = (displaySize || '').toLowerCase().includes('liquid') || (displaySize || '').toLowerCase().includes('vie')
       const nameLabel = block.type === 'loan'
         ? `CAJ SEWA SILINDER / CYLINDER LOAN CHARGES (${displaySize})`
-        : `BEKALAN REFILL GAS OKSIGEN (${displaySize})`
+        : isLiquid
+          ? `BEKALAN GAS OKSIGEN CECAIR (BULK VIE TANK)`
+          : `BEKALAN REFILL GAS OKSIGEN (${displaySize})`
       
+      const qtyDisplay = isLiquid ? `${itm.quantity.toLocaleString()} m³` : itm.quantity
+      const priceUnit = isLiquid ? `RM ${itm.unit_price.toFixed(2)} / m³` : `RM ${itm.unit_price.toFixed(2)}`
+      const volumeDisplay = isLiquid ? `${itm.quantity.toLocaleString()} m³` : (block.type === 'loan' ? '-' : getCylinderVolume(displaySize))
+
       return [
         idx + 1,
         nameLabel,
-        block.type === 'loan' ? '-' : displaySize,
-        itm.quantity,
-        `RM ${itm.unit_price.toFixed(2)}`,
+        block.type === 'loan' ? '-' : (isLiquid ? 'VIE TANK' : displaySize),
+        qtyDisplay,
+        priceUnit,
         `RM ${itm.total_price.toFixed(2)}`,
-        block.type === 'loan' ? '-' : getCylinderVolume(displaySize)
+        volumeDisplay
       ]
     })
 
@@ -833,13 +851,14 @@ export async function generateOxygenReceptionReportPdf(options: OxygenPdfOptions
 
   // Push grouped refill rows
   Object.values(refillGroup).forEach((group) => {
+    const isLiquid = (group.size_code || '').toLowerCase().includes('liquid') || (group.size_code || '').toLowerCase().includes('vie')
     const totalCost = group.unit_price * group.quantity
     tableData.push([
       bil++,
       group.size_code,
-      'Standard Refill',
-      group.quantity,
-      `RM ${group.unit_price.toFixed(2)}`,
+      isLiquid ? 'Bulk VIE Liquid Oxygen' : 'Standard Refill',
+      isLiquid ? `${group.quantity.toLocaleString()} m³` : group.quantity,
+      isLiquid ? `RM ${group.unit_price.toFixed(2)} / m³` : `RM ${group.unit_price.toFixed(2)}`,
       `RM ${totalCost.toFixed(2)}`,
       'DITERIMA / ACCEPTED'
     ])

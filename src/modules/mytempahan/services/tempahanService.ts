@@ -26,22 +26,42 @@ import {
 // STORAGE SYNCHRONIZATION & INITIALIZATION
 // =========================================================================
 
-export const CURRENT_STORAGE_KEY_TEMPAHAN_VERSION = 'home_tempahan_version_v1.0'
-export const CURRENT_STORAGE_KEY_TEMPAHAN_ROOMS = 'home_tempahan_rooms_v1.0'
-export const CURRENT_STORAGE_KEY_TEMPAHAN_BOOKINGS = 'home_tempahan_bookings_v1.0'
-export const CURRENT_STORAGE_SCHEMA_VERSION = '1.0.0'
+export const CURRENT_STORAGE_KEY_TEMPAHAN_VERSION = 'home_tempahan_version_v2.1'
+export const CURRENT_STORAGE_KEY_TEMPAHAN_ROOMS = 'home_tempahan_rooms_v2.1'
+export const CURRENT_STORAGE_KEY_TEMPAHAN_BOOKINGS = 'home_tempahan_bookings_v2.1'
+export const CURRENT_STORAGE_SCHEMA_VERSION = '2.1.0'
 
 function initLocalStorage(): void {
   const currentVersion = localStorage.getItem(CURRENT_STORAGE_KEY_TEMPAHAN_VERSION)
 
   // Seed or upgrade if version mismatch or empty
   if (currentVersion !== CURRENT_STORAGE_SCHEMA_VERSION) {
-    if (!localStorage.getItem(CURRENT_STORAGE_KEY_TEMPAHAN_ROOMS)) {
-      localStorage.setItem(CURRENT_STORAGE_KEY_TEMPAHAN_ROOMS, JSON.stringify(DEFAULT_HOSPITAL_ROOMS))
+    // Attempt graceful migration from previous version
+    const prevRoomsRaw = localStorage.getItem('home_tempahan_rooms_v2.0') || localStorage.getItem(CURRENT_STORAGE_KEY_TEMPAHAN_ROOMS)
+    let mergedRooms = DEFAULT_HOSPITAL_ROOMS
+    if (prevRoomsRaw) {
+      try {
+        const prevRooms: Room[] = JSON.parse(prevRoomsRaw)
+        mergedRooms = prevRooms.map(r => {
+          const match = DEFAULT_HOSPITAL_ROOMS.find(def => def.id === r.id || def.room_code === r.room_code)
+          return {
+            ...r,
+            image_url: r.image_url || match?.image_url
+          }
+        })
+      } catch (e) {
+        console.error('Failed to migrate prev rooms', e)
+      }
     }
-    if (!localStorage.getItem(CURRENT_STORAGE_KEY_TEMPAHAN_BOOKINGS)) {
+    localStorage.setItem(CURRENT_STORAGE_KEY_TEMPAHAN_ROOMS, JSON.stringify(mergedRooms))
+
+    const prevBookingsRaw = localStorage.getItem('home_tempahan_bookings_v2.0') || localStorage.getItem(CURRENT_STORAGE_KEY_TEMPAHAN_BOOKINGS)
+    if (prevBookingsRaw) {
+      localStorage.setItem(CURRENT_STORAGE_KEY_TEMPAHAN_BOOKINGS, prevBookingsRaw)
+    } else {
       localStorage.setItem(CURRENT_STORAGE_KEY_TEMPAHAN_BOOKINGS, JSON.stringify(DEFAULT_BOOKINGS_SEED))
     }
+
     localStorage.setItem(CURRENT_STORAGE_KEY_TEMPAHAN_VERSION, CURRENT_STORAGE_SCHEMA_VERSION)
   }
 }
@@ -50,7 +70,14 @@ export function loadRoomsFromStorage(): Room[] {
   initLocalStorage()
   try {
     const raw = localStorage.getItem(CURRENT_STORAGE_KEY_TEMPAHAN_ROOMS)
-    return raw ? JSON.parse(raw) : DEFAULT_HOSPITAL_ROOMS
+    const rooms: Room[] = raw ? JSON.parse(raw) : DEFAULT_HOSPITAL_ROOMS
+    return rooms.map(r => {
+      if (!r.image_url) {
+        const match = DEFAULT_HOSPITAL_ROOMS.find(def => def.id === r.id || def.room_code === r.room_code)
+        if (match?.image_url) return { ...r, image_url: match.image_url }
+      }
+      return r
+    })
   } catch (e) {
     console.error('Failed to parse rooms from storage:', e)
     return DEFAULT_HOSPITAL_ROOMS
@@ -111,7 +138,7 @@ export async function getRoomById(roomId: string): Promise<ApiResponse<Room>> {
   const rooms = loadRoomsFromStorage()
   const room = rooms.find(r => r.id === roomId)
   if (!room) {
-    return { data: null, error: 'Fasiliti tidak dijumpai.' }
+    return { data: null, error: 'Facility not found.' }
   }
   return { data: room, error: null }
 }
@@ -124,7 +151,7 @@ export async function saveRoom(roomData: Partial<Room>): Promise<ApiResponse<Roo
     // Update existing room
     const index = rooms.findIndex(r => r.id === roomData.id)
     if (index === -1) {
-      return { data: null, error: 'Fasiliti yang ingin dikemaskini tidak wujud.' }
+      return { data: null, error: 'Facility to update does not exist.' }
     }
     const updatedRoom: Room = {
       ...rooms[index],
@@ -139,12 +166,12 @@ export async function saveRoom(roomData: Partial<Room>): Promise<ApiResponse<Roo
     const newRoom: Room = {
       id: `room-${Date.now()}`,
       room_code: roomData.room_code || `BL-${Date.now().toString().slice(-4)}`,
-      name: roomData.name || 'Bilik Mesyuarat Baru',
+      name: roomData.name || 'New Conference Room',
       category: roomData.category || 'meeting_room',
       capacity: roomData.capacity || 20,
-      location: roomData.location || 'Hospital Daerah Lawas',
-      floor_level: roomData.floor_level || 'Aras 1',
-      building_block: roomData.building_block || 'Blok Pentadbiran',
+      location: roomData.location || 'Lawas District Hospital',
+      floor_level: roomData.floor_level || 'Level 1',
+      building_block: roomData.building_block || 'Administration Block',
       status: roomData.status || 'available',
       amenities: roomData.amenities || ['wifi_kkm', 'aircond'],
       layouts: roomData.layouts || [{ layout: 'boardroom', capacity: roomData.capacity || 20 }],
@@ -176,7 +203,7 @@ export async function deleteRoom(roomId: string): Promise<ApiResponse<boolean>> 
   const rooms = loadRoomsFromStorage()
   const filtered = rooms.filter(r => r.id !== roomId)
   if (filtered.length === rooms.length) {
-    return { data: false, error: 'Fasiliti tidak dijumpai.' }
+    return { data: false, error: 'Facility not found.' }
   }
   saveRoomsToStorage(filtered)
   return { data: true, error: null }
@@ -197,14 +224,14 @@ export async function checkRoomAvailability(
   const room = rooms.find(r => r.id === roomId)
 
   if (!room) {
-    return { isAvailable: false, conflictingBookings: [], reason: 'Fasiliti tidak ditemui.' }
+    return { isAvailable: false, conflictingBookings: [], reason: 'Facility not found.' }
   }
 
   if (room.status === 'maintenance' || room.status === 'inactive') {
     return {
       isAvailable: false,
       conflictingBookings: [],
-      reason: `Fasiliti ini sedang dalam status '${room.status === 'maintenance' ? 'Penyelenggaraan' : 'Tidak Aktif'}'.`
+      reason: `This facility is currently in '${room.status === 'maintenance' ? 'Under Maintenance' : 'Inactive'}' status.`
     }
   }
 
@@ -259,7 +286,7 @@ export async function checkRoomAvailability(
     return {
       isAvailable: false,
       conflictingBookings: populatedConflicts,
-      reason: `Terdapat ${conflictingBookings.length} permohonan bertindih (termasuk masa persediaan & pembersihan bilik).`
+      reason: `There ${conflictingBookings.length === 1 ? 'is 1 overlapping booking' : `are ${conflictingBookings.length} overlapping bookings`} (including setup & cleanup buffer times).`
     }
   }
 
@@ -317,7 +344,7 @@ export async function getBookings(filter?: BookingFilter): Promise<ApiResponse<B
         b.purpose.toLowerCase().includes(q) ||
         b.pemohon_name.toLowerCase().includes(q) ||
         b.pemohon_department.toLowerCase().includes(q) ||
-        b.room?.name.toLowerCase().includes(q) ||
+        (b.room?.name || '').toLowerCase().includes(q) ||
         b.event_type.toLowerCase().includes(q)
     )
   }
@@ -334,7 +361,7 @@ export async function getBookingById(bookingId: string): Promise<ApiResponse<Boo
   const booking = bookings.find(b => b.id === bookingId)
 
   if (!booking) {
-    return { data: null, error: 'Tempahan tidak dijumpai.' }
+    return { data: null, error: 'Booking not found.' }
   }
 
   booking.room = rooms.find(r => r.id === booking.room_id)
@@ -350,14 +377,14 @@ export async function createBooking(
   const room = rooms.find(r => r.id === payload.room_id)
 
   if (!room) {
-    return { data: null, error: 'Fasiliti yang dipilih tidak sah.' }
+    return { data: null, error: 'The selected facility is invalid.' }
   }
 
   // 1. Time validity check
   const startMin = timeToMinutes(payload.start_time)
   const endMin = timeToMinutes(payload.end_time)
   if (endMin <= startMin) {
-    return { data: null, error: 'Masa tamat tempahan mestilah selepas masa mula.' }
+    return { data: null, error: 'Booking end time must be after start time.' }
   }
 
   // 2. Lead time validation
@@ -370,13 +397,13 @@ export async function createBooking(
     isUrgent
   )
   if (!leadCheck.isValid) {
-    return { data: null, error: leadCheck.message || 'Permohonan tidak mematuhi tempoh notis minimum yang ditetapkan.' }
+    return { data: null, error: leadCheck.message || 'Booking request does not meet the minimum advance notice period.' }
   }
 
   // 3. Precision overlap check
   const avail = await checkRoomAvailability(payload.room_id, payload.date, payload.start_time, payload.end_time)
   if (!avail.isAvailable) {
-    return { data: null, error: avail.reason || 'Slot masa ini telah bertindih dengan tempahan lain.' }
+    return { data: null, error: avail.reason || 'This time slot conflicts with another booking.' }
   }
 
   // 4. Initial status determination
@@ -427,7 +454,7 @@ export async function updateBookingStatus(
   const index = allBookings.findIndex(b => b.id === bookingId)
 
   if (index === -1) {
-    return { data: null, error: 'Tempahan tidak dijumpai.' }
+    return { data: null, error: 'Booking not found.' }
   }
 
   const booking = allBookings[index]
@@ -438,14 +465,14 @@ export async function updateBookingStatus(
 
   if (newStatus === 'approved') {
     booking.approved_by = options?.userId || 'admin'
-    booking.approved_by_name = options?.userName || 'Pentadbir Fasiliti Hospital'
+    booking.approved_by_name = options?.userName || 'Hospital Facility Administrator'
     booking.approved_at = nowIso
-    booking.catatan_pelulus = options?.notes || 'Permohonan diluluskan.'
+    booking.catatan_pelulus = options?.notes || 'Booking request approved.'
     booking.rejection_reason = undefined
   } else if (newStatus === 'rejected') {
-    booking.rejection_reason = options?.reason || 'Permohonan tidak diluluskan oleh pentadbir fasiliti.'
+    booking.rejection_reason = options?.reason || 'Request rejected by facility administrator.'
   } else if (newStatus === 'cancelled') {
-    booking.cancellation_reason = options?.reason || 'Dibatalkan oleh pemohon.'
+    booking.cancellation_reason = options?.reason || 'Cancelled by applicant.'
   }
 
   allBookings[index] = booking
@@ -487,7 +514,7 @@ export async function getBookingStats(): Promise<ApiResponse<BookingStats>> {
 
       roomMinutesMap.set(b.room_id, (roomMinutesMap.get(b.room_id) || 0) + durationMin)
 
-      const deptName = b.pemohon_department || b.department_id || 'Jabatan Farmasi'
+      const deptName = b.pemohon_department || b.department_id || 'Pharmacy Department'
       const existing = deptMap.get(deptName) || { count: 0, minutes: 0, name: deptName }
       existing.count += 1
       existing.minutes += durationMin
@@ -525,19 +552,19 @@ export async function getBookingStats(): Promise<ApiResponse<BookingStats>> {
     completedBookings,
     cancelledBookings,
     averageUtilizationRate: averageUtilizationRate > 0 ? averageUtilizationRate : 42,
-    busiestRoomName: busiestRoomName !== '-' ? busiestRoomName : 'Bilik Mesyuarat Utama Kenanga',
+    busiestRoomName: busiestRoomName !== '-' ? busiestRoomName : 'Main Conference Room Kenanga',
     busiestRoomUtilization: busiestRoomUtilization > 0 ? busiestRoomUtilization : 68,
     totalHoursBooked: totalHoursBooked > 0 ? totalHoursBooked : 38.5,
     departmentUtilization: departmentUtilization.length > 0 ? departmentUtilization : [
-      { departmentName: 'Jabatan Farmasi', bookingCount: 8, hoursBooked: 24.5 },
-      { departmentName: 'Unit Pentadbiran', bookingCount: 5, hoursBooked: 18.0 },
-      { departmentName: 'Jabatan Kecemasan & Trauma', bookingCount: 4, hoursBooked: 12.0 },
-      { departmentName: 'Unit Kejururawatan', bookingCount: 3, hoursBooked: 9.5 }
+      { departmentName: 'Pharmacy Department', bookingCount: 8, hoursBooked: 24.5 },
+      { departmentName: 'Administration & Facilities Unit', bookingCount: 5, hoursBooked: 18.0 },
+      { departmentName: 'Emergency & Trauma Department', bookingCount: 4, hoursBooked: 12.0 },
+      { departmentName: 'Nursing Unit', bookingCount: 3, hoursBooked: 9.5 }
     ],
     monthlyTrends: [
       { month: 'Jun', bookings: 14, hours: 38 },
       { month: 'Jul', bookings: 22, hours: 64 },
-      { month: 'Ogo', bookings: bookings.length > 0 ? bookings.length : 28, hours: totalHoursBooked > 0 ? totalHoursBooked : 78 }
+      { month: 'Aug', bookings: bookings.length > 0 ? bookings.length : 28, hours: totalHoursBooked > 0 ? totalHoursBooked : 78 }
     ]
   }
 

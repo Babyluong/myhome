@@ -30,25 +30,25 @@ export const QuotaProgressBar: React.FC<QuotaProgressBarProps> = ({
   const getStatusColor = () => {
     if (isCriticalShortage || percentRemaining <= 10) {
       return {
-        bg: 'bg-rose-500',
-        text: 'text-rose-700',
-        border: 'border-rose-200',
-        badge: 'bg-rose-100 text-rose-800'
+        bg: 'bg-rose-600',
+        text: 'text-rose-900 font-black',
+        border: 'border-rose-300',
+        badge: 'bg-rose-100 text-rose-950 border border-rose-300'
       }
     }
     if (isLowStock || percentRemaining <= 25) {
       return {
         bg: 'bg-amber-500',
-        text: 'text-amber-700',
-        border: 'border-amber-200',
-        badge: 'bg-amber-100 text-amber-800'
+        text: 'text-amber-950 font-black',
+        border: 'border-amber-300',
+        badge: 'bg-amber-100 text-amber-950 border border-amber-300'
       }
     }
     return {
-      bg: 'bg-emerald-500',
-      text: 'text-emerald-700',
-      border: 'border-emerald-200',
-      badge: 'bg-emerald-100 text-emerald-800'
+      bg: 'bg-emerald-600',
+      text: 'text-emerald-950 font-black',
+      border: 'border-emerald-300',
+      badge: 'bg-emerald-100 text-emerald-950 border border-emerald-300'
     }
   }
 
@@ -57,13 +57,13 @@ export const QuotaProgressBar: React.FC<QuotaProgressBarProps> = ({
   if (compact) {
     return (
       <div className="w-full">
-        <div className="flex items-center justify-between text-xs mb-1">
-          <span className="text-slate-500">Baki Kuota:</span>
-          <span className={`font-bold ${status.text}`}>
-            {quotaRemaining} / {monthlyQuota} {unit} ({percentRemaining}%)
+        <div className="flex items-center justify-between text-xs mb-1.5 font-bold">
+          <span className="text-slate-700">Baki Kuota:</span>
+          <span className={`${status.text}`}>
+            {quotaRemaining.toLocaleString()} / {monthlyQuota.toLocaleString()} {unit} ({percentRemaining}%)
           </span>
         </div>
-        <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
           <div
             className={`h-full ${status.bg} transition-all duration-500 rounded-full`}
             style={{ width: `${percentRemaining}%` }}
@@ -74,69 +74,71 @@ export const QuotaProgressBar: React.FC<QuotaProgressBarProps> = ({
   }
 
   return (
-    <div className={`p-4 rounded-xl border ${status.border} bg-white shadow-xs`}>
-      <div className="flex items-start justify-between gap-2 mb-3">
+    <div className={`p-4 sm:p-5 rounded-2xl border-2 ${status.border} bg-white shadow-xs`}>
+      <div className="flex items-start justify-between gap-3 mb-3">
         <div>
-          <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-0.5">
+          <div className="text-[11px] font-black uppercase tracking-wider text-slate-600 mb-0.5">
             Status Kuota Bulanan
           </div>
-          <div className="text-xl font-bold text-slate-900 flex items-baseline gap-2">
+          <div className="text-2xl font-black text-slate-950 flex items-baseline gap-2 flex-wrap">
             <span>{quotaRemaining.toLocaleString()} {unit}</span>
-            <span className="text-xs text-slate-500 font-normal">
-              tinggal daripada kuota {monthlyQuota.toLocaleString()} {unit}
+            <span className="text-xs text-slate-600 font-semibold">
+              tinggal drpd kuota {monthlyQuota.toLocaleString()} {unit}
             </span>
           </div>
         </div>
 
-        <span className={`inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full ${status.badge}`}>
+        <span className={`inline-flex items-center gap-1.5 text-xs font-black px-3 py-1 rounded-full shrink-0 shadow-2xs ${status.badge}`}>
           {isCriticalShortage ? (
             <>
-              <AlertCircle className="w-3.5 h-3.5" />
+              <AlertCircle className="w-4 h-4 text-rose-700 shrink-0" />
               <span>KRITIKAL HABIS</span>
             </>
           ) : isLowStock ? (
             <>
-              <TrendingDown className="w-3.5 h-3.5" />
+              <TrendingDown className="w-4 h-4 text-amber-700 shrink-0" />
               <span>STOK RENDAH</span>
             </>
           ) : (
             <>
-              <CheckCircle2 className="w-3.5 h-3.5" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
               <span>KUOTA STABIL</span>
             </>
           )}
         </span>
       </div>
 
-      {/* Progress Bar */}
-      <div className="relative w-full bg-slate-100 rounded-full h-3 mb-2 overflow-hidden">
+      {/* Progress Bar with background */}
+      <div className="relative w-full bg-slate-200 rounded-full h-3.5 mb-2.5 overflow-hidden p-0.5 border border-slate-300">
         <div
           className={`h-full ${status.bg} transition-all duration-500 rounded-full`}
           style={{ width: `${percentRemaining}%` }}
         />
       </div>
 
-      <div className="flex items-center justify-between text-xs text-slate-500">
-        <span className="flex items-center gap-1">
+      <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
+        <span className="flex items-center gap-1.5">
           <span>Digunakan:</span>
-          <strong className="text-slate-700">{quotaUsed.toLocaleString()} ({percentUsed}%)</strong>
+          <strong className="text-slate-950 font-black">{quotaUsed.toLocaleString()} {unit} ({percentUsed}%)</strong>
         </span>
         
         {estimatedRunOutDays !== undefined && (
-          <span className="flex items-center gap-1 font-medium text-slate-600">
-            <Clock className="w-3.5 h-3.5 text-slate-400" />
+          <span className="flex items-center gap-1.5 font-bold text-slate-800">
+            <Clock className="w-4 h-4 text-slate-600 shrink-0" />
             <span>Anggaran Habis: ~{estimatedRunOutDays} Hari</span>
           </span>
         )}
       </div>
 
       {isLowStock && (
-        <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
-          <span className="text-amber-700 font-medium flex items-center gap-1.5">
-            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-            <span>Di bawah ambang paras rendah ({lowStockThreshold} {unit})</span>
+        <div className="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between text-xs font-bold">
+          <span className="text-amber-900 flex items-center gap-1.5">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>Di bawah ambang paras rendah ({lowStockThreshold.toLocaleString()} {unit})</span>
           </span>
-          <span className="text-slate-500">Sila semak ubat alternatif</span>
+          <span className="text-indigo-700 underline font-extrabold cursor-pointer">
+            Semak Ubat Alternatif
+          </span>
         </div>
       )}
     </div>

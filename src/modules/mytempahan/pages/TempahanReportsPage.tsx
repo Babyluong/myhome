@@ -87,15 +87,15 @@ export const TempahanReportsPage: React.FC = () => {
       exportBookingsToExcel(bookings, rooms, exportStats)
       addToast({
         type: 'success',
-        title: 'Eksport Berjaya',
-        message: 'Laporan tempahan fasiliti telah dimuat turun dalam format Excel (.xlsx).'
+        title: 'Export Successful',
+        message: 'Facility booking report has been downloaded in Excel format (.xlsx).'
       })
     } catch (err) {
       console.error(err)
       addToast({
         type: 'error',
-        title: 'Ralat Eksport',
-        message: 'Gagal menjana fail Excel.'
+        title: 'Export Error',
+        message: 'Failed to generate Excel file.'
       })
     } finally {
       setExporting(false)
@@ -121,7 +121,7 @@ export const TempahanReportsPage: React.FC = () => {
   const categoryBreakdown = useMemo(() => {
     const map = new Map<string, number>()
     bookings.forEach(b => {
-      const cat = b.event_type || 'Mesyuarat Rasmi'
+      const cat = b.event_type || 'Official Meeting'
       map.set(cat, (map.get(cat) || 0) + 1)
     })
     return Array.from(map.entries()).map(([name, count]) => ({
@@ -139,7 +139,7 @@ export const TempahanReportsPage: React.FC = () => {
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN)}
             className="p-2.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
-            title="Kembali ke Papan Pemuka"
+            title="Back to Dashboard"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -151,14 +151,14 @@ export const TempahanReportsPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-                Laporan & Analisis Utilisasi Fasiliti
+                Facility Utilization Reports & Analytics
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
-                Tahun 2026
+                Year 2026
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Analisis kadar penggunaan bilik mesyuarat, waktu puncak kepadatan tempahan dan rekod audit hospital.
+              Analysis of meeting room occupancy rates, peak demand hours, and hospital audit records.
             </p>
           </div>
         </div>
@@ -170,7 +170,7 @@ export const TempahanReportsPage: React.FC = () => {
             className="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
           >
             <FileSpreadsheet className="w-4 h-4" />
-            <span>{exporting ? 'Menjana Excel...' : 'Muat Turun Excel (.xlsx)'}</span>
+            <span>{exporting ? 'Generating Excel...' : 'Download Excel (.xlsx)'}</span>
           </button>
         </div>
       </div>
@@ -179,43 +179,43 @@ export const TempahanReportsPage: React.FC = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-2">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Jumlah Tempahan Direkod
+            Total Bookings Recorded
           </span>
           <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tabular-nums">
             {stats?.totalBookings ?? bookings.length}
           </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">Semua jenis acara & mesyuarat</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">All event & meeting types</div>
         </div>
 
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-2">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Kadar Utilisasi Keseluruhan
+            Overall Utilization Rate
           </span>
           <div className="text-2xl sm:text-3xl font-extrabold text-teal-700 dark:text-teal-400 tabular-nums">
             {stats?.averageUtilizationRate ?? 42}%
           </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">Purata penggunaan slot waktu bekerja</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">Average working hours slot usage</div>
         </div>
 
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-2">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Jumlah Jam Digunakan
+            Total Hours Utilized
           </span>
           <div className="text-2xl sm:text-3xl font-extrabold text-sky-600 dark:text-sky-400 tabular-nums">
-            {stats?.totalHoursBooked ?? 0} Jam
+            {stats?.totalHoursBooked ?? 0} Hours
           </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">Jumlah masa rasmi tempahan</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">Total official booked time</div>
         </div>
 
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-2">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Fasiliti Paling Kerap Digunakan
+            Most Frequently Used Facility
           </span>
           <div className="text-lg font-bold text-slate-900 dark:text-white truncate">
-            {stats?.busiestRoomName || 'Bilik Mesyuarat Utama Kenanga'}
+            {stats?.busiestRoomName || 'Kenanga Main Conference Room'}
           </div>
           <div className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
-            Kadar Penggunaan: {stats?.busiestRoomUtilization ?? 65}%
+            Occupancy Rate: {stats?.busiestRoomUtilization ?? 65}%
           </div>
         </div>
       </div>
@@ -226,8 +226,8 @@ export const TempahanReportsPage: React.FC = () => {
         <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-5">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
             <div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base">Waktu Puncak Tempahan (Heatmap)</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Kekerapan tempahan fasiliti mengikut blok masa harian.</p>
+              <h3 className="font-bold text-slate-900 dark:text-white text-base">Peak Booking Hours (Heatmap)</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Facility booking frequency across daily time blocks.</p>
             </div>
             <Clock className="w-5 h-5 text-teal-600 dark:text-teal-400" />
           </div>
@@ -239,7 +239,7 @@ export const TempahanReportsPage: React.FC = () => {
                 <div key={item.hour} className="space-y-1 text-xs">
                   <div className="flex items-center justify-between text-slate-700 dark:text-slate-300 font-semibold">
                     <span className="font-mono">{item.hour} - {parseInt(item.hour) + 1}:00</span>
-                    <span className="tabular-nums font-bold">{item.count} Tempahan</span>
+                    <span className="tabular-nums font-bold">{item.count} Bookings</span>
                   </div>
                   <div className="w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                     <div
@@ -257,8 +257,8 @@ export const TempahanReportsPage: React.FC = () => {
         <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-5">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
             <div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base">Pecahan Jenis Acara Hospital</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Pengagihan mesyuarat, kursus CPD dan lawatan.</p>
+              <h3 className="font-bold text-slate-900 dark:text-white text-base">Hospital Event Types Breakdown</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Distribution of meetings, CPD courses and official visits.</p>
             </div>
             <PieChart className="w-5 h-5 text-sky-600 dark:text-sky-400" />
           </div>
@@ -273,7 +273,7 @@ export const TempahanReportsPage: React.FC = () => {
                       <span className={cn('w-3 h-3 rounded-full', colors[idx % colors.length])} />
                       <span>{cat.name}</span>
                     </div>
-                    <span className="font-mono text-slate-700 dark:text-slate-300">{cat.count} Acara ({cat.percentage}%)</span>
+                    <span className="font-mono text-slate-700 dark:text-slate-300">{cat.count} Events ({cat.percentage}%)</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                     <div
@@ -292,36 +292,54 @@ export const TempahanReportsPage: React.FC = () => {
       <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Utilisasi Mengikut Jabatan & Unit</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Senarai jabatan yang aktif menggunakan fasiliti hospital.</p>
+            <h3 className="font-bold text-slate-900 dark:text-white text-base">Utilization by Department & Unit</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">List of departments actively utilizing hospital facilities.</p>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-xs text-left">
             <thead className="text-[11px] font-bold uppercase text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/60 border-y border-slate-100 dark:border-slate-800">
               <tr>
-                <th className="py-3 px-4">Nama Jabatan / Unit</th>
-                <th className="py-3 px-4">Bilangan Tempahan</th>
-                <th className="py-3 px-4">Jumlah Jam Digunakan</th>
-                <th className="py-3 px-4">Status Penglibatan</th>
+                <th className="py-3 px-4">Department / Unit Name</th>
+                <th className="py-3 px-4">Booking Count</th>
+                <th className="py-3 px-4">Total Hours Utilized</th>
+                <th className="py-3 px-4">Engagement Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {(stats?.departmentUtilization || []).map((dept, idx) => (
                 <tr key={idx} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
                   <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">{dept.departmentName}</td>
-                  <td className="py-3 px-4 font-mono font-semibold text-slate-700 dark:text-slate-300">{dept.bookingCount} Kali</td>
-                  <td className="py-3 px-4 font-mono font-bold text-teal-700 dark:text-teal-400">{dept.hoursBooked} Jam</td>
+                  <td className="py-3 px-4 font-mono font-semibold text-slate-700 dark:text-slate-300">{dept.bookingCount} Times</td>
+                  <td className="py-3 px-4 font-mono font-bold text-teal-700 dark:text-teal-400">{dept.hoursBooked} Hours</td>
                   <td className="py-3 px-4">
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                      AKTIF
+                      ACTIVE
                     </span>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View: High-End Utilization Cards */}
+        <div className="sm:hidden divide-y divide-slate-100 dark:divide-slate-800">
+          {(stats?.departmentUtilization || []).map((dept, idx) => (
+            <div key={idx} className="py-3 space-y-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <h4 className="font-bold text-slate-900 dark:text-white text-xs">{dept.departmentName}</h4>
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                  ACTIVE
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                <span>Tempahan: <strong className="text-slate-700 dark:text-slate-300 font-mono">{dept.bookingCount} Kali</strong></span>
+                <span>Jumlah Masa: <strong className="text-teal-700 dark:text-teal-400 font-mono">{dept.hoursBooked} Jam</strong></span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

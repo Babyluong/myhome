@@ -281,55 +281,100 @@ export const TransferRequestListPage: React.FC = () => {
                 No transfer requests found.
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-gray-700">
-                  <thead className="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    <tr>
-                      <th className="p-3.5 pl-4">Transfer No.</th>
-                      <th className="p-3.5">Type</th>
-                      <th className="p-3.5">From → To</th>
-                      <th className="p-3.5">Request Date</th>
-                      <th className="p-3.5">Required Date</th>
-                      <th className="p-3.5 text-center">Priority</th>
-                      <th className="p-3.5 text-center">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {transfers.map((row) => (
-                      <tr key={row.id} className="hover:bg-gray-50/80 transition-colors">
-                        <td className="p-3.5 pl-4 font-mono text-xs text-purple-600 font-medium">
-                          {row.transfer_number}
-                        </td>
-                        <td className="p-3.5 text-xs uppercase text-gray-500">
-                          <div className="flex items-center gap-1">
-                            <ArrowRightLeft className="w-3 h-3" />
-                            {row.transfer_type === 'inter_facility' ? 'Inter' : 'Intra'}
-                          </div>
-                        </td>
-                        <td className="p-3.5 text-sm text-gray-900">
-                          <span>
-                            {row.from_hospital?.nama || row.from_department?.department_name || '—'}
-                            <span className="text-gray-400 mx-1">→</span>
-                            {row.to_hospital?.nama || row.to_department?.department_name || '—'}
-                          </span>
-                        </td>
-                        <td className="p-3.5 text-sm text-gray-600">
-                          {formatDate(row.request_date)}
-                        </td>
-                        <td className="p-3.5 text-sm text-gray-600">
-                          {formatDate(row.required_date)}
-                        </td>
-                        <td className="p-3.5 text-center">
-                          {renderPriorityBadge(String(row.priority))}
-                        </td>
-                        <td className="p-3.5 text-center">
-                          {renderStatusBadge(row.status as TransferStatus)}
-                        </td>
+              <>
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm text-gray-700">
+                    <thead className="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      <tr>
+                        <th className="p-3.5 pl-4">Transfer No.</th>
+                        <th className="p-3.5">Type</th>
+                        <th className="p-3.5">From → To</th>
+                        <th className="p-3.5">Request Date</th>
+                        <th className="p-3.5">Required Date</th>
+                        <th className="p-3.5 text-center">Priority</th>
+                        <th className="p-3.5 text-center">Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {transfers.map((row) => (
+                        <tr key={row.id} className="hover:bg-gray-50/80 transition-colors">
+                          <td className="p-3.5 pl-4 font-mono text-xs text-purple-600 font-medium">
+                            {row.transfer_number}
+                          </td>
+                          <td className="p-3.5 text-xs uppercase text-gray-500">
+                            <div className="flex items-center gap-1">
+                              <ArrowRightLeft className="w-3 h-3" />
+                              {row.transfer_type === 'inter_facility' ? 'Inter' : 'Intra'}
+                            </div>
+                          </td>
+                          <td className="p-3.5 text-sm text-gray-900">
+                            <span>
+                              {row.from_hospital?.nama || row.from_department?.department_name || '—'}
+                              <span className="text-gray-400 mx-1">→</span>
+                              {row.to_hospital?.nama || row.to_department?.department_name || '—'}
+                            </span>
+                          </td>
+                          <td className="p-3.5 text-sm text-gray-600">
+                            {formatDate(row.request_date)}
+                          </td>
+                          <td className="p-3.5 text-sm text-gray-600">
+                            {formatDate(row.required_date)}
+                          </td>
+                          <td className="p-3.5 text-center">
+                            {renderPriorityBadge(String(row.priority))}
+                          </td>
+                          <td className="p-3.5 text-center">
+                            {renderStatusBadge(row.status as TransferStatus)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile View: High-End Responsive Cards */}
+                <div className="md:hidden divide-y divide-gray-100">
+                  {transfers.map((row) => (
+                    <div key={row.id} className="p-4 space-y-2.5 hover:bg-gray-50/60 transition">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="font-mono text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 inline-block">
+                            {row.transfer_number}
+                          </span>
+                          <div className="flex items-center gap-1 text-[11px] text-gray-500 mt-1 uppercase font-medium">
+                            <ArrowRightLeft className="w-3 h-3 text-purple-500" />
+                            {row.transfer_type === 'inter_facility' ? 'Inter-Facility' : 'Intra-Facility'}
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                          {renderStatusBadge(row.status as TransferStatus)}
+                          {renderPriorityBadge(String(row.priority))}
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50/80 rounded-xl p-2.5 border border-gray-100 text-xs">
+                        <div className="text-gray-500 text-[10px] uppercase font-semibold">Laluan Pindahan</div>
+                        <div className="font-medium text-gray-900 mt-0.5">
+                          {row.from_hospital?.nama || row.from_department?.department_name || '—'}
+                          <span className="text-gray-400 mx-1.5 font-bold">→</span>
+                          {row.to_hospital?.nama || row.to_department?.department_name || '—'}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-gray-500 pt-1">
+                        <div>
+                          <span className="text-gray-400">Tarikh Mohon: </span>
+                          <span className="font-medium text-gray-700">{formatDate(row.request_date)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-400">Diperlukan: </span>
+                          <span className="font-medium text-gray-700">{formatDate(row.required_date)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
 

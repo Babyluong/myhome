@@ -32,6 +32,9 @@ const dictionary: Record<string, Record<Language, string>> = {
   'nav.settings': { en: 'Settings', ms: 'Tetapan' },
   'nav.notifications': { en: 'Notifications', ms: 'Pemberitahuan' },
   'nav.search': { en: 'Search', ms: 'Carian' },
+  'nav.welcome': { en: 'Welcome', ms: 'Selamat Datang' },
+  'nav.back_to_hub': { en: 'Back to Main Hub', ms: 'Kembali ke Hub Utama' },
+  'nav.open_module': { en: 'Open Module', ms: 'Masuk Menu' },
 
   // Sidebar Modules & Links
   'sidebar.mymsds': { en: 'MyMSDS', ms: 'MyMSDS' },
@@ -58,6 +61,56 @@ const dictionary: Record<string, Record<Language, string>> = {
   'sidebar.mycrossborder': { en: 'MyCrossBorder', ms: 'MyCrossBorder' },
   'sidebar.mycrossborder.new': { en: 'New Permit Request', ms: 'Permohonan Baru' },
   'sidebar.mycrossborder.log': { en: 'Movement Log', ms: 'Log Pergerakan' },
+
+  'sidebar.mystaff': { en: 'MyStaff', ms: 'MyStaff' },
+  'sidebar.mystaff.movement': { en: 'Movement Log', ms: 'Log Pergerakan' },
+  'sidebar.mystaff.reminders': { en: 'Event Log', ms: 'Log Event' },
+  'sidebar.mystaff.calendar': { en: 'Department Calendar', ms: 'Kalendar Jabatan' },
+  'sidebar.mystaff.orgchart': { en: 'Organizational Chart', ms: 'Carta Organisasi' },
+
+  'sidebar.myperolehan': { en: 'MyPerolehan', ms: 'MyPerolehan' },
+  'sidebar.myperolehan.management': { en: 'Management Budget', ms: 'Bajet Pengurusan' },
+  'sidebar.myperolehan.development': { en: 'Development Budget', ms: 'Bajet Pembangunan' },
+  'sidebar.myperolehan.orders': { en: 'Orders & LPO', ms: 'Pesanan & LPO' },
+  'sidebar.myperolehan.payments': { en: 'Receiving & Payments', ms: 'Terimaan & Bayaran' },
+  'sidebar.myperolehan.catalog': { en: 'Catalog & Suppliers', ms: 'Katalog & Pembekal' },
+
+  'sidebar.myformulari': { en: 'MyFormulari', ms: 'MyFormulari' },
+  'sidebar.myformulari.lawas': { en: 'Hospital Lawas Formulary', ms: 'Formulari Hospital Lawas' },
+  'sidebar.myformulari.search': { en: 'Drug Search & Catalog', ms: 'Carian & Katalog Ubat' },
+  'sidebar.myformulari.ham': { en: 'High Alert Medications (HAM)', ms: 'Ubat Berisiko Tinggi (HAM)' },
+  'sidebar.myformulari.lasa': { en: 'LASA & TALL-Man Register', ms: 'Daftar LASA & TALL-Man' },
+  'sidebar.myformulari.dilution': { en: 'IV Dilution Protocols', ms: 'Protokol Pelarutan IV' },
+  'sidebar.myformulari.antimicrobial': { en: 'National Antimicrobial Guideline 2024', ms: 'Garis Panduan NAG 2024' },
+  'sidebar.myformulari.quota': { en: 'Stock Quota & Alerts', ms: 'Kuota & Amaran Stok' },
+  'sidebar.myformulari.alternatives': { en: 'Alternative Drugs', ms: 'Ubat Alternatif' },
+  'sidebar.myformulari.antidotes': { en: 'Antidote Protocols', ms: 'Daftar & Protokol Antidot' },
+
+  'sidebar.myporter': { en: 'MyPorter', ms: 'MyPorter' },
+  'sidebar.myporter.new': { en: 'New Porter Request', ms: 'Pesan Porter Baharu' },
+  'sidebar.myporter.my_requests': { en: 'My Requests & Live Tracking', ms: 'Pesanan & Jejak Terkini' },
+  'sidebar.myporter.panel': { en: 'Porter Panel (Driver/Rider)', ms: 'Panel PPK (Driver Rider)' },
+  'sidebar.myporter.receiver': { en: 'Cargo Receiving (Ward)', ms: 'Penerimaan Kargo (Wad)' },
+  'sidebar.myporter.dispatch': { en: 'Dispatch Control Center', ms: 'Pusat Kawalan Dispatch' },
+  'sidebar.myporter.roster': { en: 'Porter Duty Roster', ms: 'Jadual Bertugas PPK' },
+  'sidebar.myporter.reports': { en: 'Performance & KPI Reports', ms: 'Laporan Prestasi & KPI' },
+  'sidebar.myporter.roles': { en: 'Role Assignments', ms: 'Tetapan Peranan' },
+
+  'sidebar.mypriviledging': { en: 'MyPriviledging', ms: 'MyPriviledging' },
+  'sidebar.mypriviledging.criteria': { en: 'Credentialing Criteria', ms: 'Kriteria Credentialing' },
+  'sidebar.mypriviledging.catalog': { en: 'Procedure Catalog', ms: 'Katalog Prosedur' },
+  'sidebar.mypriviledging.my_submissions': { en: 'My Log & Submissions', ms: 'Log & Permohonan Saya' },
+  'sidebar.mypriviledging.print': { en: 'Print Privileging Certificate', ms: 'Cetak Sijil Privileging' },
+  'sidebar.mypriviledging.review': { en: 'JKCP Review & Approvals', ms: 'Semakan JKCP / Kelulusan' },
+  'sidebar.mypriviledging.progress': { en: 'Staff Progress', ms: 'Kemajuan Staf' },
+
+  'sidebar.mytempahan': { en: 'MyTempahan', ms: 'MyTempahan' },
+  'sidebar.mytempahan.calendar': { en: 'Interactive Calendar', ms: 'Kalendar Interaktif' },
+  'sidebar.mytempahan.new': { en: 'New Booking', ms: 'Tempahan Baharu' },
+  'sidebar.mytempahan.my_bookings': { en: 'My Bookings', ms: 'Permohonan Saya' },
+  'sidebar.mytempahan.approvals': { en: 'Approval Review Queue', ms: 'Semakan Kelulusan' },
+  'sidebar.mytempahan.rooms': { en: 'Facility & Room Directory', ms: 'Direktori Fasiliti & Bilik' },
+  'sidebar.mytempahan.reports': { en: 'Reports & Analytics', ms: 'Laporan & Analisis' },
 
   'sidebar.myinventory': { en: 'MyInventory', ms: 'MyInventory' },
   'sidebar.mywarrant': { en: 'MyWarrant', ms: 'MyWarrant' },
@@ -186,6 +239,16 @@ const dictionary: Record<string, Record<Language, string>> = {
   'action.download': { en: 'Download', ms: 'Muat Turun' },
   'action.upload': { en: 'Upload', ms: 'Muat Naik' },
   'action.refresh': { en: 'Refresh', ms: 'Muat Semula' },
+
+  // Common Status Labels
+  'status.active': { en: 'Active', ms: 'Aktif' },
+  'status.pending': { en: 'Pending', ms: 'Menunggu' },
+  'status.approved': { en: 'Approved', ms: 'Diluluskan' },
+  'status.rejected': { en: 'Rejected', ms: 'Ditolak' },
+  'status.completed': { en: 'Completed', ms: 'Selesai' },
+  'status.draft': { en: 'Draft', ms: 'Draf' },
+  'status.in_progress': { en: 'In Progress', ms: 'Sedang Diproses' },
+  'status.cancelled': { en: 'Cancelled', ms: 'Dibatalkan' },
 
   // Language Controls
   'language.en': { en: 'English', ms: 'Bahasa Inggeris' },

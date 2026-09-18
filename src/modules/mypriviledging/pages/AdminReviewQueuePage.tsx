@@ -47,7 +47,7 @@ export const AdminReviewQueuePage: React.FC = () => {
       ...params,
       reviewerId: 'admin-jkcp-01',
       reviewerName: 'Matron Hasnah binti Kassim (JKCP)',
-      reviewerRole: 'Penyelia Jururawat Hospital Lawas'
+      reviewerRole: 'Lawas Hospital Nursing Supervisor'
     });
     loadData();
   };
@@ -66,17 +66,17 @@ export const AdminReviewQueuePage: React.FC = () => {
           </div>
           <div>
             <h2 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
-              Pusat Semakan JKCP & Kelulusan Privileging
+              JKCP Committee Review Queue & Privileging Approvals
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Penilaian bukti log prosedur, penetapan tempoh sahlaku, dan penganugerahan Surat Penurunan Kuasa
+              Assessment of clinical log evidence, validity duration setting, and authorization letter issuance
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="px-3 py-1.5 bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 font-bold text-xs rounded-xl border border-amber-200 dark:border-amber-800">
-            {kpis.pendingSubmissions} Prosedur Menunggu Tindakan
+            {kpis.pendingSubmissions} Procedures Pending Review
           </span>
         </div>
       </div>

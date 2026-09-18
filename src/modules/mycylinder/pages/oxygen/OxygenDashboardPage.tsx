@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { 
   Activity, 
@@ -22,6 +22,9 @@ import {
   Percent,
   Layers,
   ArrowUpRight,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Share2,
   Download,
   Calendar,
   CalendarDays,
@@ -36,10 +39,23 @@ import {
   Building2,
   MapPin,
   CheckCheck,
-  ScrollText
+  ScrollText,
+  Save,
+  CheckCircle2,
+  Clock,
+  Camera,
+  CheckSquare,
+  Square,
+  MinusSquare,
+  Trash2,
+  LayoutGrid,
+  Truck,
+  FileCheck,
+  PackageCheck
 } from 'lucide-react'
 import { ROUTES } from '@/shared/constants/routes'
 import { useAuthStore } from '@/stores/authStore'
+import { isCylinderAuthorizedOfficer } from '@/shared/utils/cylinderRbac'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { Spinner, StatCard, Table, Badge, DataTable } from '@/components/ui'
 import { CylinderKpiCards } from '@/components/oxygen/CylinderKpiCards'
@@ -54,23 +70,34 @@ import { AuditReconciliationSummaryModal, AuditChangeItem } from '@/components/o
 import { ReturnDocumentPrintView } from '@/components/oxygen/ReturnDocumentPrintView'
 import { CreateRequestDocumentModal } from '@/components/oxygen/CreateRequestDocumentModal'
 import { RequestDocumentPrintView } from '@/components/oxygen/RequestDocumentPrintView'
+import { CreateReceiveDocumentModal } from '@/components/oxygen/CreateReceiveDocumentModal'
+import { ReceiveDocumentPrintView } from '@/components/oxygen/ReceiveDocumentPrintView'
 import { CylinderDispatchKpiCards } from '@/components/oxygen/CylinderDispatchKpiCards'
 import { CylinderDispatchTable } from '@/components/oxygen/CylinderDispatchTable'
 import { ManualIssueModal } from '@/components/oxygen/ManualIssueModal'
 import { UnitRequestModal } from '@/components/oxygen/UnitRequestModal'
+import { ReceiveInterFacilityModal } from '@/components/oxygen/ReceiveInterFacilityModal'
+import { ReturnInterFacilityModal } from '@/components/oxygen/ReturnInterFacilityModal'
 import { DispatchRequestDetailModal } from '@/components/oxygen/DispatchRequestDetailModal'
 import { CylinderDispatchPrintView } from '@/components/oxygen/CylinderDispatchPrintView'
+import { DeleteDispatchConfirmModal } from '@/components/oxygen/DeleteDispatchConfirmModal'
+import { DeleteCylinderModal } from '@/components/oxygen/DeleteCylinderModal'
 import {
   getCylinderDispatchRequests,
   getCylinderDispatchKPI,
   getClinicalDepartments,
   createManualIssue,
+  createInterFacilityReceivedCylinder,
+  createInterFacilityReturnCylinder,
   createUnitRequest,
   approveRequest,
   rejectRequest,
   issueRequest,
   completeRequest,
-  cancelRequest
+  cancelRequest,
+  updateRequestItems,
+  deleteCylinderDispatchRequest,
+  getCylinderDispatchRequestById,
 } from '@/services/pharmacy/cylinderDispatchService'
 import { 
   getOxygenCylinders, 
@@ -89,12 +116,19 @@ import {
   getStoreUsageBalance,
   getReturnDocuments,
   getRequestDocuments,
+  getReceiveDocuments,
   assignCylinderQrTag,
   deactivateCylinderQrTag,
   getOxygenCylinderTypes,
   generateNewCylindersWithQr,
   addSupplierTaggedLoanCylinders,
   clearCylinderInventory,
+  getRegisteredOxygenVoteCodes,
+  updateOxygenReceptionVoteCode,
+  updateOxygenReceptionsVoteCode,
+  updateOxygenReceptionArrival,
+  deleteOxygenCylinder,
+  deleteOxygenCylindersBatch,
 } from '@/services/pharmacy/oxygenService'
 import { 
   generateOxygenPoPdf, 
@@ -117,6 +151,7 @@ import type {
   OxygenReceptionItem,
   OxygenReturnDocumentWithRelations,
   OxygenRequestDocumentWithRelations,
+  OxygenReceiveDocumentWithRelations,
   OxygenCylinderTypeInfo,
 } from '@/types/pharmacy'
 import type { ApiResponse, Paginated, Column } from '@/types'
@@ -125,6 +160,7 @@ import { supabase, isSupabaseConfigured } from '@/services/supabase'
 export const OxygenDashboardPage: React.FC = () => {
   const { user } = useAuthStore()
   const { language } = useLanguage()
+  const isCylinderOfficer = useMemo(() => isCylinderAuthorizedOfficer(user), [user])
   const hospitalId = user?.hospital_id
   const location = useLocation()
   const navigate = useNavigate()
@@ -144,9 +180,9 @@ export const OxygenDashboardPage: React.FC = () => {
   const [ledgerData, setLedgerData] = useState<any[]>([])
   const [returnDocs, setReturnDocs] = useState<OxygenReturnDocumentWithRelations[]>([])
   const [requestDocs, setRequestDocs] = useState<OxygenRequestDocumentWithRelations[]>([])
+  const [receiveDocs, setReceiveDocs] = useState<OxygenReceiveDocumentWithRelations[]>([])
   const [cylinderActiveTab, setCylinderActiveTab] = useState<'overview' | 'unit_monitor' | 'store_balance' | 'supplier_returns'>('overview')
-  const [supplierReturnsSubTab, setSupplierReturnsSubTab] = useState<'returns' | 'requests'>('returns')
-  const [supplierReturnsDropdownOpen, setSupplierReturnsDropdownOpen] = useState(false)
+  const [supplierReturnsSubTab, setSupplierReturnsSubTab] = useState<'returns' | 'requests' | 'received' | 'tracking'>('returns')
   const [ledgerStartDate, setLedgerStartDate] = useState(() => {
     const d = new Date()
     d.setDate(d.getDate() - 30)
@@ -158,9 +194,11 @@ export const OxygenDashboardPage: React.FC = () => {
   const [isScanOpen, setIsScanOpen] = useState(false)
   const [selectedDepleteCombo, setSelectedDepleteCombo] = useState<any | null>(null)
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
+  const [isReceiveDocModalOpen, setIsReceiveDocModalOpen] = useState(false)
   const [sessionScannedCylinders, setSessionScannedCylinders] = useState<OxygenCylinderWithRelations[]>([])
   const [printDocId, setPrintDocId] = useState<string | null>(null)
   const [printRequestId, setPrintRequestId] = useState<string | null>(null)
+  const [printReceiveDocId, setPrintReceiveDocId] = useState<string | null>(null)
 
   // Filters for Cylinder Registry
   const [searchTerm, setSearchTerm] = useState('')
@@ -258,6 +296,10 @@ export const OxygenDashboardPage: React.FC = () => {
   const reconciliationPageSize = 10
   const [isAuditScanOpen, setIsAuditScanOpen] = useState(false)
   const [isAuditReviewOpen, setIsAuditReviewOpen] = useState(false)
+  const [reconciliationSearch, setReconciliationSearch] = useState('')
+  const [selectedReconciliationIds, setSelectedReconciliationIds] = useState<Set<string>>(new Set())
+  const [bulkStatus, setBulkStatus] = useState<string>('available')
+  const [highlightedCylinderId, setHighlightedCylinderId] = useState<string | null>(null)
 
   const isStoreLocation = (loc?: any) => {
     if (!loc) return true;
@@ -304,7 +346,6 @@ export const OxygenDashboardPage: React.FC = () => {
   const mapReconciliationToDbStatus = (status: string, location?: string) => {
     const norm = normalizeStatusForReconciliation(status);
     if (norm === 'available') {
-      if (location && !isStoreLocation(location)) return 'issued';
       return 'available';
     }
     if (norm === 'used') return 'issued';
@@ -360,10 +401,15 @@ export const OxygenDashboardPage: React.FC = () => {
   const [customSupplierInput, setCustomSupplierInput] = useState<string>('')
   const [isAddingNewSupplier, setIsAddingNewSupplier] = useState<boolean>(false)
   const [editedLoanRates, setEditedLoanRates] = useState<Record<string, string>>({})
-  const [selectedReceiveSupplier, setSelectedReceiveSupplier] = useState<string>('LINDE EOX SDN BHD (CAW. MIRI)')
+  const [selectedReceiveSupplier, setSelectedReceiveSupplier] = useState<string>('BORNEO INDAH SDN BHD')
 
-  // Helper to group and consolidate reception entries by month
-  const getMonthlyConsolidatedReceptions = (receptions: OxygenReceptionRecord[]) => {
+  // Helper to group and consolidate reception entries by month (with vote code segregation)
+  const getMonthlyConsolidatedReceptions = (receptions: OxygenReceptionRecord[], filterVote?: string) => {
+    const targetVote = filterVote || dashboardVoteFilter
+    const filtered = targetVote && targetVote !== 'all'
+      ? receptions.filter(r => (r.vote_code || '080702').startsWith(targetVote))
+      : receptions
+
     const monthMap: Record<string, {
       id: string
       hospital_id: string
@@ -385,16 +431,20 @@ export const OxygenDashboardPage: React.FC = () => {
       created_at?: string
     }> = {}
 
-    receptions.forEach(rec => {
+    filtered.forEach(rec => {
       const rawDate = rec.reception_date || ''
       const d = new Date(rawDate)
-      const monthKey = !isNaN(d.getTime()) 
+      const baseMonth = !isNaN(d.getTime()) 
         ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
         : (rawDate.substring(0, 7) || '2026-08')
 
-      const monthLabel = !isNaN(d.getTime())
+      const monthDateLabel = !isNaN(d.getTime())
         ? d.toLocaleDateString(language === 'ms' ? 'ms-MY' : 'en-US', { month: 'long', year: 'numeric' })
-        : monthKey
+        : baseMonth
+
+      const recVote = rec.vote_code || '080702'
+      const monthKey = `${baseMonth}_${recVote}`
+      const monthLabel = monthDateLabel
 
       const recIds = rec.ids && rec.ids.length > 0 ? rec.ids : [rec.id]
       const recDoNos = (rec.delivery_order_no || '').split(/[\s/]+/).filter(Boolean)
@@ -410,8 +460,8 @@ export const OxygenDashboardPage: React.FC = () => {
           refill_amount: Number(rec.refill_amount || 0),
           loan_amount: Number(rec.loan_amount || 0),
           total_amount: Number(rec.total_amount || 0),
-          vote_code: rec.vote_code || '080702',
-          vote_activity: rec.vote_activity || '27402',
+          vote_code: recVote,
+          vote_activity: rec.vote_activity || financials?.by_vote_code?.[recVote]?.vote_activity || '27402',
           status: rec.status || 'completed',
           supplier_name: rec.supplier_name,
           ids: [...recIds],
@@ -464,6 +514,14 @@ export const OxygenDashboardPage: React.FC = () => {
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
   const [pdfSuccessModalOpen, setPdfSuccessModalOpen] = useState(false)
   const [justCreatedReception, setJustCreatedReception] = useState<OxygenReceptionRecord | null>(null)
+  
+  // Key in DO / Arrival modal states
+  const [isArrivalModalOpen, setIsArrivalModalOpen] = useState(false)
+  const [arrivalRecord, setArrivalRecord] = useState<OxygenReceptionRecord | null>(null)
+  const [arrivalDoNo, setArrivalDoNo] = useState('')
+  const [arrivalSoNo, setArrivalSoNo] = useState('')
+  const [arrivalDate, setArrivalDate] = useState(() => new Date().toISOString().split('T')[0])
+  const [isSubmittingArrival, setIsSubmittingArrival] = useState(false)
 
   // Officer Signatures state
   const [signatures, setSignatures] = useState<PharmacyPOSignatures>({
@@ -486,7 +544,43 @@ export const OxygenDashboardPage: React.FC = () => {
     headPosition: ''
   })
   const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null)
-  const [hospitalUsers, setHospitalUsers] = useState<{ id: string; full_name: string; jawatan?: string; role?: { role_name: string } }[]>([])
+  const [previewVoteCode, setPreviewVoteCode] = useState<string>('080702')
+  const [previewVoteActivity, setPreviewVoteActivity] = useState<string>('27402')
+  const [previewTotalAmount, setPreviewTotalAmount] = useState<number>(0)
+  const [dashboardVoteFilter, setDashboardVoteFilter] = useState<string>('all')
+  const [availableVoteCodes, setAvailableVoteCodes] = useState<string[]>(['080702', '080600'])
+  const [isSavingVoteCode, setIsSavingVoteCode] = useState<boolean>(false)
+  const [voteSaveSuccess, setVoteSaveSuccess] = useState<boolean>(false)
+  const [isUpdatingTableVote, setIsUpdatingTableVote] = useState<string | null>(null)
+
+  // Vote Code Security Override & Audit Log Modal states
+  const [isVoteOverrideModalOpen, setIsVoteOverrideModalOpen] = useState(false)
+  const [overrideTargetRecord, setOverrideTargetRecord] = useState<OxygenReceptionRecord | any | null>(null)
+  const [overrideSelectedVoteCode, setOverrideSelectedVoteCode] = useState<string>('080702')
+  const [overrideSelectedVoteActivity, setOverrideSelectedVoteActivity] = useState<string>('27402')
+  const [overridePasswordInput, setOverridePasswordInput] = useState<string>('')
+  const [overrideReasonInput, setOverrideReasonInput] = useState<string>('')
+  const [overrideError, setOverrideError] = useState<string>('')
+  const [overrideIsSubmitting, setOverrideIsSubmitting] = useState<boolean>(false)
+  const [showOverridePassword, setShowOverridePassword] = useState<boolean>(false)
+
+  const [hospitalUsers, setHospitalUsers] = useState<{ id: string; full_name: string; jawatan?: string; department_id?: string; department?: { id?: string; department_name?: string } | null; role?: { role_name: string } }[]>([])
+  
+  // Filter officers strictly to Pharmacy Logistic staff for official PO signatures
+  const pharmacyLogisticUsers = useMemo(() => {
+    const filtered = hospitalUsers.filter(u => {
+      const deptName = (u.department?.department_name || '').toLowerCase().trim()
+      if (deptName.includes('pharmacy logistic') || deptName.includes('farmasi logistik') || deptName.includes('logistik farmasi') || deptName.includes('stor farmasi')) {
+        return true
+      }
+      if (u.department_id === '7a3bd6c4-c8e6-491b-8441-0ee9bd73f880') {
+        return true
+      }
+      return false
+    })
+    return filtered.length > 0 ? filtered : hospitalUsers
+  }, [hospitalUsers])
+
   const [lindeSupplier, setLindeSupplier] = useState<any>(null)
 
   // Cylinder Request & Dispatch States
@@ -495,8 +589,46 @@ export const OxygenDashboardPage: React.FC = () => {
   const [departmentsList, setDepartmentsList] = useState<{ id: string; department_name: string }[]>([])
   const [isManualModalOpen, setIsManualModalOpen] = useState(false)
   const [isUnitModalOpen, setIsUnitModalOpen] = useState(false)
+  const [unitModalInitialMode, setUnitModalInitialMode] = useState<'internal' | 'external'>('internal')
+  const [unitModalLockMode, setUnitModalLockMode] = useState(false)
+  const [isReceiveInterFacilityModalOpen, setIsReceiveInterFacilityModalOpen] = useState(false)
+  const [isReturnInterFacilityModalOpen, setIsReturnInterFacilityModalOpen] = useState(false)
+  const [isIntraFacilityDropdownOpen, setIsIntraFacilityDropdownOpen] = useState(false)
+  const [isInterFacilityDropdownOpen, setIsInterFacilityDropdownOpen] = useState(false)
   const [detailRequest, setDetailRequest] = useState<CylinderDispatchRequestWithRelations | null>(null)
   const [printDispatchRequestId, setPrintDispatchRequestId] = useState<string | null>(null)
+  const [deleteTargetRequest, setDeleteTargetRequest] = useState<CylinderDispatchRequestWithRelations | null>(null)
+  const [deleteCylinderTarget, setDeleteCylinderTarget] = useState<OxygenCylinderWithRelations[] | null>(null)
+  const [isDeletingCylinder, setIsDeletingCylinder] = useState(false)
+
+  // Check if current user belongs to an "other unit" (wards, clinics, ICU, etc.) rather than Pharmacy / Administration
+  const isOtherUnit = useMemo(() => {
+    if (!user) return false;
+    const roleCode = (user.role?.role_code || (user as any).role || '').toLowerCase();
+    const roleName = (user.role?.role_name || '').toLowerCase();
+    const deptName = (user.department?.department_name || '').toLowerCase();
+    const jawatan = (user.jawatan || '').toLowerCase();
+
+    const isPharmacyOrAdmin = 
+      roleCode.includes('admin') ||
+      roleCode.includes('director') ||
+      roleCode.includes('manager') ||
+      roleCode.includes('pharmacy') ||
+      roleCode.includes('pharmacist') ||
+      roleCode.includes('storekeeper') ||
+      roleName.includes('admin') ||
+      roleName.includes('farmasi') ||
+      roleName.includes('pharmacist') ||
+      deptName.includes('farmasi') ||
+      deptName.includes('pharmacy') ||
+      deptName.includes('logistik') ||
+      jawatan.includes('farmasi') ||
+      jawatan.includes('pharmacist') ||
+      jawatan.includes('stor') ||
+      jawatan.includes('pegawai farmasi');
+
+    return !isPharmacyOrAdmin;
+  }, [user]);
 
   const [dbSuppliers, setDbSuppliers] = useState<{ id: string; company_name: string }[]>([])
 
@@ -586,7 +718,7 @@ export const OxygenDashboardPage: React.FC = () => {
     })
 
     // 3. Fallback defaults for standard size codes
-    const DEFAULT_SIZES = ['101-F', '101-N', 'P101-D', 'P101-E', 'P101-F', 'P101-HS']
+    const DEFAULT_SIZES = ['101-F', '101-N', 'P101-D', 'P101-E', 'P101-F', 'P101-HS', 'Liquid Medical Oxygen (VIE Tank)']
     DEFAULT_SIZES.forEach(sc => {
       if (!priceMap[sc]) {
         priceMap[sc] = '0'
@@ -632,18 +764,27 @@ export const OxygenDashboardPage: React.FC = () => {
     const monthKey: string | undefined = targetRecord.monthKey
     const targetHospitalId = targetRecord.hospital_id || hospitalId
     if (monthKey && targetHospitalId) {
-      const [yrStr, moStr] = monthKey.split('-')
+      const cleanMonth = monthKey.split('_')[0]
+      const [yrStr, moStr] = cleanMonth.split('-')
       const year = parseInt(yrStr, 10)
       const month = parseInt(moStr, 10)
       const startDate = `${year}-${String(month).padStart(2, '0')}-01`
       const lastDay = new Date(year, month, 0).getDate()
       const endDate = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
-      const { data: monthRecs } = await supabase
+      
+      let query = supabase
         .from('pharmacy_oxygen_reception_records')
-        .select('id')
+        .select('id, vote_code')
         .eq('hospital_id', targetHospitalId)
         .gte('reception_date', startDate)
         .lte('reception_date', endDate)
+
+      const targetVote = targetRecord.vote_code || '080702'
+      if (targetVote) {
+        query = query.eq('vote_code', targetVote)
+      }
+
+      const { data: monthRecs } = await query
       if (monthRecs && monthRecs.length > 0) {
         monthRecs.forEach((r: any) => { if (r.id) idSet.add(r.id) })
       }
@@ -676,15 +817,19 @@ export const OxygenDashboardPage: React.FC = () => {
     //    This is necessary because the schema stores 101-N cylinder type as is_loan=true
     //    but it also receives actual refill gas (at RM 250) plus a separate loan fee (at RM 15).
     const resolveIsLoan = (itm: any): boolean => {
+      const sizeCode = (itm.size_info?.code || '').toLowerCase()
+      if (sizeCode.includes('liquid') || sizeCode.includes('vie') || itm.size_info?.unit === 'm3') {
+        return false
+      }
       const sizeIsLoan: boolean = itm.size_info?.is_loan === true
       if (!sizeIsLoan) return false // P101-D, P101-E, P101-F, P101-HS → always refill
 
       // For 101-N and 101-F (marked as loan sizes):
       // A loan FEE row has a very low unit_price (e.g. RM 15 for cylinder hire)
       // A refill row has the full gas price (e.g. RM 250 for 101-N refill)
-      const sizeCode = itm.size_info?.code || ''
+      const rawCode = itm.size_info?.code || ''
       const unitPrice = Number(itm.unit_price || 0)
-      const knownLoanRate = supplierLoanRates[sizeCode] ?? 0
+      const knownLoanRate = supplierLoanRates[rawCode] ?? 0
 
       if (knownLoanRate > 0) {
         // Loan fee rows are at or near the known loan rate; refills are much higher
@@ -702,16 +847,17 @@ export const OxygenDashboardPage: React.FC = () => {
       const unitPrice = Number(itm.unit_price || 0)
       const isLoan = resolveIsLoan(itm)
       const key = `${sizeCode}-${isLoan ? 'loan' : 'refill'}`
+      const itemQty = Number(itm.quantity) || 1
 
       if (!groupMap[key]) {
         groupMap[key] = {
           size_code: sizeCode,
           is_loan: isLoan,
-          qty: 1,
+          qty: itemQty,
           price: unitPrice
         }
       } else {
-        groupMap[key].qty += 1
+        groupMap[key].qty += itemQty
       }
     })
 
@@ -739,6 +885,42 @@ export const OxygenDashboardPage: React.FC = () => {
     return formattedItems
   }
 
+  /**
+   * Helper to compute precise balanceBefore and balanceAfter for PO generation,
+   * properly accounting for whether the record is already committed to the target vote code in the DB.
+   */
+  const computePoBalances = (
+    rec: OxygenReceptionRecord | any,
+    targetVoteCode: string,
+    totalAmount: number
+  ): { balanceBefore: number; balanceAfter: number } => {
+    if (!rec) return { balanceBefore: 0, balanceAfter: 0 }
+    const normTarget = targetVoteCode.startsWith('080600') ? '080600' : targetVoteCode.startsWith('080702') ? '080702' : targetVoteCode
+    const voteCodeFin = financials?.by_vote_code?.[normTarget]
+    const currentBalance = voteCodeFin ? voteCodeFin.current_balance : (financials?.current_balance ?? 274000.0)
+
+    // Check if this reception record is already counted in this vote code in DB
+    let isAlreadyCounted = false
+    if (Array.isArray(rec.ids) && rec.ids.length > 0) {
+      const matched = receptionsList.filter(r => rec.ids.includes(r.id) && (r.vote_code || '080702').startsWith(normTarget))
+      isAlreadyCounted = matched.length > 0
+    } else if (rec.id && !rec.id.startsWith('monthly-')) {
+      const dbRec = receptionsList.find(r => r.id === rec.id)
+      if (dbRec) {
+        isAlreadyCounted = (dbRec.vote_code || '080702').trim().startsWith(normTarget)
+      } else {
+        isAlreadyCounted = String(rec.vote_code || '080702').trim().startsWith(normTarget)
+      }
+    } else {
+      isAlreadyCounted = String(rec.vote_code || '080702').trim().startsWith(normTarget)
+    }
+
+    const balanceBefore = isAlreadyCounted ? currentBalance + totalAmount : currentBalance
+    const balanceAfter = isAlreadyCounted ? currentBalance : currentBalance - totalAmount
+
+    return { balanceBefore, balanceAfter }
+  }
+
   useEffect(() => {
     if (!isPoPreviewModalOpen || !previewRecord) return
 
@@ -758,19 +940,26 @@ export const OxygenDashboardPage: React.FC = () => {
         const formattedItems = await fetchAndConsolidateReceptionItems(previewRecord, targetSupName)
 
         const totalAmount = formattedItems.reduce((sum, item) => sum + item.total_price, 0)
-        const currentBalance = financials?.current_balance ?? 274000.0
-        const calculatedBalanceBefore = currentBalance + totalAmount
-        const calculatedBalanceAfter = currentBalance
+        setPreviewTotalAmount(totalAmount)
+        
+        // Use the balance specific to previewVoteCode!
+        const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, totalAmount)
+
+        const dynamicReception: OxygenReceptionRecord = {
+          ...previewRecord,
+          vote_code: previewVoteCode,
+          vote_activity: previewVoteActivity
+        }
 
         const blob = await generateOxygenPoPdf({
-          reception: previewRecord,
+          reception: dynamicReception,
           items: formattedItems,
           applicantName: previewSignatures.applicantName,
           applicantPosition: previewSignatures.applicantPosition,
           headName: previewSignatures.headName,
           headPosition: previewSignatures.headPosition,
-          balanceBefore: calculatedBalanceBefore,
-          balanceAfter: calculatedBalanceAfter,
+          balanceBefore,
+          balanceAfter,
           supplierName: matchedSup?.company_name || targetSupName,
           supplierAddress: matchedSup?.address || (isLindeSupplier(targetSupName) ? lindeSupplier?.address : '') || '',
           supplierPhone: matchedSup?.phone || (isLindeSupplier(targetSupName) ? lindeSupplier?.phone : '') || '',
@@ -791,7 +980,7 @@ export const OxygenDashboardPage: React.FC = () => {
     return () => {
       active = false
     }
-  }, [isPoPreviewModalOpen, previewRecord, previewSignatures.applicantName, previewSignatures.applicantPosition, previewSignatures.headName, previewSignatures.headPosition])
+  }, [isPoPreviewModalOpen, previewRecord, previewVoteCode, previewVoteActivity, previewSignatures.applicantName, previewSignatures.applicantPosition, previewSignatures.headName, previewSignatures.headPosition, financials])
 
   // Pricing Form state
   const [editedPrices, setEditedPrices] = useState<Record<string, string>>({})
@@ -890,7 +1079,16 @@ export const OxygenDashboardPage: React.FC = () => {
       }
 
       // Populate Financials
-      if (finRes.data) setFinancials(finRes.data)
+      if (finRes.data) {
+        setFinancials(finRes.data)
+        if (finRes.data.available_vote_codes && finRes.data.available_vote_codes.length > 0) {
+          setAvailableVoteCodes(finRes.data.available_vote_codes)
+        }
+      }
+      const voteCodesRes = await getRegisteredOxygenVoteCodes(hospitalId)
+      if (voteCodesRes.data && voteCodesRes.data.length > 0) {
+        setAvailableVoteCodes(prev => Array.from(new Set([...prev, ...(voteCodesRes.data || [])])))
+      }
       if (pricingRes.data) {
         setPricingConfigs(pricingRes.data)
         // Set initial edited prices
@@ -919,7 +1117,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
       const { data: rawUsers } = await supabase
         .from('users')
-        .select('id, full_name, jawatan, department_id, role:roles(role_name)')
+        .select('id, full_name, jawatan, department_id, department:departments!department_id(id, department_name), role:roles(role_name)')
         .eq('hospital_id', hospitalId)
       if (rawUsers) {
         setHospitalUsers(rawUsers as any)
@@ -986,17 +1184,19 @@ export const OxygenDashboardPage: React.FC = () => {
     void loadData()
     if (currentPath === '/pharmacy/oxygen/cylinders' && hospitalId) {
       const loadInventoryDashboardData = async () => {
-        const [aggRes, deptRes, docsRes, reqsRes, ledgerRes] = await Promise.all([
+        const [aggRes, deptRes, docsRes, reqsRes, recRes, ledgerRes] = await Promise.all([
           getCylinderInventoryByType(hospitalId),
           getCylindersByDepartment(hospitalId),
           getReturnDocuments(hospitalId),
           getRequestDocuments(hospitalId),
+          getReceiveDocuments(hospitalId),
           getStoreUsageBalance(hospitalId, ledgerStartDate, ledgerEndDate),
         ])
         if (aggRes.data) setCylinderAggregates(aggRes.data)
         if (deptRes.data) setDeptDistribution(deptRes.data)
         if (docsRes.data) setReturnDocs(docsRes.data)
         if (reqsRes.data) setRequestDocs(reqsRes.data)
+        if (recRes.data) setReceiveDocs(recRes.data)
         if (ledgerRes.data) setLedgerData(ledgerRes.data)
       }
       void loadInventoryDashboardData()
@@ -1009,18 +1209,21 @@ export const OxygenDashboardPage: React.FC = () => {
     setDeptDistribution([])
     setReturnDocs([])
     setRequestDocs([])
+    setReceiveDocs([])
     setLedgerData([])
-    const [aggRes, deptRes, docsRes, reqsRes, ledgerRes] = await Promise.all([
+    const [aggRes, deptRes, docsRes, reqsRes, recRes, ledgerRes] = await Promise.all([
       getCylinderInventoryByType(hospitalId),
       getCylindersByDepartment(hospitalId),
       getReturnDocuments(hospitalId),
       getRequestDocuments(hospitalId),
+      getReceiveDocuments(hospitalId),
       getStoreUsageBalance(hospitalId, ledgerStartDate, ledgerEndDate),
     ])
     if (aggRes.data) setCylinderAggregates(aggRes.data)
     if (deptRes.data) setDeptDistribution(deptRes.data)
     if (docsRes.data) setReturnDocs(docsRes.data)
     if (reqsRes.data) setRequestDocs(reqsRes.data)
+    if (recRes.data) setReceiveDocs(recRes.data)
     if (ledgerRes.data) setLedgerData(ledgerRes.data)
   }
 
@@ -1233,7 +1436,10 @@ export const OxygenDashboardPage: React.FC = () => {
         const normalizedOld = getExpectedStateForCylinder(cyl);
         const normalizedNew = physicalCounts[cylId] || normalizedOld;
         const rawNewLocation = physicalLocations[cylId] || getCylinderLocation(cyl, normalizedNew);
-        const newLocation = typeof rawNewLocation === 'object' ? (rawNewLocation?.location_name || rawNewLocation?.name || 'Pharmacy Store') : (rawNewLocation || 'Pharmacy Store');
+        let newLocation = typeof rawNewLocation === 'object' ? (rawNewLocation?.location_name || rawNewLocation?.name || 'Pharmacy Store') : (rawNewLocation || 'Pharmacy Store');
+        if (normalizedNew === 'available') {
+          newLocation = 'Pharmacy Store';
+        }
         const dbStatus = mapReconciliationToDbStatus(normalizedNew, newLocation);
 
         if (isSupabaseConfigured()) {
@@ -1371,6 +1577,9 @@ export const OxygenDashboardPage: React.FC = () => {
 
   const handleOpenPoPreview = (record: OxygenReceptionRecord) => {
     setPreviewRecord(record)
+    const initialVote = record.vote_code || '080702'
+    setPreviewVoteCode(initialVote)
+    setPreviewVoteActivity(record.vote_activity || financials?.by_vote_code?.[initialVote]?.vote_activity || '27402')
     setPreviewSignatures({
       applicantName: signatures.applicantName,
       applicantPosition: signatures.applicantPosition,
@@ -1378,6 +1587,146 @@ export const OxygenDashboardPage: React.FC = () => {
       headPosition: signatures.headPosition
     })
     setIsPoPreviewModalOpen(true)
+  }
+
+  const handleSaveVoteCodeForPreview = async (overrideCode?: string, overrideActivity?: string) => {
+    if (!previewRecord) return
+    const codeToSave = overrideCode || previewVoteCode
+    const actToSave = overrideActivity || previewVoteActivity || financials?.by_vote_code?.[codeToSave]?.vote_activity || '27402'
+    setIsSavingVoteCode(true)
+    try {
+      const targetIds = (Array.isArray(previewRecord.ids) && previewRecord.ids.length > 0)
+        ? previewRecord.ids
+        : [previewRecord.id].filter(id => id && !id.startsWith('monthly-'))
+
+      if (targetIds.length > 0) {
+        const res = await updateOxygenReceptionsVoteCode(targetIds, codeToSave, actToSave)
+        if (res.data) {
+          setPreviewRecord(prev => prev ? { ...prev, vote_code: codeToSave, vote_activity: actToSave } : null)
+          setReceptionsList(prev => prev.map(r => {
+            if (targetIds.includes(r.id) || (r.ids && r.ids.some(id => targetIds.includes(id)))) {
+              return { ...r, vote_code: codeToSave, vote_activity: actToSave }
+            }
+            return r
+          }))
+          setVoteSaveSuccess(true)
+          setTimeout(() => setVoteSaveSuccess(false), 3000)
+          void loadData()
+        }
+      }
+    } catch (err) {
+      console.error('Error saving vote code for preview:', err)
+    } finally {
+      setIsSavingVoteCode(false)
+    }
+  }
+
+  const handleOpenVoteOverrideModal = (record: OxygenReceptionRecord | any) => {
+    if (!record) return
+    setOverrideTargetRecord(record)
+    const currentVote = record.vote_code || '080702'
+    const otherCode = currentVote.startsWith('080600') ? '080702' : '080600'
+    setOverrideSelectedVoteCode(otherCode)
+    const act = financials?.by_vote_code?.[otherCode]?.vote_activity || '27402'
+    setOverrideSelectedVoteActivity(act)
+    setOverridePasswordInput('')
+    setOverrideReasonInput('')
+    setOverrideError('')
+    setShowOverridePassword(false)
+    setIsVoteOverrideModalOpen(true)
+  }
+
+  const handleSubmitVoteOverride = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!overrideTargetRecord) return
+    setOverrideError('')
+
+    // 1. Verify Password against official "F@rmasi.2016"
+    if (overridePasswordInput.trim() !== 'F@rmasi.2016') {
+      setOverrideError(
+        language === 'ms'
+          ? 'Kata laluan keselamatan tidak sah. Sila masukkan kata laluan "F@rmasi.2016" yang betul.'
+          : 'Invalid security password. Please enter the valid authorization password "F@rmasi.2016".'
+      )
+      return
+    }
+
+    // 2. Verify Reason
+    if (!overrideReasonInput.trim() || overrideReasonInput.trim().length < 5) {
+      setOverrideError(
+        language === 'ms'
+          ? 'Sila nyatakan sebab / justifikasi pertukaran kod vot (minimum 5 aksara) untuk rekod audit keselamatan.'
+          : 'Please provide a valid reason / justification for changing the vote code (minimum 5 characters).'
+      )
+      return
+    }
+
+    setOverrideIsSubmitting(true)
+    try {
+      const oldCode = overrideTargetRecord.vote_code || '080702'
+      const oldAct = overrideTargetRecord.vote_activity || '27402'
+      const newCode = overrideSelectedVoteCode
+      const newAct = overrideSelectedVoteActivity || financials?.by_vote_code?.[newCode]?.vote_activity || '27402'
+
+      const targetIds = (Array.isArray(overrideTargetRecord.ids) && overrideTargetRecord.ids.length > 0)
+        ? overrideTargetRecord.ids
+        : [overrideTargetRecord.id].filter(id => id && !id.startsWith('monthly-'))
+
+      if (targetIds.length > 0) {
+        // 3. Update Database records
+        const updateRes = await updateOxygenReceptionsVoteCode(targetIds, newCode, newAct)
+        if (updateRes.error) {
+          throw new Error(updateRes.error)
+        }
+
+        // 4. Log to audit_logs
+        await supabase.from('audit_logs').insert({
+          user_id: user?.id || null,
+          action: 'OVERRIDE_OXYGEN_VOTE_CODE',
+          module: 'MYCYLINDER_OXYGEN',
+          entity_type: 'pharmacy_oxygen_reception_records',
+          entity_id: targetIds[0],
+          old_values: {
+            vote_code: oldCode,
+            vote_activity: oldAct,
+            delivery_order_no: overrideTargetRecord.delivery_order_no,
+            target_ids: targetIds
+          },
+          new_values: {
+            vote_code: newCode,
+            vote_activity: newAct,
+            reason: overrideReasonInput.trim(),
+            authorized_by_password: 'F@rmasi.2016',
+            user_name: user?.full_name || 'Staff Farmasi',
+            timestamp: new Date().toISOString()
+          },
+          created_at: new Date().toISOString()
+        })
+
+        // 5. Update In-Memory States
+        setReceptionsList(prev => prev.map(r => {
+          if (targetIds.includes(r.id) || (r.ids && r.ids.some(id => targetIds.includes(id)))) {
+            return { ...r, vote_code: newCode, vote_activity: newAct }
+          }
+          return r
+        }))
+
+        // If currently open in Modal 5 preview:
+        if (previewRecord && (targetIds.includes(previewRecord.id) || (previewRecord.ids && previewRecord.ids.some(id => targetIds.includes(id))))) {
+          setPreviewRecord(prev => prev ? { ...prev, vote_code: newCode, vote_activity: newAct } : null)
+          setPreviewVoteCode(newCode)
+          setPreviewVoteActivity(newAct)
+        }
+
+        setIsVoteOverrideModalOpen(false)
+        await loadData()
+      }
+    } catch (err: any) {
+      console.error('Error overriding vote code:', err)
+      setOverrideError(err.message || 'Ralat semasa mengemas kini kod vot.')
+    } finally {
+      setOverrideIsSubmitting(false)
+    }
   }
 
   const handleGeneratePoWithCustomSignatures = async (e?: React.FormEvent) => {
@@ -1396,19 +1745,33 @@ export const OxygenDashboardPage: React.FC = () => {
       const formattedItems = await fetchAndConsolidateReceptionItems(previewRecord, poSupplierName)
 
       const totalAmount = formattedItems.reduce((sum, item) => sum + item.total_price, 0)
-      const currentBalance = financials?.current_balance ?? 274000.0
-      const calculatedBalanceBefore = currentBalance + totalAmount
-      const calculatedBalanceAfter = currentBalance
+      const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, totalAmount)
+
+      const dynamicReception: OxygenReceptionRecord = {
+        ...previewRecord,
+        vote_code: previewVoteCode,
+        vote_activity: previewVoteActivity
+      }
+
+      // Persist chosen vote code to DB for this reception or consolidated batch
+      const targetIds = (Array.isArray(previewRecord.ids) && previewRecord.ids.length > 0)
+        ? previewRecord.ids
+        : [previewRecord.id].filter(id => id && !id.startsWith('monthly-'))
+
+      if (targetIds.length > 0) {
+        await updateOxygenReceptionsVoteCode(targetIds, previewVoteCode, previewVoteActivity)
+        void loadData()
+      }
 
       const blob = await generateOxygenPoPdf({
-        reception: previewRecord,
+        reception: dynamicReception,
         items: formattedItems,
         applicantName: previewSignatures.applicantName,
         applicantPosition: previewSignatures.applicantPosition,
         headName: previewSignatures.headName,
         headPosition: previewSignatures.headPosition,
-        balanceBefore: calculatedBalanceBefore,
-        balanceAfter: calculatedBalanceAfter,
+        balanceBefore,
+        balanceAfter,
         supplierName: poMatchedSup?.company_name || poSupplierName,
         supplierAddress: poMatchedSup?.address || (isLindeSupplier(poSupplierName) ? lindeSupplier?.address : '') || '',
         supplierPhone: poMatchedSup?.phone || (isLindeSupplier(poSupplierName) ? lindeSupplier?.phone : '') || '',
@@ -1440,7 +1803,8 @@ export const OxygenDashboardPage: React.FC = () => {
     if (config) return config.refill_price
     // Default fallback base refill prices when no config found for specific size
     if (sizeCode === '101-N') return 250.00
-    if (sizeCode === '101-F') return 117.20
+    if (sizeCode === '101-F' || sizeCode === 'P101-F') return 118.00
+    if (sizeCode.includes('Liquid Medical Oxygen') || sizeCode.includes('VIE Tank')) return 3.60
     return 0
   }
 
@@ -1493,7 +1857,11 @@ export const OxygenDashboardPage: React.FC = () => {
   const handleCreateReception = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!hospitalId || !user?.id) return
-    if (!doNumber || !soNumber) {
+
+    const isLiquidOrder = (receiveQuantities['Liquid Medical Oxygen (VIE Tank)'] || 0) > 0
+    const isPendingOrder = isLiquidOrder && (!doNumber || !doNumber.trim() || doNumber.trim().toUpperCase() === 'PENDING')
+
+    if (!isPendingOrder && (!doNumber || !soNumber)) {
       alert('Please fill in Delivery Order and Sales Order numbers.')
       return
     }
@@ -1520,46 +1888,62 @@ export const OxygenDashboardPage: React.FC = () => {
         const sizeObj = sizesList?.find(s => s.code === sizeCode || s.code === sizeCode.replace(/^P/, '') || `P${s.code}` === sizeCode)
         if (!sizeObj) continue
 
+        const isPerM3 = sizeCode.toLowerCase().includes('liquid') || sizeCode.toLowerCase().includes('vie') || sizeObj.unit === 'm3'
         const basePrice = getActivePrice(sizeCode, selectedReceiveSupplier)
         const loanRate = getActiveLoanRate(sizeCode, selectedReceiveSupplier)
 
         // Insert refilled items
         if (qtyRefilled > 0) {
           const itemPrice = basePrice
-          for (let i = 0; i < qtyRefilled; i++) {
+          if (isPerM3) {
             itemsToCreate.push({
               cylinder_size_id: sizeObj.id,
               cylinder_type_id: defaultType,
-              unit_price: itemPrice
+              unit_price: itemPrice,
+              quantity: qtyRefilled,
             })
+          } else {
+            for (let i = 0; i < qtyRefilled; i++) {
+              itemsToCreate.push({
+                cylinder_size_id: sizeObj.id,
+                cylinder_type_id: defaultType,
+                unit_price: itemPrice,
+                quantity: 1,
+              })
+            }
           }
         }
 
-        // Insert loaned items
-        if (qtyLoaned > 0) {
+        // Insert loaned items (only for loanable cylinders, never for bulk stationary VIE tanks)
+        if (qtyLoaned > 0 && !isPerM3) {
           const itemPrice = loanRate
           for (let i = 0; i < qtyLoaned; i++) {
             itemsToCreate.push({
               cylinder_size_id: sizeObj.id,
               cylinder_type_id: defaultType,
-              unit_price: itemPrice
+              unit_price: itemPrice,
+              quantity: 1,
             })
           }
         }
       }
 
+      const finalDoNumber = doNumber.trim() || (isPendingOrder ? 'PENDING' : '')
+      const finalSoNumber = soNumber.trim() || (isPendingOrder ? 'PENDING' : '')
+      const finalStatus = isPendingOrder ? 'pending' : receptionStatus
+
       const res = await createOxygenReceptionRecord(
         hospitalId,
         {
           reception_date: receptionDate,
-          delivery_order_no: doNumber,
-          sales_order_no: soNumber,
+          delivery_order_no: finalDoNumber,
+          sales_order_no: finalSoNumber,
           refill_amount: refillAmt,
           loan_amount: loanAmt,
           total_amount: grandTotal,
           vote_code: voteCode,
           vote_activity: voteActivity,
-          status: receptionStatus,
+          status: finalStatus,
           supplier_name: selectedReceiveSupplier
         },
         itemsToCreate,
@@ -1589,6 +1973,51 @@ export const OxygenDashboardPage: React.FC = () => {
     }
   }
 
+  const handleOpenArrivalModal = (record: OxygenReceptionRecord) => {
+    setArrivalRecord(record)
+    const existingDo = record.delivery_order_no === 'PENDING' ? '' : (record.delivery_order_no || '')
+    setArrivalDoNo(existingDo)
+    setArrivalSoNo(record.sales_order_no === '-' || record.sales_order_no === 'PENDING' ? '' : (record.sales_order_no || ''))
+    setArrivalDate(new Date().toISOString().split('T')[0])
+    setIsArrivalModalOpen(true)
+  }
+
+  const handleSubmitArrival = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!hospitalId || !arrivalRecord) return
+    if (!arrivalDoNo.trim()) {
+      alert(language === 'ms' ? 'Sila masukkan Nombor Delivery Order (DO).' : 'Please enter the Delivery Order (DO) number.')
+      return
+    }
+
+    setIsSubmittingArrival(true)
+    try {
+      const idsToUpdate = arrivalRecord.ids && arrivalRecord.ids.length > 0 ? arrivalRecord.ids : [arrivalRecord.id]
+      const res = await updateOxygenReceptionArrival(
+        hospitalId,
+        idsToUpdate,
+        arrivalDoNo.trim(),
+        arrivalDate,
+        arrivalSoNo.trim() || undefined
+      )
+
+      if (res.error) {
+        alert(res.error)
+      } else {
+        setIsArrivalModalOpen(false)
+        await loadData()
+        alert(language === 'ms' 
+          ? 'Penghantaran berjaya disahkan! Laporan Penerimaan (KEW.PS-3) kini sedia untuk dijana.' 
+          : 'Delivery arrival confirmed successfully! Reception Report (KEW.PS-3) is now ready.')
+      }
+    } catch (err) {
+      console.error('Error confirming delivery arrival:', err)
+      alert('Failed to update delivery arrival.')
+    } finally {
+      setIsSubmittingArrival(false)
+    }
+  }
+
   // PDF Generation Triggers
   const handleDownloadPO = async (record: OxygenReceptionRecord) => {
     try {
@@ -1598,9 +2027,8 @@ export const OxygenDashboardPage: React.FC = () => {
       const formattedItems = await fetchAndConsolidateReceptionItems(record, poSupplierName)
 
       const totalAmount = formattedItems.reduce((sum, item) => sum + item.total_price, 0)
-      const currentBalance = financials?.current_balance ?? 274000.0
-      const calculatedBalanceBefore = currentBalance + totalAmount
-      const calculatedBalanceAfter = currentBalance
+      const targetVote = record.vote_code || '080702'
+      const { balanceBefore, balanceAfter } = computePoBalances(record, targetVote, totalAmount)
 
       const poLoanRates: Record<string, number> = {}
       pricingConfigs
@@ -1614,8 +2042,8 @@ export const OxygenDashboardPage: React.FC = () => {
         applicantPosition: signatures.applicantPosition,
         headName: signatures.headName,
         headPosition: signatures.headPosition,
-        balanceBefore: calculatedBalanceBefore,
-        balanceAfter: calculatedBalanceAfter,
+        balanceBefore,
+        balanceAfter,
         supplierName: matchedSup?.company_name || poSupplierName,
         supplierAddress: matchedSup?.address || (isLindeSupplier(poSupplierName) ? lindeSupplier?.address : '') || '',
         supplierPhone: matchedSup?.phone || (isLindeSupplier(poSupplierName) ? lindeSupplier?.phone : '') || '',
@@ -1742,6 +2170,89 @@ export const OxygenDashboardPage: React.FC = () => {
     }
   }
 
+  const handleConfirmDeleteCylinders = async (cylinderIds: string[], reason: string) => {
+    setIsDeletingCylinder(true)
+    try {
+      let res;
+      if (cylinderIds.length === 1) {
+        res = await deleteOxygenCylinder(cylinderIds[0], reason, user?.id)
+      } else {
+        res = await deleteOxygenCylindersBatch(cylinderIds, reason, user?.id)
+      }
+
+      if (res?.error) {
+        throw new Error(res.error)
+      }
+
+      const deletedSet = new Set(cylinderIds)
+
+      // 1. Update cylinders state
+      setCylinders(prev => prev.filter(c => !deletedSet.has(c.id)))
+      setTaggedCylindersList(prev => prev.filter(c => !deletedSet.has(c.id)))
+
+      // 2. Clear from bulk selection
+      setSelectedReconciliationIds(prev => {
+        const next = new Set(prev)
+        cylinderIds.forEach(id => next.delete(id))
+        return next
+      })
+
+      // 3. Clear from physical maps
+      setPhysicalCounts(prev => {
+        const next = { ...prev }
+        cylinderIds.forEach(id => delete next[id])
+        return next
+      })
+      setPhysicalLocations(prev => {
+        const next = { ...prev }
+        cylinderIds.forEach(id => delete next[id])
+        return next
+      })
+      setPhysicalScannedBy(prev => {
+        const next = { ...prev }
+        cylinderIds.forEach(id => delete next[id])
+        return next
+      })
+
+      // 4. Update audit log in live list
+      const targetSerial = deleteCylinderTarget?.length === 1 ? deleteCylinderTarget[0]?.serial_number : undefined
+      const newLogEntry = {
+        id: `log-${Date.now()}-${Math.random()}`,
+        action: cylinderIds.length > 1 ? 'BULK_DELETE_OXYGEN_CYLINDERS' : 'DELETE_OXYGEN_CYLINDER',
+        created_at: new Date().toISOString(),
+        user: {
+          full_name: user?.full_name || 'Staff Auditor',
+          jawatan: user?.jawatan || 'Pegawai Farmasi'
+        },
+        new_values: {
+          reason,
+          count: cylinderIds.length,
+          deleted_at: new Date().toISOString(),
+          serial_number: targetSerial
+        },
+        old_values: {
+          serial_number: targetSerial
+        }
+      }
+      setReconciliationLogs(prev => [newLogEntry, ...prev])
+
+      // 5. Success banner message
+      setAuditSuccessMsg(
+        language === 'ms'
+          ? `🗑️ Berjaya memadam ${cylinderIds.length} silinder daripada rekod inventori.`
+          : `🗑️ Successfully deleted ${cylinderIds.length} cylinder(s) from inventory.`
+      )
+      setTimeout(() => setAuditSuccessMsg(null), 5000)
+
+      setDeleteCylinderTarget(null)
+    } catch (err: any) {
+      console.error('Error deleting cylinder(s):', err)
+      alert(err?.message || 'Gagal memadam silinder / Failed to delete cylinder(s)')
+    } finally {
+      setIsDeletingCylinder(false)
+    }
+  }
+
   const renderActiveView = () => {
     // 1. CYLINDER INVENTORY VIEW (Implementation Plan Dashboard)
     if (currentPath === '/pharmacy/oxygen/cylinders') {
@@ -1758,109 +2269,74 @@ export const OxygenDashboardPage: React.FC = () => {
 
       return (
         <div className="space-y-8">
-          {/* Tab Navigation & Action Toolbar */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-            <div className="grid grid-cols-2 md:flex md:flex-row bg-white/20 backdrop-blur-xl border border-white/30 p-1.5 rounded-[24px] md:rounded-3xl shadow-xl w-full max-w-full md:max-w-2xl relative z-30 gap-1 md:gap-0">
-              {[
-                { id: 'overview', label: language === 'ms' ? 'Gambaran Keseluruhan' : 'Overview Store Grid' },
-                { id: 'unit_monitor', label: language === 'ms' ? 'Agihan Unit' : 'Unit Distribution' },
-                { id: 'store_balance', label: language === 'ms' ? 'Lelang Inventori' : 'Store Usage Ledger' },
-              ].map((tab) => (
+          {/* Executive Segmented Navigation Bar & Operational Controls */}
+          <div className="space-y-4">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+              {/* Primary Segmented Tab Navigation */}
+              <div className="inline-flex flex-wrap sm:flex-nowrap items-center bg-white border border-slate-200/90 p-1.5 rounded-2xl shadow-xs gap-1.5 w-full lg:w-auto">
+                {[
+                  { 
+                    id: 'overview', 
+                    label: language === 'ms' ? 'Gambaran Stor' : 'Overview Store Grid',
+                    icon: LayoutGrid 
+                  },
+                  { 
+                    id: 'unit_monitor', 
+                    label: language === 'ms' ? 'Agihan Unit' : 'Unit Distribution',
+                    icon: Building2 
+                  },
+                  { 
+                    id: 'store_balance', 
+                    label: language === 'ms' ? 'Lejar Penggunaan Stor' : 'Store Usage Ledger',
+                    icon: ScrollText 
+                  },
+                  { 
+                    id: 'supplier_returns', 
+                    label: language === 'ms' ? 'Logistik Pembekal' : 'Supplier Logistics',
+                    icon: Truck,
+                    count: returnDocs.length + requestDocs.length + receiveDocs.length
+                  },
+                ].map((tab) => {
+                  const Icon = tab.icon
+                  const isActive = cylinderActiveTab === tab.id
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setCylinderActiveTab(tab.id as any)}
+                      className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${
+                        isActive
+                          ? 'bg-[#008f76] text-white shadow-sm shadow-teal-900/15'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 active:scale-[0.98]'
+                      }`}
+                    >
+                      <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                      <span>{tab.label}</span>
+                      {tab.count !== undefined && (
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${
+                          isActive
+                            ? 'bg-white/20 text-white'
+                            : 'bg-slate-100 text-slate-600 border border-slate-200'
+                        }`}>
+                          {tab.count}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Administrative Protected Action */}
+              <div className="flex items-center gap-2.5 self-end sm:self-auto">
                 <button
-                  key={tab.id}
-                  onClick={() => setCylinderActiveTab(tab.id as any)}
-                  className={`md:flex-shrink-0 md:flex-1 px-3 md:px-4 py-3 rounded-xl md:rounded-2xl text-[11px] md:text-xs font-bold transition-all duration-300 ${
-                    cylinderActiveTab === tab.id
-                      ? 'bg-[#00a68a] text-white shadow-xl'
-                      : 'text-slate-600 hover:bg-white/40'
-                  }`}
+                  onClick={handleOpenClearModal}
+                  className="px-3.5 py-2.5 bg-rose-50/80 hover:bg-rose-100 text-rose-700 border border-rose-200/80 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs hover:shadow-xs active:scale-95 shrink-0 cursor-pointer"
+                  title="Protected action: Clear stock data with admin password verification"
                 >
-                  {tab.label}
+                  <Lock className="w-3.5 h-3.5 text-rose-600" />
+                  <span>{language === 'ms' ? 'Kosongkan Data (Imbasan Baru)' : 'Clear Stock Data'}</span>
                 </button>
-              ))}
-              
-              {/* Supplier Returns Dropdown Tab */}
-              <div className="relative md:flex-shrink-0 md:flex-1 md:min-w-[140px]">
-                <button
-                  onClick={() => {
-                    setCylinderActiveTab('supplier_returns');
-                    setSupplierReturnsDropdownOpen(!supplierReturnsDropdownOpen);
-                  }}
-                  className={`w-full px-3 md:px-4 py-3 rounded-xl md:rounded-2xl text-[11px] md:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1.5 ${
-                    cylinderActiveTab === 'supplier_returns'
-                      ? 'bg-[#00a68a] text-white shadow-xl'
-                      : 'text-slate-600 hover:bg-white/40'
-                  }`}
-                >
-                  <span>{language === 'ms' ? 'Pemulangan Pembekal' : 'Supplier Returns'}</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${supplierReturnsDropdownOpen ? 'rotate-180' : ''}`} />
-                </button>
-                
-                {supplierReturnsDropdownOpen && (
-                  <>
-                    <div 
-                      className="fixed inset-0 z-40" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSupplierReturnsDropdownOpen(false);
-                      }} 
-                    />
-                    <div className="absolute right-0 left-0 mt-2 bg-white/95 backdrop-blur-xl border border-slate-200/80 rounded-2xl shadow-2xl p-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setCylinderActiveTab('supplier_returns');
-                          setSupplierReturnsSubTab('returns');
-                          setSupplierReturnsDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all duration-200 ${
-                          cylinderActiveTab === 'supplier_returns' && supplierReturnsSubTab === 'returns'
-                            ? 'bg-rose-500/10 text-rose-600'
-                            : 'text-slate-700 hover:bg-slate-100'
-                        }`}
-                      >
-                        <span className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                          cylinderActiveTab === 'supplier_returns' && supplierReturnsSubTab === 'returns' 
-                            ? 'bg-rose-500 scale-110 shadow-[0_0_8px_rgba(244,63,94,0.6)]' 
-                            : 'bg-slate-400'
-                        }`} />
-                        {language === 'ms' ? 'Pemulangan' : 'Returns'}
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setCylinderActiveTab('supplier_returns');
-                          setSupplierReturnsSubTab('requests');
-                          setSupplierReturnsDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all duration-200 ${
-                          cylinderActiveTab === 'supplier_returns' && supplierReturnsSubTab === 'requests'
-                            ? 'bg-blue-600/10 text-blue-600'
-                            : 'text-slate-700 hover:bg-slate-100'
-                        }`}
-                      >
-                        <span className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                          cylinderActiveTab === 'supplier_returns' && supplierReturnsSubTab === 'requests' 
-                            ? 'bg-blue-600 scale-110 shadow-[0_0_8px_rgba(37,99,235,0.6)]' 
-                            : 'bg-slate-400'
-                        }`} />
-                        {language === 'ms' ? 'Permintaan' : 'Requests'}
-                      </button>
-                    </div>
-                  </>
-                )}
               </div>
             </div>
-
-            {/* Clear Stock Data Protected Button */}
-            <button
-              onClick={handleOpenClearModal}
-              className="px-4 py-3 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm active:scale-95 shrink-0"
-              title="Protected action: Clear stock data with admin password verification"
-            >
-              <Lock className="w-3.5 h-3.5 text-rose-600" />
-              {language === 'ms' ? 'Kosongkan Data (Imbasan Baru)' : 'Clear Data (Wait for Scanned Data)'}
-            </button>
           </div>
  
           {/* Tab Content */}
@@ -1889,32 +2365,39 @@ export const OxygenDashboardPage: React.FC = () => {
                   setLedgerEndDate(end)
                 }}
                 isLoading={isLedgerLoading}
+                onRefresh={handleRefreshInventoryData}
               />
             )}
  
             {cylinderActiveTab === 'supplier_returns' && (
                <SupplierReturnsSection
+                 hospitalId={hospitalId || ''}
                  documents={returnDocs}
                  requestDocuments={requestDocs}
+                 receiveDocuments={receiveDocs}
                  onCreateClick={() => setIsReturnModalOpen(true)}
                  onCreateRequestClick={() => setIsRequestModalOpen(true)}
+                 onCreateReceiveClick={() => setIsReceiveDocModalOpen(true)}
                  onScanClick={() => setIsScanOpen(true)}
                  onPrintClick={(docId) => setPrintDocId(docId)}
                  onPrintRequestClick={(docId) => setPrintRequestId(docId)}
+                 onPrintReceiveClick={(docId) => setPrintReceiveDocId(docId)}
                  isViewOnly={false}
                  subTab={supplierReturnsSubTab}
                  onSubTabChange={setSupplierReturnsSubTab}
-                 hideSubTabBar={true}
+                 hideSubTabBar={false}
                  onSuccess={async () => {
                    if (!hospitalId) return
-                   const [aggRes, docsRes, reqsRes] = await Promise.all([
+                   const [aggRes, docsRes, reqsRes, recDocsRes] = await Promise.all([
                      getCylinderInventoryByType(hospitalId),
                      getReturnDocuments(hospitalId),
                      getRequestDocuments(hospitalId),
+                     getReceiveDocuments(hospitalId),
                    ])
                    if (aggRes.data) setCylinderAggregates(aggRes.data)
                    if (docsRes.data) setReturnDocs(docsRes.data)
                    if (reqsRes.data) setRequestDocs(reqsRes.data)
+                   if (recDocsRes.data) setReceiveDocs(recDocsRes.data)
                  }}
                />
              )}
@@ -1933,16 +2416,19 @@ export const OxygenDashboardPage: React.FC = () => {
             setSessionScannedCylinders={setSessionScannedCylinders}
             onSuccess={async () => {
               if (!hospitalId) return
-              const [aggRes, docsRes, reqsRes] = await Promise.all([
+              const [aggRes, docsRes, reqsRes, recDocsRes] = await Promise.all([
                 getCylinderInventoryByType(hospitalId),
                 getReturnDocuments(hospitalId),
                 getRequestDocuments(hospitalId),
+                getReceiveDocuments(hospitalId),
               ])
               if (aggRes.data) setCylinderAggregates(aggRes.data)
               if (docsRes.data) setReturnDocs(docsRes.data)
               if (reqsRes.data) setRequestDocs(reqsRes.data)
+              if (recDocsRes.data) setReceiveDocs(recDocsRes.data)
             }}
           />
+
 
           {/* Return Document Modals */}
           <CreateReturnDocumentModal
@@ -1953,14 +2439,16 @@ export const OxygenDashboardPage: React.FC = () => {
             setSessionScannedCylinders={setSessionScannedCylinders}
             onSuccess={async () => {
               if (!hospitalId) return
-              const [aggRes, docsRes, reqsRes] = await Promise.all([
+              const [aggRes, docsRes, reqsRes, recDocsRes] = await Promise.all([
                 getCylinderInventoryByType(hospitalId),
                 getReturnDocuments(hospitalId),
                 getRequestDocuments(hospitalId),
+                getReceiveDocuments(hospitalId),
               ])
               if (aggRes.data) setCylinderAggregates(aggRes.data)
               if (docsRes.data) setReturnDocs(docsRes.data)
               if (reqsRes.data) setRequestDocs(reqsRes.data)
+              if (recDocsRes.data) setReceiveDocs(recDocsRes.data)
             }}
           />
 
@@ -1971,14 +2459,36 @@ export const OxygenDashboardPage: React.FC = () => {
             onClose={() => setIsRequestModalOpen(false)}
             onSuccess={async () => {
               if (!hospitalId) return
-              const [aggRes, docsRes, reqsRes] = await Promise.all([
+              const [aggRes, docsRes, reqsRes, recDocsRes] = await Promise.all([
                 getCylinderInventoryByType(hospitalId),
                 getReturnDocuments(hospitalId),
                 getRequestDocuments(hospitalId),
+                getReceiveDocuments(hospitalId),
               ])
               if (aggRes.data) setCylinderAggregates(aggRes.data)
               if (docsRes.data) setReturnDocs(docsRes.data)
               if (reqsRes.data) setRequestDocs(reqsRes.data)
+              if (recDocsRes.data) setReceiveDocs(recDocsRes.data)
+            }}
+          />
+
+          {/* Receive Document Modals */}
+          <CreateReceiveDocumentModal
+            hospitalId={hospitalId || ''}
+            isOpen={isReceiveDocModalOpen}
+            onClose={() => setIsReceiveDocModalOpen(false)}
+            onSuccess={async () => {
+              if (!hospitalId) return
+              const [aggRes, docsRes, reqsRes, recDocsRes] = await Promise.all([
+                getCylinderInventoryByType(hospitalId),
+                getReturnDocuments(hospitalId),
+                getRequestDocuments(hospitalId),
+                getReceiveDocuments(hospitalId),
+              ])
+              if (aggRes.data) setCylinderAggregates(aggRes.data)
+              if (docsRes.data) setReturnDocs(docsRes.data)
+              if (reqsRes.data) setRequestDocs(reqsRes.data)
+              if (recDocsRes.data) setReceiveDocs(recDocsRes.data)
             }}
           />
 
@@ -1997,6 +2507,14 @@ export const OxygenDashboardPage: React.FC = () => {
               onClose={() => setPrintRequestId(null)}
             />
           )}
+
+          {printReceiveDocId && (
+            <ReceiveDocumentPrintView
+              documentId={printReceiveDocId}
+              isOpen={!!printReceiveDocId}
+              onClose={() => setPrintReceiveDocId(null)}
+            />
+          )}
         </div>
       )
     }
@@ -2012,6 +2530,7 @@ export const OxygenDashboardPage: React.FC = () => {
             departments={departmentsList}
             onViewDetails={(req) => setDetailRequest(req)}
             onPrint={(req) => setPrintDispatchRequestId(req.id)}
+            onDelete={(req) => setDeleteTargetRequest(req)}
           />
 
           <ManualIssueModal
@@ -2019,10 +2538,13 @@ export const OxygenDashboardPage: React.FC = () => {
             onClose={() => setIsManualModalOpen(false)}
             onSubmit={async (data) => {
               if (hospitalId) {
-                await createManualIssue(hospitalId, {
+                const res = await createManualIssue(hospitalId, {
                   ...data,
                   issuer_id: user?.id || ''
                 })
+                if (res.error) {
+                  throw new Error(res.error)
+                }
                 await loadData()
               }
             }}
@@ -2035,13 +2557,18 @@ export const OxygenDashboardPage: React.FC = () => {
           <UnitRequestModal
             isOpen={isUnitModalOpen}
             onClose={() => setIsUnitModalOpen(false)}
+            initialMode={unitModalInitialMode}
+            lockMode={unitModalLockMode}
             onSubmit={async (data) => {
               if (hospitalId) {
-                await createUnitRequest(hospitalId, {
+                const res = await createUnitRequest(hospitalId, {
                   ...data,
                   requester_id: user?.id || '',
                   priority: data.priority
                 })
+                if (res.error) {
+                  throw new Error(res.error)
+                }
                 await loadData()
               }
             }}
@@ -2049,38 +2576,140 @@ export const OxygenDashboardPage: React.FC = () => {
             currentUser={user as any}
           />
 
+          <ReceiveInterFacilityModal
+            isOpen={isReceiveInterFacilityModalOpen}
+            onClose={() => setIsReceiveInterFacilityModalOpen(false)}
+            onSubmit={async (data) => {
+              if (hospitalId) {
+                const res = await createInterFacilityReceivedCylinder(hospitalId, data)
+                if (res.error) {
+                  throw new Error(res.error)
+                }
+                await loadData()
+                if (res.data?.id) {
+                  setPrintDispatchRequestId(res.data.id)
+                }
+              }
+            }}
+            departments={departmentsList}
+            currentUser={user as any}
+            users={hospitalUsers}
+            hospitalId={hospitalId || ''}
+          />
+
+          <ReturnInterFacilityModal
+            isOpen={isReturnInterFacilityModalOpen}
+            onClose={() => setIsReturnInterFacilityModalOpen(false)}
+            onSubmit={async (data) => {
+              if (hospitalId) {
+                const res = await createInterFacilityReturnCylinder(hospitalId, data)
+                if (res.error) {
+                  throw new Error(res.error)
+                }
+                await loadData()
+                if (res.data?.id) {
+                  setPrintDispatchRequestId(res.data.id)
+                }
+              }
+            }}
+            departments={departmentsList}
+            currentUser={user as any}
+            users={hospitalUsers}
+            hospitalId={hospitalId || ''}
+          />
+
           <DispatchRequestDetailModal
             isOpen={!!detailRequest}
             onClose={() => setDetailRequest(null)}
             request={detailRequest}
             currentUser={user as any}
-            onApprove={async (id) => {
-              await approveRequest(id, user?.id || '')
+            onApprove={async (id, adjustedItems) => {
+              if (!isCylinderOfficer) {
+                throw new Error('Hanya Pegawai Farmasi dan Penolong Pegawai Farmasi yang dibenarkan meluluskan permohonan silinder.')
+              }
+              const res = await approveRequest(id, user?.id || '', adjustedItems)
+              if (res.error) throw new Error(res.error)
               await loadData()
+              const updatedReq = (await getCylinderDispatchRequestById(id))?.data
+              if (updatedReq) {
+                setDetailRequest(updatedReq)
+              }
             }}
             onReject={async (id, reason) => {
-              await rejectRequest(id, user?.id || '', reason)
+              if (!isCylinderOfficer) {
+                throw new Error('Hanya Pegawai Farmasi dan Penolong Pegawai Farmasi yang dibenarkan menolak permohonan silinder.')
+              }
+              const res = await rejectRequest(id, user?.id || '', reason)
+              if (res.error) throw new Error(res.error)
               await loadData()
             }}
             onIssue={async (id, items) => {
-              await issueRequest(id, user?.id || '', items)
+              if (!isCylinderOfficer) {
+                throw new Error('Hanya Pegawai Farmasi dan Penolong Pegawai Farmasi yang dibenarkan mengeluarkan (dispatch) silinder.')
+              }
+              const res = await issueRequest(id, user?.id || '', items)
+              if (res.error) throw new Error(res.error)
               await loadData()
+              const updatedReq = (await getCylinderDispatchRequestById(id))?.data
+              if (updatedReq) {
+                setDetailRequest(updatedReq)
+              }
             }}
             onComplete={async (id) => {
-              await completeRequest(id)
+              const res = await completeRequest(id)
+              if (res.error) throw new Error(res.error)
               await loadData()
             }}
             onCancel={async (id) => {
-              await cancelRequest(id)
+              const res = await cancelRequest(id)
+              if (res.error) throw new Error(res.error)
               await loadData()
             }}
+            onUpdateItems={async (id, items, reason) => {
+              const res = await updateRequestItems(id, user?.id || '', items, reason)
+              if (res.error) throw new Error(res.error)
+              await loadData()
+              const updatedReq = (await getCylinderDispatchRequestById(id))?.data
+              if (updatedReq) {
+                setDetailRequest(updatedReq)
+              }
+            }}
+            onDelete={(req) => {
+              setDetailRequest(null)
+              setDeleteTargetRequest(req)
+            }}
           />
+
+          {deleteTargetRequest && (
+            <DeleteDispatchConfirmModal
+              isOpen={!!deleteTargetRequest}
+              request={deleteTargetRequest}
+              onClose={() => setDeleteTargetRequest(null)}
+              onConfirm={async (requestId, reason, password) => {
+                const res = await deleteCylinderDispatchRequest(
+                  requestId,
+                  user?.id || '',
+                  reason,
+                  password
+                )
+                if (res.error) {
+                  throw new Error(res.error)
+                }
+                setDeleteTargetRequest(null)
+                if (detailRequest?.id === requestId) {
+                  setDetailRequest(null)
+                }
+                await loadData()
+              }}
+            />
+          )}
 
           {printDispatchRequestId && (
             <CylinderDispatchPrintView
               requestId={printDispatchRequestId}
               isOpen={!!printDispatchRequestId}
               onClose={() => setPrintDispatchRequestId(null)}
+              supplierName={selectedPricingSupplier !== 'All Suppliers' ? selectedPricingSupplier : 'BORNEO INDAH SDN BHD'}
             />
           )}
         </div>
@@ -2676,7 +3305,8 @@ export const OxygenDashboardPage: React.FC = () => {
               </div>
 
               <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
+                {/* Desktop View: Full Table */}
+                <div className="hidden md:block overflow-x-auto">
                   <table className="w-full border-collapse text-left text-xs text-gray-500">
                     <thead className="bg-slate-50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                       <tr>
@@ -2722,6 +3352,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                   className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold border border-rose-100 transition-all flex items-center gap-1 active:scale-95"
                                   title={language === 'ms' ? 'Nyahaktifkan' : 'Deactivate QR Tag'}
                                 >
+                                  <Trash2 className="w-3 h-3 text-rose-500" />
                                   {language === 'ms' ? 'Nyahaktif' : 'Deactivate'}
                                 </button>
                               </div>
@@ -2731,6 +3362,72 @@ export const OxygenDashboardPage: React.FC = () => {
                       )}
                     </tbody>
                   </table>
+                </div>
+
+                {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
+                <div className="md:hidden divide-y divide-slate-100">
+                  {paginatedTaggedCylinders.length === 0 ? (
+                    <div className="p-8 text-center text-slate-400 text-xs font-semibold italic">
+                      {language === 'ms' ? 'Tiada kod QR dijumpai.' : 'No active QR codes found matching criteria.'}
+                    </div>
+                  ) : (
+                    paginatedTaggedCylinders.map(cyl => (
+                      <div key={cyl.id} className="p-4 space-y-3 hover:bg-slate-50/50 transition-colors">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                              {language === 'ms' ? 'No. Siri Silinder' : 'Cylinder Serial'}
+                            </span>
+                            <span className="font-mono font-bold text-slate-900 text-sm">
+                              {cyl.serial_number}
+                            </span>
+                          </div>
+                          <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[11px] font-bold border border-slate-200 text-right">
+                            {cyl.type_info?.type_name || 'Standard Cylinder'}
+                          </span>
+                        </div>
+
+                        <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 space-y-1">
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            {language === 'ms' ? 'Nilai Tag QR' : 'Active QR Tag Value'}
+                          </span>
+                          <span className="font-mono text-xs text-teal-700 font-bold select-all break-all block">
+                            {cyl.qr_code_value}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-2 pt-1">
+                          <div className="text-[11px] text-slate-500">
+                            <span className="text-slate-400 font-semibold">{language === 'ms' ? 'Didaftar: ' : 'Tagged: '}</span>
+                            <span className="font-semibold text-slate-700">
+                              {cyl.qr_tagged_at || cyl.created_at ? new Date(cyl.qr_tagged_at || cyl.created_at).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                            <button
+                              onClick={() => {
+                                setGeneratedLabels([cyl])
+                                setQrActiveTab('generate')
+                                setSelectedTypeId(cyl.type_id || '')
+                              }}
+                              className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200 transition-all flex items-center gap-1 active:scale-95"
+                            >
+                              <Printer className="w-3 h-3 text-slate-500" />
+                              {language === 'ms' ? 'Cetak' : 'Reprint'}
+                            </button>
+                            <button
+                              onClick={() => handleDeactivateQrTag(cyl.id)}
+                              className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold border border-rose-200 transition-all flex items-center gap-1 active:scale-95"
+                            >
+                              <Trash2 className="w-3 h-3 text-rose-500" />
+                              {language === 'ms' ? 'Nyahaktif' : 'Deactivate'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
 
                 {/* Pagination Controls */}
@@ -2821,8 +3518,12 @@ export const OxygenDashboardPage: React.FC = () => {
       }, {});
 
       const groupNames = Object.keys(groupedCylinders);
-      const activeGroup = selectedReconciliationGroup || groupNames[0] || null;
-      const activeCylinders = activeGroup ? (groupedCylinders[activeGroup] || []) : [];
+      const activeGroup = selectedReconciliationGroup === '__ALL__'
+        ? '__ALL__'
+        : (selectedReconciliationGroup || groupNames[0] || null);
+      const activeCylinders = activeGroup === '__ALL__'
+        ? cylinders
+        : (activeGroup ? (groupedCylinders[activeGroup] || []) : []);
 
       // Categorize cylinders: Available in System (Verified) vs Scanned in Audit (Pending Verification)
       const isCylinderScanned = (cyl: any) => Boolean(
@@ -2849,6 +3550,29 @@ export const OxygenDashboardPage: React.FC = () => {
         ? scannedCylinders
         : systemCylinders;
 
+      // Filter by search / scan query
+      const searchNormalized = reconciliationSearch.trim().toLowerCase();
+      const filteredCylinders = displayCylinders.filter(cyl => {
+        if (!searchNormalized) return true;
+        const serial = (cyl.serial_number || '').toLowerCase();
+        const qr = (cyl.qr_code_value || '').toLowerCase();
+        const rawLoc = physicalLocations[cyl.id] || cyl.scanned_location || getCylinderLocation(cyl);
+        const locStr = (typeof rawLoc === 'object' ? (rawLoc?.location_name || rawLoc?.name || '') : String(rawLoc || '')).toLowerCase();
+        const typeStr = (cyl.type_info?.type_name || '').toLowerCase();
+        return serial.includes(searchNormalized) || qr.includes(searchNormalized) || locStr.includes(searchNormalized) || typeStr.includes(searchNormalized);
+      });
+
+      // Detect if search matches cylinders in other groups
+      const otherGroupMatches = searchNormalized && activeGroup !== '__ALL__'
+        ? cylinders.filter(cyl => {
+            const grp = cyl.type_info?.type_name || 'Standard Cylinder';
+            if (grp === activeGroup) return false;
+            const serial = (cyl.serial_number || '').toLowerCase();
+            const qr = (cyl.qr_code_value || '').toLowerCase();
+            return serial.includes(searchNormalized) || qr.includes(searchNormalized);
+          })
+        : [];
+
       // Single cylinder verify action
       const handleVerifyCylinder = async (cylId: string) => {
         try {
@@ -2858,7 +3582,10 @@ export const OxygenDashboardPage: React.FC = () => {
           const expectedNorm = getExpectedStateForCylinder(cyl);
           const normalizedNew = physicalCounts[cylId] ? normalizeStatusForReconciliation(physicalCounts[cylId]) : expectedNorm;
           const rawNewLoc = physicalLocations[cylId] || cyl.scanned_location || getCylinderLocation(cyl, normalizedNew);
-          const newLocation = typeof rawNewLoc === 'object' ? (rawNewLoc?.location_name || rawNewLoc?.name || 'Pharmacy Store') : (rawNewLoc || 'Pharmacy Store');
+          let newLocation = typeof rawNewLoc === 'object' ? (rawNewLoc?.location_name || rawNewLoc?.name || 'Pharmacy Store') : (rawNewLoc || 'Pharmacy Store');
+          if (normalizedNew === 'available') {
+            newLocation = 'Pharmacy Store';
+          }
           const dbStatus = mapReconciliationToDbStatus(normalizedNew, newLocation);
           const auditorName = physicalScannedBy[cylId]?.user || cyl.scanned_by_name || user?.full_name || 'AMRI AMIT';
 
@@ -2943,13 +3670,161 @@ export const OxygenDashboardPage: React.FC = () => {
         }
       };
 
+      // Barcode / QR scanner Enter key handler
+      const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const query = reconciliationSearch.trim().toLowerCase();
+          if (!query) return;
+
+          // 1. Search in active cylinders first
+          let target = activeCylinders.find(c => 
+            (c.serial_number || '').toLowerCase() === query || 
+            (c.qr_code_value || '').toLowerCase() === query
+          );
+
+          let matchedGroup: string | null = null;
+          // 2. If not found in active cylinders, search all cylinders across groups
+          if (!target) {
+            target = cylinders.find(c => 
+              (c.serial_number || '').toLowerCase() === query || 
+              (c.qr_code_value || '').toLowerCase() === query
+            );
+            if (target) {
+              matchedGroup = target.type_info?.type_name || 'Standard Cylinder';
+              setSelectedReconciliationGroup(matchedGroup);
+            }
+          }
+
+          if (target) {
+            setHighlightedCylinderId(target.id);
+            setSelectedReconciliationIds(prev => new Set(prev).add(target!.id));
+            setReconciliationPage(1);
+            setAuditSuccessMsg(
+              language === 'ms'
+                ? `🎯 Silinder ${target.serial_number} ditemui ${matchedGroup ? `(Kumpulan: ${matchedGroup})` : ''}!`
+                : `🎯 Cylinder ${target.serial_number} found ${matchedGroup ? `(Group: ${matchedGroup})` : ''}!`
+            );
+            setTimeout(() => setAuditSuccessMsg(null), 4000);
+          } else {
+            setAuditSuccessMsg(
+              language === 'ms'
+                ? `⚠️ Tiada silinder ditemui dengan no. siri / kod "${reconciliationSearch}".`
+                : `⚠️ No cylinder found with serial / code "${reconciliationSearch}".`
+            );
+            setTimeout(() => setAuditSuccessMsg(null), 4000);
+          }
+        }
+      };
+
       // Pagination calculation
-      const totalCylindersInTab = displayCylinders.length;
-      const totalPages = Math.ceil(totalCylindersInTab / reconciliationPageSize);
-      const paginatedCylinders = displayCylinders.slice(
+      const totalCylindersInTab = filteredCylinders.length;
+      const totalPages = Math.max(1, Math.ceil(totalCylindersInTab / reconciliationPageSize));
+      const paginatedCylinders = filteredCylinders.slice(
         (reconciliationPage - 1) * reconciliationPageSize,
         reconciliationPage * reconciliationPageSize
       );
+
+      // Bulk Selection State Helpers
+      const isAllVisibleSelected = paginatedCylinders.length > 0 && paginatedCylinders.every(c => selectedReconciliationIds.has(c.id));
+      const isSomeVisibleSelected = paginatedCylinders.some(c => selectedReconciliationIds.has(c.id)) && !isAllVisibleSelected;
+
+      const handleToggleSelectAllVisible = () => {
+        setSelectedReconciliationIds(prev => {
+          const next = new Set(prev);
+          if (isAllVisibleSelected) {
+            paginatedCylinders.forEach(c => next.delete(c.id));
+          } else {
+            paginatedCylinders.forEach(c => next.add(c.id));
+          }
+          return next;
+        });
+      };
+
+      const handleSelectAllInGroup = () => {
+        setSelectedReconciliationIds(prev => {
+          const next = new Set(prev);
+          filteredCylinders.forEach(c => next.add(c.id));
+          return next;
+        });
+      };
+
+      const handleToggleSelectRow = (cylId: string) => {
+        setSelectedReconciliationIds(prev => {
+          const next = new Set(prev);
+          if (next.has(cylId)) {
+            next.delete(cylId);
+          } else {
+            next.add(cylId);
+          }
+          return next;
+        });
+      };
+
+      // Bulk Change Physical Count / Status
+      const handleApplyBulkStatus = (targetStatus: string) => {
+        if (selectedReconciliationIds.size === 0) return;
+        const normStatus = normalizeStatusForReconciliation(targetStatus);
+        const currentAuditor = user?.full_name || user?.email || 'Staff Auditor';
+        const nowFormatted = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const selectedCount = selectedReconciliationIds.size;
+
+        setPhysicalCounts(prev => {
+          const next = { ...prev };
+          selectedReconciliationIds.forEach(id => {
+            next[id] = normStatus;
+          });
+          return next;
+        });
+
+        setPhysicalLocations(prev => {
+          const next = { ...prev };
+          selectedReconciliationIds.forEach(id => {
+            if (normStatus === 'available' || normStatus === 'empty') {
+              next[id] = 'Pharmacy Store';
+            } else if (normStatus === 'return') {
+              next[id] = 'Supplier';
+            }
+          });
+          return next;
+        });
+
+        setPhysicalScannedBy(prev => {
+          const next = { ...prev };
+          selectedReconciliationIds.forEach(id => {
+            next[id] = { user: currentAuditor, timestamp: nowFormatted };
+          });
+          return next;
+        });
+
+        const label = getStatusLabel(normStatus);
+        setAuditSuccessMsg(
+          language === 'ms'
+            ? `✅ Status bagi ${selectedCount} silinder telah ditukar kepada "${label}"! Sila klik "Save Reconciliation Audit" untuk menyimpan.`
+            : `✅ Status for ${selectedCount} cylinders updated to "${label}"! Please click "Save Reconciliation Audit" to save.`
+        );
+        setTimeout(() => setAuditSuccessMsg(null), 5000);
+      };
+
+      // Bulk Verify Selected Cylinders
+      const handleBulkVerifySelected = async () => {
+        if (selectedReconciliationIds.size === 0) return;
+        const idsToVerify = Array.from(selectedReconciliationIds);
+        try {
+          for (const id of idsToVerify) {
+            await handleVerifyCylinder(id);
+          }
+          setSelectedReconciliationIds(new Set());
+          setAuditSuccessMsg(
+            language === 'ms'
+              ? `✅ ${idsToVerify.length} silinder berjaya disahkan dan direkodkan ke Sistem!`
+              : `✅ ${idsToVerify.length} cylinders verified and recorded in System Inventory!`
+          );
+          setTimeout(() => setAuditSuccessMsg(null), 4000);
+        } catch (err) {
+          console.error('Error verifying selected cylinders:', err);
+        }
+      };
 
       const handleGroupSelect = (groupName: string) => {
         setSelectedReconciliationGroup(groupName);
@@ -2977,6 +3852,21 @@ export const OxygenDashboardPage: React.FC = () => {
                 <p className="text-xs text-gray-400 italic">{language === 'ms' ? 'Tiada jenis tersedia' : 'No types available'}</p>
               ) : (
                 <div className="space-y-1">
+                  <button
+                    onClick={() => handleGroupSelect('__ALL__')}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl text-left text-xs font-bold transition-all border ${
+                      activeGroup === '__ALL__'
+                        ? 'bg-[#00a68a]/10 text-[#00a68a] border-[#00a68a]/20 shadow-sm shadow-[#00a68a]/5'
+                        : 'text-gray-600 hover:bg-slate-50 border-transparent hover:text-gray-900'
+                    }`}
+                  >
+                    <span className="truncate pr-2">{language === 'ms' ? 'Semua Silinder' : 'All Cylinders'}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
+                      activeGroup === '__ALL__' ? 'bg-[#00a68a] text-white' : 'bg-slate-100 text-slate-500'
+                    }`}>
+                      {cylinders.length}
+                    </span>
+                  </button>
                   {groupNames.map(name => {
                     const count = groupedCylinders[name].length;
                     const isActive = name === activeGroup;
@@ -3010,7 +3900,9 @@ export const OxygenDashboardPage: React.FC = () => {
                   <div className="px-4 py-3.5 border-b border-gray-100 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <Layers className="w-4 h-4 text-[#00a68a]" />
-                      <h3 className="text-xs font-black text-gray-800 uppercase tracking-wider">{activeGroup}</h3>
+                      <h3 className="text-xs font-black text-gray-800 uppercase tracking-wider">
+                        {activeGroup === '__ALL__' ? (language === 'ms' ? 'SEMUA SILINDER (KESELURUHAN)' : 'ALL CYLINDERS (TOTAL)') : activeGroup}
+                      </h3>
                     </div>
 
                     {/* Sub-Tab Switcher - 2 Tabs: System Inventory & Already Scanned */}
@@ -3066,11 +3958,221 @@ export const OxygenDashboardPage: React.FC = () => {
                       {language === 'ms' ? 'Menunjukkan' : 'Showing'} {paginatedCylinders.length} {language === 'ms' ? 'daripada' : 'of'} {totalCylindersInTab}
                     </span>
                   </div>
+
+                  {/* Search / Scan Bar & Quick Actions */}
+                  <div className="p-3.5 border-b border-gray-100 bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                    <div className="relative flex-1">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                        <Search className="w-4 h-4 text-slate-400" />
+                      </div>
+                      <input
+                        type="text"
+                        value={reconciliationSearch}
+                        onChange={(e) => {
+                          setReconciliationSearch(e.target.value);
+                          setReconciliationPage(1);
+                        }}
+                        onKeyDown={handleSearchKeyDown}
+                        placeholder={
+                          language === 'ms' 
+                            ? 'Imbas kod bar/QR atau taip No. Siri silinder (cth: saboxy-00211)...' 
+                            : 'Scan barcode/QR or type cylinder serial (e.g. saboxy-00211)...'
+                        }
+                        className="w-full pl-9 pr-24 py-2 border border-gray-200 rounded-xl text-xs font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#00a68a] focus:ring-1 focus:ring-[#00a68a] transition-all bg-slate-50/50 hover:bg-white focus:bg-white"
+                      />
+                      <div className="absolute inset-y-0 right-0 pr-1.5 flex items-center gap-1">
+                        {reconciliationSearch && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setReconciliationSearch('');
+                              setReconciliationPage(1);
+                            }}
+                            className="p-1 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-lg transition-colors cursor-pointer"
+                            title={language === 'ms' ? 'Kosongkan carian' : 'Clear search'}
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setIsAuditScanOpen(true)}
+                          className="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/60 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
+                          title={language === 'ms' ? 'Imbas Kod QR Kamera' : 'Scan QR Camera'}
+                        >
+                          <Camera className="w-3 h-3 text-emerald-600" />
+                          <span>{language === 'ms' ? 'Imbas' : 'Scan'}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {reconciliationSearch && (
+                      <div className="text-[11px] text-gray-500 font-bold shrink-0 flex items-center gap-1.5">
+                        <span className="px-2.5 py-1 rounded-lg bg-[#00a68a]/10 text-[#00a68a] border border-[#00a68a]/20">
+                          {filteredCylinders.length} {language === 'ms' ? 'dijumpai' : 'found'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Cross-Group Discovery Alert */}
+                  {otherGroupMatches.length > 0 && (
+                    <div className="px-4 py-2.5 bg-amber-50/90 border-b border-amber-200/80 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-900">
+                      <div className="flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                        <span>
+                          {language === 'ms'
+                            ? `Dijumpai ${otherGroupMatches.length} silinder sepadan dalam kumpulan lain: `
+                            : `Found ${otherGroupMatches.length} matching cylinder(s) in other groups: `}
+                          <strong className="font-mono font-bold">
+                            {Array.from(new Set(otherGroupMatches.map(c => c.type_info?.type_name || 'Standard Cylinder'))).slice(0, 2).join(', ')}
+                          </strong>
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const targetGrp = otherGroupMatches[0]?.type_info?.type_name || 'Standard Cylinder';
+                          setSelectedReconciliationGroup(targetGrp);
+                          setReconciliationPage(1);
+                        }}
+                        className="px-3 py-1 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-lg text-[11px] transition-all cursor-pointer shadow-xs"
+                      >
+                        {language === 'ms' ? 'Tukar ke Kumpulan Ini' : 'Switch to Group'}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Bulk Action Toolbar */}
+                  {selectedReconciliationIds.size > 0 && (
+                    <div className="p-3 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-b border-emerald-200 flex flex-wrap items-center justify-between gap-3 animate-in fade-in duration-200">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-xs font-black flex items-center gap-1.5 shadow-xs">
+                          <CheckSquare className="w-3.5 h-3.5" />
+                          {selectedReconciliationIds.size} {language === 'ms' ? 'Dipilih' : 'Selected'}
+                        </span>
+
+                        {filteredCylinders.length > paginatedCylinders.length && selectedReconciliationIds.size < filteredCylinders.length && (
+                          <button
+                            type="button"
+                            onClick={handleSelectAllInGroup}
+                            className="text-[11px] text-[#00a68a] hover:underline font-bold cursor-pointer"
+                          >
+                            {language === 'ms' 
+                              ? `Pilih semua ${filteredCylinders.length} silinder dalam senarai ini`
+                              : `Select all ${filteredCylinders.length} cylinders in this list`}
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Bulk Status Action Controls */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                          {language === 'ms' ? 'Tukar Status Pukal:' : 'Bulk Status:'}
+                        </span>
+
+                        <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-gray-200 shadow-xs">
+                          <select
+                            value={bulkStatus}
+                            onChange={(e) => setBulkStatus(e.target.value)}
+                            className="text-xs font-bold text-gray-700 bg-transparent py-1 px-2 outline-none border-r border-gray-100 cursor-pointer"
+                          >
+                            <option value="available">📦 {language === 'ms' ? 'Tersedia (Stor)' : 'Available (Store)'}</option>
+                            <option value="used">🏥 {language === 'ms' ? 'Digunakan (Wad)' : 'In Use / Used (Ward)'}</option>
+                            <option value="return">🔄 {language === 'ms' ? 'Pulang (Pembekal)' : 'Return (Supplier)'}</option>
+                            <option value="empty">⭕ {language === 'ms' ? 'Kosong (Stor)' : 'Empty (Store)'}</option>
+                          </select>
+
+                          <button
+                            type="button"
+                            onClick={() => handleApplyBulkStatus(bulkStatus)}
+                            className="px-3 py-1 bg-[#00a68a] hover:bg-[#008f76] active:scale-95 text-white font-black text-xs rounded-lg transition-all cursor-pointer shadow-xs"
+                          >
+                            {language === 'ms' ? 'Terapkan' : 'Apply'}
+                          </button>
+                        </div>
+
+                        {/* Quick 1-click status pills */}
+                        <div className="hidden xl:flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleApplyBulkStatus('available')}
+                            className="px-2 py-1 bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                            title="Set to Available (Store)"
+                          >
+                            📦 {language === 'ms' ? 'Tersedia' : 'Available'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleApplyBulkStatus('used')}
+                            className="px-2 py-1 bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                            title="Set to In Use (Ward)"
+                          >
+                            🏥 {language === 'ms' ? 'Digunakan' : 'In Use'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleApplyBulkStatus('return')}
+                            className="px-2 py-1 bg-white hover:bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                            title="Set to Return (Supplier)"
+                          >
+                            🔄 {language === 'ms' ? 'Pulang' : 'Return'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleApplyBulkStatus('empty')}
+                            className="px-2 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                            title="Set to Empty (Store)"
+                          >
+                            ⭕ {language === 'ms' ? 'Kosong' : 'Empty'}
+                          </button>
+                        </div>
+
+                        {/* Bulk Verify Button */}
+                        <button
+                          type="button"
+                          onClick={handleBulkVerifySelected}
+                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs flex items-center gap-1 transition-all cursor-pointer"
+                          title={language === 'ms' ? 'Sahkan semua silinder dipilih' : 'Verify all selected cylinders'}
+                        >
+                          <CheckCheck className="w-3.5 h-3.5" />
+                          <span>{language === 'ms' ? 'Sahkan Pilihan' : 'Verify Selected'}</span>
+                        </button>
+
+                        {/* Bulk Delete Button */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const selectedList = cylinders.filter(c => selectedReconciliationIds.has(c.id));
+                            if (selectedList.length > 0) {
+                              setDeleteCylinderTarget(selectedList);
+                            }
+                          }}
+                          className="px-3 py-1 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs flex items-center gap-1 transition-all cursor-pointer"
+                          title={language === 'ms' ? 'Padam semua silinder dipilih secara kekal' : 'Permanently delete all selected cylinders'}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>{language === 'ms' ? 'Padam Pilihan' : 'Delete Selected'}</span>
+                        </button>
+
+                        {/* Clear Selection Button */}
+                        <button
+                          type="button"
+                          onClick={() => setSelectedReconciliationIds(new Set())}
+                          className="p-1 hover:bg-slate-200/60 text-slate-500 rounded-lg transition-colors cursor-pointer"
+                          title={language === 'ms' ? 'Nyahpilih Semua' : 'Deselect All'}
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Mobile View: Cards Layout */}
                   <div className="block md:hidden divide-y divide-gray-100">
                     {paginatedCylinders.length === 0 ? (
                       <div className="py-8 text-center text-gray-400 font-bold">
-                        {language === 'ms' ? 'Tiada silinder dalam tab ini.' : 'No cylinders in this tab.'}
+                        {language === 'ms' ? 'Tiada silinder ditemui.' : 'No cylinders found.'}
                       </div>
                     ) : (
                       paginatedCylinders.map(cyl => {
@@ -3083,11 +4185,26 @@ export const OxygenDashboardPage: React.FC = () => {
                         const isVerified = isCylinderVerified(cyl);
                         const scannerInfo = physicalScannedBy[cyl.id];
                         const scannedUser = scannerInfo?.user || cyl.scanned_by_name || (isScanned ? (user?.full_name || 'Staff Auditor') : null);
+                        const isSelected = selectedReconciliationIds.has(cyl.id);
+                        const isHighlighted = highlightedCylinderId === cyl.id;
 
                         return (
-                          <div key={cyl.id} className="p-4 space-y-3">
+                          <div 
+                            key={cyl.id} 
+                            className={`p-4 space-y-3 transition-colors ${
+                              isSelected ? 'bg-emerald-50/50' : ''
+                            } ${
+                              isHighlighted ? 'ring-2 ring-[#00a68a] bg-emerald-50/80 animate-pulse' : ''
+                            }`}
+                          >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => handleToggleSelectRow(cyl.id)}
+                                  className="w-4 h-4 rounded text-[#00a68a] focus:ring-[#00a68a] border-gray-300 cursor-pointer"
+                                />
                                 <span className="font-mono font-bold text-gray-900 text-sm">{cyl.serial_number}</span>
                                 {isScanned && (
                                   <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded text-[9px] font-bold inline-flex items-center gap-1">
@@ -3107,6 +4224,14 @@ export const OxygenDashboardPage: React.FC = () => {
                               )}
                             </div>
                             <div className="grid grid-cols-2 gap-3 text-[11px]">
+                              {activeGroup === '__ALL__' && (
+                                <div className="space-y-0.5 col-span-2">
+                                  <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">{language === 'ms' ? 'Jenis Silinder' : 'Cylinder Type'}</span>
+                                  <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md border border-slate-200 text-[10px] font-bold inline-block">
+                                    {cyl.type_info?.type_name || 'Standard'}
+                                  </span>
+                                </div>
+                              )}
                               <div className="space-y-0.5">
                                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">{language === 'ms' ? 'Lokasi Silinder' : 'Location / Ward'}</span>
                                 <span className="px-2 py-0.5 bg-teal-50 text-teal-700 rounded-md border border-teal-100 text-[10px] font-bold inline-block">
@@ -3130,24 +4255,56 @@ export const OxygenDashboardPage: React.FC = () => {
                               <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">{language === 'ms' ? 'Status Fizikal' : 'Physical Count / Status'}</span>
                               <select 
                                 value={currentPhysical}
-                                onChange={(e) => setPhysicalCounts(prev => ({ ...prev, [cyl.id]: e.target.value }))}
-                                className="w-full border border-gray-200 rounded-lg p-2 bg-white font-bold text-gray-800 text-xs outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                                onChange={(e) => {
+                                  const newVal = e.target.value;
+                                  setPhysicalCounts(prev => ({ ...prev, [cyl.id]: newVal }));
+                                  if (newVal === 'available' || newVal === 'empty') {
+                                    setPhysicalLocations(prev => ({ ...prev, [cyl.id]: 'Pharmacy Store' }));
+                                  } else if (newVal === 'return') {
+                                    setPhysicalLocations(prev => ({ ...prev, [cyl.id]: 'Supplier' }));
+                                  }
+                                  setPhysicalScannedBy(prev => ({
+                                    ...prev,
+                                    [cyl.id]: {
+                                      user: user?.full_name || user?.email || 'Staff Auditor',
+                                      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                    }
+                                  }));
+                                }}
+                                className="w-full border border-gray-200 rounded-lg p-2 bg-white font-bold text-gray-800 text-xs outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500 cursor-pointer"
                               >
-                                <option value="used">{language === 'ms' ? 'Digunakan (Wad)' : 'Used / In Use (Ward)'}</option>
                                 <option value="available">{language === 'ms' ? 'Tersedia (Stor)' : 'Available (Store)'}</option>
+                                <option value="used">{language === 'ms' ? 'Digunakan (Wad)' : 'Used / In Use (Ward)'}</option>
                                 <option value="empty">{language === 'ms' ? 'Kosong (Stor)' : 'Empty (Store)'}</option>
                                 <option value="return">{language === 'ms' ? 'Pemulangan (Pembekal)' : 'Return (Supplier)'}</option>
                               </select>
                             </div>
-                            {reconciliationTab === 'scanned' && (
+                            <div className="flex items-center gap-2 pt-1">
+                              {reconciliationTab === 'scanned' ? (
+                                <button
+                                  type="button"
+                                  onClick={() => handleVerifyCylinder(cyl.id)}
+                                  className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                                >
+                                  <CheckCircle className="w-4 h-4" />
+                                  <span>{language === 'ms' ? 'Sahkan Silinder' : 'Verify Cylinder'}</span>
+                                </button>
+                              ) : (
+                                <div className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold">
+                                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                                  <span>{language === 'ms' ? 'Disahkan' : 'Verified'}</span>
+                                </div>
+                              )}
                               <button
-                                onClick={() => handleVerifyCylinder(cyl.id)}
-                                className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                                type="button"
+                                onClick={() => setDeleteCylinderTarget([cyl])}
+                                className="py-2 px-3 border border-rose-200 hover:bg-rose-50 text-rose-600 active:scale-95 font-bold text-xs rounded-xl flex items-center justify-center gap-1 transition-all cursor-pointer shrink-0 shadow-xs"
+                                title={language === 'ms' ? `Padam Silinder ${cyl.serial_number}` : `Delete Cylinder ${cyl.serial_number}`}
                               >
-                                <CheckCircle className="w-4 h-4" />
-                                <span>{language === 'ms' ? 'Sahkan Silinder' : 'Verify Cylinder'}</span>
+                                <Trash2 className="w-4 h-4" />
+                                <span>{language === 'ms' ? 'Padam' : 'Delete'}</span>
                               </button>
-                            )}
+                            </div>
                           </div>
                         );
                       })
@@ -3159,20 +4316,35 @@ export const OxygenDashboardPage: React.FC = () => {
                     <table className="w-full border-collapse text-left text-xs text-gray-500">
                       <thead className="bg-slate-50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                         <tr>
-                          <th scope="col" className="px-6 py-3 font-semibold">{language === 'ms' ? 'No. Siri' : 'Cylinder Serial'}</th>
-                          <th scope="col" className="px-6 py-3 font-semibold">{language === 'ms' ? 'Lokasi Silinder' : 'Location / Ward'}</th>
-                          <th scope="col" className="px-6 py-3 font-semibold">{language === 'ms' ? 'Diimbas Oleh' : 'Scanned By'}</th>
-                          <th scope="col" className="px-6 py-3 font-semibold">{language === 'ms' ? 'Jangkaan' : 'Expected State'}</th>
-                          <th scope="col" className="px-6 py-3 font-semibold">{language === 'ms' ? 'Status Fizikal' : 'Physical Count / Status'}</th>
-                          <th scope="col" className="px-6 py-3 font-semibold">{language === 'ms' ? 'Audit' : 'Audit Status'}</th>
-                          <th scope="col" className="px-6 py-3 font-semibold text-right">{language === 'ms' ? 'Tindakan' : 'Action'}</th>
+                          <th scope="col" className="w-10 px-4 py-3 text-center">
+                            <input
+                              type="checkbox"
+                              checked={isAllVisibleSelected}
+                              ref={el => {
+                                if (el) el.indeterminate = isSomeVisibleSelected;
+                              }}
+                              onChange={handleToggleSelectAllVisible}
+                              className="w-4 h-4 rounded text-[#00a68a] focus:ring-[#00a68a] border-gray-300 cursor-pointer"
+                              title={language === 'ms' ? 'Pilih semua di halaman ini' : 'Select all on this page'}
+                            />
+                          </th>
+                          <th scope="col" className="px-4 py-3 font-semibold">{language === 'ms' ? 'No. Siri' : 'Cylinder Serial'}</th>
+                          {activeGroup === '__ALL__' && (
+                            <th scope="col" className="px-4 py-3 font-semibold">{language === 'ms' ? 'Jenis Silinder' : 'Cylinder Type'}</th>
+                          )}
+                          <th scope="col" className="px-4 py-3 font-semibold">{language === 'ms' ? 'Lokasi Silinder' : 'Location / Ward'}</th>
+                          <th scope="col" className="px-4 py-3 font-semibold">{language === 'ms' ? 'Diimbas Oleh' : 'Scanned By'}</th>
+                          <th scope="col" className="px-4 py-3 font-semibold">{language === 'ms' ? 'Jangkaan' : 'Expected State'}</th>
+                          <th scope="col" className="px-4 py-3 font-semibold">{language === 'ms' ? 'Status Fizikal' : 'Physical Count / Status'}</th>
+                          <th scope="col" className="px-4 py-3 font-semibold">{language === 'ms' ? 'Audit' : 'Audit Status'}</th>
+                          <th scope="col" className="px-4 py-3 font-semibold text-right">{language === 'ms' ? 'Tindakan' : 'Action'}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100 border-t border-gray-100">
                         {paginatedCylinders.length === 0 ? (
                           <tr>
-                            <td colSpan={7} className="py-8 text-center text-gray-400 font-bold">
-                              {language === 'ms' ? 'Tiada silinder dalam tab ini.' : 'No cylinders in this tab.'}
+                            <td colSpan={activeGroup === '__ALL__' ? 9 : 8} className="py-8 text-center text-gray-400 font-bold">
+                              {language === 'ms' ? 'Tiada silinder ditemui.' : 'No cylinders found.'}
                             </td>
                           </tr>
                         ) : (
@@ -3187,10 +4359,27 @@ export const OxygenDashboardPage: React.FC = () => {
                             const scannerInfo = physicalScannedBy[cyl.id];
                             const scannedUser = scannerInfo?.user || cyl.scanned_by_name || (isScanned ? (user?.full_name || 'Staff Auditor') : null);
                             const scannedTime = scannerInfo?.timestamp || (cyl.qr_tagged_at ? new Date(cyl.qr_tagged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : null);
+                            const isSelected = selectedReconciliationIds.has(cyl.id);
+                            const isHighlighted = highlightedCylinderId === cyl.id;
 
                             return (
-                              <tr key={cyl.id} className="hover:bg-slate-50/50 transition-colors">
-                                <td className="px-6 py-4 font-mono font-bold text-gray-900">
+                              <tr 
+                                key={cyl.id} 
+                                className={`transition-colors ${
+                                  isSelected ? 'bg-emerald-50/50' : 'hover:bg-slate-50/50'
+                                } ${
+                                  isHighlighted ? 'ring-2 ring-[#00a68a] bg-emerald-50/80 animate-pulse' : ''
+                                }`}
+                              >
+                                <td className="w-10 px-4 py-4 text-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => handleToggleSelectRow(cyl.id)}
+                                    className="w-4 h-4 rounded text-[#00a68a] focus:ring-[#00a68a] border-gray-300 cursor-pointer"
+                                  />
+                                </td>
+                                <td className="px-4 py-4 font-mono font-bold text-gray-900">
                                   <div className="flex items-center gap-2">
                                     <span>{cyl.serial_number}</span>
                                     {isScanned && (
@@ -3201,13 +4390,20 @@ export const OxygenDashboardPage: React.FC = () => {
                                     )}
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 font-semibold text-gray-600">
+                                {activeGroup === '__ALL__' && (
+                                  <td className="px-4 py-4 font-semibold text-gray-600">
+                                    <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[10px] font-bold">
+                                      {cyl.type_info?.type_name || 'Standard'}
+                                    </span>
+                                  </td>
+                                )}
+                                <td className="px-4 py-4 font-semibold text-gray-600">
                                   <span className="px-2.5 py-1 bg-teal-50 text-teal-700 rounded-lg border border-teal-100 text-[10px] font-bold inline-flex items-center gap-1">
                                     <Building2 className="w-3 h-3 text-teal-600" />
                                     {locationLabel}
                                   </span>
                                 </td>
-                                <td className="px-6 py-4 font-semibold text-gray-700">
+                                <td className="px-4 py-4 font-semibold text-gray-700">
                                   {isScanned && scannedUser ? (
                                     <div className="flex items-center gap-1.5">
                                       <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-black flex items-center justify-center text-[9px] shrink-0">
@@ -3228,45 +4424,71 @@ export const OxygenDashboardPage: React.FC = () => {
                                     </span>
                                   )}
                                 </td>
-                                <td className="px-6 py-4 font-semibold text-gray-600 uppercase">
+                                <td className="px-4 py-4 font-semibold text-gray-600 uppercase">
                                   <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg border border-slate-200 text-[10px] font-bold">
                                     {getStatusLabel(expectedNorm)}
                                   </span>
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className="px-4 py-4">
                                   <select 
                                     value={currentPhysical}
-                                    onChange={(e) => setPhysicalCounts(prev => ({ ...prev, [cyl.id]: e.target.value }))}
-                                    className="border border-gray-200 rounded-lg p-1.5 bg-white font-bold text-gray-800 text-[11px] outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                                    onChange={(e) => {
+                                      const newVal = e.target.value;
+                                      setPhysicalCounts(prev => ({ ...prev, [cyl.id]: newVal }));
+                                      if (newVal === 'available' || newVal === 'empty') {
+                                        setPhysicalLocations(prev => ({ ...prev, [cyl.id]: 'Pharmacy Store' }));
+                                      } else if (newVal === 'return') {
+                                        setPhysicalLocations(prev => ({ ...prev, [cyl.id]: 'Supplier' }));
+                                      }
+                                      setPhysicalScannedBy(prev => ({
+                                        ...prev,
+                                        [cyl.id]: {
+                                          user: user?.full_name || user?.email || 'Staff Auditor',
+                                          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                        }
+                                      }));
+                                    }}
+                                    className="border border-gray-200 rounded-lg p-1.5 bg-white font-bold text-gray-800 text-[11px] outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500 cursor-pointer"
                                   >
-                                    <option value="used">{language === 'ms' ? 'Digunakan (Wad)' : 'Used / In Use (Ward)'}</option>
                                     <option value="available">{language === 'ms' ? 'Tersedia (Stor)' : 'Available (Store)'}</option>
+                                    <option value="used">{language === 'ms' ? 'Digunakan (Wad)' : 'Used / In Use (Ward)'}</option>
                                     <option value="empty">{language === 'ms' ? 'Kosong (Stor)' : 'Empty (Store)'}</option>
                                     <option value="return">{language === 'ms' ? 'Pemulangan (Pembekal)' : 'Return (Supplier)'}</option>
                                   </select>
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className="px-4 py-4">
                                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider 
                                     ${isMatched ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-red-100 text-red-700 border border-red-200'}`}
                                   >
                                     {isMatched ? (language === 'ms' ? 'Padan' : 'Matched') : (language === 'ms' ? 'Tidak Padan' : 'Mismatch')}
                                   </span>
                                 </td>
-                                <td className="px-6 py-4 text-right">
-                                  {reconciliationTab === 'scanned' ? (
+                                <td className="px-4 py-4 text-right">
+                                  <div className="flex items-center justify-end gap-1.5">
+                                    {reconciliationTab === 'scanned' ? (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleVerifyCylinder(cyl.id)}
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer"
+                                      >
+                                        <CheckCircle className="w-3.5 h-3.5" />
+                                        {language === 'ms' ? 'Sahkan' : 'Verify'}
+                                      </button>
+                                    ) : (
+                                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-[10px] font-bold">
+                                        <CheckCircle className="w-3 h-3 text-emerald-600" />
+                                        {language === 'ms' ? 'Disahkan' : 'Verified'}
+                                      </span>
+                                    )}
                                     <button
-                                      onClick={() => handleVerifyCylinder(cyl.id)}
-                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer"
+                                      type="button"
+                                      onClick={() => setDeleteCylinderTarget([cyl])}
+                                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer border border-transparent hover:border-rose-200 active:scale-90"
+                                      title={language === 'ms' ? `Padam Silinder ${cyl.serial_number}` : `Delete Cylinder ${cyl.serial_number}`}
                                     >
-                                      <CheckCircle className="w-3.5 h-3.5" />
-                                      {language === 'ms' ? 'Sahkan' : 'Verify'}
+                                      <Trash2 className="w-4 h-4" />
                                     </button>
-                                  ) : (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-[10px] font-bold">
-                                      <CheckCircle className="w-3 h-3 text-emerald-600" />
-                                      {language === 'ms' ? 'Disahkan' : 'Verified'}
-                                    </span>
-                                  )}
+                                  </div>
                                 </td>
                               </tr>
                             );
@@ -3322,6 +4544,7 @@ export const OxygenDashboardPage: React.FC = () => {
                   reconciliationLogs.map(log => {
                     const auditorTitle = log.user?.full_name || log.new_values?.verified_by || 'AMRI AMIT';
                     const isVerificationAction = log.action === 'VERIFIED_CYLINDER_AUDIT';
+                    const isDeleteAction = log.action === 'DELETE_OXYGEN_CYLINDER' || log.action === 'BULK_DELETE_OXYGEN_CYLINDERS';
 
                     return (
                       <div key={log.id} className="p-4 hover:bg-slate-50/50 transition-colors text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -3344,6 +4567,27 @@ export const OxygenDashboardPage: React.FC = () => {
                               <span>({language === 'ms' ? 'Status' : 'Status'}:</span>
                               <span className="font-bold text-emerald-600 uppercase">{log.new_values?.status || 'Available'}</span>
                               <span>)</span>
+                            </p>
+                          ) : isDeleteAction ? (
+                            <p className="text-gray-600 font-medium flex items-center flex-wrap gap-1">
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded text-[9px] font-bold mr-1">
+                                <Trash2 className="w-2.5 h-2.5 text-rose-600" />
+                                {language === 'ms' ? 'Dipadam' : 'Deleted'}
+                              </span>
+                              {log.action === 'BULK_DELETE_OXYGEN_CYLINDERS' ? (
+                                <span>
+                                  {language === 'ms' ? `Sebanyak ${log.new_values?.count || ''} silinder telah dipadam dari pangkalan data.` : `${log.new_values?.count || ''} cylinders were deleted from inventory database.`}
+                                </span>
+                              ) : (
+                                <span>
+                                  {language === 'ms' ? 'Silinder' : 'Cylinder'} <span className="font-mono font-bold text-gray-900">{log.new_values?.serial_number || log.old_values?.serial_number || 'N/A'}</span> {language === 'ms' ? 'telah dipadam secara kekal dari inventori.' : 'was deleted permanently from inventory.'}
+                                </span>
+                              )}
+                              {log.new_values?.reason && (
+                                <span className="text-slate-500 italic text-[11px]">
+                                  ({log.new_values.reason})
+                                </span>
+                              )}
                             </p>
                           ) : (
                             <p className="text-gray-600 font-medium">
@@ -3388,6 +4632,8 @@ export const OxygenDashboardPage: React.FC = () => {
                 const groupKey = cyl.type_info?.type_name || 'Standard Cylinder';
                 setSelectedReconciliationGroup(groupKey);
               }
+              setHighlightedCylinderId(cylinderId);
+              setSelectedReconciliationIds(prev => new Set(prev).add(cylinderId));
             }}
             onBatchScanMatch={(batchItems) => {
               const currentAuditor = user?.full_name || user?.email || 'Staff Auditor';
@@ -3418,6 +4664,12 @@ export const OxygenDashboardPage: React.FC = () => {
                   const groupKey = cyl.type_info?.type_name || 'Standard Cylinder';
                   setSelectedReconciliationGroup(groupKey);
                 }
+                setHighlightedCylinderId(lastId);
+                setSelectedReconciliationIds(prev => {
+                  const next = new Set(prev);
+                  batchItems.forEach(item => next.add(item.cylinderId));
+                  return next;
+                });
               }
             }}
             onNewCylinderRegistered={(newCyl) => {
@@ -3431,6 +4683,8 @@ export const OxygenDashboardPage: React.FC = () => {
               setPhysicalScannedBy(prev => ({ ...prev, [newCyl.id]: { user: currentAuditor, timestamp: nowFormatted } }));
               const groupKey = newCyl.type_info?.type_name || 'Standard Cylinder';
               setSelectedReconciliationGroup(groupKey);
+              setHighlightedCylinderId(newCyl.id);
+              setSelectedReconciliationIds(prev => new Set(prev).add(newCyl.id));
             }}
             existingCylinders={cylinders}
           />
@@ -3455,76 +4709,142 @@ export const OxygenDashboardPage: React.FC = () => {
       <div className="space-y-8">
         
         {/* ========================================================
-            REAMPED PREMIUM GLASSMORPHIC FINANCIAL CARDS (Tall, rich layout)
+            VOTE CODE SELECTOR / FILTER BAR & SEGREGATED FINANCIAL METRICS
            ======================================================== */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-          {/* Card 1: Total Allocation */}
-          <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
-                  {language === 'ms' ? 'JUMLAH PERUNTUKAN' : 'TOTAL ALLOCATION'}
-                </span>
-                <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
-                  {fmt(financials?.total_allocation || 274000.00)}
-                </h4>
-                <div className="flex items-center gap-1.5 mt-3 text-[10px] font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg w-max border border-slate-200/60">
-                  <Database className="w-3.5 h-3.5 text-teal-600" />
-                  <span>VOTE: 080702 / 27402</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white border border-slate-200/80 rounded-[24px] px-6 py-4 shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-teal-50 border border-teal-100 rounded-xl text-teal-600">
+              <Database className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block">
+                {language === 'ms' ? 'SUMBER PERUNTUKAN (KOD UNDI)' : 'BUDGET ALLOCATION (VOTE CODE)'}
+              </span>
+              <span className="text-xs font-extrabold text-slate-800">
+                {dashboardVoteFilter === 'all' 
+                  ? (language === 'ms' ? 'Semua Vot Digabungkan' : 'All Registered Votes Combined')
+                  : `Kod Vot ${dashboardVoteFilter} ${dashboardVoteFilter === '080702' ? '(Kontrak Pusat / CC)' : dashboardVoteFilter === '080600' ? '(Duit Khas / Khas)' : ''}`}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center flex-wrap gap-1.5 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/60">
+            <button
+              type="button"
+              onClick={() => {
+                setDashboardVoteFilter('all')
+                setCurrentPage(1)
+                setMonthlyCurrentPage(1)
+              }}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                dashboardVoteFilter === 'all'
+                  ? 'bg-teal-600 text-white shadow-sm shadow-teal-600/20'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+              }`}
+            >
+              {language === 'ms' ? 'Semua Vot' : 'All Votes'}
+            </button>
+            {availableVoteCodes.map(code => (
+              <button
+                key={code}
+                type="button"
+                onClick={() => {
+                  setDashboardVoteFilter(code)
+                  setCurrentPage(1)
+                  setMonthlyCurrentPage(1)
+                }}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all whitespace-nowrap ${
+                  dashboardVoteFilter === code
+                    ? 'bg-teal-600 text-white shadow-sm shadow-teal-600/20'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                Vot {code} {code === '080702' ? '(CC)' : code === '080600' ? '(Duit Khas)' : ''}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {(() => {
+          const activeFin = dashboardVoteFilter === 'all'
+            ? financials
+            : financials?.by_vote_code?.[dashboardVoteFilter]
+
+          const displayAllocation = activeFin?.total_allocation ?? (dashboardVoteFilter === 'all' ? (financials?.total_allocation ?? 274000.0) : 0)
+          const displayExpenses = activeFin?.total_expenses ?? 0
+          const displayLiabilities = activeFin?.liabilities ?? 0
+          const displayBalance = activeFin?.current_balance ?? 0
+          const displayLoanCharges = activeFin?.loan_charges ?? 0
+          const displayVoteBadge = dashboardVoteFilter === 'all'
+            ? `${availableVoteCodes.length} KOD VOT BERDAFTAR`
+            : `VOTE: ${dashboardVoteFilter} / ${activeFin?.vote_activity || '27402'}`
+          const isOverBudget = displayBalance < 0
+
+          return (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+              {/* Card 1: Total Allocation */}
+              <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
+                      {language === 'ms' ? 'JUMLAH PERUNTUKAN' : 'TOTAL ALLOCATION'}
+                    </span>
+                    <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
+                      {fmt(displayAllocation)}
+                    </h4>
+                    <div className="flex items-center gap-1.5 mt-3 text-[10px] font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg w-max border border-slate-200/60">
+                      <Database className="w-3.5 h-3.5 text-teal-600" />
+                      <span>{displayVoteBadge}</span>
+                    </div>
+                  </div>
+                  <div className="w-11 h-11 bg-teal-50 border border-teal-100 rounded-2xl flex items-center justify-center shadow-sm shadow-teal-500/5">
+                    <DollarSign className="w-5 h-5 text-teal-600" />
+                  </div>
                 </div>
               </div>
-              <div className="w-11 h-11 bg-teal-50 border border-teal-100 rounded-2xl flex items-center justify-center shadow-sm shadow-teal-500/5">
-                <DollarSign className="w-5 h-5 text-teal-600" />
-              </div>
-            </div>
-          </div>
 
-          {/* Card 2: Total Expenses */}
-          <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
-                  {language === 'ms' ? 'JUMLAH PERBELANJAAN' : 'TOTAL EXPENSES'}
-                </span>
-                <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
-                  {fmt(financials?.total_expenses || 261037.70)}
-                </h4>
-                <div className="flex items-center gap-1.5 mt-3 text-[10px] font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg w-max border border-rose-100">
-                  <TrendingUp className="w-3.5 h-3.5" />
-                  <span>{language === 'ms' ? 'Isian Semula:' : 'Refills:'} {fmt(financials?.total_expenses || 261037.70)}</span>
+              {/* Card 2: Total Expenses */}
+              <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
+                      {language === 'ms' ? 'JUMLAH PERBELANJAAN' : 'TOTAL EXPENSES'}
+                    </span>
+                    <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
+                      {fmt(displayExpenses)}
+                    </h4>
+                    <div className="flex items-center gap-1.5 mt-3 text-[10px] font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg w-max border border-rose-100">
+                      <TrendingUp className="w-3.5 h-3.5" />
+                      <span>{language === 'ms' ? 'Isian Semula:' : 'Refills:'} {fmt(displayExpenses)}</span>
+                    </div>
+                  </div>
+                  <div className="w-11 h-11 bg-rose-50 border border-rose-100 rounded-2xl flex items-center justify-center shadow-sm shadow-rose-500/5">
+                    <TrendingUp className="w-5 h-5 text-rose-600" />
+                  </div>
                 </div>
               </div>
-              <div className="w-11 h-11 bg-rose-50 border border-rose-100 rounded-2xl flex items-center justify-center shadow-sm shadow-rose-500/5">
-                <TrendingUp className="w-5 h-5 text-rose-600" />
-              </div>
-            </div>
-          </div>
 
-          {/* Card 3: Liabilities */}
-          <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
-                  {language === 'ms' ? 'LIABILITI / TANGGUNGAN' : 'LIABILITIES'}
-                </span>
-                <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
-                  {fmt(financials?.liabilities || 0.00)}
-                </h4>
-                <span className="text-[10px] font-bold text-slate-600 mt-3.5 block italic">
-                  {language === 'ms' ? 'PO / SO Komited' : 'Committed PO / SO'}
-                </span>
+              {/* Card 3: Liabilities */}
+              <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
+                      {language === 'ms' ? 'LIABILITI / TANGGUNGAN' : 'LIABILITIES'}
+                    </span>
+                    <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
+                      {fmt(displayLiabilities)}
+                    </h4>
+                    <span className="text-[10px] font-bold text-slate-600 mt-3.5 block italic">
+                      {language === 'ms' ? 'PO / SO Komited' : 'Committed PO / SO'}
+                    </span>
+                  </div>
+                  <div className="w-11 h-11 bg-sky-50 border border-sky-100 rounded-2xl flex items-center justify-center shadow-sm shadow-sky-500/5">
+                    <Layers className="w-5 h-5 text-sky-600" />
+                  </div>
+                </div>
               </div>
-              <div className="w-11 h-11 bg-sky-50 border border-sky-100 rounded-2xl flex items-center justify-center shadow-sm shadow-sky-500/5">
-                <Layers className="w-5 h-5 text-sky-600" />
-              </div>
-            </div>
-          </div>
 
-          {/* Card 4: Current Balance */}
-          {(() => {
-            const bal = financials?.current_balance ?? -2717.14
-            const isOverBudget = bal < 0
-            return (
+              {/* Card 4: Current Balance */}
               <div className={`relative border rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300
                 ${isOverBudget 
                   ? 'bg-rose-50/80 border-rose-200 shadow-[0_8px_30px_rgba(244,63,94,0.03)]' 
@@ -3536,7 +4856,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       {language === 'ms' ? 'BAKI SEMASA' : 'CURRENT BALANCE'}
                     </span>
                     <h4 className={`text-2xl lg:text-3xl font-extrabold tracking-tight mt-2.5 ${isOverBudget ? 'text-rose-600' : 'text-slate-900'}`}>
-                      {fmt(bal)}
+                      {fmt(displayBalance)}
                     </h4>
                     <span className={`inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider mt-3 px-2 py-0.5 rounded-full
                       ${isOverBudget ? 'bg-rose-100 text-[#e11d48] animate-pulse' : 'bg-emerald-50 text-[#10b981]'}`}
@@ -3551,29 +4871,29 @@ export const OxygenDashboardPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            )
-          })()}
 
-          {/* Card 5: Loan Charges */}
-          <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
-                  {language === 'ms' ? 'CAJ PINJAMAN SILINDER' : 'LOAN CHARGES'}
-                </span>
-                <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
-                  {fmt(financials?.loan_charges || 15679.44)}
-                </h4>
-                <span className="text-[10px] font-bold text-purple-700 mt-3.5 block bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-lg w-max">
-                  {language === 'ms' ? 'Kadar:' : 'Rate:'} {fmt(systemSettings?.loan_cylinder_rate || 18.36)} / {language === 'ms' ? 'silinder' : 'cyl'}
-                </span>
-              </div>
-              <div className="w-11 h-11 bg-purple-50 border border-purple-100 rounded-2xl flex items-center justify-center shadow-sm shadow-purple-500/5">
-                <Percent className="w-5 h-5 text-purple-600" />
+              {/* Card 5: Loan Charges */}
+              <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
+                      {language === 'ms' ? 'CAJ PINJAMAN SILINDER' : 'LOAN CHARGES'}
+                    </span>
+                    <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
+                      {fmt(displayLoanCharges)}
+                    </h4>
+                    <span className="text-[10px] font-bold text-purple-700 mt-3.5 block bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-lg w-max">
+                      {language === 'ms' ? 'Kadar:' : 'Rate:'} {fmt(systemSettings?.loan_cylinder_rate || 18.36)} / {language === 'ms' ? 'silinder' : 'cyl'}
+                    </span>
+                  </div>
+                  <div className="w-11 h-11 bg-purple-50 border border-purple-100 rounded-2xl flex items-center justify-center shadow-sm shadow-purple-500/5">
+                    <Percent className="w-5 h-5 text-purple-600" />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          )
+        })()}
 
         {/* ========================================================
             MODERN ACTION BAR
@@ -3691,48 +5011,104 @@ export const OxygenDashboardPage: React.FC = () => {
 
             {ledgerViewMode === 'detailed' ? (
               /* DETAILED PER-DELIVERY VIEW */
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-left text-xs text-gray-700">
-                  <thead className="bg-slate-100 text-[10px] font-black text-slate-700 uppercase tracking-widest border-b border-slate-200">
-                    <tr>
-                      <th className="px-6 py-4">{language === 'ms' ? 'TARIKH TERIMA' : 'RECEPTION DATE'}</th>
-                      <th className="px-6 py-4">{language === 'ms' ? 'PESANAN PENGHANTARAN' : 'DELIVERY ORDER'}</th>
-                      <th className="px-6 py-4">{language === 'ms' ? 'KOS ISIAN SEMULA' : 'REFILL COST'}</th>
-                      <th className="px-6 py-4">{language === 'ms' ? 'CAJ PINJAMAN' : 'LOAN CHARGES'}</th>
-                      <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH' : 'TOTAL COST'}</th>
-                      <th className="px-6 py-4 text-center">{language === 'ms' ? 'STATUS' : 'STATUS'}</th>
-                      <th className="px-6 py-4 text-right">{language === 'ms' ? 'DOKUMEN' : 'DOCUMENTS'}</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {receptionsList.length === 0 ? (
+              <>
+                {/* Desktop View: Full Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full border-collapse text-left text-xs text-gray-700">
+                    <thead className="bg-slate-100 text-[10px] font-black text-slate-700 uppercase tracking-widest border-b border-slate-200">
                       <tr>
-                        <td colSpan={7} className="px-6 py-10 text-center text-slate-600 font-semibold italic">{language === 'ms' ? 'Tiada penghantaran log.' : 'No oxygen deliveries logged yet.'}</td>
+                        <th className="px-6 py-4">{language === 'ms' ? 'TARIKH TERIMA' : 'RECEPTION DATE'}</th>
+                        <th className="px-6 py-4">{language === 'ms' ? 'PESANAN PENGHANTARAN' : 'DELIVERY ORDER'}</th>
+                        <th className="px-6 py-4 text-center">{language === 'ms' ? 'KOD VOT' : 'VOTE CODE'}</th>
+                        <th className="px-6 py-4">{language === 'ms' ? 'KOS ISIAN SEMULA' : 'REFILL COST'}</th>
+                        <th className="px-6 py-4">{language === 'ms' ? 'CAJ PINJAMAN' : 'LOAN CHARGES'}</th>
+                        <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH' : 'TOTAL COST'}</th>
+                        <th className="px-6 py-4 text-center">{language === 'ms' ? 'STATUS' : 'STATUS'}</th>
+                        <th className="px-6 py-4 text-right">{language === 'ms' ? 'DOKUMEN' : 'DOCUMENTS'}</th>
                       </tr>
-                    ) : (
-                      (() => {
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {(() => {
+                        const filteredReceptions = dashboardVoteFilter === 'all' 
+                          ? receptionsList 
+                          : receptionsList.filter(r => (r.vote_code || '080702').startsWith(dashboardVoteFilter))
+                        
+                        if (filteredReceptions.length === 0) {
+                          return (
+                            <tr>
+                              <td colSpan={8} className="px-6 py-10 text-center text-slate-600 font-semibold italic">
+                                {language === 'ms' 
+                                  ? (dashboardVoteFilter !== 'all' ? `Tiada penghantaran di bawah Kod Vot ${dashboardVoteFilter}.` : 'Tiada penghantaran log.') 
+                                  : (dashboardVoteFilter !== 'all' ? `No deliveries under Vote Code ${dashboardVoteFilter}.` : 'No oxygen deliveries logged yet.')}
+                              </td>
+                            </tr>
+                          )
+                        }
+
                         const itemsPerPage = 5
-                        const paginatedList = receptionsList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                        return paginatedList.map((rec) => (
+                        const paginatedList = filteredReceptions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                        return paginatedList.map((rec) => {
+                          const isPending = rec.status === 'pending' || 
+                                            rec.status === 'pending_delivery' || 
+                                            !rec.delivery_order_no || 
+                                            String(rec.delivery_order_no).toUpperCase().startsWith('PENDING')
+
+                          return (
                           <tr key={rec.id} className="hover:bg-slate-50 transition-colors">
                             <td className="px-6 py-4 text-slate-900 font-semibold">
                               {new Date(rec.reception_date).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </td>
-                            <td className="px-6 py-4 font-mono font-bold text-teal-600">{rec.delivery_order_no}</td>
+                            <td className="px-6 py-4 font-mono font-bold">
+                              {isPending ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                  <Clock className="w-2.5 h-2.5 text-amber-600" />
+                                  {language === 'ms' ? 'Menunggu DO' : 'Pending DO'}
+                                </span>
+                              ) : (
+                                <span className="text-teal-600">{rec.delivery_order_no}</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <button
+                                type="button"
+                                onClick={() => handleOpenVoteOverrideModal(rec)}
+                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] font-mono font-bold transition-all hover:scale-105 active:scale-95 shadow-2xs ${
+                                  (rec.vote_code || '080702').startsWith('080600')
+                                    ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 hover:border-purple-300'
+                                    : 'bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100 hover:border-teal-300'
+                                }`}
+                                title={language === 'ms' ? 'Kod Vot Terkunci (Read-Only). Klik untuk kebenaran pertukaran luar jangka' : 'Locked Vote Code (Read-Only). Click for override authorization'}
+                              >
+                                <Lock className="w-2.5 h-2.5 text-amber-600" />
+                                <span>{rec.vote_code || '080702'}</span>
+                              </button>
+                            </td>
                             <td className="px-6 py-4 text-slate-800 font-semibold">{fmt(rec.refill_amount)}</td>
                             <td className="px-6 py-4 text-purple-700 font-semibold">{fmt(rec.loan_amount)}</td>
                             <td className="px-6 py-4 text-slate-950 font-black">{fmt(rec.total_amount)}</td>
                             <td className="px-6 py-4 text-center">
                               <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border
-                                ${rec.status === 'completed' 
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-                                  : 'bg-amber-50 text-amber-700 border-amber-200'}`}
+                                ${isPending 
+                                  ? 'bg-amber-50 text-amber-800 border-amber-300' 
+                                  : rec.status === 'completed' 
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                                    : 'bg-amber-50 text-amber-700 border-amber-200'}`}
                               >
-                                {rec.status.replace('_', ' ')}
+                                {isPending ? (language === 'ms' ? 'Menunggu Penghantaran' : 'Pending Delivery') : rec.status.replace('_', ' ')}
                               </span>
                             </td>
                             <td className="px-6 py-4 text-right">
                               <div className="flex items-center justify-end gap-1.5">
+                                {isPending && (
+                                  <button 
+                                    onClick={() => handleOpenArrivalModal(rec)}
+                                    className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 shadow-xs"
+                                    title={language === 'ms' ? 'Daftar No. DO dan Tarikh Ketibaan' : 'Key in DO Number and Arrival Date'}
+                                  >
+                                    <CheckCircle className="w-3.5 h-3.5 text-emerald-200" />
+                                    {language === 'ms' ? 'Kemas Kini DO' : 'Key In DO'}
+                                  </button>
+                                )}
                                 <button 
                                   onClick={() => handleOpenPoPreview(rec)}
                                   className="px-2.5 py-1.5 hover:bg-slate-100 text-slate-700 hover:text-slate-900 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-slate-200"
@@ -3741,146 +5117,424 @@ export const OxygenDashboardPage: React.FC = () => {
                                   <FileText className="w-3.5 h-3.5 text-slate-500" />
                                   PO
                                 </button>
+                                {isPending ? (
+                                  <button 
+                                    disabled
+                                    className="px-2.5 py-1.5 bg-slate-50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-slate-200 cursor-not-allowed opacity-50"
+                                    title={language === 'ms' ? 'Laporan Penerimaan (KEW.PS-3) dikunci sehingga No. DO didaftarkan' : 'Report locked until DO is registered'}
+                                  >
+                                    <Lock className="w-3.5 h-3.5 text-slate-400" />
+                                    {language === 'ms' ? 'Laporan' : 'Report'}
+                                  </button>
+                                ) : (
+                                  <button 
+                                    onClick={() => handleDownloadReport(rec)}
+                                    className="px-2.5 py-1.5 hover:bg-teal-50 text-slate-700 hover:text-teal-700 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-slate-200"
+                                    title="Generate Reception Report PDF"
+                                  >
+                                    <Download className="w-3.5 h-3.5 text-slate-500" />
+                                    {language === 'ms' ? 'Laporan' : 'Report'}
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                          )
+                        })
+                      })()}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
+                <div className="md:hidden space-y-3 p-3 bg-slate-50/50">
+                  {(() => {
+                    const filteredReceptions = dashboardVoteFilter === 'all' 
+                      ? receptionsList 
+                      : receptionsList.filter(r => (r.vote_code || '080702').startsWith(dashboardVoteFilter))
+                    
+                    if (filteredReceptions.length === 0) {
+                      return (
+                        <div className="p-8 text-center text-slate-500 text-xs font-semibold italic bg-white rounded-2xl border border-slate-200">
+                          {language === 'ms' 
+                            ? (dashboardVoteFilter !== 'all' ? `Tiada penghantaran di bawah Kod Vot ${dashboardVoteFilter}.` : 'Tiada penghantaran log.') 
+                            : (dashboardVoteFilter !== 'all' ? `No deliveries under Vote Code ${dashboardVoteFilter}.` : 'No oxygen deliveries logged yet.')}
+                        </div>
+                      )
+                    }
+
+                    const itemsPerPage = 5
+                    const paginatedList = filteredReceptions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                    return paginatedList.map((rec) => {
+                      const isPending = rec.status === 'pending' || 
+                                        rec.status === 'pending_delivery' || 
+                                        !rec.delivery_order_no || 
+                                        String(rec.delivery_order_no).toUpperCase().startsWith('PENDING')
+
+                      return (
+                        <div key={rec.id} className="bg-white border border-slate-200/80 rounded-2xl p-4 space-y-3 shadow-xs">
+                          {/* Header: Date + Status Badge */}
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-slate-900 font-extrabold text-sm">
+                              {new Date(rec.reception_date).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            </span>
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border
+                              ${isPending 
+                                ? 'bg-amber-50 text-amber-800 border-amber-300' 
+                                : rec.status === 'completed' 
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                                  : 'bg-amber-50 text-amber-700 border-amber-200'}`}
+                            >
+                              {isPending ? (language === 'ms' ? 'Menunggu DO' : 'Pending Delivery') : rec.status.replace('_', ' ')}
+                            </span>
+                          </div>
+
+                          {/* DO and Vote Code */}
+                          <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                            <div>
+                              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
+                                {language === 'ms' ? 'Pesanan Penghantaran (DO)' : 'Delivery Order'}
+                              </span>
+                              {isPending ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 mt-0.5">
+                                  <Clock className="w-2.5 h-2.5 text-amber-600" />
+                                  {language === 'ms' ? 'Menunggu DO' : 'Pending DO'}
+                                </span>
+                              ) : (
+                                <span className="font-mono font-bold text-teal-600 text-xs break-all">
+                                  {rec.delivery_order_no}
+                                </span>
+                              )}
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => handleOpenVoteOverrideModal(rec)}
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[10px] font-mono font-bold transition-all active:scale-95 ${
+                                (rec.vote_code || '080702').startsWith('080600')
+                                  ? 'bg-purple-50 text-purple-700 border-purple-200'
+                                  : 'bg-teal-50 text-teal-700 border-teal-200'
+                              }`}
+                              title={language === 'ms' ? 'Kod Vot. Klik untuk tukar' : 'Vote Code. Click to override'}
+                            >
+                              <Lock className="w-2.5 h-2.5 text-amber-600" />
+                              <span>{rec.vote_code || '080702'}</span>
+                            </button>
+                          </div>
+
+                          {/* Financial 3-Col Chip Grid */}
+                          <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
+                            <div>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                                {language === 'ms' ? 'Isian Semula' : 'Refill'}
+                              </span>
+                              <span className="font-semibold text-xs text-slate-800">
+                                {fmt(rec.refill_amount)}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                                {language === 'ms' ? 'Pinjaman' : 'Loan'}
+                              </span>
+                              <span className="font-semibold text-xs text-purple-700">
+                                {fmt(rec.loan_amount)}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                                {language === 'ms' ? 'Jumlah Kos' : 'Total'}
+                              </span>
+                              <span className="font-black text-xs text-slate-950">
+                                {fmt(rec.total_amount)}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Actions Button Bar */}
+                          <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+                            {isPending && (
+                              <button 
+                                onClick={() => handleOpenArrivalModal(rec)}
+                                className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1 active:scale-95 shadow-xs"
+                              >
+                                <CheckCircle className="w-3 h-3 text-emerald-200" />
+                                {language === 'ms' ? 'Kemas Kini DO' : 'Key In DO'}
+                              </button>
+                            )}
+                            <button 
+                              onClick={() => handleOpenPoPreview(rec)}
+                              className="px-3 py-2 hover:bg-slate-100 text-slate-700 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1 active:scale-95 border border-slate-200"
+                            >
+                              <FileText className="w-3.5 h-3.5 text-slate-500" />
+                              PO
+                            </button>
+                            {isPending ? (
+                              <button 
+                                disabled
+                                className="px-3 py-2 bg-slate-50 text-slate-400 rounded-xl font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 border border-slate-200 opacity-50 cursor-not-allowed"
+                              >
+                                <Lock className="w-3.5 h-3.5 text-slate-400" />
+                                {language === 'ms' ? 'Laporan' : 'Report'}
+                              </button>
+                            ) : (
+                              <button 
+                                onClick={() => handleDownloadReport(rec)}
+                                className="px-3 py-2 bg-teal-50 hover:bg-teal-100 text-teal-800 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1 active:scale-95 border border-teal-200"
+                              >
+                                <Download className="w-3.5 h-3.5 text-teal-600" />
+                                {language === 'ms' ? 'Laporan' : 'Report'}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })
+                  })()}
+                </div>
+              </>
+            ) : (
+              /* MONTHLY CONSOLIDATED VIEW */
+              <>
+                {/* Desktop View: Full Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full border-collapse text-left text-xs text-gray-700">
+                    <thead className="bg-teal-50/70 text-[10px] font-black text-teal-900 uppercase tracking-widest border-b border-teal-100">
+                      <tr>
+                        <th className="px-6 py-4">{language === 'ms' ? 'BULAN & REKOD' : 'MONTH & ENTRIES'}</th>
+                        <th className="px-6 py-4">{language === 'ms' ? 'PESANAN PENGHANTARAN GABUNGAN' : 'CONSOLIDATED DELIVERY ORDERS'}</th>
+                        <th className="px-6 py-4 text-center">{language === 'ms' ? 'KOD VOT' : 'VOTE CODE'}</th>
+                        <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH ISIAN SEMULA' : 'TOTAL REFILL'}</th>
+                        <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH PINJAMAN' : 'TOTAL LOAN'}</th>
+                        <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH KOS' : 'TOTAL COST'}</th>
+                        <th className="px-6 py-4 text-center">{language === 'ms' ? 'STATUS' : 'STATUS'}</th>
+                        <th className="px-6 py-4 text-right">{language === 'ms' ? 'DOKUMEN GABUNGAN' : 'CONSOLIDATED DOCS'}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {(() => {
+                        const monthlyList = getMonthlyConsolidatedReceptions(receptionsList)
+                        if (monthlyList.length === 0) {
+                          return (
+                            <tr>
+                              <td colSpan={8} className="px-6 py-10 text-center text-slate-600 font-semibold italic">
+                                {language === 'ms' ? 'Tiada rekod bulanan dijumpai.' : 'No monthly records found.'}
+                              </td>
+                            </tr>
+                          )
+                        }
+                        const itemsPerPage = 5
+                        const paginatedMonthly = monthlyList.slice((monthlyCurrentPage - 1) * itemsPerPage, monthlyCurrentPage * itemsPerPage)
+                        return paginatedMonthly.map((mRec) => (
+                          <tr key={mRec.id} className="hover:bg-teal-50/30 transition-colors">
+                            <td className="px-6 py-4">
+                              <div className="flex flex-col gap-1">
+                                <span className="text-slate-900 font-extrabold text-sm capitalize">
+                                  {mRec.monthLabel}
+                                </span>
+                                <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-teal-50 text-teal-700 border border-teal-200/80">
+                                  <Layers className="w-2.5 h-2.5" />
+                                  {mRec.entryCount} {mRec.entryCount === 1 ? (language === 'ms' ? 'Entri' : 'Delivery') : (language === 'ms' ? 'Entri Digabung' : 'Combined Deliveries')}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex flex-col gap-1 max-w-[280px]">
+                                <span className="font-mono font-bold text-teal-700 text-xs truncate" title={mRec.delivery_order_no}>
+                                  {mRec.delivery_order_no}
+                                </span>
+                                <span className="text-[10px] text-slate-500 font-semibold">
+                                  {language === 'ms' ? `Menggabungkan ${mRec.entryCount} nota serahan` : `Aggregates ${mRec.entryCount} delivery orders`}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-black uppercase tracking-wider border ${
+                                (mRec.vote_code || '080702').startsWith('080600')
+                                  ? 'bg-purple-50 text-purple-700 border-purple-200'
+                                  : 'bg-teal-50 text-teal-700 border-teal-200'
+                              }`}>
+                                Vot {mRec.vote_code || '080702'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-slate-800 font-semibold">{fmt(mRec.refill_amount)}</td>
+                            <td className="px-6 py-4 text-purple-700 font-semibold">{fmt(mRec.loan_amount)}</td>
+                            <td className="px-6 py-4 text-slate-950 font-black text-sm">{fmt(mRec.total_amount)}</td>
+                            <td className="px-6 py-4 text-center">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border bg-emerald-50 text-emerald-700 border-emerald-200">
+                                {language === 'ms' ? 'DIKONSOLIDASI' : 'CONSOLIDATED'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
                                 <button 
-                                  onClick={() => handleDownloadReport(rec)}
-                                  className="px-2.5 py-1.5 hover:bg-teal-50 text-slate-700 hover:text-teal-700 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-slate-200"
-                                  title="Generate Reception Report PDF"
+                                  onClick={() => handleOpenPoPreview(mRec as any)}
+                                  className="px-2.5 py-1.5 bg-white hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-teal-300 shadow-sm"
+                                  title={language === 'ms' ? 'Jana PO Gabungan Bulanan' : 'Generate Consolidated Monthly PO PDF'}
                                 >
-                                  <Download className="w-3.5 h-3.5 text-slate-500" />
+                                  <FileText className="w-3.5 h-3.5" />
+                                  {language === 'ms' ? 'PO Bulan' : 'Monthly PO'}
+                                </button>
+                                <button 
+                                  onClick={() => handleDownloadReport(mRec as any)}
+                                  className="px-2.5 py-1.5 bg-teal-50 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-teal-200 shadow-sm"
+                                  title={language === 'ms' ? 'Jana Laporan Pemeriksaan Bulanan (KEW.PS-3)' : 'Generate Consolidated Monthly Inspection Report'}
+                                >
+                                  <Download className="w-3.5 h-3.5" />
                                   {language === 'ms' ? 'Laporan' : 'Report'}
+                                </button>
+                                <button 
+                                  onClick={() => {
+                                    setSelectedConsolidateMonthKey(mRec.monthKey)
+                                    setIsMonthlyModalOpen(true)
+                                  }}
+                                  className="p-1.5 hover:bg-slate-100 text-slate-500 hover:text-slate-800 rounded-xl transition-all border border-slate-200"
+                                  title={language === 'ms' ? 'Lihat Perincian Entri' : 'View Delivery Breakdown'}
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
                                 </button>
                               </div>
                             </td>
                           </tr>
                         ))
-                      })()
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              /* MONTHLY CONSOLIDATED VIEW */
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-left text-xs text-gray-700">
-                  <thead className="bg-teal-50/70 text-[10px] font-black text-teal-900 uppercase tracking-widest border-b border-teal-100">
-                    <tr>
-                      <th className="px-6 py-4">{language === 'ms' ? 'BULAN & REKOD' : 'MONTH & ENTRIES'}</th>
-                      <th className="px-6 py-4">{language === 'ms' ? 'PESANAN PENGHANTARAN GABUNGAN' : 'CONSOLIDATED DELIVERY ORDERS'}</th>
-                      <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH ISIAN SEMULA' : 'TOTAL REFILL'}</th>
-                      <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH PINJAMAN' : 'TOTAL LOAN'}</th>
-                      <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH KOS' : 'TOTAL COST'}</th>
-                      <th className="px-6 py-4 text-center">{language === 'ms' ? 'STATUS' : 'STATUS'}</th>
-                      <th className="px-6 py-4 text-right">{language === 'ms' ? 'DOKUMEN GABUNGAN' : 'CONSOLIDATED DOCS'}</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {(() => {
-                      const monthlyList = getMonthlyConsolidatedReceptions(receptionsList)
-                      if (monthlyList.length === 0) {
-                        return (
-                          <tr>
-                            <td colSpan={7} className="px-6 py-10 text-center text-slate-600 font-semibold italic">
-                              {language === 'ms' ? 'Tiada rekod bulanan dijumpai.' : 'No monthly records found.'}
-                            </td>
-                          </tr>
-                        )
-                      }
-                      const itemsPerPage = 5
-                      const paginatedMonthly = monthlyList.slice((monthlyCurrentPage - 1) * itemsPerPage, monthlyCurrentPage * itemsPerPage)
-                      return paginatedMonthly.map((mRec) => (
-                        <tr key={mRec.id} className="hover:bg-teal-50/30 transition-colors">
-                          <td className="px-6 py-4">
-                            <div className="flex flex-col gap-1">
-                              <span className="text-slate-900 font-extrabold text-sm capitalize">
-                                {mRec.monthLabel}
-                              </span>
-                              <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-teal-50 text-teal-700 border border-teal-200/80">
-                                <Layers className="w-2.5 h-2.5" />
-                                {mRec.entryCount} {mRec.entryCount === 1 ? (language === 'ms' ? 'Entri' : 'Delivery') : (language === 'ms' ? 'Entri Digabung' : 'Combined Deliveries')}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex flex-col gap-1 max-w-[280px]">
-                              <span className="font-mono font-bold text-teal-700 text-xs truncate" title={mRec.delivery_order_no}>
-                                {mRec.delivery_order_no}
-                              </span>
-                              <span className="text-[10px] text-slate-500 font-semibold">
-                                {language === 'ms' ? `Menggabungkan ${mRec.entryCount} nota serahan` : `Aggregates ${mRec.entryCount} delivery orders`}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-slate-800 font-semibold">{fmt(mRec.refill_amount)}</td>
-                          <td className="px-6 py-4 text-purple-700 font-semibold">{fmt(mRec.loan_amount)}</td>
-                          <td className="px-6 py-4 text-slate-950 font-black text-sm">{fmt(mRec.total_amount)}</td>
-                          <td className="px-6 py-4 text-center">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border bg-emerald-50 text-emerald-700 border-emerald-200">
-                              {language === 'ms' ? 'DIKONSOLIDASI' : 'CONSOLIDATED'}
+                      })()}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
+                <div className="md:hidden space-y-3 p-3 bg-teal-50/20">
+                  {(() => {
+                    const monthlyList = getMonthlyConsolidatedReceptions(receptionsList)
+                    if (monthlyList.length === 0) {
+                      return (
+                        <div className="p-8 text-center text-slate-500 text-xs font-semibold italic bg-white rounded-2xl border border-slate-200">
+                          {language === 'ms' ? 'Tiada rekod bulanan dijumpai.' : 'No monthly records found.'}
+                        </div>
+                      )
+                    }
+                    const itemsPerPage = 5
+                    const paginatedMonthly = monthlyList.slice((monthlyCurrentPage - 1) * itemsPerPage, monthlyCurrentPage * itemsPerPage)
+                    return paginatedMonthly.map((mRec) => (
+                      <div key={mRec.id} className="bg-white border border-teal-200/80 rounded-2xl p-4 space-y-3 shadow-xs">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-slate-900 font-extrabold text-sm capitalize">
+                            {mRec.monthLabel}
+                          </span>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold bg-teal-50 text-teal-700 border border-teal-200">
+                            <Layers className="w-2.5 h-2.5" />
+                            {mRec.entryCount} {mRec.entryCount === 1 ? (language === 'ms' ? 'Entri' : 'Delivery') : (language === 'ms' ? 'Entri Digabung' : 'Combined')}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                          <div className="min-w-0 flex-1">
+                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
+                              {language === 'ms' ? 'DO Gabungan' : 'Consolidated DO'}
                             </span>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
-                              <button 
-                                onClick={() => handleOpenPoPreview(mRec as any)}
-                                className="px-2.5 py-1.5 bg-white hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-teal-300 shadow-sm"
-                                title={language === 'ms' ? 'Jana PO Gabungan Bulanan' : 'Generate Consolidated Monthly PO PDF'}
-                              >
-                                <FileText className="w-3.5 h-3.5" />
-                                {language === 'ms' ? 'PO Bulan' : 'Monthly PO'}
-                              </button>
-                              <button 
-                                onClick={() => handleDownloadReport(mRec as any)}
-                                className="px-2.5 py-1.5 bg-teal-50 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-teal-200 shadow-sm"
-                                title={language === 'ms' ? 'Jana Laporan Pemeriksaan Bulanan (KEW.PS-3)' : 'Generate Consolidated Monthly Inspection Report'}
-                              >
-                                <Download className="w-3.5 h-3.5" />
-                                {language === 'ms' ? 'Laporan' : 'Report'}
-                              </button>
-                              <button 
-                                onClick={() => {
-                                  setSelectedConsolidateMonthKey(mRec.monthKey)
-                                  setIsMonthlyModalOpen(true)
-                                }}
-                                className="p-1.5 hover:bg-slate-100 text-slate-500 hover:text-slate-800 rounded-xl transition-all border border-slate-200"
-                                title={language === 'ms' ? 'Lihat Perincian Entri' : 'View Delivery Breakdown'}
-                              >
-                                <Eye className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    })()}
-                  </tbody>
-                </table>
-              </div>
+                            <span className="font-mono font-bold text-teal-700 text-xs truncate block" title={mRec.delivery_order_no}>
+                              {mRec.delivery_order_no}
+                            </span>
+                          </div>
+
+                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-black uppercase tracking-wider border flex-shrink-0 ${
+                            (mRec.vote_code || '080702').startsWith('080600')
+                              ? 'bg-purple-50 text-purple-700 border-purple-200'
+                              : 'bg-teal-50 text-teal-700 border-teal-200'
+                          }`}>
+                            Vot {mRec.vote_code || '080702'}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
+                          <div>
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              {language === 'ms' ? 'Isian' : 'Refill'}
+                            </span>
+                            <span className="font-semibold text-xs text-slate-800">
+                              {fmt(mRec.refill_amount)}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              {language === 'ms' ? 'Pinjaman' : 'Loan'}
+                            </span>
+                            <span className="font-semibold text-xs text-purple-700">
+                              {fmt(mRec.loan_amount)}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              {language === 'ms' ? 'Jumlah Kos' : 'Total'}
+                            </span>
+                            <span className="font-black text-xs text-slate-950">
+                              {fmt(mRec.total_amount)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+                          <button 
+                            onClick={() => handleOpenPoPreview(mRec as any)}
+                            className="px-3 py-2 bg-white hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center gap-1 active:scale-95 border border-teal-300 shadow-xs"
+                          >
+                            <FileText className="w-3.5 h-3.5" />
+                            {language === 'ms' ? 'PO Bulan' : 'Monthly PO'}
+                          </button>
+                          <button 
+                            onClick={() => handleDownloadReport(mRec as any)}
+                            className="px-3 py-2 bg-teal-50 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center gap-1 active:scale-95 border border-teal-200"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            {language === 'ms' ? 'Laporan' : 'Report'}
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setSelectedConsolidateMonthKey(mRec.monthKey)
+                              setIsMonthlyModalOpen(true)
+                            }}
+                            className="p-2 hover:bg-slate-100 text-slate-500 rounded-xl transition-all border border-slate-200"
+                            title={language === 'ms' ? 'Lihat Perincian' : 'View Details'}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  })()}
+                </div>
+              </>
             )}
 
             {/* Pagination Controls */}
             {ledgerViewMode === 'detailed' ? (
-              receptionsList.length > 5 && (
-                <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs">
-                  <span className="text-slate-600 font-bold">
-                    {language === 'ms' ? 'Menunjukkan' : 'Showing'} <span className="text-slate-900 font-black">{((currentPage - 1) * 5) + 1}</span> {language === 'ms' ? 'hingga' : 'to'} <span className="text-slate-900 font-black">{Math.min(currentPage * 5, receptionsList.length)}</span> {language === 'ms' ? 'daripada' : 'of'} <span className="text-slate-900 font-black">{receptionsList.length}</span> {language === 'ms' ? 'entri' : 'entries'}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      disabled={currentPage === 1}
-                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                      className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
-                    >
-                      {language === 'ms' ? 'SEBELUM' : 'PREV'}
-                    </button>
-                    <button 
-                      disabled={currentPage * 5 >= receptionsList.length}
-                      onClick={() => setCurrentPage(prev => prev + 1)}
-                      className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
-                    >
-                      {language === 'ms' ? 'SETERUS' : 'NEXT'}
-                    </button>
+              (() => {
+                const filteredReceptions = dashboardVoteFilter === 'all' 
+                  ? receptionsList 
+                  : receptionsList.filter(r => (r.vote_code || '080702').startsWith(dashboardVoteFilter))
+                return filteredReceptions.length > 5 && (
+                  <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs">
+                    <span className="text-slate-600 font-bold">
+                      {language === 'ms' ? 'Menunjukkan' : 'Showing'} <span className="text-slate-900 font-black">{((currentPage - 1) * 5) + 1}</span> {language === 'ms' ? 'hingga' : 'to'} <span className="text-slate-900 font-black">{Math.min(currentPage * 5, filteredReceptions.length)}</span> {language === 'ms' ? 'daripada' : 'of'} <span className="text-slate-900 font-black">{filteredReceptions.length}</span> {language === 'ms' ? 'entri' : 'entries'}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                      >
+                        {language === 'ms' ? 'SEBELUM' : 'PREV'}
+                      </button>
+                      <button 
+                        disabled={currentPage * 5 >= filteredReceptions.length}
+                        onClick={() => setCurrentPage(prev => prev + 1)}
+                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                      >
+                        {language === 'ms' ? 'SETERUS' : 'NEXT'}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )
+                )
+              })()
             ) : (
               (() => {
                 const monthlyList = getMonthlyConsolidatedReceptions(receptionsList)
@@ -3944,21 +5598,42 @@ export const OxygenDashboardPage: React.FC = () => {
                 </select>
               </div>
               
-              <div className="space-y-2.5">
+              <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
                 {pricingConfigs
                   .filter((config) => isSupplierMatch(config.supplier_name, selectedPricingSupplier))
-                  .slice(0, 6)
-                  .map((config) => (
-                  <div key={config.id} className="flex items-center justify-between py-2.5 border-b border-slate-100 hover:bg-slate-50 px-2 rounded-lg transition-colors">
-                    <div>
-                      <span className="text-xs font-bold text-slate-800 tracking-tight block">{config.cylinder_size_code}</span>
-                      <span className="text-[9px] text-slate-600 font-bold">{config.supplier_name || lindeDisplayName}</span>
-                    </div>
-                    <span className="font-mono text-xs font-extrabold text-slate-900">
-                      RM {config.refill_price.toFixed(2)}
-                    </span>
-                  </div>
-                ))}
+                  .sort((a, b) => {
+                    const order = ['101-F', '101-N', 'P101-D', 'P101-E', 'P101-F', 'P101-HS', 'Liquid Medical Oxygen (VIE Tank)']
+                    const idxA = order.indexOf(a.cylinder_size_code)
+                    const idxB = order.indexOf(b.cylinder_size_code)
+                    if (idxA !== -1 && idxB !== -1) return idxA - idxB
+                    if (idxA !== -1) return -1
+                    if (idxB !== -1) return 1
+                    return a.cylinder_size_code.localeCompare(b.cylinder_size_code)
+                  })
+                  .map((config) => {
+                    const isPerM3 = config.cylinder_size_code.toLowerCase().includes('vie') || 
+                                    config.cylinder_size_code.toLowerCase().includes('liquid') || 
+                                    config.cylinder_size_code.toLowerCase().includes('m3') ||
+                                    config.cylinder_size_code.toLowerCase().includes('m³')
+                    return (
+                      <div key={config.id} className="flex items-center justify-between py-2.5 border-b border-slate-100 hover:bg-slate-50 px-2 rounded-lg transition-colors">
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-bold text-slate-800 tracking-tight block">{config.cylinder_size_code}</span>
+                            {isPerM3 && (
+                              <span className="px-1.5 py-0.5 bg-teal-50 border border-teal-200 text-teal-700 text-[8.5px] font-black rounded uppercase">
+                                VIE Tank
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[9px] text-slate-600 font-bold">{config.supplier_name || lindeDisplayName}</span>
+                        </div>
+                        <span className="font-mono text-xs font-extrabold text-slate-900">
+                          RM {config.refill_price.toFixed(2)}{isPerM3 ? ' / m³' : ''}
+                        </span>
+                      </div>
+                    )
+                  })}
                 
                 {/* Supplier Loan Rates for 101-N and 101-F */}
                 {(() => {
@@ -4099,20 +5774,211 @@ export const OxygenDashboardPage: React.FC = () => {
           </p>
         </div>
 
-        {currentPath === '/pharmacy/oxygen/consumption' && (
-          <div className="flex gap-2.5">
+        {currentPath === '/pharmacy/oxygen/consumption' && isOtherUnit && (
+          <div className="flex items-center gap-2.5">
             <button
-              onClick={() => setIsUnitModalOpen(true)}
-              className="flex-1 sm:flex-none px-4 py-2.5 text-xs sm:text-sm font-semibold bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-1.5 shadow-sm focus:outline-none"
+              onClick={() => {
+                setUnitModalInitialMode('internal')
+                setUnitModalLockMode(true)
+                setIsUnitModalOpen(true)
+              }}
+              className="px-4 py-2.5 text-xs sm:text-sm font-bold bg-[#00a68a] hover:bg-[#008f76] text-white rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 focus:outline-none cursor-pointer"
             >
-              <Plus className="w-4 h-4" /> Request Cylinders
+              <Plus className="w-4 h-4" />
+              {language === 'ms' ? 'Mohon Silinder (Intra-Facility)' : 'Request Cylinders (Intra-Facility)'}
             </button>
-            <button
-              onClick={() => setIsManualModalOpen(true)}
-              className="flex-1 sm:flex-none px-4 py-2.5 text-xs sm:text-sm font-semibold bg-[#00a68a] text-white rounded-xl hover:bg-[#008f76] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/10 focus:outline-none"
-            >
-              <Plus className="w-4 h-4" /> Manual Dispatch
-            </button>
+          </div>
+        )}
+
+        {currentPath === '/pharmacy/oxygen/consumption' && !isOtherUnit && (
+          <div className="flex flex-wrap items-center gap-3">
+            {/* 1. INTRA-FACILITY DROPDOWN (Request & Manual Dispatch) */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsIntraFacilityDropdownOpen(!isIntraFacilityDropdownOpen)
+                  setIsInterFacilityDropdownOpen(false)
+                }}
+                className="px-4 py-2.5 text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 focus:outline-none cursor-pointer"
+              >
+                <Building2 className="w-4 h-4" />
+                <span>{language === 'ms' ? 'Intra-Facility' : 'Intra-Facility'}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isIntraFacilityDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isIntraFacilityDropdownOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-30" 
+                    onClick={() => setIsIntraFacilityDropdownOpen(false)}
+                  />
+                  <div 
+                    className="absolute right-0 sm:left-0 sm:right-auto mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-1.5 z-40 animate-fade-in divide-y divide-slate-100"
+                    onClick={() => setIsIntraFacilityDropdownOpen(false)}
+                  >
+                    <div className="px-4 py-2.5 bg-slate-50/80">
+                      <div className="text-[10px] font-black uppercase tracking-wider text-emerald-800">
+                        {language === 'ms' ? 'Operasi Intra-Facility (Dalaman)' : 'Intra-Facility Operations'}
+                      </div>
+                      <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                        {language === 'ms' ? 'Pergerakan silinder dalam fasiliti / wad' : 'Internal hospital & ward movements'}
+                      </div>
+                    </div>
+
+                    <div className="p-1 space-y-0.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUnitModalInitialMode('internal')
+                          setUnitModalLockMode(false)
+                          setIsUnitModalOpen(true)
+                        }}
+                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-800 hover:bg-emerald-50 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
+                      >
+                        <div className="p-2 bg-emerald-100 text-emerald-700 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                            {language === 'ms' ? 'Mohon Silinder' : 'Request Cylinders'}
+                            <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded">Request</span>
+                          </div>
+                          <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                            {language === 'ms' ? 'Borang pesanan silinder wad / unit' : 'Internal ward & unit order form'}
+                          </div>
+                        </div>
+                      </button>
+
+                      {isCylinderOfficer && (
+                        <button
+                          type="button"
+                          onClick={() => setIsManualModalOpen(true)}
+                          className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-800 hover:bg-teal-50 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
+                        >
+                          <div className="p-2 bg-teal-100 text-teal-700 rounded-lg group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                            <Plus className="w-4 h-4" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                              Manual Dispatch
+                              <span className="text-[10px] font-bold bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded">Dispatch</span>
+                            </div>
+                            <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                              {language === 'ms' ? 'Keluarkan silinder secara terus ke wad' : 'Direct manual issue of cylinders to unit'}
+                            </div>
+                          </div>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* 2. INTER-FACILITY DROPDOWN (Request, Receive & Return) */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsInterFacilityDropdownOpen(!isInterFacilityDropdownOpen)
+                  setIsIntraFacilityDropdownOpen(false)
+                }}
+                className="px-4 py-2.5 text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 focus:outline-none cursor-pointer"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>{language === 'ms' ? 'Inter-Facility' : 'Inter-Facility'}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isInterFacilityDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isInterFacilityDropdownOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-30" 
+                    onClick={() => setIsInterFacilityDropdownOpen(false)}
+                  />
+                  <div 
+                    className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-1.5 z-40 animate-fade-in divide-y divide-slate-100"
+                    onClick={() => setIsInterFacilityDropdownOpen(false)}
+                  >
+                    <div className="px-4 py-2.5 bg-slate-50/80">
+                      <div className="text-[10px] font-black uppercase tracking-wider text-indigo-800">
+                        {language === 'ms' ? 'Operasi Inter-Facility (Fasiliti Luar)' : 'Inter-Facility Operations'}
+                      </div>
+                      <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                        {language === 'ms' ? 'Pindahan silinder antara KK / hospital luar' : 'Transfers with external clinics & hospitals'}
+                      </div>
+                    </div>
+
+                    <div className="p-1 space-y-0.5">
+                      {/* 1. Request */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUnitModalInitialMode('external')
+                          setUnitModalLockMode(false)
+                          setIsUnitModalOpen(true)
+                        }}
+                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-800 hover:bg-blue-50 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
+                      >
+                        <div className="p-2 bg-blue-100 text-blue-700 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                            {language === 'ms' ? 'Mohon Silinder' : 'Request Cylinders'}
+                            <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Request</span>
+                          </div>
+                          <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                            {language === 'ms' ? 'Pesanan silinder ke fasiliti luar' : 'Create indent to external facility'}
+                          </div>
+                        </div>
+                      </button>
+
+                      {/* 2. Receive */}
+                      <button
+                        type="button"
+                        onClick={() => setIsReceiveInterFacilityModalOpen(true)}
+                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-800 hover:bg-indigo-50 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
+                      >
+                        <div className="p-2 bg-indigo-100 text-indigo-700 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                          <ArrowDownToLine className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                            {language === 'ms' ? 'Terima Silinder' : 'Receive Cylinders'}
+                            <span className="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded">Receive</span>
+                          </div>
+                          <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                            {language === 'ms' ? 'Rekod penerimaan silinder masuk' : 'Record incoming transfer receipt'}
+                          </div>
+                        </div>
+                      </button>
+
+                      {/* 3. Return */}
+                      <button
+                        type="button"
+                        onClick={() => setIsReturnInterFacilityModalOpen(true)}
+                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-800 hover:bg-purple-50 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
+                      >
+                        <div className="p-2 bg-purple-100 text-purple-700 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                          <ArrowUpFromLine className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                            {language === 'ms' ? 'Pulang Silinder' : 'Return Cylinders'}
+                            <span className="text-[10px] font-bold bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">Return</span>
+                          </div>
+                          <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                            {language === 'ms' ? 'Pulang silinder kosong / pinjaman' : 'Return empty or loaned cylinders'}
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         )}
 
@@ -4228,13 +6094,27 @@ export const OxygenDashboardPage: React.FC = () => {
                 {/* Left Side: Pricing List */}
                 <div className="flex-1 overflow-y-auto pr-2 space-y-4">
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                    {Object.keys(editedPrices).sort().map((sizeCode) => {
+                    {Object.keys(editedPrices).sort((a, b) => {
+                      const order = ['101-F', '101-N', 'P101-D', 'P101-E', 'P101-F', 'P101-HS', 'Liquid Medical Oxygen (VIE Tank)']
+                      const idxA = order.indexOf(a)
+                      const idxB = order.indexOf(b)
+                      if (idxA !== -1 && idxB !== -1) return idxA - idxB
+                      if (idxA !== -1) return -1
+                      if (idxB !== -1) return 1
+                      return a.localeCompare(b)
+                    }).map((sizeCode) => {
                       const isLoanCyl = sizeCode === '101-N' || sizeCode === '101-F'
+                      const isPerM3 = sizeCode.toLowerCase().includes('vie') || 
+                                      sizeCode.toLowerCase().includes('liquid') || 
+                                      sizeCode.toLowerCase().includes('m3') ||
+                                      sizeCode.toLowerCase().includes('m³')
                       return (
                         <div 
                           key={sizeCode} 
                           className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50/50 border border-slate-200/80 hover:bg-white hover:border-slate-350 rounded-xl hover:shadow-sm transition-all duration-200 gap-4 ${
-                            isLoanCyl ? 'xl:col-span-2 bg-purple-50/20 border-purple-200/60 hover:border-l-4 hover:border-l-purple-500' : 'hover:border-l-4 hover:border-l-sky-500'
+                            isLoanCyl ? 'xl:col-span-2 bg-purple-50/20 border-purple-200/60 hover:border-l-4 hover:border-l-purple-500' : 
+                            isPerM3 ? 'xl:col-span-2 bg-teal-50/20 border-teal-200/60 hover:border-l-4 hover:border-l-teal-500' :
+                            'hover:border-l-4 hover:border-l-sky-500'
                           }`}
                         >
                           <div className="min-w-max">
@@ -4247,16 +6127,23 @@ export const OxygenDashboardPage: React.FC = () => {
                                   LOAN CYLINDER
                                 </span>
                               )}
+                              {isPerM3 && (
+                                <span className="px-2.5 py-0.5 border border-teal-200 bg-teal-100/70 text-teal-800 rounded-md font-extrabold text-[9px] uppercase tracking-wider">
+                                  BULK VIE TANK
+                                </span>
+                              )}
                             </div>
                             <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">
-                              {isLoanCyl ? 'Refill & Cylinder Rental Loan Rates' : 'Standard Refill Rate'}
+                              {isLoanCyl ? 'Refill & Cylinder Rental Loan Rates' : isPerM3 ? 'Bulk Liquid Rate (Per m³)' : 'Standard Refill Rate'}
                             </span>
                           </div>
 
                           <div className="flex flex-wrap items-center gap-3">
                             {/* Refill Rate Input */}
                             <div className="flex items-center gap-1.5">
-                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Refill</span>
+                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
+                                {isPerM3 ? 'Rate / m³' : 'Refill'}
+                              </span>
                               <div className="relative w-32 flex items-center border border-slate-250 rounded-lg bg-white overflow-hidden shadow-xs h-9.5 focus-within:border-sky-600 focus-within:ring-2 focus-within:ring-sky-600/10 transition-all">
                                 <span className="pl-3 text-[10px] font-bold text-slate-400">RM</span>
                                 <input 
@@ -4382,13 +6269,19 @@ export const OxygenDashboardPage: React.FC = () => {
                           <div className="mt-3">
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Refill Cost Updates</span>
                             <div className="flex flex-wrap gap-2">
-                              {group.changes.map((chg, cIdx) => (
-                                <div key={cIdx} className="px-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center gap-2 shadow-xxs">
-                                  <span className="font-mono text-[10px] font-black text-slate-700">{chg.cylinder_size_code}</span>
-                                  <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
-                                  <span className="font-mono text-xs font-black text-[#0284c7]">RM {chg.refill_price.toFixed(2)}</span>
-                                </div>
-                              ))}
+                              {group.changes.map((chg, cIdx) => {
+                                const isPerM3 = chg.cylinder_size_code.toLowerCase().includes('vie') || 
+                                                chg.cylinder_size_code.toLowerCase().includes('liquid') || 
+                                                chg.cylinder_size_code.toLowerCase().includes('m3') ||
+                                                chg.cylinder_size_code.toLowerCase().includes('m³')
+                                return (
+                                  <div key={cIdx} className="px-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center gap-2 shadow-xxs">
+                                    <span className="font-mono text-[10px] font-black text-slate-700">{chg.cylinder_size_code}</span>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                                    <span className="font-mono text-xs font-black text-[#0284c7]">RM {chg.refill_price.toFixed(2)}{isPerM3 ? ' / m³' : ''}</span>
+                                  </div>
+                                )
+                              })}
                             </div>
                           </div>
                         </div>
@@ -4539,6 +6432,10 @@ export const OxygenDashboardPage: React.FC = () => {
 
                       return filteredReceiveConfigs.map((config) => {
                         const isLoanSize = config.cylinder_size_code.startsWith('101-')
+                        const isPerM3 = config.cylinder_size_code.toLowerCase().includes('vie') || 
+                                        config.cylinder_size_code.toLowerCase().includes('liquid') || 
+                                        config.cylinder_size_code.toLowerCase().includes('m3') ||
+                                        config.cylinder_size_code.toLowerCase().includes('m³')
                         const basePrice = config.refill_price
                         const loanRate = config.loan_rate ?? systemSettings?.loan_cylinder_rate ?? 18.36
                         const priceToDisplay = basePrice
@@ -4554,10 +6451,19 @@ export const OxygenDashboardPage: React.FC = () => {
                             <div className="flex items-center gap-3.5">
                               <div className="w-1.5 h-1.5 rounded-full bg-teal-500 shadow-[0_0_4px_rgba(20,184,166,0.4)]" />
                               <div>
-                                <span className="font-mono text-sm font-extrabold text-slate-800 block group-hover:text-teal-700 transition-colors">
-                                  {config.cylinder_size_code}
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-mono text-sm font-extrabold text-slate-800 block group-hover:text-teal-700 transition-colors">
+                                    {config.cylinder_size_code}
+                                  </span>
+                                  {isPerM3 && (
+                                    <span className="px-1.5 py-0.5 bg-teal-50 border border-teal-200 text-teal-700 text-[8.5px] font-black rounded uppercase">
+                                      VIE Tank
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-[9px] text-slate-400 uppercase tracking-wider block mt-0.5 font-bold">
+                                  {isPerM3 ? 'Bulk Liquid Volume' : 'Standard Capacity'}
                                 </span>
-                                <span className="text-[9px] text-slate-400 uppercase tracking-wider block mt-0.5 font-bold">Standard Capacity</span>
                               </div>
                             </div>
 
@@ -4565,73 +6471,80 @@ export const OxygenDashboardPage: React.FC = () => {
                             <div className="flex flex-col">
                               <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Warrant Rate</span>
                               <span className="font-mono text-xs font-bold text-slate-655 mt-0.5">
-                                RM {priceToDisplay.toFixed(2)}
+                                RM {priceToDisplay.toFixed(2)}{isPerM3 ? ' / m³' : ''}
                               </span>
                             </div>
 
-                            {/* Stepper controls scaled up for spaciousness */}
-                            <div className="flex items-center gap-4">
-                              <div className="flex flex-col items-center">
-                                <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold mb-1.5">Refilled</span>
-                                <div className="inline-flex items-center border border-slate-250 bg-white rounded-lg overflow-hidden h-9 shadow-xxs">
-                                  <button 
-                                    type="button"
-                                    onClick={() => setReceiveQuantities(prev => ({ ...prev, [config.cylinder_size_code]: Math.max(0, (prev[config.cylinder_size_code] || 0) - 1) }))}
-                                    className="px-3 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
-                                  >
-                                    -
-                                  </button>
-                                  <input 
-                                    type="number" 
-                                    min="0"
-                                    value={receiveQuantities[config.cylinder_size_code] || 0}
-                                    onChange={(e) => setReceiveQuantities(prev => ({ ...prev, [config.cylinder_size_code]: Math.max(0, parseInt(e.target.value) || 0) }))}
-                                    className="w-10 text-center font-mono font-extrabold text-teal-700 text-xs bg-transparent outline-none border-0 p-0 focus:ring-0"
-                                  />
-                                  <button 
-                                    type="button"
-                                    onClick={() => setReceiveQuantities(prev => ({ ...prev, [config.cylinder_size_code]: (prev[config.cylinder_size_code] || 0) + 1 }))}
-                                    className="px-3 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Loan Stepper widget */}
-                              <div className="flex flex-col items-center">
-                                <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold mb-1.5">Loaned</span>
-                                {isLoanSize ? (
-                                  <span className="text-[9px] text-teal-800 font-extrabold uppercase tracking-wider px-3 bg-teal-50 border border-teal-200 rounded-md shadow-xxs h-9 flex items-center justify-center">
-                                    Self Loaned
+                              {/* Stepper controls scaled up for spaciousness */}
+                              <div className="flex items-center gap-4">
+                                <div className="flex flex-col items-center">
+                                  <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold mb-1.5">
+                                    {isPerM3 ? 'Volume (m³)' : 'Refilled'}
                                   </span>
-                                ) : (
-                                  <div className="inline-flex items-center border border-slate-250 bg-white rounded-lg overflow-hidden h-9 shadow-xxs">
+                                  <div className={`inline-flex items-center border border-slate-250 bg-white rounded-lg overflow-hidden h-9 shadow-xxs ${isPerM3 ? 'w-28' : ''}`}>
                                     <button 
                                       type="button"
-                                      onClick={() => setReceiveLoans(prev => ({ ...prev, [config.cylinder_size_code]: Math.max(0, (prev[config.cylinder_size_code] || 0) - 1) }))}
-                                      className="px-3 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
+                                      onClick={() => setReceiveQuantities(prev => ({ ...prev, [config.cylinder_size_code]: Math.max(0, (prev[config.cylinder_size_code] || 0) - (isPerM3 ? 100 : 1)) }))}
+                                      className="px-2.5 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
                                     >
                                       -
                                     </button>
                                     <input 
                                       type="number" 
                                       min="0"
-                                      value={receiveLoans[config.cylinder_size_code] || 0}
-                                      onChange={(e) => setReceiveLoans(prev => ({ ...prev, [config.cylinder_size_code]: Math.max(0, parseInt(e.target.value) || 0) }))}
-                                      className="w-10 text-center font-mono font-extrabold text-teal-850 text-xs bg-transparent outline-none border-0 p-0 focus:ring-0"
+                                      step={isPerM3 ? "10" : "1"}
+                                      value={receiveQuantities[config.cylinder_size_code] || 0}
+                                      onChange={(e) => setReceiveQuantities(prev => ({ ...prev, [config.cylinder_size_code]: Math.max(0, parseInt(e.target.value) || 0) }))}
+                                      className={`${isPerM3 ? 'w-16' : 'w-10'} text-center font-mono font-extrabold text-teal-700 text-xs bg-transparent outline-none border-0 p-0 focus:ring-0`}
                                     />
                                     <button 
                                       type="button"
-                                      onClick={() => setReceiveLoans(prev => ({ ...prev, [config.cylinder_size_code]: (prev[config.cylinder_size_code] || 0) + 1 }))}
-                                      className="px-3 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
+                                      onClick={() => setReceiveQuantities(prev => ({ ...prev, [config.cylinder_size_code]: (prev[config.cylinder_size_code] || 0) + (isPerM3 ? 100 : 1) }))}
+                                      className="px-2.5 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
                                     >
                                       +
                                     </button>
                                   </div>
-                                )}
+                                </div>
+
+                                {/* Loan Stepper widget */}
+                                <div className="flex flex-col items-center">
+                                  <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold mb-1.5">Loaned</span>
+                                  {isPerM3 ? (
+                                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider px-3 bg-slate-100 border border-slate-200 rounded-md shadow-xxs h-9 flex items-center justify-center">
+                                      N/A (Bulk VIE)
+                                    </span>
+                                  ) : isLoanSize ? (
+                                    <span className="text-[9px] text-teal-800 font-extrabold uppercase tracking-wider px-3 bg-teal-50 border border-teal-200 rounded-md shadow-xxs h-9 flex items-center justify-center">
+                                      Self Loaned
+                                    </span>
+                                  ) : (
+                                    <div className="inline-flex items-center border border-slate-250 bg-white rounded-lg overflow-hidden h-9 shadow-xxs">
+                                      <button 
+                                        type="button" 
+                                        onClick={() => setReceiveLoans(prev => ({ ...prev, [config.cylinder_size_code]: Math.max(0, (prev[config.cylinder_size_code] || 0) - 1) }))}
+                                        className="px-3 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
+                                      >
+                                        -
+                                      </button>
+                                      <input 
+                                        type="number" 
+                                        min="0"
+                                        value={receiveLoans[config.cylinder_size_code] || 0}
+                                        onChange={(e) => setReceiveLoans(prev => ({ ...prev, [config.cylinder_size_code]: Math.max(0, parseInt(e.target.value) || 0) }))}
+                                        className="w-10 text-center font-mono font-extrabold text-teal-850 text-xs bg-transparent outline-none border-0 p-0 focus:ring-0"
+                                      />
+                                      <button 
+                                        type="button" 
+                                        onClick={() => setReceiveLoans(prev => ({ ...prev, [config.cylinder_size_code]: (prev[config.cylinder_size_code] || 0) + 1 }))}
+                                        className="px-3 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
 
                             {/* Subtotal calculation column */}
                             <div className="text-right sm:w-28 flex flex-col justify-end items-end">
@@ -4668,33 +6581,42 @@ export const OxygenDashboardPage: React.FC = () => {
                         </select>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-3.5">
-                        <div className="space-y-1.5">
-                          <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">DO No.</label>
-                          <input 
-                            type="text" 
-                            placeholder="DO-998877"
-                            value={doNumber}
-                            onChange={(e) => setDoNumber(e.target.value)}
-                            required
-                            className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
-                          />
-                        </div>
-                        <div className="space-y-1.5">
-                          <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">SO No.</label>
-                          <input 
-                            type="text" 
-                            placeholder="SO-112233"
-                            value={soNumber}
-                            onChange={(e) => setSoNumber(e.target.value)}
-                            required
-                            className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
-                          />
-                        </div>
-                      </div>
+                      {(() => {
+                        const isLiquidOrder = (receiveQuantities['Liquid Medical Oxygen (VIE Tank)'] || 0) > 0
+                        return (
+                          <div className="grid grid-cols-2 gap-3.5">
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
+                                DO No. {isLiquidOrder && <span className="text-amber-600 font-normal">(Auto PENDING jika permohonan)</span>}
+                              </label>
+                              <input 
+                                type="text" 
+                                placeholder={isLiquidOrder ? "PENDING (Key in semasa tiba)" : "DO-998877"}
+                                value={doNumber}
+                                onChange={(e) => setDoNumber(e.target.value)}
+                                required={!isLiquidOrder}
+                                className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
+                                SO No. {isLiquidOrder && <span className="text-slate-400 font-normal">(Pilihan)</span>}
+                              </label>
+                              <input 
+                                type="text" 
+                                placeholder={isLiquidOrder ? "SO-112233 (Pilihan)" : "SO-112233"}
+                                value={soNumber}
+                                onChange={(e) => setSoNumber(e.target.value)}
+                                required={!isLiquidOrder}
+                                className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                              />
+                            </div>
+                          </div>
+                        )
+                      })()}
 
                       <div className="space-y-1.5">
-                        <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Date Received</label>
+                        <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Date Received / Request</label>
                         <input 
                           type="date" 
                           value={receptionDate}
@@ -4707,13 +6629,25 @@ export const OxygenDashboardPage: React.FC = () => {
                       <div className="grid grid-cols-2 gap-3.5">
                         <div className="space-y-1.5">
                           <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Vote Code</label>
-                          <input 
-                            type="text" 
+                          <select 
                             value={voteCode}
-                            onChange={(e) => setVoteCode(e.target.value)}
+                            onChange={(e) => {
+                              const newVote = e.target.value
+                              setVoteCode(newVote)
+                              const act = financials?.by_vote_code?.[newVote]?.vote_activity || '27402'
+                              setVoteActivity(act)
+                            }}
                             required
-                            className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
-                          />
+                            className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                          >
+                            {availableVoteCodes.map(code => {
+                              return (
+                                <option key={code} value={code}>
+                                  {code} {code === '080702' ? '(CC)' : code === '080600' ? '(Duit Khas)' : ''}
+                                </option>
+                              )
+                            })}
+                          </select>
                         </div>
                         <div className="space-y-1.5">
                           <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider block">Vote Act</label>
@@ -4725,6 +6659,14 @@ export const OxygenDashboardPage: React.FC = () => {
                             className="bg-white border border-slate-255 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
                           />
                         </div>
+                      </div>
+
+                      {/* Remaining Balance Indicator */}
+                      <div className="bg-slate-100/80 border border-slate-200/80 rounded-lg px-3 py-2 flex items-center justify-between text-[11px]">
+                        <span className="text-slate-500 font-semibold">Baki Peruntukan Vot {voteCode}:</span>
+                        <span className={`font-mono font-bold ${(financials?.by_vote_code?.[voteCode]?.current_balance ?? 0) < 0 ? 'text-rose-600' : 'text-teal-700'}`}>
+                          {fmt(financials?.by_vote_code?.[voteCode]?.current_balance ?? (voteCode === '080702' ? (financials?.current_balance ?? 0) : 0))}
+                        </span>
                       </div>
 
                       <div className="space-y-1.5">
@@ -4765,6 +6707,21 @@ export const OxygenDashboardPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
+
+                    {/* Pending Request Notice for Bulk VIE Tank */}
+                    {(() => {
+                      const isLiquidOrder = (receiveQuantities['Liquid Medical Oxygen (VIE Tank)'] || 0) > 0
+                      const isPendingOrder = isLiquidOrder && (!doNumber || !doNumber.trim() || doNumber.trim().toUpperCase() === 'PENDING')
+                      if (!isPendingOrder) return null
+                      return (
+                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 font-medium leading-relaxed flex items-start gap-2.5">
+                          <Clock className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                          <span>
+                            Pesanan Oksigen Cecair (VIE Tank) didaftarkan sebagai <strong>Menunggu Penghantaran (Pending Delivery)</strong> untuk menjana PO dahulu. No. DO dan Tarikh Ketibaan akan dikemas kini semasa lori tangki tiba bagi mengaktifkan Laporan Penerimaan (KEW.PS-3).
+                          </span>
+                        </div>
+                      )
+                    })()}
                   </div>
 
                   <div className="flex flex-col gap-2 mt-6 flex-shrink-0">
@@ -4775,14 +6732,33 @@ export const OxygenDashboardPage: React.FC = () => {
                     >
                       Cancel
                     </button>
-                    <button 
-                      type="submit"
-                      disabled={isSubmittingReception}
-                      className="w-full py-3 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white rounded-lg text-xs font-extrabold shadow-sm transition-all active:scale-98 flex items-center justify-center gap-1.5"
-                    >
-                      {isSubmittingReception ? <Spinner size="sm" /> : <ShoppingCart className="w-3.5 h-3.5" />}
-                      Log Received Oxygen
-                    </button>
+                    {(() => {
+                      const isLiquidOrder = (receiveQuantities['Liquid Medical Oxygen (VIE Tank)'] || 0) > 0
+                      const isPendingOrder = isLiquidOrder && (!doNumber || !doNumber.trim() || doNumber.trim().toUpperCase() === 'PENDING')
+
+                      return (
+                        <button 
+                          type="submit"
+                          disabled={isSubmittingReception}
+                          className={`w-full py-3 disabled:opacity-50 text-white rounded-lg text-xs font-extrabold shadow-sm transition-all active:scale-98 flex items-center justify-center gap-1.5 ${
+                            isPendingOrder 
+                              ? 'bg-amber-600 hover:bg-amber-700' 
+                              : 'bg-teal-600 hover:bg-teal-700'
+                          }`}
+                        >
+                          {isSubmittingReception ? (
+                            <Spinner size="sm" />
+                          ) : isPendingOrder ? (
+                            <FileText className="w-3.5 h-3.5" />
+                          ) : (
+                            <ShoppingCart className="w-3.5 h-3.5" />
+                          )}
+                          {isPendingOrder 
+                            ? (language === 'ms' ? 'Daftar Permintaan & Jana PO (Menunggu DO)' : 'Generate PO Request (Pending DO)')
+                            : (language === 'ms' ? 'Daftar Penerimaan Oksigen' : 'Log Received Oxygen')}
+                        </button>
+                      )
+                    })()}
                   </div>
                 </div>
               </div>
@@ -4794,44 +6770,202 @@ export const OxygenDashboardPage: React.FC = () => {
       {/* ========================================================
           MODAL 3: PDF DOWNLOAD CONGRATULATION SCREEN
          ======================================================== */}
-      {pdfSuccessModalOpen && justCreatedReception && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-[28px] w-full max-w-md p-6 shadow-2xl text-center relative border border-slate-200/50 animate-bounce-short">
-            <button 
-              onClick={() => setPdfSuccessModalOpen(false)}
-              className="absolute right-5 top-5 p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95"
-            >
-              <X className="w-4 h-4" />
-            </button>
+      {pdfSuccessModalOpen && justCreatedReception && (() => {
+        const isPending = justCreatedReception.status === 'pending' || 
+                          justCreatedReception.status === 'pending_delivery' || 
+                          !justCreatedReception.delivery_order_no || 
+                          String(justCreatedReception.delivery_order_no).toUpperCase().startsWith('PENDING')
 
-            <div className="w-16 h-16 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-              <CheckCircle className="w-8 h-8 text-emerald-600" />
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-[28px] w-full max-w-md p-6 shadow-2xl text-center relative border border-slate-200/50 animate-bounce-short">
+              <button 
+                onClick={() => setPdfSuccessModalOpen(false)}
+                className="absolute right-5 top-5 p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className={`w-16 h-16 ${isPending ? 'bg-amber-50 border-amber-200' : 'bg-emerald-50 border-emerald-100'} border rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm`}>
+                {isPending ? (
+                  <FileText className="w-8 h-8 text-amber-600" />
+                ) : (
+                  <CheckCircle className="w-8 h-8 text-emerald-600" />
+                )}
+              </div>
+
+              <h3 className="text-lg font-black text-slate-800">
+                {isPending 
+                  ? 'Liquid Oxygen Request Registered (PO Ready)!' 
+                  : 'Oxygen Received Successfully!'}
+              </h3>
+              <p className="text-xs text-slate-500 mt-2 px-4 leading-relaxed">
+                {isPending 
+                  ? 'Permohonan pesanan gas oksigen cecair berjaya didaftarkan. Anda boleh menjana Pesanan Kerajaan (PO) sekarang. Laporan Penerimaan (KEW.PS-3) akan diaktifkan sebaik sahaja lori tangki tiba dan No. DO dikemas kini.' 
+                  : 'The oxygen delivery was successfully recorded into Supabase. You can now download the KKM-compliant documents.'}
+              </p>
+
+              <div className="flex flex-col gap-3 mt-6">
+                <button 
+                  onClick={() => {
+                    setPdfSuccessModalOpen(false)
+                    handleOpenPoPreview(justCreatedReception)
+                  }}
+                  className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                >
+                  <Printer className="w-4 h-4 text-slate-300" />
+                  Print Purchase Order (PO) PDF
+                </button>
+                {isPending ? (
+                  <div className="p-3 bg-amber-50/80 border border-amber-200/80 rounded-xl text-[11px] text-amber-800 font-medium flex items-center gap-2 text-left">
+                    <Lock className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                    <span>Laporan Penerimaan (KEW.PS-3) dikunci sementara sehingga No. DO dimasukkan semasa ketibaan.</span>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => handleDownloadReport(justCreatedReception)}
+                    className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <Download className="w-4 h-4 text-white" />
+                    Download Reception Report
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+
+      {/* ========================================================
+          MODAL 3B: KEY IN DO & CONFIRM ARRIVAL MODAL (LIQUID / PENDING RECEPTION)
+         ======================================================== */}
+      {isArrivalModalOpen && arrivalRecord && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4"
+          onClick={() => setIsArrivalModalOpen(false)}
+        >
+          <div 
+            className="bg-white rounded-[24px] w-full max-w-lg p-6 shadow-2xl border border-slate-200 relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3.5 mb-4">
+              <div>
+                <span className="text-[10px] font-black text-teal-700 uppercase tracking-widest block mb-0.5">Kementerian Kesihatan Malaysia (KKM)</span>
+                <h3 className="text-base font-extrabold text-slate-900 tracking-tight">
+                  {language === 'ms' ? 'Kemas Kini Ketibaan Penghantaran Oksigen (Key In DO)' : 'Confirm Oxygen Arrival (Key In DO)'}
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {language === 'ms' 
+                    ? 'Sahkan ketibaan lori tangki / bekalan oksigen dan daftarkan Nombor Nota Serahan (DO).' 
+                    : 'Confirm tanker arrival and register Delivery Order (DO) number.'}
+                </p>
+              </div>
+              <button 
+                onClick={() => setIsArrivalModalOpen(false)}
+                className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <h3 className="text-lg font-black text-slate-800">Oxygen Received Successfully!</h3>
-            <p className="text-xs text-slate-500 mt-2 px-4 leading-relaxed">
-              The oxygen delivery was successfully recorded into Supabase. You can now download the KKM-compliant documents.
-            </p>
+            <form onSubmit={handleSubmitArrival} className="space-y-4">
+              {/* Order Info Card */}
+              <div className="bg-slate-50 border border-slate-200/80 p-3.5 rounded-xl space-y-2 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-slate-500 font-medium">Pembekal:</span>
+                  <span className="font-bold text-slate-800">{arrivalRecord.supplier_name || 'LINDE EOX SDN BHD (CAW. MIRI)'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 font-medium">Tarikh Pesanan:</span>
+                  <span className="font-semibold text-slate-700">
+                    {new Date(arrivalRecord.reception_date).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 font-medium">Kod Vot:</span>
+                  <span className="font-mono font-bold text-teal-700">
+                    {arrivalRecord.vote_code || '080702'} ({arrivalRecord.vote_activity || '27402'})
+                  </span>
+                </div>
+                <div className="flex justify-between border-t border-slate-200/70 pt-2 font-bold">
+                  <span className="text-slate-600">Jumlah Anggaran:</span>
+                  <span className="font-mono text-teal-800 text-sm">{fmt(arrivalRecord.total_amount)}</span>
+                </div>
+              </div>
 
-            <div className="flex flex-col gap-3 mt-6">
-              <button 
-                onClick={() => {
-                  setPdfSuccessModalOpen(false)
-                  handleOpenPoPreview(justCreatedReception)
-                }}
-                className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 active:scale-95"
-              >
-                <Printer className="w-4 h-4 text-slate-300" />
-                Print Purchase Order (PO) PDF
-              </button>
-              <button 
-                onClick={() => handleDownloadReport(justCreatedReception)}
-                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 active:scale-95"
-              >
-                <Download className="w-4 h-4 text-white" />
-                Download Reception Report
-              </button>
-            </div>
+              {/* Form Inputs */}
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-extrabold text-slate-700 uppercase tracking-wider block">
+                    No. Delivery Order (DO) <span className="text-rose-500">*</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="cth: 0238445129"
+                    value={arrivalDoNo}
+                    onChange={(e) => setArrivalDoNo(e.target.value)}
+                    required
+                    autoFocus
+                    className="bg-white border border-teal-300 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
+                      No. Sales Order (SO) <span className="text-slate-400 font-normal">(Pilihan)</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      placeholder="cth: 133045612"
+                      value={arrivalSoNo}
+                      onChange={(e) => setArrivalSoNo(e.target.value)}
+                      className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
+                      Tarikh Ketibaan (Auto) <span className="text-rose-500">*</span>
+                    </label>
+                    <input 
+                      type="date" 
+                      value={arrivalDate}
+                      onChange={(e) => setArrivalDate(e.target.value)}
+                      required
+                      className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-all text-xs font-medium rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Informative Unlock Banner */}
+              <div className="p-3 bg-emerald-50/90 border border-emerald-200 rounded-xl text-[11px] text-emerald-900 font-medium leading-relaxed flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                <span>
+                  Selepas No. DO dan Tarikh Ketibaan disimpan, status pesanan akan ditukar kepada <strong>Selesai (Completed)</strong> dan <strong>Laporan Penerimaan (KEW.PS-3)</strong> akan diaktifkan untuk dimuat turun.
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 pt-2">
+                <button 
+                  type="button" 
+                  onClick={() => setIsArrivalModalOpen(false)}
+                  className="flex-1 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all"
+                >
+                  {language === 'ms' ? 'Batal' : 'Cancel'}
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isSubmittingArrival}
+                  className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold shadow-sm transition-all flex items-center justify-center gap-1.5 active:scale-98"
+                >
+                  {isSubmittingArrival ? <Spinner size="sm" /> : <CheckCheck className="w-4 h-4" />}
+                  {language === 'ms' ? 'Sahkan & Buka Laporan' : 'Confirm & Unlock Report'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -5001,17 +7135,118 @@ export const OxygenDashboardPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Dropdown 1: Pegawai Memohon */}
+                  {/* Section 1: Kod Undi & Peruntukan (LOCKED / READ-ONLY) */}
+                  <div className="space-y-3.5 border-b border-slate-100 pb-5">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-teal-700 uppercase tracking-widest flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
+                        1. Kod Undi & Peruntukan
+                      </h4>
+                      <span className="inline-flex items-center gap-1 text-[9px] font-mono font-extrabold bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-full">
+                        <Lock className="w-2.5 h-2.5 text-amber-600" />
+                        VOT {previewVoteCode} (READ-ONLY)
+                      </span>
+                    </div>
+
+                    {/* Read-Only Locked Box with Security Override Button */}
+                    <div className="space-y-1.5">
+                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block flex items-center justify-between">
+                        <span>{language === 'ms' ? 'Kod Vot Disahkan (Read-Only)' : 'Verified Vote Code (Read-Only)'}</span>
+                        <span className="text-[9px] text-emerald-600 font-extrabold flex items-center gap-0.5">
+                          <CheckCircle2 className="w-3 h-3" /> {language === 'ms' ? 'Terkunci' : 'Locked'}
+                        </span>
+                      </label>
+
+                      <div className="flex items-center justify-between gap-2 p-3 bg-slate-50/90 border border-slate-200/80 rounded-2xl shadow-2xs">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="p-2 bg-white border border-slate-200 rounded-xl text-amber-600 shadow-2xs shrink-0">
+                            <Lock className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="text-xs font-mono font-black text-slate-900 block truncate">
+                              Vot {previewVoteCode} {previewVoteCode === '080702' ? '(CC)' : previewVoteCode === '080600' ? '(Duit Khas)' : ''}
+                            </span>
+                            <span className="text-[10px] text-slate-500 font-semibold block truncate">
+                              Baki: {fmt(financials?.by_vote_code?.[previewVoteCode]?.current_balance ?? (previewVoteCode === '080702' ? (financials?.current_balance ?? 0) : 0))}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Security Change Button */}
+                        <button
+                          type="button"
+                          onClick={() => handleOpenVoteOverrideModal(previewRecord)}
+                          className="px-3 py-1.5 bg-white hover:bg-amber-50 text-amber-800 hover:text-amber-900 border border-amber-300 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-xs flex items-center gap-1 active:scale-95 shrink-0"
+                          title={language === 'ms' ? 'Tukar Kod Vot dengan Kebenaran F@rmasi.2016' : 'Change Vote Code with F@rmasi.2016'}
+                        >
+                          <Lock className="w-3 h-3 text-amber-600" />
+                          <span>{language === 'ms' ? 'Tukar Vot' : 'Change Vote'}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                          Aktiviti Vot
+                        </label>
+                        <div className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-mono font-bold rounded-lg px-2.5 py-1.5 truncate">
+                          {previewVoteActivity || '27402'}
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                          Baki Vot Semasa
+                        </label>
+                        <div className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-mono font-bold rounded-lg px-2.5 py-1.5 truncate">
+                          {fmt(financials?.by_vote_code?.[previewVoteCode]?.current_balance ?? (previewVoteCode === '080702' ? (financials?.current_balance ?? 0) : 0))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Live Budget Health & Breakdown */}
+                    {(() => {
+                      const totalAmt = previewTotalAmount || previewRecord?.total_amount || 0
+                      const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, totalAmt)
+                      const isDeficit = balanceAfter < 0
+                      return (
+                        <div className={`p-2.5 rounded-xl border text-[10px] space-y-1.5 ${isDeficit ? 'bg-rose-50/80 border-rose-200 text-rose-800' : 'bg-teal-50/70 border-teal-200 text-teal-900'}`}>
+                          <div className="flex justify-between font-bold">
+                            <span>Status Baki Vot {previewVoteCode}:</span>
+                            <span className="font-mono">{isDeficit ? 'PERUNTUKAN DEFISIT' : 'PERUNTUKAN SIHAT'}</span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-1 pt-1 border-t border-slate-200/60 font-mono text-[9px]">
+                            <span className="text-slate-500">Baki Sebelum PO:</span>
+                            <span className="font-bold text-right text-slate-800">{fmt(balanceBefore)}</span>
+                            <span className="text-slate-500">Tolak PO Ini:</span>
+                            <span className="font-bold text-right text-slate-800">-{fmt(totalAmt)}</span>
+                            <span className="text-slate-500">Baki Selepas PO:</span>
+                            <span className={`font-bold text-right ${isDeficit ? 'text-rose-600' : 'text-teal-700'}`}>{fmt(balanceAfter)}</span>
+                          </div>
+                        </div>
+                      )
+                    })()}
+
+                    <p className="text-[9px] text-slate-400 font-medium leading-tight">
+                      {language === 'ms' 
+                        ? '🔒 Kod Vot disahkan dan dikunci (Read-Only). Untuk sebarang perubahan luar jangka, klik "Tukar Vot" dan masukkan kata laluan keselamatan F@rmasi.2016 berserta justifikasi log audit KKM.' 
+                        : '🔒 Vote Code is verified and locked (Read-Only). For unforeseen changes, click "Change Vote" and enter security password F@rmasi.2016 with audit log justification.'}
+                    </p>
+                  </div>
+
+                  {/* Dropdown 2: Pegawai Memohon */}
                   <div className="space-y-3.5 border-b border-slate-100 pb-5">
                     <h4 className="text-xs font-black text-teal-700 uppercase tracking-widest flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-                      1. Pegawai Yang Memohon
+                      2. Pegawai Yang Memohon
                     </h4>
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Select Officer</label>
+                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                        Select Officer (Pharmacy Logistic)
+                      </label>
                       <select
                         onChange={(e) => {
-                          const chosen = hospitalUsers.find(u => u.full_name === e.target.value)
+                          const chosen = pharmacyLogisticUsers.find(u => u.full_name === e.target.value)
                           if (chosen) {
                             setPreviewSignatures(prev => ({
                               ...prev,
@@ -5024,7 +7259,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         className="w-full border border-slate-250 rounded-xl p-2.5 text-xs outline-none bg-white text-gray-700 focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-all font-semibold"
                       >
                         <option value="">-- Select Officer --</option>
-                        {hospitalUsers.map(user => (
+                        {pharmacyLogisticUsers.map(user => (
                           <option key={user.id} value={user.full_name}>
                             {user.full_name} ({user.jawatan || user.role?.role_name || 'Staff'})
                           </option>
@@ -5044,17 +7279,19 @@ export const OxygenDashboardPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Dropdown 2: Ketua Bahagian */}
+                  {/* Dropdown 3: Ketua Bahagian */}
                   <div className="space-y-3.5 pb-4">
                     <h4 className="text-xs font-black text-teal-700 uppercase tracking-widest flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-                      2. Ketua Bahagian
+                      3. Ketua Bahagian
                     </h4>
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Select Head of Dept</label>
+                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                        Select Head of Dept (Pharmacy Logistic)
+                      </label>
                       <select
                         onChange={(e) => {
-                          const chosen = hospitalUsers.find(u => u.full_name === e.target.value)
+                          const chosen = pharmacyLogisticUsers.find(u => u.full_name === e.target.value)
                           if (chosen) {
                             setPreviewSignatures(prev => ({
                               ...prev,
@@ -5067,7 +7304,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         className="w-full border border-slate-250 rounded-xl p-2.5 text-xs outline-none bg-white text-gray-700 focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-all font-semibold"
                       >
                         <option value="">-- Select Head --</option>
-                        {hospitalUsers.map(user => (
+                        {pharmacyLogisticUsers.map(user => (
                           <option key={user.id} value={user.full_name}>
                             {user.full_name} ({user.jawatan || user.role?.role_name || 'Staff'})
                           </option>
@@ -5179,7 +7416,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       >
                         {monthlyList.map(m => (
                           <option key={m.monthKey} value={m.monthKey}>
-                            {m.monthLabel.toUpperCase()} — ({m.entryCount} {m.entryCount === 1 ? 'Entri' : 'Entri Digabung'} / {fmt(m.total_amount)})
+                            {m.monthLabel.toUpperCase()} [Vot {m.vote_code || '080702'}] — ({m.entryCount} {m.entryCount === 1 ? 'Entri' : 'Entri Digabung'} / {fmt(m.total_amount)})
                           </option>
                         ))}
                       </select>
@@ -5454,6 +7691,176 @@ export const OxygenDashboardPage: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Vote Code Security Override & Audit Log Modal */}
+      {isVoteOverrideModalOpen && overrideTargetRecord && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white border border-amber-200 rounded-[28px] shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-amber-500/10 via-amber-50/50 to-orange-50/20 border-b border-amber-100 p-6 flex items-start gap-4">
+              <div className="p-3 bg-amber-100 text-amber-700 rounded-2xl border border-amber-200 shadow-xs shrink-0">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-md">
+                    {language === 'ms' ? 'KAWALAN KESELAMATAN & AUDIT' : 'SECURITY CONTROL & AUDIT'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setIsVoteOverrideModalOpen(false)}
+                    className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-white/50"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <h3 className="text-base font-extrabold text-slate-900 mt-1.5">
+                  {language === 'ms' ? 'Kebenaran Pertukaran Kod Vot' : 'Vote Code Override Authorization'}
+                </h3>
+                <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                  {language === 'ms' 
+                    ? `Pertukaran Kod Vot untuk Pesanan (DO) ${overrideTargetRecord.delivery_order_no || '-'} adalah terkawal dan direkodkan dalam log audit KKM.` 
+                    : `Changing Vote Code for Delivery Order ${overrideTargetRecord.delivery_order_no || '-'} is controlled and logged in KKM audit logs.`}
+                </p>
+              </div>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmitVoteOverride} className="p-6 space-y-4">
+              {overrideError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-semibold flex items-start gap-2 animate-in fade-in duration-150">
+                  <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <span>{overrideError}</span>
+                </div>
+              )}
+
+              {/* Current vs New Vote Selection */}
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-500 font-bold">{language === 'ms' ? 'Kod Vot Semasa:' : 'Current Vote Code:'}</span>
+                  <span className="font-mono font-black text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200">
+                    Vot {overrideTargetRecord.vote_code || '080702'}
+                  </span>
+                </div>
+                <div className="pt-2 border-t border-slate-200 space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-600 uppercase tracking-wider block">
+                    {language === 'ms' ? 'Pilih Kod Vot Baru (Sasaran) *' : 'Select New Vote Code *'}
+                  </label>
+                  <select
+                    value={overrideSelectedVoteCode}
+                    onChange={(e) => {
+                      const newCode = e.target.value
+                      setOverrideSelectedVoteCode(newCode)
+                      const act = financials?.by_vote_code?.[newCode]?.vote_activity || '27402'
+                      setOverrideSelectedVoteActivity(act)
+                    }}
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono font-black text-slate-800 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
+                  >
+                    {availableVoteCodes.map(code => {
+                      const codeFin = financials?.by_vote_code?.[code]
+                      const bal = codeFin ? codeFin.current_balance : (code === '080702' ? (financials?.current_balance ?? 0) : 0)
+                      const labelSuffix = code === '080702' ? '(CC)' : code === '080600' ? '(Duit Khas)' : ''
+                      return (
+                        <option key={code} value={code}>
+                          Vot {code} {labelSuffix} — Baki: {fmt(bal)}
+                        </option>
+                      )
+                    })}
+                  </select>
+                </div>
+              </div>
+
+              {/* Security Password */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-700 uppercase tracking-wider block flex items-center justify-between">
+                  <span>{language === 'ms' ? 'Kata Laluan Keselamatan Farmasi *' : 'Pharmacy Security Password *'}</span>
+                  <span className="text-[9px] text-amber-700 font-mono font-bold">(F@rmasi.2016)</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showOverridePassword ? 'text' : 'password'}
+                    value={overridePasswordInput}
+                    onChange={(e) => setOverridePasswordInput(e.target.value)}
+                    placeholder='Masukkan kata laluan F@rmasi.2016...'
+                    required
+                    className="w-full bg-white border border-slate-300 rounded-xl pl-3.5 pr-10 py-2.5 text-xs font-mono font-semibold text-slate-800 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowOverridePassword(!showOverridePassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                  >
+                    {showOverridePassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Audit Log Reason Textarea */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-700 uppercase tracking-wider block">
+                  {language === 'ms' ? 'Sebab / Justifikasi Pertukaran (Log Audit KKM) *' : 'Reason / Justification for Override (Audit Log) *'}
+                </label>
+                <textarea
+                  value={overrideReasonInput}
+                  onChange={(e) => setOverrideReasonInput(e.target.value)}
+                  rows={3}
+                  placeholder={language === 'ms' 
+                    ? 'Nyatakan sebab pertukaran (cth: Pembetulan peruntukan atas arahan Ketua Pegawai Farmasi / Memo pertukaran...)' 
+                    : 'State justification (e.g. Allocation adjustment as directed by Head of Pharmacy...)'}
+                  required
+                  className="w-full bg-white border border-slate-300 rounded-xl p-3 text-xs text-slate-800 font-medium outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 resize-none leading-relaxed"
+                />
+                <span className="text-[9px] text-slate-400 font-medium block">
+                  {language === 'ms' 
+                    ? 'ℹ️ Sebab ini akan disimpan secara rasmi dalam jadual audit_logs bersama ID pengguna dan cap masa.' 
+                    : 'ℹ️ This reason is recorded in audit_logs with your user ID and timestamp.'}
+                </span>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2.5 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsVoteOverrideModalOpen(false)}
+                  className="flex-1 py-2.5 px-4 border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold rounded-xl text-xs transition-all active:scale-95"
+                >
+                  {language === 'ms' ? 'Batal' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  disabled={overrideIsSubmitting || !overridePasswordInput || !overrideReasonInput}
+                  className="flex-1 py-2.5 px-4 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-extrabold rounded-xl text-xs shadow-md shadow-amber-600/20 transition-all active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-50"
+                >
+                  {overrideIsSubmitting ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>{language === 'ms' ? 'Mengesahkan...' : 'Authorizing...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>{language === 'ms' ? 'Sahkan & Simpan Audit' : 'Authorize & Save'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          MODAL: DELETE CYLINDER CONFIRMATION (SINGLE & BULK)
+         ======================================================== */}
+      {deleteCylinderTarget && (
+        <DeleteCylinderModal
+          isOpen={!!deleteCylinderTarget}
+          cylinders={deleteCylinderTarget}
+          onClose={() => setDeleteCylinderTarget(null)}
+          onConfirm={handleConfirmDeleteCylinders}
+          isDeleting={isDeletingCylinder}
+        />
       )}
     </div>
   )

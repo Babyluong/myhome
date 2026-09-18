@@ -11,7 +11,9 @@ import {
   TrendingDown,
   Layers,
   Activity,
-  Pill
+  Pill,
+  ShieldAlert,
+  Building2
 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -25,6 +27,17 @@ export const FormulariSubMenu: React.FC = () => {
   const stats = useMemo(() => getFormulariSummaryStats(), [])
 
   const menuItems = [
+    {
+      title: language === 'ms' ? 'Formulari Ubat Hospital Lawas' : 'Hospital Lawas Formulary',
+      description: language === 'ms'
+        ? 'Pangkalan data formulari ubat rasmi Hospital Lawas. Diselaraskan terus mengikut baki inventori fasiliti MyInventory dan diasingkan mengikut kumpulan Eyedrop, Eardrop, Insulin, MDI, Antikoagulan & kelas klinikal.'
+        : 'Official Lawas Hospital Drug Formulary. Strictly reflects facility inventory from MyInventory, separated into Eyedrops, Eardrops, Insulin, MDI Inhalers, Anticoagulants and clinical groups.',
+      icon: Building2,
+      path: ROUTES.FORMULARI_HOSPITAL_LAWAS,
+      color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+      badge: language === 'ms' ? 'Khas Hospital Lawas' : 'Lawas Special',
+      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+    },
     {
       title: language === 'ms' ? 'Carian & Pengkatalogan Formulari' : 'Formulary Search & Catalog',
       description: language === 'ms'
@@ -101,6 +114,17 @@ export const FormulariSubMenu: React.FC = () => {
       color: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
       badge: language === 'ms' ? 'Alternatif Terapi' : 'Therapeutic Alt.',
       badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+    },
+    {
+      title: language === 'ms' ? 'Daftar & Protokol Antidot KKM' : 'KKM Antidote & Poison Protocols',
+      description: language === 'ms'
+        ? 'Pangkalan data lengkap antidot KKM (List A, B, C), protokol dos intoksikasi ubat, pengurusan toksikologi & talian kecemasan Pusat Racun Negara (PRN).'
+        : 'Official MOH antidote registry (List A, B, C), drug intoxication reversal protocols, emergency toxicology management, and National Poison Centre hotline.',
+      icon: ShieldAlert,
+      path: ROUTES.FORMULARI_ANTIDOTES,
+      color: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
+      badge: language === 'ms' ? '25+ Antidot KKM' : '25+ MOH Antidotes',
+      badgeColor: 'bg-rose-500 text-white border-transparent'
     }
   ]
 

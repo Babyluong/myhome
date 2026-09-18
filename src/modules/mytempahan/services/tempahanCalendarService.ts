@@ -22,19 +22,19 @@ export function generateBookingICS(booking: Booking): string {
   const dtStamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z'
   const dtStart = formatIcsDateTime(booking.date, booking.start_time)
   const dtEnd = formatIcsDateTime(booking.date, booking.end_time)
-  const location = `${booking.room?.name || 'Bilik Mesyuarat'}, ${booking.room?.location || 'Hospital Lawas'}`
+  const location = `${booking.room?.name || 'Conference Room'}, ${booking.room?.location || 'Lawas Hospital'}`
   const summary = `[MyTempahan] ${booking.purpose}`
-  const description = `No. Rujukan: ${booking.booking_number}\\n` +
-    `Pemohon: ${booking.pemohon_name || booking.user?.full_name || 'Pegawai KKM'}\\n` +
-    `Fasiliti: ${booking.room?.name} (${booking.room?.room_code})\\n` +
-    `Susun Atur: ${booking.layout_type}\\n` +
-    `Kehadiran: ${booking.attendees_count} Pax\\n` +
-    `Peralatan Dimohon: ${(booking.requested_amenities || []).join(', ')}`
+  const description = `Booking Ref: ${booking.booking_number}\\n` +
+    `Applicant: ${booking.pemohon_name || booking.user?.full_name || 'Hospital Officer'}\\n` +
+    `Facility: ${booking.room?.name} (${booking.room?.room_code})\\n` +
+    `Layout: ${booking.layout_type}\\n` +
+    `Attendees: ${booking.attendees_count} Pax\\n` +
+    `Requested Equipment: ${(booking.requested_amenities || []).join(', ')}`
 
   const icsLines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Hospital Lawas//HOME MyTempahan//MS',
+    'PRODID:-//Lawas Hospital//HOME MyTempahan//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:REQUEST',
     'BEGIN:VEVENT',
@@ -49,7 +49,7 @@ export function generateBookingICS(booking: Booking): string {
     'TRANSP:OPAQUE',
     'BEGIN:VALARM',
     'ACTION:DISPLAY',
-    'DESCRIPTION:Peringatan Mesyuarat / Tempahan Fasiliti Hospital Lawas',
+    'DESCRIPTION:Lawas Hospital Facility Booking / Meeting Reminder',
     'TRIGGER:-PT15M',
     'END:VALARM',
     'END:VEVENT',

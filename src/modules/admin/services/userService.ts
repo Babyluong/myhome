@@ -197,10 +197,35 @@ function generateTemporaryPassword(): string {
 export async function createUser(userData: Partial<User>): Promise<UserWithRelations> {
   try {
     if (isSupabaseConfigured()) {
-      // Create user in database first
+      let finalUserId = userData.id || crypto.randomUUID()
+      let tempPassword = generateTemporaryPassword()
+
+      // Create Supabase Auth user first if email is provided
+      // This ensures public.users.id strictly matches auth.users.id
+      if (userData.email) {
+        const { success: authSuccess, error: authError, authUserId } = await createAuthUser(
+          userData.email,
+          tempPassword,
+          finalUserId
+        )
+
+        if (!authSuccess) {
+          console.error('Failed to create Auth user:', authError)
+          throw new Error(`Failed to create authentication account: ${authError || 'Unknown error'}`)
+        }
+
+        if (authUserId) {
+          finalUserId = authUserId
+        }
+      }
+
+      // Create user in database with the exact Auth user ID
       const { data, error } = await supabase
         .from('users')
-        .insert(userData)
+        .insert({
+          ...userData,
+          id: finalUserId,
+        })
         .select(`
           *,
           role:roles!role_id(*),
@@ -211,65 +236,17 @@ export async function createUser(userData: Partial<User>): Promise<UserWithRelat
 
       if (error) throw error
 
-      // Create Supabase Auth user if email is provided
-      if (data.email) {
-        const tempPassword = generateTemporaryPassword()
-        const { success: authSuccess, error: authError, authUserId } = await createAuthUser(
+      if (data && data.email) {
+        // Send welcome email with password setup link
+        const emailResult = await sendWelcomeEmail(
           data.email,
-          tempPassword,
-          data.id // Use the same UUID as the users table
+          data.employee_id,
+          data.full_name
         )
 
-        if (!authSuccess) {
-          console.error('Failed to create Auth user:', authError)
-          // Rollback: delete the user record if Auth user creation failed
-          await supabase.from('users').delete().eq('id', data.id)
-          throw new Error(`Failed to create authentication account: ${authError || 'Unknown error'}`)
-        }
-
-        // Update user record with auth user ID if different (shouldn't be, but just in case)
-        if (authUserId && authUserId !== data.id) {
-          const { data: updatedData, error: updateError } = await supabase
-            .from('users')
-            .update({ id: authUserId })
-            .eq('id', data.id)
-            .select(`
-              *,
-              role:roles!role_id(*),
-              department:departments!department_id(*),
-              hospital:hospitals!hospital_id(*)
-            `)
-            .maybeSingle()
-
-          if (updateError) {
-            console.error('Failed to update user ID:', updateError)
-          } else if (updatedData) {
-            // Send welcome email with password setup link
-            const emailResult = await sendWelcomeEmail(
-              data.email,
-              data.employee_id,
-              data.full_name
-            )
-
-            if (!emailResult.success) {
-              console.error('Failed to send welcome email:', emailResult.error)
-              // Continue - user account is created successfully
-            }
-
-            return updatedData as UserWithRelations
-          }
-        } else {
-          // Send welcome email with password setup link
-          const emailResult = await sendWelcomeEmail(
-            data.email,
-            data.employee_id,
-            data.full_name
-          )
-
-          if (!emailResult.success) {
-            console.error('Failed to send welcome email:', emailResult.error)
-            // Continue - user account is created successfully
-          }
+        if (!emailResult.success) {
+          console.error('Failed to send welcome email:', emailResult.error)
+          // Continue - user account is created successfully
         }
       }
 

@@ -7,22 +7,22 @@ import {
   Printer, 
   Car, 
   ClipboardList, 
-  AlertCircle,
-  FileText,
-  Shield
+  AlertCircle, 
+  FileText, 
+  Shield 
 } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
-
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { 
   getRequests, 
-  getVehicles,
-  getTransporterAggregateStats,
-  getTransporterRoles,
-  getInspections
+  getVehicles, 
+  getTransporterAggregateStats, 
+  getTransporterRoles, 
+  getInspections 
 } from '../services/transporterService'
 import { getUsers } from '@/services/userService'
 import type { TransportRequest, TransportVehicle, VehicleInspection } from '@/shared/types/mytransporter'
@@ -40,6 +40,8 @@ import { JATA_NEGARA_BASE64 } from './jataNegaraBase64'
 const TransporterReportsPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
+  const { language } = useLanguage()
+  const isEn = language !== 'ms'
   const toast = useToast()
 
   const [requests, setRequests] = useState<TransportRequest[]>([])
@@ -73,7 +75,10 @@ const TransporterReportsPage: React.FC = () => {
         if (inspRes.data) setInspections(inspRes.data)
 
       } catch (err: any) {
-        toast.error('Gagal Memuatkan Laporan', err.message || 'Sila cuba lagi.')
+        toast.error(
+          isEn ? 'Failed to Load Reports' : 'Gagal Memuatkan Laporan', 
+          err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
+        )
       } finally {
         setLoading(false)
       }
@@ -143,7 +148,7 @@ const TransporterReportsPage: React.FC = () => {
     requests.forEach(req => {
       if (req.status_semasa === 'completed' && req.pemandu_id) {
         const dId = req.pemandu_id
-        const dName = req.pemandu?.full_name || (dId === 'driver-1' ? 'Pemandu Ali' : dId === 'driver-2' ? 'Pemandu Abu' : 'AMRI AMIT')
+        const dName = req.pemandu?.full_name || (dId === 'driver-1' ? 'Driver Ali' : dId === 'driver-2' ? 'Driver Abu' : 'AMRI AMIT')
         
         if (!driverStats[dId]) {
           driverStats[dId] = {
@@ -281,25 +286,25 @@ const TransporterReportsPage: React.FC = () => {
 
     // Meta Block
     doc.setFontSize(8)
-    doc.text('Rujukan Kami: KKM/HL/500-2/1/1 (06)', 15, 38)
-    doc.text(`Tarikh: ${new Date().toLocaleDateString('ms-MY')}`, 15, 43)
+    doc.text('Our Ref: KKM/HL/500-2/1/1 (06)', 15, 38)
+    doc.text(`Date: ${new Date().toLocaleDateString('en-US')}`, 15, 43)
     doc.setFont('Helvetica', 'bold')
-    doc.text('Klasifikasi: TERHAD', 195, 38, { align: 'right' })
+    doc.text('Classification: RESTRICTED', 195, 38, { align: 'right' })
     doc.setFont('Helvetica', 'normal')
 
     // Document Title
     doc.setFont('Helvetica', 'bold')
     doc.setFontSize(11)
-    doc.text('LAPORAN KAJIAN KEPERLUAN & PENGGUNAAN FLEET KENDERAAN HOSPITAL', 105, 52, { align: 'center' })
+    doc.text('HOSPITAL FLEET ASSET UTILIZATION & CAPACITY REPORT', 105, 52, { align: 'center' })
     doc.setFontSize(9)
-    doc.text('KERTAS JUSTIFIKASI BUKTI SOKONGAN PENAMBAHAN AMBULANS DAN JAWATAN PEMANDU', 105, 57, { align: 'center' })
+    doc.text('OFFICIAL JUSTIFICATION FOR ADDITIONAL AMBULANCE ASSETS AND DRIVER ESTABLISHMENT', 105, 57, { align: 'center' })
     doc.setLineWidth(0.4)
     doc.line(35, 59, 175, 59)
 
     // Introduction paragraph
     doc.setFont('Helvetica', 'normal')
     doc.setFontSize(8.5)
-    const introText = 'Laporan rasmi ini disediakan oleh Jabatan Pengangkutan Hospital Lawas bagi mengemukakan justifikasi bertulis permohonan penambahan peruntukan aset Ambulans (Kelas B/C) dan pertambahan jawatan pemandu kenderaan (Gred H11/H14). Data penggunaan yang dibentangkan di bawah dikumpul secara digital daripada log tugasan sebenar dan bacaan odometer perjalanan (KM) bagi membuktikan kesibukan dan tahap penggunaan (utilization rate) armada sedia ada.'
+    const introText = 'This formal evaluation report is compiled by the Transport Department of Hospital Lawas to provide substantiated justification for the allocation of additional Ambulance assets (Class B/C) and vehicle driver positions (Grade H11/H14). The operational data below is captured digitally from real dispatch logs and odometer readings (KM) to document current utilization rates and fleet workload.'
     const wrappedIntro = doc.splitTextToSize(introText, 180)
     doc.text(wrappedIntro, 15, 65)
 
@@ -308,13 +313,13 @@ const TransporterReportsPage: React.FC = () => {
     // Section 1: Fleet Overview Stats
     doc.setFont('Helvetica', 'bold')
     doc.setFontSize(10)
-    doc.text('1. RINGKASAN AM KADAR PENGGUNAAN (FLEET STATS)', 15, currentY)
+    doc.text('1. GENERAL FLEET UTILIZATION SUMMARY', 15, currentY)
     doc.setFont('Helvetica', 'normal')
     doc.setFontSize(8.5)
-    doc.text(`• Jumlah Permohonan Perjalanan (Selesai): ${requests.filter(r=>r.status_semasa==='completed').length} trip`, 20, currentY + 7)
-    doc.text(`• Jumlah Ambulans & Kereta Jabatan Aktif: ${vehicles.filter(v=>v.status==='active').length} unit`, 20, currentY + 13)
-    doc.text(`• Jumlah Kakitangan Pemandu Beraktif: ${getDriverUsageData().length} orang`, 20, currentY + 19)
-    doc.text(`• Laporan Kerosakan Terbuka (Dalam Penyelenggaraan): ${aggregateStats?.totalIssuesOpen || 0} aduan`, 20, currentY + 25)
+    doc.text(`• Total Completed Transport Missions: ${requests.filter(r=>r.status_semasa==='completed').length} trips`, 20, currentY + 7)
+    doc.text(`• Active Ambulances & Departmental Vehicles: ${vehicles.filter(v=>v.status==='active').length} units`, 20, currentY + 13)
+    doc.text(`• Active Duty Drivers Pool: ${getDriverUsageData().length} personnel`, 20, currentY + 19)
+    doc.text(`• Open Defect Reports (Under Maintenance): ${aggregateStats?.totalIssuesOpen || 0} issues`, 20, currentY + 25)
 
     currentY += 33
 
@@ -338,15 +343,15 @@ const TransporterReportsPage: React.FC = () => {
     checkPageSpace(40)
     doc.setFont('Helvetica', 'bold')
     doc.setFontSize(10)
-    doc.text('2. REKOD PENGGUNAAN KENDERAAN (VEHICLE UTILIZATION RATE)', 15, currentY)
+    doc.text('2. VEHICLE UTILIZATION RATES & MILEAGE LOG', 15, currentY)
     
-    const vehicleHeaders = [['No. Pendaftaran', 'Model Kenderaan', 'Jumlah Trip', 'Jumlah Jarak (KM)', 'Masa Penggunaan (Jam)']]
+    const vehicleHeaders = [['Plate Number', 'Vehicle Model', 'Total Trips', 'Total Distance (KM)', 'Operational Time (Hours)']]
     const vehicleRows = getVehicleUsageData().map(v => [
       v.plate, 
       v.model, 
-      `${v.count} kali`, 
+      `${v.count} trips`, 
       `${v.distanceKm} km`, 
-      `${v.durationHours} jam`
+      `${v.durationHours} hrs`
     ])
 
     autoTable(doc, {
@@ -365,14 +370,14 @@ const TransporterReportsPage: React.FC = () => {
     checkPageSpace(40)
     doc.setFont('Helvetica', 'bold')
     doc.setFontSize(10)
-    doc.text('3. REKOD PRESTASI & BEBAN KERJA PEMANDU (DRIVER WORKLOAD)', 15, currentY)
+    doc.text('3. DRIVER WORKLOAD & PERFORMANCE LOG', 15, currentY)
     
-    const driverHeaders = [['Nama Pemandu', 'Jumlah Trip Selesai', 'Jumlah Jarak (KM)', 'Masa Penggunaan (Jam)']]
+    const driverHeaders = [['Driver Name', 'Completed Trips', 'Total Distance (KM)', 'Operational Time (Hours)']]
     const driverRows = getDriverUsageData().map(d => [
       d.name, 
-      `${d.count} kali`, 
+      `${d.count} trips`, 
       `${d.distanceKm} km`, 
-      `${d.durationHours} jam`
+      `${d.durationHours} hrs`
     ])
 
     autoTable(doc, {
@@ -391,13 +396,13 @@ const TransporterReportsPage: React.FC = () => {
     checkPageSpace(40)
     doc.setFont('Helvetica', 'bold')
     doc.setFontSize(10)
-    doc.text('4. ANALISIS KEKERAPAN DESTINASI / FASILITI (FACILITY FREQUENCY)', 15, currentY)
+    doc.text('4. DESTINATION & FACILITY VISIT FREQUENCY ANALYSIS', 15, currentY)
     
-    const facilityHeaders = [['Nama Fasiliti / Destinasi', 'Kategori Fasiliti', 'Kekerapan Perjalanan (Trip)']]
+    const facilityHeaders = [['Facility / Destination', 'Facility Category', 'Trip Frequency']]
     const facilityRows = getFacilityUsageData().map(f => [
-      f.name,
-      f.category,
-      `${f.count} kali`
+      f.name, 
+      f.category, 
+      `${f.count} trips`
     ])
 
     autoTable(doc, {
@@ -417,21 +422,24 @@ const TransporterReportsPage: React.FC = () => {
 
     doc.setFont('Helvetica', 'bold')
     doc.setFontSize(8.5)
-    doc.text('Disediakan Oleh:', 25, currentY)
+    doc.text('Prepared By:', 25, currentY)
     doc.text('______________________________', 25, currentY + 15)
     doc.setFont('Helvetica', 'normal')
-    doc.text('Penyelia Unit Kenderaan / Ambulans', 25, currentY + 20)
-    doc.text('Hospital Lawas, KKM', 25, currentY + 24)
+    doc.text('Transport & Ambulance Unit Supervisor', 25, currentY + 20)
+    doc.text('Hospital Lawas, MOH', 25, currentY + 24)
 
     doc.setFont('Helvetica', 'bold')
-    doc.text('Disokong Oleh:', 135, currentY)
+    doc.text('Supported & Endorsed By:', 135, currentY)
     doc.text('______________________________', 135, currentY + 15)
     doc.setFont('Helvetica', 'normal')
-    doc.text('Pengarah Hospital / Ketua Jabatan', 135, currentY + 20)
-    doc.text('Hospital Lawas, KKM', 135, currentY + 24)
+    doc.text('Hospital Director / Head of Department', 135, currentY + 20)
+    doc.text('Hospital Lawas, MOH', 135, currentY + 24)
 
-    doc.save(`Laporan_Justifikasi_Fleet_Lawas_${new Date().getFullYear()}.pdf`)
-    toast.success('Laporan Bukti Sokongan Dijana', 'PDF Justifikasi Fleet rasmi berjaya dimuat turun.')
+    doc.save(`Fleet_Justification_Report_Lawas_${new Date().getFullYear()}.pdf`)
+    toast.success(
+      isEn ? 'Report Generated' : 'Laporan Bukti Sokongan Dijana', 
+      isEn ? 'Official Fleet Justification PDF successfully exported.' : 'PDF Justifikasi Fleet rasmi berjaya dimuat turun.'
+    )
   }
 
   const vehicleUsage = getVehicleUsageData()
@@ -445,10 +453,10 @@ const TransporterReportsPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Papan Pemuka</span>
+        <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
       </button>
 
       {/* Header */}
@@ -456,25 +464,29 @@ const TransporterReportsPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <TrendingUp className="w-8 h-8 text-blue-600 animate-pulse" />
-            Laporan Kualiti & Justifikasi Fleet (Management Reports)
+            {isEn ? 'Fleet Quality & Business Justification Reports' : 'Laporan Kualiti & Justifikasi Fleet (Management Reports)'}
           </h1>
           <p className="text-slate-500 text-sm">
-            Kaji data utilization fleet kenderaan dan pengagihan tugasan pemandu. Gunakan laporan ini sebagai bukti sokongan bertulis (justifikasi) permohonan penambahan aset.
+            {isEn 
+              ? 'Analyze vehicle fleet utilization rates and driver workload distribution. Generate documented evidence for asset justification.' 
+              : 'Kaji data utilization fleet kenderaan dan pengagihan tugasan pemandu. Gunakan laporan ini sebagai bukti sokongan bertulis (justifikasi) permohonan penambahan aset.'}
           </p>
         </div>
         <Button 
           disabled={loading || requests.length === 0}
           onClick={handleExportJustificationPDF}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-2 cursor-pointer"
         >
           <Printer className="w-4 h-4" />
-          <span>Cetak Laporan Rasmi</span>
+          <span>{isEn ? 'Print Official Report' : 'Cetak Laporan Rasmi'}</span>
         </Button>
       </div>
 
       {/* Loading indicator */}
       {loading ? (
-        <div className="p-12 text-center text-slate-500 font-medium animate-pulse">Menghimpunkan data analitik pengangkutan...</div>
+        <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+          {isEn ? 'Aggregating fleet analytics data...' : 'Menghimpunkan data analitik pengangkutan...'}
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           
@@ -483,12 +495,14 @@ const TransporterReportsPage: React.FC = () => {
             <CardHeader className="bg-slate-50/50 border-b border-slate-100">
               <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
                 <Car className="w-5 h-5 text-blue-600" />
-                Utilization Kenderaan
+                {isEn ? 'Vehicle Fleet Utilization' : 'Utilization Kenderaan'}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               {vehicleUsage.length === 0 ? (
-                <div className="p-6 text-center text-slate-400 text-xs">Tiada data perjalanan kenderaan ditemui.</div>
+                <div className="p-6 text-center text-slate-400 text-xs">
+                  {isEn ? 'No vehicle trip data recorded.' : 'Tiada data perjalanan kenderaan ditemui.'}
+                </div>
               ) : (
                 <div className="divide-y divide-slate-150">
                   {vehicleUsage.map((v, idx) => (
@@ -498,11 +512,11 @@ const TransporterReportsPage: React.FC = () => {
                         <p className="text-xxs text-slate-400 font-semibold">{v.model}</p>
                         <div className="flex gap-2.5 mt-1.5 text-xxs font-medium text-slate-500">
                           <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-650">{v.distanceKm} KM</span>
-                          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-650">{v.durationHours} Jam</span>
+                          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-650">{v.durationHours} {isEn ? 'Hours' : 'Jam'}</span>
                         </div>
                       </div>
                       <span className="font-bold text-blue-600 tabular-nums bg-blue-50 px-3 py-1 rounded-lg border border-blue-100 text-xs">
-                        {v.count} kali jalan
+                        {v.count} {isEn ? 'trips' : 'kali jalan'}
                       </span>
                     </div>
                   ))}
@@ -516,12 +530,14 @@ const TransporterReportsPage: React.FC = () => {
             <CardHeader className="bg-slate-50/50 border-b border-slate-100">
               <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
                 <ClipboardList className="w-5 h-5 text-indigo-600" />
-                Beban Tugasan Pemandu
+                {isEn ? 'Driver Workload Distribution' : 'Beban Tugasan Pemandu'}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               {driverUsage.length === 0 ? (
-                <div className="p-6 text-center text-slate-400 text-xs">Tiada data perjalanan pemandu ditemui.</div>
+                <div className="p-6 text-center text-slate-400 text-xs">
+                  {isEn ? 'No driver trip records found.' : 'Tiada data perjalanan pemandu ditemui.'}
+                </div>
               ) : (
                 <div className="divide-y divide-slate-150">
                   {driverUsage.map((d, idx) => (
@@ -530,11 +546,11 @@ const TransporterReportsPage: React.FC = () => {
                         <span className="font-bold text-slate-700 block">{d.name}</span>
                         <div className="flex gap-2.5 mt-1.5 text-xxs font-medium text-slate-500">
                           <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-650">{d.distanceKm} KM</span>
-                          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-650">{d.durationHours} Jam</span>
+                          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-650">{d.durationHours} {isEn ? 'Hours' : 'Jam'}</span>
                         </div>
                       </div>
                       <span className="font-bold text-indigo-600 tabular-nums bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-100 text-xs">
-                        {d.count} trip selesai
+                        {d.count} {isEn ? 'completed' : 'trip selesai'}
                       </span>
                     </div>
                   ))}
@@ -548,12 +564,14 @@ const TransporterReportsPage: React.FC = () => {
             <CardHeader className="bg-slate-50/50 border-b border-slate-100">
               <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-emerald-600" />
-                Destinasi & Kunjungan Fasiliti
+                {isEn ? 'Facility & Destination Frequency' : 'Destinasi & Kunjungan Fasiliti'}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               {facilityUsage.length === 0 ? (
-                <div className="p-6 text-center text-slate-400 text-xs">Tiada data kunjungan destinasi ditemui.</div>
+                <div className="p-6 text-center text-slate-400 text-xs">
+                  {isEn ? 'No facility visit records found.' : 'Tiada data kunjungan destinasi ditemui.'}
+                </div>
               ) : (
                 <div className="divide-y divide-slate-150">
                   {facilityUsage.map((f, idx) => (
@@ -563,7 +581,7 @@ const TransporterReportsPage: React.FC = () => {
                         <span className="text-xxs text-slate-400 font-semibold">{f.category}</span>
                       </div>
                       <span className="font-bold text-emerald-600 tabular-nums bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100 text-xs flex-shrink-0 ml-2">
-                        {f.count} trip
+                        {f.count} {isEn ? 'trips' : 'trip'}
                       </span>
                     </div>
                   ))}
@@ -577,25 +595,29 @@ const TransporterReportsPage: React.FC = () => {
             <CardHeader className="bg-slate-50/50 border-b border-slate-100 flex flex-row items-center justify-between py-4">
               <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
                 <Shield className="w-5 h-5 text-blue-600" />
-                Log Perjalanan Merentas Sempadan (Sabah-Sarawak / Sarawak-Brunei)
+                {isEn 
+                  ? 'Cross-Border Travel & Patient Transfer Journal (Sabah-Sarawak / Sarawak-Brunei)' 
+                  : 'Log Perjalanan Merentas Sempadan (Sabah-Sarawak / Sarawak-Brunei)'}
               </CardTitle>
               <Badge className="bg-blue-100 text-blue-800 font-bold border border-blue-200">
-                {crossborderTrips.length} Perjalanan
+                {crossborderTrips.length} {isEn ? 'Trips' : 'Perjalanan'}
               </Badge>
             </CardHeader>
             <CardContent className="p-0">
               {crossborderTrips.length === 0 ? (
-                <div className="p-12 text-center text-slate-400 text-sm">Tiada pergerakan merentas sempadan direkodkan.</div>
+                <div className="p-12 text-center text-slate-400 text-sm">
+                  {isEn ? 'No cross-border transfers on record.' : 'Tiada pergerakan merentas sempadan direkodkan.'}
+                </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
                       <tr className="bg-slate-50 border-b border-slate-150 text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                        <th className="p-4">No. Rujukan</th>
-                        <th className="p-4">Destinasi & Pintu Sempadan</th>
-                        <th className="p-4">Pesakit & Diagnosis</th>
-                        <th className="p-4">Tarikh Bertolak</th>
-                        <th className="p-4">Status</th>
+                        <th className="p-4">{isEn ? 'Ref No' : 'No. Rujukan'}</th>
+                        <th className="p-4">{isEn ? 'Destination & Border Post' : 'Destinasi & Pintu Sempadan'}</th>
+                        <th className="p-4">{isEn ? 'Patient & Clinical Diagnosis' : 'Pesakit & Diagnosis'}</th>
+                        <th className="p-4">{isEn ? 'Departure Date' : 'Tarikh Bertolak'}</th>
+                        <th className="p-4">{isEn ? 'Status' : 'Status'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
@@ -626,20 +648,28 @@ const TransporterReportsPage: React.FC = () => {
                             )}
                           </td>
                           <td className="p-4 whitespace-nowrap text-slate-650 font-semibold font-mono">
-                            {new Date(req.tarikh_masa_diperlukan).toLocaleString('ms-MY', {
+                            {new Date(req.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY', {
                               dateStyle: 'short',
                               timeStyle: 'short'
                             })}
                           </td>
                           <td className="p-4">
                             {req.status_semasa === 'completed' ? (
-                              <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-250">Selesai</Badge>
+                              <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-250">
+                                {isEn ? 'Completed' : 'Selesai'}
+                              </Badge>
                             ) : req.status_semasa === 'rejected' ? (
-                              <Badge className="bg-rose-50 text-rose-700 border border-rose-200">Ditolak</Badge>
+                              <Badge className="bg-rose-50 text-rose-700 border border-rose-200">
+                                {isEn ? 'Rejected' : 'Ditolak'}
+                              </Badge>
                             ) : req.status_semasa === 'cancelled' ? (
-                              <Badge className="bg-slate-100 text-slate-500 border border-slate-200">Batal</Badge>
+                              <Badge className="bg-slate-100 text-slate-500 border border-slate-200">
+                                {isEn ? 'Cancelled' : 'Batal'}
+                              </Badge>
                             ) : (
-                              <Badge className="bg-blue-50 text-blue-750 border border-blue-200">Dalam Proses</Badge>
+                              <Badge className="bg-blue-50 text-blue-750 border border-blue-200">
+                                {isEn ? 'In Progress' : 'Dalam Proses'}
+                              </Badge>
                             )}
                           </td>
                         </tr>

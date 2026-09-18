@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { getAccessRequests, approveAccessRequest, rejectAccessRequest } from '@/services/accessRequestManagementService'
 import { getAllRoles } from '@/services/roleService'
+import { recordAuditLog } from '@/services/auditLogService'
 import { useToastStore } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'
 import { formatDate } from '@/lib/utils'
@@ -112,6 +113,25 @@ export const AdminApprovalsTab: React.FC = () => {
         assignedRole
       )
       if (result && result.success) {
+        // Record approval audit log
+        try {
+          recordAuditLog({
+            userId: currentLoggedUser?.id,
+            action: 'APPROVE',
+            module: 'myadmin',
+            entityType: 'access_request',
+            entityId: selectedRequest.id,
+            newValues: {
+              status: 'approved',
+              role_assigned: assignedRole,
+              approver: currentLoggedUser?.full_name,
+            },
+            details: `Meluluskan permohonan pendaftaran kakitangan: ${selectedRequest.full_name} (${selectedRequest.jawatan}).`,
+          })
+        } catch (auditErr) {
+          console.warn('Failed to record approval audit:', auditErr)
+        }
+
         showSuccess('Success', `${selectedRequest.full_name} has been approved as an active user.`)
         setSelectedRequest(null)
         fetchRequests()
@@ -144,6 +164,25 @@ export const AdminApprovalsTab: React.FC = () => {
         rejectionReason.trim()
       )
       if (result && result.success) {
+        // Record rejection audit log
+        try {
+          recordAuditLog({
+            userId: currentLoggedUser?.id,
+            action: 'REJECT',
+            module: 'myadmin',
+            entityType: 'access_request',
+            entityId: rejectionRequest.id,
+            newValues: {
+              status: 'rejected',
+              rejection_reason: rejectionReason.trim(),
+              reviewer: currentLoggedUser?.full_name,
+            },
+            details: `Menolak permohonan pendaftaran kakitangan: ${rejectionRequest.full_name}. Sebab: ${rejectionReason.trim()}`,
+          })
+        } catch (auditErr) {
+          console.warn('Failed to record rejection audit:', auditErr)
+        }
+
         showSuccess('Success', `Registration for ${rejectionRequest.full_name} has been rejected.`)
         setRejectionRequest(null)
         fetchRequests()

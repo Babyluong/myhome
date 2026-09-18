@@ -1,4 +1,4 @@
-﻿// src/modules/myporter/components/PorterJobTrackerStepper.tsx
+// src/modules/myporter/components/PorterJobTrackerStepper.tsx
 import React from 'react'
 import { motion } from 'framer-motion'
 import { 
@@ -11,6 +11,7 @@ import {
   AlertCircle
 } from 'lucide-react'
 import type { PorterJobStatus, PorterJobRequest } from '@/shared/types/myporter'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 
 interface StepConfig {
   key: string
@@ -18,15 +19,6 @@ interface StepConfig {
   desc: string
   icon: React.ElementType
 }
-
-const STEPS: StepConfig[] = [
-  { key: 'broadcasting', label: 'Pesanan Dibuat', desc: 'Mencari PPK berdekatan', icon: Clock },
-  { key: 'accepted', label: 'PPK Ditugaskan', desc: 'PPK menuju ke lokasi ambil', icon: UserCheck },
-  { key: 'at_pickup', label: 'Tiba di Asal', desc: 'Pengesahan kargo/pesakit', icon: MapPin },
-  { key: 'in_transit', label: 'Dalam Perjalanan', desc: 'Sedang menuju ke destinasi', icon: Truck },
-  { key: 'pending_receiver_confirmation', label: 'Tiba di Destinasi', desc: 'Menunggu pengesahan penerima', icon: PackageCheck },
-  { key: 'completed', label: 'Selesai', desc: 'Penyerahan disahkan', icon: CheckCircle }
-]
 
 const getStepIndex = (status: PorterJobStatus): number => {
   switch (status) {
@@ -57,6 +49,47 @@ interface Props {
 }
 
 export const PorterJobTrackerStepper: React.FC<Props> = ({ job, compact = false }) => {
+  const { language } = useLanguage()
+
+  const STEPS: StepConfig[] = [
+    { 
+      key: 'broadcasting', 
+      label: language === 'ms' ? 'Pesanan Dibuat' : 'Request Created', 
+      desc: language === 'ms' ? 'Mencari PPK berdekatan' : 'Searching nearby porters', 
+      icon: Clock 
+    },
+    { 
+      key: 'accepted', 
+      label: language === 'ms' ? 'PPK Ditugaskan' : 'Porter Assigned', 
+      desc: language === 'ms' ? 'PPK menuju ke lokasi ambil' : 'Porter heading to pickup', 
+      icon: UserCheck 
+    },
+    { 
+      key: 'at_pickup', 
+      label: language === 'ms' ? 'Tiba di Asal' : 'At Pickup Location', 
+      desc: language === 'ms' ? 'Pengesahan kargo/pesakit' : 'Verifying cargo/patient', 
+      icon: MapPin 
+    },
+    { 
+      key: 'in_transit', 
+      label: language === 'ms' ? 'Dalam Perjalanan' : 'In Transit', 
+      desc: language === 'ms' ? 'Sedang menuju ke destinasi' : 'Heading to destination', 
+      icon: Truck 
+    },
+    { 
+      key: 'pending_receiver_confirmation', 
+      label: language === 'ms' ? 'Tiba di Destinasi' : 'At Destination', 
+      desc: language === 'ms' ? 'Menunggu pengesahan penerima' : 'Awaiting receiver confirmation', 
+      icon: PackageCheck 
+    },
+    { 
+      key: 'completed', 
+      label: language === 'ms' ? 'Selesai' : 'Completed', 
+      desc: language === 'ms' ? 'Penyerahan disahkan' : 'Handover verified', 
+      icon: CheckCircle 
+    }
+  ]
+
   const currentStepIdx = getStepIndex(job.status)
   const isCancelled = job.status === 'cancelled'
   const isDisputed = job.status === 'disputed'
@@ -66,8 +99,14 @@ export const PorterJobTrackerStepper: React.FC<Props> = ({ job, compact = false 
       <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-3 text-rose-800">
         <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
         <div className="text-sm">
-          <p className="font-bold">Permohonan Ini Telah Dibatalkan</p>
-          {job.cancellation_reason && <p className="text-xs text-rose-600 mt-0.5">Sebab: {job.cancellation_reason}</p>}
+          <p className="font-bold">
+            {language === 'ms' ? 'Permohonan Ini Telah Dibatalkan' : 'This Request Has Been Cancelled'}
+          </p>
+          {job.cancellation_reason && (
+            <p className="text-xs text-rose-600 mt-0.5">
+              {language === 'ms' ? 'Sebab:' : 'Reason:'} {job.cancellation_reason}
+            </p>
+          )}
         </div>
       </div>
     )
@@ -78,8 +117,12 @@ export const PorterJobTrackerStepper: React.FC<Props> = ({ job, compact = false 
       <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl flex items-center gap-3 text-amber-900">
         <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
         <div className="text-sm">
-          <p className="font-bold">Tugasan Dalam Status Pertikaian (Dispute)</p>
-          <p className="text-xs text-amber-700 mt-0.5">Penyelia sedang menyemak ketidakpadanan kargo/lokasi.</p>
+          <p className="font-bold">
+            {language === 'ms' ? 'Tugasan Dalam Status Pertikaian (Dispute)' : 'Task in Dispute Status'}
+          </p>
+          <p className="text-xs text-amber-700 mt-0.5">
+            {language === 'ms' ? 'Penyelia sedang menyemak ketidakpadanan kargo/lokasi.' : 'Supervisor is reviewing cargo/location discrepancy.'}
+          </p>
         </div>
       </div>
     )
@@ -90,7 +133,9 @@ export const PorterJobTrackerStepper: React.FC<Props> = ({ job, compact = false 
       <div className="w-full space-y-2">
         <div className="flex justify-between items-center text-xs">
           <span className="font-semibold text-slate-700">{STEPS[currentStepIdx]?.label}</span>
-          <span className="text-slate-400 font-mono">Fasa {currentStepIdx + 1} / {STEPS.length}</span>
+          <span className="text-slate-400 font-mono">
+            {language === 'ms' ? `Fasa ${currentStepIdx + 1} / ${STEPS.length}` : `Phase ${currentStepIdx + 1} / ${STEPS.length}`}
+          </span>
         </div>
         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
           <motion.div 
@@ -180,7 +225,7 @@ export const PorterJobTrackerStepper: React.FC<Props> = ({ job, compact = false 
                   </p>
                   {isCurrent && (
                     <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-full animate-pulse">
-                      Semasa
+                      {language === 'ms' ? 'Semasa' : 'Current'}
                     </span>
                   )}
                 </div>

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/stores/toastStore';
+import { useLanguage } from '@/shared/contexts/LanguageContext';
 import { getCrossborderTransfers } from '../services/crossborderService';
 import type { CrossborderTransfer } from '@/shared/types/mycrossborder';
 import { Card, CardContent, Button, Badge } from '@/components/ui';
@@ -21,6 +22,7 @@ import { formatDate } from '@/lib/utils';
 
 export const CrossborderDashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   const loggedUser = useAuthStore((state) => state.user);
   const toast = useToast();
   
@@ -34,7 +36,10 @@ export const CrossborderDashboardPage: React.FC = () => {
       setTransfers(res.data || []);
     } catch (err) {
       console.error('Failed to load transfers', err);
-      toast.error('Ralat', 'Gagal memuatkan rekod rentasi sempadan');
+      toast.error(
+        language === 'ms' ? 'Ralat' : 'Error',
+        language === 'ms' ? 'Gagal memuatkan rekod rentasi sempadan' : 'Failed to load cross-border transfer records'
+      );
     } finally {
       setLoading(false);
     }
@@ -60,15 +65,15 @@ export const CrossborderDashboardPage: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'draft':
-        return <Badge className="border-slate-200 text-slate-700 bg-slate-50">Draf</Badge>;
+        return <Badge className="border-slate-200 text-slate-700 bg-slate-50">{language === 'ms' ? 'Draf' : 'Draft'}</Badge>;
       case 'submitted':
-        return <Badge className="border-amber-200 text-amber-800 bg-amber-50">Menunggu Kelulusan</Badge>;
+        return <Badge className="border-amber-200 text-amber-800 bg-amber-50">{language === 'ms' ? 'Menunggu Kelulusan' : 'Pending Approval'}</Badge>;
       case 'approved':
-        return <Badge className="border-emerald-200 text-emerald-800 bg-emerald-50">Diluluskan</Badge>;
+        return <Badge className="border-emerald-200 text-emerald-800 bg-emerald-50">{language === 'ms' ? 'Diluluskan' : 'Approved'}</Badge>;
       case 'completed':
-        return <Badge className="border-blue-200 text-blue-800 bg-blue-50">Selesai</Badge>;
+        return <Badge className="border-blue-200 text-blue-800 bg-blue-50">{language === 'ms' ? 'Selesai' : 'Completed'}</Badge>;
       case 'cancelled':
-        return <Badge className="border-red-200 text-red-800 bg-red-50">Dibatalkan</Badge>;
+        return <Badge className="border-red-200 text-red-800 bg-red-50">{language === 'ms' ? 'Dibatalkan' : 'Cancelled'}</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
@@ -84,7 +89,9 @@ export const CrossborderDashboardPage: React.FC = () => {
             MyCrossBorder
           </h1>
           <p className="text-sm text-slate-500">
-            Sistem Bersepadu Pengurusan & Pelepasan Sempadan Malaysia-Brunei (Hospital Lawas - Hospital Limbang)
+            {language === 'ms' 
+              ? 'Sistem Bersepadu Pengurusan & Pelepasan Sempadan Malaysia-Brunei (Hospital Lawas - Hospital Limbang)'
+              : 'Integrated Malaysia-Brunei Medical Border Clearance & Patient Transfer System'}
           </p>
         </div>
         <div className="flex gap-3">
@@ -94,7 +101,7 @@ export const CrossborderDashboardPage: React.FC = () => {
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold flex items-center gap-2 shadow-sm rounded-xl px-4 py-2"
           >
             <Plus className="w-4 h-4" />
-            Daftar Pemindahan Baru
+            {language === 'ms' ? 'Daftar Pemindahan Baru' : 'New Transfer Application'}
           </Button>
           <Button 
             onClick={() => navigate('/crossborder/log')}
@@ -102,7 +109,7 @@ export const CrossborderDashboardPage: React.FC = () => {
             className="border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center gap-2 rounded-xl"
           >
             <History className="w-4 h-4" />
-            Log Sejarah
+            {language === 'ms' ? 'Log Sejarah' : 'Transfer History Log'}
           </Button>
         </div>
       </div>
@@ -112,11 +119,11 @@ export const CrossborderDashboardPage: React.FC = () => {
         <Card className="bg-white border border-slate-200 shadow-sm rounded-xl">
           <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <span className="text-sm font-medium text-slate-500">Jumlah Permohonan</span>
+              <span className="text-sm font-medium text-slate-500">{language === 'ms' ? 'Jumlah Permohonan' : 'Total Applications'}</span>
               <p className="text-2xl font-bold font-mono mt-1 text-slate-900">
                 {loading ? '...' : stats.total}
               </p>
-              <p className="text-xs text-slate-400 mt-1">Keseluruhan kes</p>
+              <p className="text-xs text-slate-400 mt-1">{language === 'ms' ? 'Keseluruhan kes' : 'All lifetime records'}</p>
             </div>
             <div className="p-3 bg-slate-100 text-slate-600 rounded-xl">
               <FileText className="w-5 h-5" />
@@ -127,11 +134,11 @@ export const CrossborderDashboardPage: React.FC = () => {
         <Card className="bg-white border border-slate-200 shadow-sm rounded-xl">
           <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <span className="text-sm font-medium text-slate-500">Menunggu Kelulusan</span>
+              <span className="text-sm font-medium text-slate-500">{language === 'ms' ? 'Menunggu Kelulusan' : 'Pending Approvals'}</span>
               <p className="text-2xl font-bold font-mono mt-1 text-slate-900">
                 {loading ? '...' : stats.pending}
               </p>
-              <p className="text-xs text-slate-400 mt-1">Perlu kelulusan Pengarah</p>
+              <p className="text-xs text-slate-400 mt-1">{language === 'ms' ? 'Perlu kelulusan Pengarah' : 'Requires Director approval'}</p>
             </div>
             <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
               <Clock className="w-5 h-5" />
@@ -142,11 +149,11 @@ export const CrossborderDashboardPage: React.FC = () => {
         <Card className="bg-white border border-slate-200 shadow-sm rounded-xl">
           <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <span className="text-sm font-medium text-slate-500">Kebenaran Aktif</span>
+              <span className="text-sm font-medium text-slate-500">{language === 'ms' ? 'Kebenaran Aktif' : 'Active Permits'}</span>
               <p className="text-2xl font-bold font-mono mt-1 text-slate-900">
                 {loading ? '...' : stats.approved}
               </p>
-              <p className="text-xs text-slate-400 mt-1">Kebenaran pelepasan aktif</p>
+              <p className="text-xs text-slate-400 mt-1">{language === 'ms' ? 'Kebenaran pelepasan aktif' : 'Active clearance permits'}</p>
             </div>
             <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
               <ShieldCheck className="w-5 h-5" />
@@ -157,11 +164,11 @@ export const CrossborderDashboardPage: React.FC = () => {
         <Card className="bg-white border border-slate-200 shadow-sm rounded-xl">
           <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <span className="text-sm font-medium text-slate-500">Selesai Perjalanan</span>
+              <span className="text-sm font-medium text-slate-500">{language === 'ms' ? 'Selesai Perjalanan' : 'Completed Transfers'}</span>
               <p className="text-2xl font-bold font-mono mt-1 text-slate-900">
                 {loading ? '...' : stats.completed}
               </p>
-              <p className="text-xs text-slate-400 mt-1">Selamat tiba di Limbang</p>
+              <p className="text-xs text-slate-400 mt-1">{language === 'ms' ? 'Selamat tiba di Limbang' : 'Safely received at Limbang'}</p>
             </div>
             <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
               <CheckCircle2 className="w-5 h-5" />
@@ -177,33 +184,37 @@ export const CrossborderDashboardPage: React.FC = () => {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <Clock className="w-4 h-4 text-blue-600" />
-              Permohonan Terkini
+              {language === 'ms' ? 'Permohonan Terkini' : 'Recent Transfer Applications'}
             </h2>
             <Button 
               onClick={() => navigate('/crossborder/log')}
               variant="ghost" 
               className="text-blue-600 hover:text-blue-700 font-semibold p-0 flex items-center gap-1 text-sm hover:bg-transparent"
             >
-              Lihat Semua
+              {language === 'ms' ? 'Lihat Semua' : 'View All'}
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
 
           {loading ? (
-            <div className="py-12 text-center text-slate-400">Memuatkan data...</div>
+            <div className="py-12 text-center text-slate-400">
+              {language === 'ms' ? 'Memuatkan data...' : 'Loading transfer records...'}
+            </div>
           ) : recentTransfers.length === 0 ? (
-            <div className="py-12 text-center text-slate-400">Tiada rekod perjalanan ditemui.</div>
+            <div className="py-12 text-center text-slate-400">
+              {language === 'ms' ? 'Tiada rekod perjalanan ditemui.' : 'No transfer records found.'}
+            </div>
           ) : (
             <div className="overflow-x-auto border border-slate-100 rounded-xl">
               <table className="w-full text-sm text-left text-slate-600">
                 <thead className="text-xs uppercase bg-slate-50/70 text-slate-500 border-b border-slate-200/80">
                   <tr>
-                    <th scope="col" className="px-4 py-3">No Rujukan</th>
-                    <th scope="col" className="px-4 py-3">Tarikh & Masa</th>
-                    <th scope="col" className="px-4 py-3">Pesakit Utama</th>
-                    <th scope="col" className="px-4 py-3">Kenderaan</th>
-                    <th scope="col" className="px-4 py-3">Status</th>
-                    <th scope="col" className="px-4 py-3 text-right">Tindakan</th>
+                    <th scope="col" className="px-4 py-3">{language === 'ms' ? 'No Rujukan' : 'Reference No'}</th>
+                    <th scope="col" className="px-4 py-3">{language === 'ms' ? 'Tarikh & Masa' : 'Date & Time'}</th>
+                    <th scope="col" className="px-4 py-3">{language === 'ms' ? 'Pesakit Utama' : 'Primary Patient'}</th>
+                    <th scope="col" className="px-4 py-3">{language === 'ms' ? 'Kenderaan' : 'Vehicle'}</th>
+                    <th scope="col" className="px-4 py-3">{language === 'ms' ? 'Status' : 'Status'}</th>
+                    <th scope="col" className="px-4 py-3 text-right">{language === 'ms' ? 'Tindakan' : 'Action'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -224,12 +235,12 @@ export const CrossborderDashboardPage: React.FC = () => {
                             <div className="font-medium text-slate-900">{item.patients[0].nama}</div>
                             {item.patients.length > 1 && (
                               <div className="text-xs text-slate-400">
-                                + {item.patients.length - 1} pesakit lain
+                                + {item.patients.length - 1} {language === 'ms' ? 'pesakit lain' : 'other patients'}
                               </div>
                             )}
                           </div>
                         ) : (
-                          <span className="text-slate-400">Tiada pesakit</span>
+                          <span className="text-slate-400">{language === 'ms' ? 'Tiada pesakit' : 'No patients'}</span>
                         )}
                       </td>
                       <td className="px-4 py-3.5 font-mono text-xs">
@@ -245,7 +256,7 @@ export const CrossborderDashboardPage: React.FC = () => {
                           size="sm"
                           className="border-slate-200 text-slate-700 hover:bg-slate-100 rounded-lg text-xs"
                         >
-                          Butiran
+                          {language === 'ms' ? 'Butiran' : 'Details'}
                         </Button>
                       </td>
                     </tr>
@@ -261,19 +272,23 @@ export const CrossborderDashboardPage: React.FC = () => {
           <Card className="bg-white border border-slate-200 shadow-sm rounded-xl p-6">
             <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
-              Rujukan Sempadan Brunei
+              {language === 'ms' ? 'Rujukan Sempadan Brunei' : 'Brunei Transit Regulations'}
             </h2>
             <div className="text-sm text-slate-600 space-y-3 leading-relaxed">
               <p>
-                Rujukan kecemasan merentasi pos sempadan Malaysia-Brunei bagi pesakit Hospital Lawas memerlukan kelengkapan borang:
+                {language === 'ms' 
+                  ? 'Rujukan kecemasan merentasi pos sempadan Malaysia-Brunei bagi pesakit Hospital Lawas memerlukan kelengkapan borang:'
+                  : 'Emergency patient transit through Brunei border checkpoints (Lawas - Limbang corridor) requires:'}
               </p>
               <ul className="list-disc pl-5 space-y-1.5 text-xs text-slate-500">
-                <li>Borang Transfer Pesakit Merentasi Sempadan rasmi bercop basah hospital.</li>
-                <li>Surat Pelepasan Imigresen bertandatangan Pengarah Hospital Lawas.</li>
-                <li>Pasport / Dokumen perjalanan fizikal bagi semua pengiring dan pesakit.</li>
+                <li>{language === 'ms' ? 'Borang Transfer Pesakit Merentasi Sempadan rasmi bercop basah hospital.' : 'Official MOH Cross-Border Patient Transfer Authorization with official hospital seal.'}</li>
+                <li>{language === 'ms' ? 'Surat Pelepasan Imigresen bertandatangan Pengarah Hospital Lawas.' : 'Immigration Clearance Letter signed by the Hospital Director.'}</li>
+                <li>{language === 'ms' ? 'Pasport / Dokumen perjalanan fizikal bagi semua pengiring dan pesakit.' : 'Valid Passports / Border Crossing Passes for all escorts, drivers, and patients.'}</li>
               </ul>
               <p className="text-xs text-amber-800 bg-amber-50/50 p-3 rounded-lg border border-amber-100">
-                Sila pastikan data perjalanan (No Pasport/IC) adalah tepat untuk mengelakkan kelewatan di pintu kawalan sempadan.
+                {language === 'ms' 
+                  ? 'Sila pastikan data perjalanan (No Pasport/IC) adalah tepat untuk mengelakkan kelewatan di pintu kawalan sempadan.'
+                  : 'Please ensure all travel identifiers (Passport/IC Numbers) are accurate to prevent transit delays at checkpoint posts.'}
               </p>
             </div>
           </Card>

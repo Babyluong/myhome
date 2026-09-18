@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, Printer, FileText, ChevronLeft, ChevronRight, Eye, CheckCircle } from 'lucide-react';
+import { Search, Filter, Printer, FileText, ChevronLeft, ChevronRight, Eye, CheckCircle, Trash2 } from 'lucide-react';
 import type { CylinderDispatchRequestWithRelations } from '@/types/pharmacy';
 
 interface CylinderDispatchTableProps {
@@ -8,6 +8,7 @@ interface CylinderDispatchTableProps {
   departments: { id: string; department_name: string }[];
   onViewDetails: (request: CylinderDispatchRequestWithRelations) => void;
   onPrint: (request: CylinderDispatchRequestWithRelations) => void;
+  onDelete?: (request: CylinderDispatchRequestWithRelations) => void;
 }
 
 export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
@@ -15,25 +16,28 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
   departments,
   onViewDetails,
   onPrint,
+  onDelete,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDept, setSelectedDept] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedType, setSelectedType] = useState('all'); // 'all' | 'internal' | 'external'
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [pageSize, setPageSize] = useState<number | 'all'>(5);
 
   const filteredRequests = useMemo(() => {
     return requests.filter((req) => {
-      // 1. Search term (Request No, Department name, Requester name, Issuer name, Remarks)
+      // 1. Search term (Request No, Department name, Requester name, Issuer name, Remarks, External facility)
       const searchLower = searchTerm.toLowerCase();
       const matchSearch =
-        req.request_number.toLowerCase().includes(searchLower) ||
-        req.department?.department_name?.toLowerCase().includes(searchLower) ||
-        req.requester?.full_name?.toLowerCase().includes(searchLower) ||
-        req.issuer?.full_name?.toLowerCase().includes(searchLower) ||
-        (req.remarks && req.remarks.toLowerCase().includes(searchLower));
+        (req.request_number || '').toLowerCase().includes(searchLower) ||
+        (req.department?.department_name || '').toLowerCase().includes(searchLower) ||
+        (req.requester?.full_name || '').toLowerCase().includes(searchLower) ||
+        (req.issuer?.full_name || '').toLowerCase().includes(searchLower) ||
+        (req.remarks || '').toLowerCase().includes(searchLower) ||
+        (req.external_facility_name && req.external_facility_name.toLowerCase().includes(searchLower));
 
       // 2. Department
       const matchDept = selectedDept === 'all' || req.department_id === selectedDept;
@@ -41,7 +45,24 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
       // 3. Status
       const matchStatus = selectedStatus === 'all' || req.status === selectedStatus;
 
-      // 4. Date range
+      // 4. Indent Type (Within Facility vs External Facility operations)
+      let matchType = true;
+      if (selectedType === 'internal') {
+        matchType = !req.is_external_facility;
+      } else if (selectedType === 'external') {
+        matchType = Boolean(req.is_external_facility);
+      } else if (selectedType === 'external_request') {
+        const isReturn = Boolean(req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang') || req.remarks?.toLowerCase().includes('pemulangan'));
+        const isReceive = !isReturn && (req.indent_direction === 'inbound' || req.manual_requester_name?.toLowerCase().includes('terima'));
+        matchType = Boolean(req.is_external_facility && !isReturn && !isReceive);
+      } else if (selectedType === 'external_receive') {
+        const isReturn = Boolean(req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang') || req.remarks?.toLowerCase().includes('pemulangan'));
+        matchType = Boolean(req.is_external_facility && !isReturn && (req.indent_direction === 'inbound' || req.manual_requester_name?.toLowerCase().includes('terima') || req.manual_requester_name?.toLowerCase().includes('received')));
+      } else if (selectedType === 'external_return') {
+        matchType = Boolean(req.is_external_facility && (req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang') || req.remarks?.toLowerCase().includes('pemulangan')));
+      }
+
+      // 5. Date range
       let matchDate = true;
       if (startDate) {
         matchDate = matchDate && new Date(req.request_date) >= new Date(startDate);
@@ -53,20 +74,50 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
         matchDate = matchDate && new Date(req.request_date) < endLimit;
       }
 
-      return matchSearch && matchDept && matchStatus && matchDate;
+      return matchSearch && matchDept && matchStatus && matchType && matchDate;
     });
-  }, [requests, searchTerm, selectedDept, selectedStatus, startDate, endDate]);
+  }, [requests, searchTerm, selectedDept, selectedStatus, selectedType, startDate, endDate]);
 
-  // Reset pagination on filter change
+  const isAll = pageSize === 'all';
+  const effectivePageSize = isAll ? (filteredRequests.length || 1) : pageSize;
+  const totalPages = isAll ? 1 : Math.max(1, Math.ceil(filteredRequests.length / effectivePageSize));
+
+  // Reset pagination on filter or page size change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedDept, selectedStatus, startDate, endDate]);
+  }, [searchTerm, selectedDept, selectedStatus, selectedType, startDate, endDate, pageSize]);
 
-  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage) || 1;
+  // Ensure current page remains valid if records or totalPages decrease
+  React.useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   const paginatedRequests = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredRequests.slice(startIndex, startIndex + itemsPerPage);
-  }, [filteredRequests, currentPage]);
+    if (isAll) {
+      return filteredRequests;
+    }
+    const startIndex = (currentPage - 1) * effectivePageSize;
+    return filteredRequests.slice(startIndex, startIndex + effectivePageSize);
+  }, [filteredRequests, currentPage, effectivePageSize, isAll]);
+
+  const clinicalDepartments = useMemo(() => {
+    const KNOWN_MODULE_KEYWORDS = [
+      'mykunci', 'mysuhu', 'myinventory', 'mycuti', 'myformulari',
+      'myperhimpunan', 'myporter', 'mypriviledging', 'mytempahan',
+      'mytransporter', 'mywarrant', 'mycylinder', 'mystaff', 'mytimeoff',
+      'asset management', 'advanced reports', 'financial & billing'
+    ];
+    return (departments || []).filter((d) => {
+      const name = (d.department_name || '').toLowerCase().trim();
+      const code = (d.department_code || '').toLowerCase().trim();
+      if (KNOWN_MODULE_KEYWORDS.some((mod) => name === mod || name.startsWith(mod) || code === mod)) return false;
+      if (name.startsWith('my') && !name.startsWith('myocard')) return false;
+      if (code.startsWith('system_') || code === 'reports' || code === 'asset' || code === 'billing') return false;
+      return true;
+    });
+  }, [departments]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -141,17 +192,33 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
     <div className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200 shadow-xl overflow-hidden mt-6">
       {/* Header Filters */}
       <div className="p-6 border-b border-slate-200 bg-slate-50/50">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
           {/* Search Box */}
           <div className="relative col-span-1 md:col-span-2">
             <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search by ID, department, requester, issuer..."
+              placeholder="Cari ID, fasiliti luar (cth: Beaufort), pemohon..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl bg-white text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
             />
+          </div>
+
+          {/* Indent Type Filter */}
+          <div className="relative">
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all appearance-none font-semibold cursor-pointer"
+            >
+              <option value="all">Semua Jenis Inden</option>
+              <option value="internal">🏢 Intra-Facility (Dalaman)</option>
+              <option value="external">🌐 Inter-Facility (Semua)</option>
+              <option value="external_request">📋 Inter-Facility: Request</option>
+              <option value="external_receive">📥 Inter-Facility: Receive</option>
+              <option value="external_return">📤 Inter-Facility: Return</option>
+            </select>
           </div>
 
           {/* Department Filter */}
@@ -159,10 +226,10 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
             <select
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none"
+              className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer"
             >
-              <option value="all">All Departments</option>
-              {departments.map((dept) => (
+              <option value="all">Semua Jabatan</option>
+              {clinicalDepartments.map((dept) => (
                 <option key={dept.id} value={dept.id}>
                   {dept.department_name}
                 </option>
@@ -175,9 +242,9 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none"
+              className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer"
             >
-              <option value="all">All Statuses</option>
+              <option value="all">Semua Status</option>
               <option value="pending">Pending Approval</option>
               <option value="approved">Approved (Ready)</option>
               <option value="issued">Issued</option>
@@ -245,12 +312,57 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
               {/* Department */}
               <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-100 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Department</span>
-                  <span className="font-semibold text-slate-800 text-xs">
-                    {req.department?.department_name || 'Pharmacy Store'}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                      {req.is_external_facility 
+                        ? (req.external_operation === 'return' || req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang')
+                            ? 'Inter-Facility (Return)'
+                            : req.external_operation === 'receive' || req.indent_direction === 'inbound'
+                              ? 'Inter-Facility (Receive)'
+                              : 'Inter-Facility (Request)')
+                        : 'Intra-Facility (Wad/Unit)'}
+                    </span>
+                    {req.is_external_facility ? (
+                      req.external_operation === 'return' || req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang') ? (
+                        <span className="px-1.5 py-0.2 rounded text-[9px] bg-purple-100 text-purple-700 font-extrabold uppercase border border-purple-200">
+                          📤 Return
+                        </span>
+                      ) : req.external_operation === 'receive' || req.indent_direction === 'inbound' ? (
+                        <span className="px-1.5 py-0.2 rounded text-[9px] bg-indigo-100 text-indigo-700 font-extrabold uppercase border border-indigo-200">
+                          📥 Receive
+                        </span>
+                      ) : (
+                        <span className="px-1.5 py-0.2 rounded text-[9px] bg-blue-100 text-blue-700 font-extrabold uppercase border border-blue-200">
+                          📋 Request
+                        </span>
+                      )
+                    ) : (
+                      <span className="px-1.5 py-0.2 rounded text-[9px] bg-teal-100 text-teal-800 font-extrabold uppercase border border-teal-200">
+                        🏢 Intra
+                      </span>
+                    )}
+                  </div>
+                  <span className="font-semibold text-slate-800 text-xs flex items-center gap-1 mt-0.5 flex-wrap">
+                    {req.is_external_facility ? (
+                      req.indent_direction === 'inbound' ? (
+                        <>
+                          <span className="text-indigo-700 font-extrabold">{req.external_facility_name || 'Fasiliti Luar'}</span>
+                          <span className="text-indigo-400 font-bold">➔</span>
+                          <span>{req.department?.department_name || 'Farmasi Logistik'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>{req.department?.department_name || 'Farmasi Logistik'}</span>
+                          <span className="text-indigo-500 font-bold">➔</span>
+                          <span className="text-indigo-700 font-extrabold">{req.external_facility_name || 'Fasiliti Luar'}</span>
+                        </>
+                      )
+                    ) : (
+                      req.department?.department_name || 'Pharmacy Store'
+                    )}
                   </span>
                 </div>
-                {req.request_type === 'manual_issue' && (
+                {req.request_type === 'manual_issue' && !req.is_external_facility && (
                   <span className="px-2 py-0.5 rounded text-[9px] bg-slate-100 text-slate-600 font-bold uppercase tracking-wide">
                     Manual
                   </span>
@@ -322,15 +434,17 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                     <Eye className="w-4 h-4" /> View Details
                   </button>
                 )}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onPrint(req);
-                  }}
-                  className="px-3 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
-                >
-                  <Printer className="w-4 h-4" /> Print Slip
-                </button>
+                {((req.status || '').toLowerCase() === 'completed' || (req.status || '').toLowerCase() === 'complete') && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onPrint(req);
+                    }}
+                    className="px-3 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+                  >
+                    <Printer className="w-4 h-4" /> Print Slip
+                  </button>
+                )}
               </div>
             </div>
           ))
@@ -376,10 +490,51 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
 
                   {/* Department */}
                   <td className="px-6 py-4">
-                    <span className="font-semibold text-slate-700">
-                      {req.department?.department_name || 'Pharmacy Store'}
-                    </span>
-                    {req.request_type === 'manual_issue' && (
+                    {req.is_external_facility ? (
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {req.external_operation === 'return' || req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang') ? (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 font-extrabold uppercase border border-purple-200">
+                              📤 Return
+                            </span>
+                          ) : req.external_operation === 'receive' || req.indent_direction === 'inbound' ? (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-indigo-100 text-indigo-700 font-extrabold uppercase border border-indigo-200">
+                              📥 Receive
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-extrabold uppercase border border-blue-200">
+                              📋 Request
+                            </span>
+                          )}
+                          <span className="font-bold text-slate-800 text-xs">
+                            {req.department?.department_name || 'Farmasi Logistik'}
+                          </span>
+                          <span className="text-indigo-500 font-extrabold text-xs">
+                            {req.indent_direction === 'inbound' ? '⬅' : '➔'}
+                          </span>
+                          <span className="font-extrabold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded text-xs border border-indigo-100">
+                            {req.external_facility_name || 'Fasiliti Luar'}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-slate-500 font-semibold tracking-wide flex items-center gap-1">
+                          {req.external_operation === 'return' || req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang')
+                            ? `Pemulangan ke ${req.external_facility_name || 'Fasiliti Luar'}`
+                            : req.external_operation === 'receive' || req.indent_direction === 'inbound'
+                              ? `Penerimaan dari ${req.external_facility_name || 'Fasiliti Luar'}`
+                              : `Permohonan Inden (${req.indent_direction === 'inbound' ? 'Masuk' : 'Keluar'})`}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] bg-teal-50 text-teal-800 font-bold border border-teal-200">
+                          🏢 Intra
+                        </span>
+                        <span className="font-semibold text-slate-700">
+                          {req.department?.department_name || 'Pharmacy Store'}
+                        </span>
+                      </div>
+                    )}
+                    {req.request_type === 'manual_issue' && !req.is_external_facility && (
                       <span className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-500 uppercase tracking-wider font-semibold">
                         Manual
                       </span>
@@ -460,13 +615,24 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                           <Eye className="w-3.5 h-3.5" /> Details
                         </button>
                       )}
-                      <button
-                        onClick={() => onPrint(req)}
-                        className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all border border-slate-200/60 bg-white"
-                        title="Print Issue Slip"
-                      >
-                        <Printer className="w-3.5 h-3.5" />
-                      </button>
+                      {((req.status || '').toLowerCase() === 'completed' || (req.status || '').toLowerCase() === 'complete') && (
+                        <button
+                          onClick={() => onPrint(req)}
+                          className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all border border-slate-200/60 bg-white"
+                          title="Print Issue Slip"
+                        >
+                          <Printer className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      {onDelete && (
+                        <button
+                          onClick={() => onDelete(req)}
+                          className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all border border-rose-200/70 bg-white shadow-2xs hover:shadow-xs active:scale-95"
+                          title="Padam Permohonan / Delete Record (Dilindungi Kata Laluan)"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -483,27 +649,90 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
       </div>
 
       {/* Pagination Footer */}
-      <div className="p-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-        <div>
-          Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
-          {Math.min(currentPage * itemsPerPage, filteredRequests.length)} of{' '}
-          {filteredRequests.length} requests
+      <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 bg-white">
+        {/* Record count info */}
+        <div className="font-medium">
+          {filteredRequests.length === 0 ? (
+            <span>Showing 0 of 0 requests</span>
+          ) : isAll ? (
+            <span>
+              Showing all <span className="font-bold text-slate-800">{filteredRequests.length}</span> requests
+            </span>
+          ) : (
+            <span>
+              Showing{' '}
+              <span className="font-bold text-slate-800">
+                {(currentPage - 1) * effectivePageSize + 1}
+              </span>{' '}
+              to{' '}
+              <span className="font-bold text-slate-800">
+                {Math.min(currentPage * effectivePageSize, filteredRequests.length)}
+              </span>{' '}
+              of{' '}
+              <span className="font-bold text-blue-600">{filteredRequests.length}</span> requests
+            </span>
+          )}
         </div>
-        <div className="flex gap-2">
+
+        {/* Page Size Selector */}
+        <div className="flex items-center gap-2">
+          <span className="text-slate-400 font-medium">Papar / Show:</span>
+          {/* Desktop & Tablet Pill Buttons */}
+          <div className="hidden sm:inline-flex items-center p-0.5 bg-slate-100 rounded-xl border border-slate-200/80 shadow-2xs">
+            {([5, 10, 20, 50, 'all'] as const).map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => {
+                  setPageSize(opt);
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                  pageSize === opt
+                    ? 'bg-white text-blue-600 shadow-xs border border-slate-200/60'
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/60'
+                }`}
+              >
+                {opt === 'all' ? 'All' : opt}
+              </button>
+            ))}
+          </div>
+          {/* Mobile Select Dropdown */}
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              const val = e.target.value;
+              setPageSize(val === 'all' ? 'all' : Number(val));
+              setCurrentPage(1);
+            }}
+            className="sm:hidden px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-2xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer"
+          >
+            <option value={5}>5 per page</option>
+            <option value={10}>10 per page</option>
+            <option value={20}>20 per page</option>
+            <option value={50}>50 per page</option>
+            <option value="all">Semua / All</option>
+          </select>
+        </div>
+
+        {/* Page Navigation */}
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            disabled={currentPage === 1}
-            className="p-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            disabled={currentPage === 1 || isAll}
+            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all text-slate-600 hover:text-slate-900 shadow-2xs"
+            title="Halaman Sebelumnya / Previous Page"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="px-3 py-1 bg-slate-100 border border-slate-200 rounded-lg font-bold">
-            {currentPage} of {totalPages}
+          <span className="px-3 py-1 bg-slate-100 border border-slate-200 rounded-lg font-bold text-slate-700">
+            {isAll ? '1 of 1' : `${currentPage} of ${totalPages}`}
           </span>
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="p-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            disabled={currentPage === totalPages || isAll}
+            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all text-slate-600 hover:text-slate-900 shadow-2xs"
+            title="Halaman Seterusnya / Next Page"
           >
             <ChevronRight className="w-4 h-4" />
           </button>

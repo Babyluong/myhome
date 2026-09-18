@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -720,7 +720,8 @@ const SystemLogsPage: React.FC = () => {
             </div>
           ) : (
             <>
-              <div className="overflow-x-auto">
+              {/* Desktop View: Full Table */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-wider text-slate-400">
@@ -838,6 +839,82 @@ const SystemLogsPage: React.FC = () => {
                     })}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Mobile View: High-End Native Activity Cards (Zero Horizontal Scroll!) */}
+              <div className="md:hidden divide-y divide-slate-100">
+                {logs.map((log) => {
+                  const CategoryIcon = categoryIcons[log.category]
+                  return (
+                    <div 
+                      key={log.id}
+                      onClick={() => handleViewLog(log)}
+                      className="p-4 space-y-2.5 hover:bg-slate-50/50 transition-colors active:bg-slate-100/50 cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-mono text-xs text-slate-500 font-bold">
+                          {formatDateTime(log.created_at)}
+                        </span>
+                        <span className={cn(
+                          "inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border",
+                          log.severity === 'critical' ? 'bg-red-50 text-red-700 border-red-200' :
+                          log.severity === 'error' ? 'bg-red-50 text-red-650 border-red-150' :
+                          log.severity === 'warning' ? 'bg-amber-50 text-amber-600 border-amber-150' :
+                          'bg-slate-50 text-slate-650 border-slate-150'
+                        )}>
+                          {log.severity}
+                        </span>
+                      </div>
+
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-5 h-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center flex-shrink-0">
+                            <User className="w-3 h-3 text-slate-500" />
+                          </div>
+                          <span className="font-extrabold text-slate-800 text-xs truncate">
+                            {log.user?.full_name || 'System Operator'}
+                          </span>
+                        </div>
+                        <h4 className="font-black text-slate-900 text-xs capitalize leading-tight">
+                          {log.action.replace(/_/g, ' ')}
+                        </h4>
+                        {log.description && (
+                          <p className="text-xs text-slate-500 line-clamp-2 mt-1 font-medium">
+                            {log.description}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2 pt-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className={cn(
+                            'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border',
+                            categoryColors[log.category]
+                          )}>
+                            <CategoryIcon className="w-2.5 h-2.5" />
+                            {log.category.replace('_', ' ')}
+                          </span>
+                          {log.entity_type && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200 capitalize">
+                              {log.entity_type.replace(/_/g, ' ')}
+                            </span>
+                          )}
+                        </div>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleViewLog(log)
+                          }}
+                          className="px-2.5 py-1 text-xs font-black uppercase tracking-wider text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-lg transition-all flex items-center gap-1"
+                        >
+                          <Eye className="w-3 h-3" />
+                          <span>View</span>
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
 
               {/* Pagination */}

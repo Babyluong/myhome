@@ -1,4 +1,4 @@
-﻿// src/modules/myporter/pages/PorterDashboardPage.tsx
+// src/modules/myporter/pages/PorterDashboardPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -40,11 +40,13 @@ import type {
 } from '@/shared/types/myporter'
 import { JobStatusBadge, UrgencyBadge, StaffStatusBadge } from '../components/PorterStatusBadge'
 import { PorterJobTrackerStepper } from '../components/PorterJobTrackerStepper'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 
 export const PorterDashboardPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
   const toast = useToast()
+  const { language } = useLanguage()
 
   const [stats, setStats] = useState<PorterAggregateStats | null>(null)
   const [recentJobs, setRecentJobs] = useState<PorterJobRequest[]>([])
@@ -75,7 +77,10 @@ export const PorterDashboardPage: React.FC = () => {
         }
       }
     } catch (err: any) {
-      toast.error('Ralat Memuat Data', err.message || 'Gagal memuatkan data papan pemuka.')
+      toast.error(
+        language === 'ms' ? 'Ralat Memuat Data' : 'Error Loading Data',
+        err.message || (language === 'ms' ? 'Gagal memuatkan data papan pemuka.' : 'Failed to load dashboard data.')
+      )
     } finally {
       setLoading(false)
     }
@@ -91,10 +96,13 @@ export const PorterDashboardPage: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <div className="w-12 h-12 border-4 border-sky-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-slate-400 font-medium animate-pulse">Memuatkan Papan Pemuka MyPorter...</p>
+        <p className="text-slate-400 font-medium animate-pulse">
+          {language === 'ms' ? 'Memuatkan Papan Pemuka MyPorter...' : 'Loading MyPorter Dashboard...'}
+        </p>
       </div>
     )
   }
+
   return (
     <div className="w-full space-y-8">
       {/* Top Banner Header */}
@@ -108,7 +116,9 @@ export const PorterDashboardPage: React.FC = () => {
             <div>
               <h1 className="text-3xl font-black text-white tracking-tight">MyPorter</h1>
               <p className="text-slate-400 text-xs sm:text-sm">
-                Sistem Logistik, Pemindahan Pesakit & Dispatch Bersepadu Hospital
+                {language === 'ms' 
+                  ? 'Sistem Logistik, Pemindahan Pesakit & Dispatch Bersepadu Hospital' 
+                  : 'Integrated Hospital Logistics, Patient Transfer & Dispatch Ecosystem'}
               </p>
             </div>
           </div>
@@ -120,7 +130,7 @@ export const PorterDashboardPage: React.FC = () => {
             className="flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-bold shadow-lg shadow-sky-500/25 border-0 rounded-xl px-5 py-2.5 transition-all duration-200 active:scale-95 text-sm"
           >
             <Plus className="w-4 h-4" />
-            <span>Pesan Porter Sekarang</span>
+            <span>{language === 'ms' ? 'Pesan Porter Sekarang' : 'Request Porter Now'}</span>
           </Button>
 
           <Button
@@ -129,7 +139,7 @@ export const PorterDashboardPage: React.FC = () => {
             className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 text-slate-200 border-slate-700 rounded-xl px-4 py-2.5 text-sm"
           >
             <Radio className="w-4 h-4 text-sky-400" />
-            <span>Panel PPK Rider</span>
+            <span>{language === 'ms' ? 'Panel PPK Rider' : 'Porter Driver Panel'}</span>
           </Button>
 
           {userRole === 'porter_manager' && (
@@ -139,7 +149,7 @@ export const PorterDashboardPage: React.FC = () => {
               className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 text-slate-200 border-slate-700 rounded-xl px-4 py-2.5 text-sm"
             >
               <Shield className="w-4 h-4 text-amber-400" />
-              <span>Pusat Dispatch</span>
+              <span>{language === 'ms' ? 'Pusat Dispatch' : 'Dispatch Control Center'}</span>
             </Button>
           )}
         </div>
@@ -150,9 +160,13 @@ export const PorterDashboardPage: React.FC = () => {
         <Card className="bg-slate-900/70 border-slate-800 shadow-lg hover:border-sky-500/50 transition-all rounded-2xl">
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Permohonan Hari Ini</p>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                {language === 'ms' ? 'Permohonan Hari Ini' : 'Today\'s Requests'}
+              </p>
               <h3 className="text-3xl font-black text-white tabular-nums">{stats?.totalJobsToday || 0}</h3>
-              <p className="text-[11px] text-sky-400 font-medium">{stats?.activeBroadcasting || 0} sedang mencari PPK</p>
+              <p className="text-[11px] text-sky-400 font-medium">
+                {stats?.activeBroadcasting || 0} {language === 'ms' ? 'sedang mencari PPK' : 'searching for porters'}
+              </p>
             </div>
             <div className="p-3 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-2xl">
               <ClipboardList className="w-7 h-7" />
@@ -163,9 +177,13 @@ export const PorterDashboardPage: React.FC = () => {
         <Card className="bg-slate-900/70 border-slate-800 shadow-lg hover:border-blue-500/50 transition-all rounded-2xl">
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Sedang Dalam Perjalanan</p>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                {language === 'ms' ? 'Sedang Dalam Perjalanan' : 'Active In Transit'}
+              </p>
               <h3 className="text-3xl font-black text-blue-400 tabular-nums">{stats?.inTransit || 0}</h3>
-              <p className="text-[11px] text-slate-400">{stats?.pendingReceiverConfirmation || 0} tiba di destinasi</p>
+              <p className="text-[11px] text-slate-400">
+                {stats?.pendingReceiverConfirmation || 0} {language === 'ms' ? 'tiba di destinasi' : 'at destination'}
+              </p>
             </div>
             <div className="p-3 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-2xl">
               <Truck className="w-7 h-7 animate-pulse" />
@@ -176,11 +194,15 @@ export const PorterDashboardPage: React.FC = () => {
         <Card className="bg-slate-900/70 border-slate-800 shadow-lg hover:border-emerald-500/50 transition-all rounded-2xl">
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">PPK Bersedia (Online)</p>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                {language === 'ms' ? 'PPK Bersedia (Online)' : 'Available Porters (Online)'}
+              </p>
               <h3 className="text-3xl font-black text-emerald-400 tabular-nums">
                 {stats?.availablePortersCount || 0} <span className="text-sm font-normal text-slate-500">/ {stats?.totalPortersOnDuty || 0}</span>
               </h3>
-              <p className="text-[11px] text-emerald-400 font-medium">Kadar sedia ada mencukupi</p>
+              <p className="text-[11px] text-emerald-400 font-medium">
+                {language === 'ms' ? 'Kadar sedia ada mencukupi' : 'Sufficient duty coverage'}
+              </p>
             </div>
             <div className="p-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-2xl">
               <Users className="w-7 h-7" />
@@ -191,11 +213,15 @@ export const PorterDashboardPage: React.FC = () => {
         <Card className="bg-slate-900/70 border-slate-800 shadow-lg hover:border-amber-500/50 transition-all rounded-2xl">
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Purata Masa TAT (SLA)</p>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                {language === 'ms' ? 'Purata Masa TAT (SLA)' : 'Average TAT (SLA)'}
+              </p>
               <h3 className="text-3xl font-black text-amber-400 tabular-nums">
                 {stats?.averageTATMinutes || 14} <span className="text-sm font-normal text-slate-500">min</span>
               </h3>
-              <p className="text-[11px] text-amber-400 font-medium">{stats?.slaCompliancePercentage || 96.8}% patuh SLA</p>
+              <p className="text-[11px] text-amber-400 font-medium">
+                {stats?.slaCompliancePercentage || 96.8}% {language === 'ms' ? 'patuh SLA' : 'SLA compliance'}
+              </p>
             </div>
             <div className="p-3 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-2xl">
               <TrendingUp className="w-7 h-7" />
@@ -207,18 +233,58 @@ export const PorterDashboardPage: React.FC = () => {
       {/* Grab-Style Quick 1-Click Order Categories */}
       <div className="space-y-3">
         <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-          <span>Kategori Pantas Pesanan (Quick Request)</span>
+          <span>{language === 'ms' ? 'Kategori Pantas Pesanan (Quick Request)' : 'Quick Request Categories'}</span>
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
           {[
-            { cat: 'patient_transfer', label: 'Pesakit', icon: Bed, color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30' },
-            { cat: 'lab_specimen', label: 'Spesimen', icon: FlaskConical, color: 'text-teal-400 bg-teal-500/10 border-teal-500/30' },
-            { cat: 'blood_bank', label: 'Tabung Darah', icon: Droplets, color: 'text-rose-400 bg-rose-500/10 border-rose-500/30' },
-            { cat: 'pharmacy_run', label: 'Ubat Farmasi', icon: Pill, color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' },
-            { cat: 'gas_equipment', label: 'Oksigen / Alat', icon: AirVent, color: 'text-sky-400 bg-sky-500/10 border-sky-500/30' },
-            { cat: 'mortuary', label: 'Jenazah', icon: Shield, color: 'text-slate-300 bg-slate-500/10 border-slate-500/30' },
-            { cat: 'medical_records', label: 'Rekod BHT', icon: FileText, color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' },
-            { cat: 'cssd_linen', label: 'CSSD & Linen', icon: Activity, color: 'text-fuchsia-400 bg-fuchsia-500/10 border-fuchsia-500/30' },
+            { 
+              cat: 'patient_transfer', 
+              label: language === 'ms' ? 'Pesakit' : 'Patient Transfer', 
+              icon: Bed, 
+              color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30' 
+            },
+            { 
+              cat: 'lab_specimen', 
+              label: language === 'ms' ? 'Spesimen' : 'Lab Specimen', 
+              icon: FlaskConical, 
+              color: 'text-teal-400 bg-teal-500/10 border-teal-500/30' 
+            },
+            { 
+              cat: 'blood_bank', 
+              label: language === 'ms' ? 'Tabung Darah' : 'Blood Bank', 
+              icon: Droplets, 
+              color: 'text-rose-400 bg-rose-500/10 border-rose-500/30' 
+            },
+            { 
+              cat: 'pharmacy_run', 
+              label: language === 'ms' ? 'Ubat Farmasi' : 'Pharmacy Run', 
+              icon: Pill, 
+              color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' 
+            },
+            { 
+              cat: 'gas_equipment', 
+              label: language === 'ms' ? 'Oksigen / Alat' : 'Gas & Equipment', 
+              icon: AirVent, 
+              color: 'text-sky-400 bg-sky-500/10 border-sky-500/30' 
+            },
+            { 
+              cat: 'mortuary', 
+              label: language === 'ms' ? 'Jenazah' : 'Mortuary', 
+              icon: Shield, 
+              color: 'text-slate-300 bg-slate-500/10 border-slate-500/30' 
+            },
+            { 
+              cat: 'medical_records', 
+              label: language === 'ms' ? 'Rekod BHT' : 'Medical Records', 
+              icon: FileText, 
+              color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' 
+            },
+            { 
+              cat: 'cssd_linen', 
+              label: language === 'ms' ? 'CSSD & Linen' : 'CSSD & Linen', 
+              icon: Activity, 
+              color: 'text-fuchsia-400 bg-fuchsia-500/10 border-fuchsia-500/30' 
+            },
           ].map((item) => {
             const Icon = item.icon
             return (
@@ -242,14 +308,14 @@ export const PorterDashboardPage: React.FC = () => {
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
               <Activity className="w-5 h-5 text-sky-400" />
-              <span>Status Pergerakan Langsung (Live Jobs)</span>
+              <span>{language === 'ms' ? 'Status Pergerakan Langsung (Live Jobs)' : 'Live Dispatch & Movement Status'}</span>
             </h2>
             <Button
               variant="ghost"
               onClick={() => navigate('/porter/requests/my')}
               className="text-xs font-bold text-sky-400 hover:text-sky-300 p-0 flex items-center gap-1"
             >
-              <span>Lihat Semua Pesanan</span>
+              <span>{language === 'ms' ? 'Lihat Semua Pesanan' : 'View All Requests'}</span>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
@@ -257,7 +323,7 @@ export const PorterDashboardPage: React.FC = () => {
           <div className="space-y-4">
             {recentJobs.length === 0 ? (
               <div className="p-12 text-center text-slate-500 bg-slate-900/50 rounded-2xl border border-slate-800">
-                Tiada permohonan aktif pada masa ini.
+                {language === 'ms' ? 'Tiada permohonan aktif pada masa ini.' : 'No active requests at this time.'}
               </div>
             ) : (
               recentJobs.map((job) => (
@@ -277,7 +343,9 @@ export const PorterDashboardPage: React.FC = () => {
                     <div className="flex items-start gap-2">
                       <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-slate-400 text-[10px] uppercase font-semibold">Dari (Asal):</p>
+                        <p className="text-slate-400 text-[10px] uppercase font-semibold">
+                          {language === 'ms' ? 'Dari (Asal):' : 'From (Origin):'}
+                        </p>
                         <p className="font-bold text-slate-200">{job.origin_department_name}</p>
                         <p className="text-slate-500">{job.origin_location_details}</p>
                       </div>
@@ -285,7 +353,9 @@ export const PorterDashboardPage: React.FC = () => {
                     <div className="flex items-start gap-2">
                       <MapPin className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-slate-400 text-[10px] uppercase font-semibold">Ke (Destinasi):</p>
+                        <p className="text-slate-400 text-[10px] uppercase font-semibold">
+                          {language === 'ms' ? 'Ke (Destinasi):' : 'To (Destination):'}
+                        </p>
                         <p className="font-bold text-slate-200">{job.destination_department_name}</p>
                         <p className="text-slate-500">{job.destination_location_details}</p>
                       </div>
@@ -297,13 +367,15 @@ export const PorterDashboardPage: React.FC = () => {
 
                   <div className="flex items-center justify-between pt-1 border-t border-slate-800/80 text-xs">
                     <div className="text-slate-400">
-                      PPK: <span className="font-semibold text-slate-200">{job.assigned_porter_name || 'Menunggu tugasan'}</span>
+                      {language === 'ms' ? 'PPK:' : 'Porter:'} <span className="font-semibold text-slate-200">
+                        {job.assigned_porter_name || (language === 'ms' ? 'Menunggu tugasan' : 'Awaiting assignment')}
+                      </span>
                     </div>
                     <button
                       onClick={() => navigate('/porter/requests/my')}
                       className="text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1"
                     >
-                      <span>Jejak Pesanan</span>
+                      <span>{language === 'ms' ? 'Jejak Pesanan' : 'Track Request'}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -318,14 +390,14 @@ export const PorterDashboardPage: React.FC = () => {
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
               <Users className="w-5 h-5 text-emerald-400" />
-              <span>Status Petugas PPK</span>
+              <span>{language === 'ms' ? 'Status Petugas PPK' : 'Porter Duty Status'}</span>
             </h2>
             <Button
               variant="ghost"
               onClick={() => navigate('/porter/roster')}
               className="text-xs font-bold text-sky-400 hover:text-sky-300 p-0 flex items-center gap-1"
             >
-              <span>Jadual Syif</span>
+              <span>{language === 'ms' ? 'Jadual Syif' : 'Duty Roster'}</span>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
@@ -360,7 +432,9 @@ export const PorterDashboardPage: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <StaffStatusBadge status={p.current_status} />
-                  <p className="text-[10px] text-slate-400 mt-1 font-mono">{p.total_completed_today} selesai</p>
+                  <p className="text-[10px] text-slate-400 mt-1 font-mono">
+                    {p.total_completed_today} {language === 'ms' ? 'selesai' : 'completed'}
+                  </p>
                 </div>
               </div>
             ))}

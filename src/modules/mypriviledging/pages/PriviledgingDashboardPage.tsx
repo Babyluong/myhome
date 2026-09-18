@@ -81,7 +81,7 @@ export const PriviledgingDashboardPage: React.FC = () => {
 
   // Handle Delete
   const handleDeleteSubmission = (id: string) => {
-    if (window.confirm('Adakah anda pasti ingin memadam rekod prosedur ini?')) {
+    if (window.confirm('Are you sure you want to delete this procedure submission?')) {
       priviledgingService.deleteSubmission(id);
       loadData();
     }
@@ -99,7 +99,7 @@ export const PriviledgingDashboardPage: React.FC = () => {
       ...params,
       reviewerId: 'admin-jkcp-01',
       reviewerName: 'Matron Hasnah binti Kassim (JKCP)',
-      reviewerRole: 'Penyelia Jururawat Hospital Lawas'
+      reviewerRole: 'Lawas Hospital Nursing Supervisor'
     });
     loadData();
   };
@@ -138,7 +138,7 @@ export const PriviledgingDashboardPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-slate-500 uppercase font-semibold tracking-wider">
-                Profil Semasa:
+                Active Profile:
               </span>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                 {activeStaff?.fullName}
@@ -154,7 +154,7 @@ export const PriviledgingDashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-xs font-semibold text-slate-500">Tukar Pegawai:</label>
+          <label className="text-xs font-semibold text-slate-500">Switch Staff:</label>
           <select
             value={activeStaff?.id || ''}
             onChange={(e) => handleSelectStaff(e.target.value)}
@@ -191,10 +191,10 @@ export const PriviledgingDashboardPage: React.FC = () => {
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-sky-700 transition-all" />
           </div>
           <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-            Kriteria Credentialing
+            Credentialing Criteria
           </h4>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Syarat kelayakan, bukti sokongan & senarai semak Jururawat & Penolong Pegawai Perubatan.
+            Eligibility criteria, required supporting documentation & clinical checklists for Staff Nurses & Assistant Medical Officers.
           </p>
         </div>
 
@@ -210,10 +210,10 @@ export const PriviledgingDashboardPage: React.FC = () => {
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-700 transition-all" />
           </div>
           <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-            Katalog Prosedur (500+)
+            Procedure Catalog (500+)
           </h4>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Rujuk 14 kategori prosedur dan pilih prosedur untuk direkodkan ke buku log.
+            Explore 14 clinical procedure categories and select items for your competency logbook.
           </p>
         </div>
 
@@ -229,12 +229,12 @@ export const PriviledgingDashboardPage: React.FC = () => {
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-amber-700 transition-all" />
           </div>
           <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-            {isAdminMode ? 'Semakan JKCP / Kelulusan' : 'Log & Permohonan Saya'}
+            {isAdminMode ? 'JKCP Committee Review Queue' : 'My Submissions & Logbook'}
           </h4>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             {isAdminMode
-              ? `${kpis.pendingSubmissions} prosedur menunggu tindakan pengesahan klinikal.`
-              : 'Pantau status draf, permohonan dalam semakan dan pembetulan.'}
+              ? `${kpis.pendingSubmissions} procedures awaiting clinical assessment & endorsement.`
+              : 'Track drafts, active submissions, approved privileges and amendment requests.'}
           </p>
         </div>
 
@@ -250,10 +250,10 @@ export const PriviledgingDashboardPage: React.FC = () => {
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-slate-900 transition-all" />
           </div>
           <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-            Cetak Sijil & Penurunan Kuasa
+            Print Privileging Certificate
           </h4>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Format rasmi KKM berjata negara bagi prosedur yang telah diluluskan berdikari.
+            Official MOH credentialing certificate & letters of authorization with national crest for approved privileges.
           </p>
         </div>
       </div>
@@ -263,13 +263,13 @@ export const PriviledgingDashboardPage: React.FC = () => {
         <div className="flex items-center justify-between">
           <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <FileText className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
-            {isAdminMode ? 'Senarai Prosedur Hospital' : 'Rekod Prosedur Anda'}
+            {isAdminMode ? 'Hospital Privileging Registry' : 'Your Clinical Procedures Logbook'}
           </h3>
           <button
             onClick={() => navigate(isAdminMode ? '/priviledging/review-queue' : '/priviledging/my-submissions')}
             className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline font-semibold flex items-center gap-1"
           >
-            <span>Lihat Semua</span>
+            <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>

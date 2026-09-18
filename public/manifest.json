@@ -1,0 +1,77 @@
+{
+  "name": "H.O.M.E. - Hospital Operation & Management Ecosystem",
+  "short_name": "H.O.M.E.",
+  "description": "Hospital Operation Management Ecosystem - Kementerian Kesihatan Malaysia",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "scope": "/",
+  "lang": "ms",
+  "categories": ["medical", "health", "productivity", "business"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/512px-Jata_MalaysiaV2.svg.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Module Hub",
+      "short_name": "Hub",
+      "description": "Buka direktori modul utama H.O.M.E.",
+      "url": "/hub",
+      "icons": [{ "src": "/512px-Jata_MalaysiaV2.svg.png", "sizes": "512x512" }]
+    },
+    {
+      "name": "MyStaff",
+      "short_name": "Staff",
+      "description": "Pengurusan Maklumat & Direktori Kakitangan",
+      "url": "/staff",
+      "icons": [{ "src": "/512px-Jata_MalaysiaV2.svg.png", "sizes": "512x512" }]
+    },
+    {
+      "name": "MyKunci",
+      "short_name": "Kunci",
+      "description": "Pengurusan & Log Kunci Hospital",
+      "url": "/kunci",
+      "icons": [{ "src": "/512px-Jata_MalaysiaV2.svg.png", "sizes": "512x512" }]
+    },
+    {
+      "name": "MyTempahan",
+      "short_name": "Tempahan",
+      "description": "Tempahan Bilik & Fasiliti",
+      "url": "/tempahan",
+      "icons": [{ "src": "/512px-Jata_MalaysiaV2.svg.png", "sizes": "512x512" }]
+    }
+  ]
+}

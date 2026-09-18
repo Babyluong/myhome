@@ -1499,7 +1499,8 @@ export const StoreLocationManagementPage: React.FC = () => {
           ) : viewMode === 'table' ? (
             /* TABLE VIEW */
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
+              {/* Desktop View: Full Table */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left text-xs text-slate-700">
                   <thead className="bg-slate-50 text-slate-600 uppercase font-bold tracking-wider border-b border-slate-200">
                     <tr>
@@ -1542,19 +1543,14 @@ export const StoreLocationManagementPage: React.FC = () => {
                           )}
                         </td>
                         <td className="py-3.5 px-4">
-                          {loc.storage_condition === 'cold_2_8c' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200 rounded-lg">
-                              <Thermometer className="w-3 h-3" /> Peti Sejuk (2-8°C)
-                            </span>
-                          )}
-                          {loc.storage_condition === 'controlled' && (
+                          {(loc.storage_condition === 'ambient' || (loc.storage_condition as unknown as string) === 'room_temp') && (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 rounded-lg">
-                              <ShieldAlert className="w-3 h-3" /> Kawalan DDA
+                              Suhu Bilik (≤25°C)
                             </span>
                           )}
-                          {loc.storage_condition === 'ambient' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-slate-100 text-slate-700 rounded-lg">
-                              Suhu Bilik
+                          {(loc.storage_condition === 'cold_2_8c' || (loc.storage_condition as unknown as string) === 'chilled') && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200 rounded-lg">
+                              Peti Sejuk (2-8°C)
                             </span>
                           )}
                           {loc.storage_condition === 'frozen' && (
@@ -1590,6 +1586,87 @@ export const StoreLocationManagementPage: React.FC = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
+              <div className="md:hidden divide-y divide-slate-100">
+                {filteredLocations.map(loc => (
+                  <div
+                    key={loc.id}
+                    onClick={() => handleSelectStoreLocation(loc)}
+                    className="p-4 space-y-3 hover:bg-slate-50/50 transition cursor-pointer"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="font-mono font-bold text-teal-700 text-xs block">
+                          {loc.location_code}
+                        </span>
+                        <h4 className="font-bold text-slate-900 text-sm">
+                          {loc.store_name}
+                        </h4>
+                      </div>
+                      {loc.is_active ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex-shrink-0">
+                          <CheckCircle className="w-3 h-3" /> Aktif
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full flex-shrink-0">
+                          <XCircle className="w-3 h-3" /> Tidak Aktif
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {loc.location_type === 'drug' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 rounded-md">
+                          <Package className="w-2.5 h-2.5" /> Ubat
+                        </span>
+                      )}
+                      {loc.location_type === 'non_drug' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 rounded-md">
+                          <ClipboardList className="w-2.5 h-2.5" /> Bukan Ubat
+                        </span>
+                      )}
+                      {loc.location_type === 'both' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200 rounded-md">
+                          <Layers className="w-2.5 h-2.5" /> Ubat & Bukan Ubat
+                        </span>
+                      )}
+                      {(loc.storage_condition === 'ambient' || (loc.storage_condition as unknown as string) === 'room_temp') && (
+                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 rounded-md">
+                          ≤25°C
+                        </span>
+                      )}
+                      {(loc.storage_condition === 'cold_2_8c' || (loc.storage_condition as unknown as string) === 'chilled') && (
+                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200 rounded-md">
+                          2-8°C
+                        </span>
+                      )}
+                      {loc.storage_condition === 'frozen' && (
+                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-md">
+                          -20°C
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-slate-100">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleViewItems(loc)
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 transition"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-teal-600" />
+                        <span>{loc.total_items_count} Item</span>
+                      </button>
+
+                      <span className="text-[11px] text-teal-600 font-bold">
+                        Pilih Lokasi &rarr;
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ) : (

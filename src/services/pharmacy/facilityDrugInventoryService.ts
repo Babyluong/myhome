@@ -42,19 +42,89 @@ export interface FacilityDrugItem extends DrugWithRelations {
   notes?: string
 }
 
-// ─── Local Cache Helpers ─────────────────────────────────────────────────────
+import { mockDrugs } from './mockData'
+
+export const DEFAULT_HOSPITAL_ID = '85bb6adc-b868-428b-83f4-e5af2f5cf904'
+
+export const isUuid = (val?: string | null): boolean =>
+  Boolean(val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val))
+
+export function normalizeHospitalId(hospitalId?: string | null): string {
+  if (!hospitalId) return DEFAULT_HOSPITAL_ID
+  return isUuid(hospitalId) ? hospitalId : DEFAULT_HOSPITAL_ID
+}
 
 function cacheKey(hospitalId: string) {
-  return `facility_drug_items_${hospitalId}`
+  const norm = normalizeHospitalId(hospitalId)
+  return `facility_drug_items_${norm}`
+}
+
+function getDefaultFacilityItems(hospitalId: string): FacilityDrugItem[] {
+  return mockDrugs.map(d => ({
+    ...d,
+    facility_inventory_id: `FAC-INV-${d.id}`,
+    hospital_id: hospitalId,
+    facility_stock: d.id === 'drug-apx25' ? 450
+      : d.id === 'drug-emp10' ? 620
+      : d.id === 'drug-ent100' ? 380
+      : d.id === 'drug-cic50' ? 240
+      : d.id === 'drug-dap10' ? 510
+      : d.id === 'drug-tac1' ? 180
+      : d.id === 'drug-tcz200' ? 12
+      : d.id === 'drug-ada40' ? 18
+      : d.id === 'drug-001' ? 8500
+      : d.id === 'drug-002' ? 3200
+      : d.id === 'drug-003' ? 6400
+      : d.id === 'drug-004' ? 450
+      : 2800,
+    min_buffer_level: d.min_stock_level || 20,
+    batch_number: d.id === 'drug-apx25' ? 'B260801'
+      : d.id === 'drug-emp10' ? 'B260714'
+      : d.id === 'drug-ent100' ? 'B260902'
+      : d.id === 'drug-cic50' ? 'B260519'
+      : d.id === 'drug-dap10' ? 'B260822'
+      : d.id === 'drug-tcz200' ? 'B260601'
+      : 'B260101',
+    expiry_date: d.id === 'drug-apx25' ? '2027-11-30'
+      : d.id === 'drug-emp10' ? '2027-08-31'
+      : d.id === 'drug-ent100' ? '2027-10-31'
+      : d.id === 'drug-cic50' ? '2027-05-31'
+      : d.id === 'drug-dap10' ? '2027-09-30'
+      : d.id === 'drug-tcz200' ? '2027-04-30'
+      : '2027-12-31',
+    location: d.id === 'drug-tcz200' || d.id === 'drug-ada40' || d.id === 'drug-004'
+      ? '[STOR-CC] Stor Sejuk (Chiller 2-8°C) > Rak CC-01'
+      : '[STOR-01] Stor Utama Farmasi > Rak A-01 > Level 1',
+    notes: d.storage_conditions || '',
+    added_at: '2026-01-01T00:00:00Z',
+  }))
 }
 
 function readCache(hospitalId: string): FacilityDrugItem[] {
   try {
     const raw = localStorage.getItem(cacheKey(hospitalId))
-    return raw ? JSON.parse(raw) : []
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const defaults = getDefaultFacilityItems(hospitalId)
+        const merged = parsed.map(item => {
+          if (item.facility_stock === 0 || item.facility_stock === undefined) {
+            const def = defaults.find(d => d.id === item.id || d.drug_code === item.drug_code)
+            if (def && def.facility_stock !== undefined && def.facility_stock > 0) {
+              return { ...item, facility_stock: def.facility_stock }
+            }
+          }
+          return item
+        })
+        return merged
+      }
+    }
   } catch {
-    return []
+    // fallback
   }
+  const defaultItems = getDefaultFacilityItems(hospitalId)
+  writeCache(hospitalId, defaultItems)
+  return defaultItems
 }
 
 function writeCache(hospitalId: string, items: FacilityDrugItem[]) {
@@ -73,8 +143,9 @@ function writeCache(hospitalId: string, items: FacilityDrugItem[]) {
 export async function loadFacilityDrugInventory(
   hospitalId: string
 ): Promise<FacilityDrugItem[]> {
+  const effectiveHospitalId = normalizeHospitalId(hospitalId)
   if (!isSupabaseConfigured()) {
-    return readCache(hospitalId)
+    return readCache(effectiveHospitalId)
   }
 
   try {
@@ -127,7 +198,7 @@ export async function loadFacilityDrugInventory(
           supplier:suppliers (*)
         )
       `)
-      .eq('hospital_id', hospitalId)
+      .eq('hospital_id', effectiveHospitalId)
       .order('added_at', { ascending: false })
 
     if (error) throw error
@@ -152,7 +223,7 @@ export async function loadFacilityDrugInventory(
       const { data: batches } = await supabase
         .from('pharmacy_stock_batches')
         .select('item_id, batch_number, expiry_date, quantity_on_hand, status')
-        .eq('hospital_id', hospitalId)
+        .eq('hospital_id', effectiveHospitalId)
         .in('status', ['available', 'quarantine', 'active'])
 
       // 2. Fetch stock transactions for fallbacks
@@ -164,7 +235,7 @@ export async function loadFacilityDrugInventory(
           created_at,
           batch:pharmacy_stock_batches(batch_number, expiry_date)
         `)
-        .eq('hospital_id', hospitalId)
+        .eq('hospital_id', effectiveHospitalId)
         .order('created_at', { ascending: false })
 
       const batchMap = new Map<string, { totalStock: number; primaryBatch: string; earliestExpiry: string }>()
@@ -248,11 +319,11 @@ export async function loadFacilityDrugInventory(
       })
     } catch {}
 
-    writeCache(hospitalId, items)
+    writeCache(effectiveHospitalId, items)
     return items
   } catch (err) {
     console.error('[FacilityInventory] Failed to load from Supabase, using cache:', err)
-    return readCache(hospitalId)
+    return readCache(effectiveHospitalId)
   }
 }
 
@@ -264,9 +335,10 @@ export async function addToFacilityDrugInventory(
   facilityStock = 0,
   minBufferLevel = 20
 ): Promise<{ success: boolean; error?: string }> {
-  if (!isSupabaseConfigured()) {
-    // Offline: write to cache only
-    const cached = readCache(hospitalId)
+  const effectiveHospitalId = normalizeHospitalId(hospitalId)
+  if (!isSupabaseConfigured() || !isUuid(drug.id)) {
+    // Offline / non-UUID custom item: write to cache only
+    const cached = readCache(effectiveHospitalId)
     if (cached.some(i => i.id === drug.id)) {
       return { success: false, error: 'Item sudah wujud dalam Inventori Fasiliti.' }
     }
@@ -276,7 +348,7 @@ export async function addToFacilityDrugInventory(
       min_buffer_level: minBufferLevel,
       added_at: new Date().toISOString(),
     }
-    writeCache(hospitalId, [item, ...cached])
+    writeCache(effectiveHospitalId, [item, ...cached])
     return { success: true }
   }
 
@@ -284,7 +356,7 @@ export async function addToFacilityDrugInventory(
     const { error } = await supabase
       .from('facility_drug_inventory')
       .insert({
-        hospital_id: hospitalId,
+        hospital_id: effectiveHospitalId,
         drug_id: drug.id,
         facility_stock: facilityStock,
         min_buffer_level: minBufferLevel,
@@ -312,8 +384,9 @@ export async function batchAddToFacilityDrugInventory(
   facilityStock = 0,
   minBufferLevel = 20
 ): Promise<{ added: number; skipped: number; error?: string }> {
+  const effectiveHospitalId = normalizeHospitalId(hospitalId)
   if (!isSupabaseConfigured()) {
-    const cached = readCache(hospitalId)
+    const cached = readCache(effectiveHospitalId)
     const existingIds = new Set(cached.map(i => i.id))
     const toAdd = drugs.filter(d => !existingIds.has(d.id))
     const newItems: FacilityDrugItem[] = toAdd.map(d => ({
@@ -322,13 +395,14 @@ export async function batchAddToFacilityDrugInventory(
       min_buffer_level: minBufferLevel,
       added_at: new Date().toISOString(),
     }))
-    writeCache(hospitalId, [...newItems, ...cached])
+    writeCache(effectiveHospitalId, [...newItems, ...cached])
     return { added: newItems.length, skipped: drugs.length - newItems.length }
   }
 
   try {
-    const rows = drugs.map(d => ({
-      hospital_id: hospitalId,
+    const validDrugs = drugs.filter(d => isUuid(d.id))
+    const rows = validDrugs.map(d => ({
+      hospital_id: effectiveHospitalId,
       drug_id: d.id,
       facility_stock: facilityStock,
       min_buffer_level: minBufferLevel,
@@ -362,15 +436,16 @@ export async function updateFacilityDrugInventoryItem(
     notes: string
   }>
 ): Promise<{ success: boolean; error?: string }> {
+  const effectiveHospitalId = normalizeHospitalId(hospitalId)
   // Always update local cache for immediate UI reflection
-  const cached = readCache(hospitalId)
+  const cached = readCache(effectiveHospitalId)
   const idx = cached.findIndex(i => i.id === drugId || (i as any).drug_id === drugId || (i as any).facility_inventory_id === drugId)
   if (idx !== -1) {
     cached[idx] = { ...cached[idx], ...updates }
-    writeCache(hospitalId, cached)
+    writeCache(effectiveHospitalId, cached)
   }
 
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured() || !isUuid(drugId)) {
     return { success: true }
   }
 
@@ -378,7 +453,7 @@ export async function updateFacilityDrugInventoryItem(
     const { data, error } = await supabase
       .from('facility_drug_inventory')
       .upsert(
-        { hospital_id: hospitalId, drug_id: drugId, ...updates, updated_at: new Date().toISOString() },
+        { hospital_id: effectiveHospitalId, drug_id: drugId, ...updates, updated_at: new Date().toISOString() },
         { onConflict: 'hospital_id,drug_id' }
       )
       .select('id')
@@ -405,7 +480,7 @@ export async function updateFacilityDrugInventoryItem(
         const { data: batches } = await supabase
           .from('pharmacy_stock_batches')
           .select('id')
-          .eq('hospital_id', hospitalId)
+          .eq('hospital_id', effectiveHospitalId)
           .eq('item_id', drugId)
           .in('status', ['available', 'quarantine', 'active'])
           .order('expiry_date', { ascending: true })
@@ -446,7 +521,8 @@ export async function bulkAssignLocationToFacilityDrugItems(
   drugIds: string[],
   locationString: string
 ): Promise<{ success: boolean; count: number; error?: string }> {
-  const cached = readCache(hospitalId)
+  const effectiveHospitalId = normalizeHospitalId(hospitalId)
+  const cached = readCache(effectiveHospitalId)
   const drugIdSet = new Set(drugIds)
   let updatedCount = 0
 
@@ -458,7 +534,7 @@ export async function bulkAssignLocationToFacilityDrugItems(
     return item
   })
 
-  writeCache(hospitalId, updatedCache)
+  writeCache(effectiveHospitalId, updatedCache)
 
   if (!isSupabaseConfigured()) {
     return { success: true, count: updatedCount }
@@ -468,7 +544,7 @@ export async function bulkAssignLocationToFacilityDrugItems(
     const { error, data } = await supabase
       .from('facility_drug_inventory')
       .update({ location: locationString, updated_at: new Date().toISOString() })
-      .eq('hospital_id', hospitalId)
+      .eq('hospital_id', effectiveHospitalId)
       .in('drug_id', drugIds)
       .select('id')
 
@@ -489,9 +565,12 @@ export async function removeFromFacilityDrugInventory(
   hospitalId: string,
   drugId: string
 ): Promise<{ success: boolean; error?: string }> {
-  if (!isSupabaseConfigured()) {
-    const cached = readCache(hospitalId)
-    writeCache(hospitalId, cached.filter(i => i.id !== drugId))
+  const effectiveHospitalId = normalizeHospitalId(hospitalId)
+  // Always update local cache first
+  const cached = readCache(effectiveHospitalId)
+  writeCache(effectiveHospitalId, cached.filter(i => i.id !== drugId && (i as any).facility_inventory_id !== drugId))
+
+  if (!isSupabaseConfigured() || !isUuid(drugId)) {
     return { success: true }
   }
 
@@ -499,7 +578,7 @@ export async function removeFromFacilityDrugInventory(
     const { error } = await supabase
       .from('facility_drug_inventory')
       .delete()
-      .eq('hospital_id', hospitalId)
+      .eq('hospital_id', effectiveHospitalId)
       .eq('drug_id', drugId)
 
     if (error) throw error
@@ -516,12 +595,13 @@ export async function clearFacilityDrugInventoryByScheme(
   hospitalId: string,
   scheme: string | 'all'
 ): Promise<{ success: boolean; error?: string }> {
+  const effectiveHospitalId = normalizeHospitalId(hospitalId)
   if (!isSupabaseConfigured()) {
-    const cached = readCache(hospitalId)
+    const cached = readCache(effectiveHospitalId)
     const updated = scheme === 'all'
       ? []
       : cached.filter(i => (i.procurement_vote || '').toLowerCase() !== scheme.toLowerCase())
-    writeCache(hospitalId, updated)
+    writeCache(effectiveHospitalId, updated)
     return { success: true }
   }
 
@@ -529,7 +609,7 @@ export async function clearFacilityDrugInventoryByScheme(
     let query = supabase
       .from('facility_drug_inventory')
       .delete()
-      .eq('hospital_id', hospitalId)
+      .eq('hospital_id', effectiveHospitalId)
 
     if (scheme !== 'all') {
       // We need to join with drugs to filter by scheme.

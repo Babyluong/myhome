@@ -1,168 +1,260 @@
-import React, { useState, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useMemo, useEffect } from 'react'
 import {
   ShieldCheck,
-  Search,
-  ArrowLeft,
-  Filter,
-  CheckCircle2,
-  Clock,
   Printer,
-  Sparkles,
-  Layers,
   FileCheck,
-  AlertCircle,
-  Activity
+  Activity,
+  Baby,
+  User,
+  Calculator,
+  Clock,
+  RefreshCw,
+  BookOpen,
+  ArrowLeft
 } from 'lucide-react'
-import { NAG_GUIDELINES } from '../data/antimicrobialData'
-import { AntimicrobialTable } from '../components/AntimicrobialTable'
-import { ROUTES } from '@/lib/constants'
+import {
+  NAGInfectionGuideline,
+  NAGPopulation,
+  NAGSyncMetadata
+} from '../types/formulariTypes'
+import { NAGMasterSidebar } from '../components/NAGMasterSidebar'
+import { NAGClinicalMonograph } from '../components/NAGClinicalMonograph'
+import { NAGUserGuideBanner } from '../components/NAGUserGuideBanner'
+import { PaediatricDoseCalculatorModal } from '../components/PaediatricDoseCalculatorModal'
+import { NAGSyncManagerModal } from '../components/NAGSyncManagerModal'
+import {
+  getAllNAGGuidelines,
+  getNAGSyncMetadata
+} from '../services/nagService'
 
 export const AntimicrobialGuidelinePage: React.FC = () => {
-  const navigate = useNavigate()
-  const [selectedSystem, setSelectedSystem] = useState<string>('ALL')
+  const [guidelines, setGuidelines] = useState<NAGInfectionGuideline[]>(() => getAllNAGGuidelines())
+  const [syncMeta, setSyncMeta] = useState<NAGSyncMetadata>(() => getNAGSyncMetadata())
+
+  // Master-Detail State
+  const [selectedPopulation, setSelectedPopulation] = useState<NAGPopulation>('All')
   const [selectedSetting, setSelectedSetting] = useState<string>('ALL')
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  
+  // Active selected guideline
+  const [selectedGuidelineId, setSelectedGuidelineId] = useState<string | null>(() => {
+    const list = getAllNAGGuidelines()
+    // Default to CAP or first guideline
+    const cap = list.find(g => g.conditionName.toLowerCase().includes('community acquired pneumonia') || g.conditionName.toLowerCase().includes('cap'))
+    return cap ? cap.id : (list[0]?.id || null)
+  })
 
-  const bodySystems = [
-    'Respiratory',
-    'Urinary',
-    'Skin & Soft Tissue',
-    'Central Nervous System (CNS)',
-    'Intra-abdominal',
-    'Surgical Prophylaxis (SAP)'
-  ]
+  // Mobile detail view active state
+  const [isMobileDetailOpen, setIsMobileDetailOpen] = useState(false)
 
-  const settings = [
-    'Community-Acquired',
-    'Hospital-Acquired (HAP/VAP)',
-    'Surgical Prophylaxis'
-  ]
+  // Modals state
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false)
+  const [calculatorDrugHint, setCalculatorDrugHint] = useState<string | undefined>()
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false)
+  const [showGuide, setShowGuide] = useState(false)
 
-  const filteredGuidelines = useMemo(() => {
-    return NAG_GUIDELINES.filter(item => {
-      if (searchTerm) {
-        const q = searchTerm.toLowerCase()
-        const matchCond = item.conditionName.toLowerCase().includes(q)
-        const matchPath = item.primaryPathogens.some(p => p.toLowerCase().includes(q))
-        const matchReg = item.firstLineTherapy.regimen.toLowerCase().includes(q)
-        if (!matchCond && !matchPath && !matchReg) return false
+  // Listen to guidelines update event for live reactivity
+  useEffect(() => {
+    const handleUpdated = () => {
+      const updatedList = getAllNAGGuidelines()
+      setGuidelines(updatedList)
+      setSyncMeta(getNAGSyncMetadata())
+      if (!selectedGuidelineId && updatedList.length > 0) {
+        setSelectedGuidelineId(updatedList[0].id)
       }
-      if (selectedSystem !== 'ALL' && item.bodySystem !== selectedSystem) return false
-      if (selectedSetting !== 'ALL' && item.setting !== selectedSetting) return false
-      return true
-    })
-  }, [searchTerm, selectedSystem, selectedSetting])
+    }
+    window.addEventListener('nag_guidelines_updated', handleUpdated)
+    return () => window.removeEventListener('nag_guidelines_updated', handleUpdated)
+  }, [selectedGuidelineId])
+
+  // Active selected guideline object
+  const activeGuideline = useMemo(() => {
+    if (!selectedGuidelineId) return guidelines[0] || null
+    return guidelines.find(g => g.id === selectedGuidelineId) || guidelines[0] || null
+  }, [guidelines, selectedGuidelineId])
+
+  const handleSelectGuideline = (item: NAGInfectionGuideline) => {
+    setSelectedGuidelineId(item.id)
+    setIsMobileDetailOpen(true)
+  }
+
+  const handleOpenCalculator = (drugHint?: string) => {
+    setCalculatorDrugHint(drugHint)
+    setIsCalculatorOpen(true)
+  }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-8">
-      {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600" />
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6 animate-fade-in">
+      {/* 1. TOP OFFICIAL KKM PORTAL HEADER */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600" />
+
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-2xl shadow-md flex-shrink-0">
-            <ShieldCheck className="w-7 h-7" />
+          <div className="w-13 h-13 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-700 to-teal-800 text-white rounded-2xl shadow-md flex items-center justify-center flex-shrink-0">
+            <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-200" />
           </div>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-              <span>Garis Panduan Antimikrobial Kebangsaan (NAG 2024)</span>
-            </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              National Antimicrobial Guideline Malaysia (Edisi Ke-4) & Protokol Antimicrobial Stewardship (AMS)
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+                National Antimicrobial Guidelines (NAG 2024)
+              </h1>
+              <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                {syncMeta.edition}
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                17 Dewasa (A1–A17) • 14 Pediatrik (B1–B14)
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium leading-relaxed">
+              Portal Garis Panduan Antimikrobial Kebangsaan Edisi Ke-4 (KKM) &amp; Kawalan Rintangan Antimikrob (AMS) Lawas Hospital
             </p>
           </div>
         </div>
 
-        <button
-          onClick={() => window.print()}
-          className="px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 transition-all self-start md:self-auto cursor-pointer"
+        {/* Action Tools */}
+        <div className="flex flex-wrap items-center gap-2 self-start lg:self-auto flex-shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowGuide(!showGuide)}
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 border border-slate-200/80"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-emerald-700" />
+            <span>{showGuide ? 'Tutup Panduan' : 'Panduan Pengguna'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleOpenCalculator()}
+            className="px-3.5 py-2 bg-cyan-700 hover:bg-cyan-800 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <Calculator className="w-3.5 h-3.5 text-cyan-200" />
+            <span>Kalkulator Dos</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsSyncModalOpen(true)}
+            className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+            <span>Penyegerakan</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <Printer className="w-3.5 h-3.5 text-slate-500" />
+            <span>Cetak</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 2. FIRST-TIME USER GUIDE BANNER (TOGGLEABLE) */}
+      {showGuide && (
+        <NAGUserGuideBanner
+          onQuickFilter={q => {
+            setSearchTerm(q)
+            setShowGuide(false)
+          }}
+        />
+      )}
+
+      {/* 3. AMS PROTOCOL HIGHLIGHT BANNER */}
+      <div className="bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 text-white rounded-3xl p-5 sm:p-6 shadow-md">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex-shrink-0">
+              <FileCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-wider">
+                Polisi Antimicrobial Stewardship (AMS) Hospital Lawas:
+              </h3>
+              <p className="text-xs text-emerald-100/80 mt-0.5">
+                Prinsip wajib penggunaan antimikrobial rasional bagi membasmi rintangan kuman (AMR).
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+            <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/10 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-emerald-300 flex-shrink-0" />
+              <span>Semakan Wajib 48–72 Jam</span>
+            </div>
+            <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/10 flex items-center gap-2">
+              <Activity className="w-4 h-4 text-emerald-300 flex-shrink-0" />
+              <span>Tukar IV ke Oral Pantas</span>
+            </div>
+            <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/10 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-300 flex-shrink-0" />
+              <span>Sekatan Ubat Tier-R</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. MASTER-DETAIL TWO-PANE LAYOUT */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* LEFT MASTER NAVIGATION PANE (Col 4) */}
+        <div
+          className={`lg:col-span-5 xl:col-span-4 sticky top-6 ${
+            isMobileDetailOpen ? 'hidden lg:block' : 'block'
+          }`}
         >
-          <Printer className="w-4 h-4" />
-          <span>Cetak Panduan NAG</span>
-        </button>
-      </div>
-
-      {/* AMS Policy Ribbon */}
-      <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
-        <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-wider">
-          <FileCheck className="w-4 h-4" />
-          <span>Protokol Antimicrobial Stewardship (AMS) Hospital Lawas</span>
+          <NAGMasterSidebar
+            guidelines={guidelines}
+            selectedGuidelineId={selectedGuidelineId}
+            onSelectGuideline={handleSelectGuideline}
+            selectedPopulation={selectedPopulation}
+            onSelectPopulation={setSelectedPopulation}
+            selectedSetting={selectedSetting}
+            onSelectSetting={setSelectedSetting}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+          />
         </div>
 
-        <h2 className="text-lg sm:text-xl font-bold leading-snug">
-          Prinsip Penggunaan Antibiotik Secara Rasional Bagi Membendung Rintangan Antimikrob (AMR):
-        </h2>
+        {/* RIGHT DETAIL MONOGRAPH PANE (Col 8) */}
+        <div
+          className={`lg:col-span-7 xl:col-span-8 space-y-4 ${
+            isMobileDetailOpen ? 'block' : 'hidden lg:block'
+          }`}
+        >
+          {/* Mobile Back Button */}
+          {isMobileDetailOpen && (
+            <button
+              type="button"
+              onClick={() => setIsMobileDetailOpen(false)}
+              className="lg:hidden px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Kembali ke Senarai Kategori</span>
+            </button>
+          )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-          <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 space-y-1">
-            <Clock className="w-5 h-5 text-emerald-300 mb-2" />
-            <h3 className="text-xs font-bold">Semakan Mandatori 48-72 Jam</h3>
-            <p className="text-[11px] text-emerald-100/80 leading-relaxed">
-              Semua preskripsi antibiotik empirik wajib disemak semula selepas 72 jam berdasarkan keputusan kultur mikrobiologi.
-            </p>
-          </div>
-
-          <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 space-y-1">
-            <Activity className="w-5 h-5 text-emerald-300 mb-2" />
-            <h3 className="text-xs font-bold">Pertukaran Awal IV ke Oral</h3>
-            <p className="text-[11px] text-emerald-100/80 leading-relaxed">
-              Tukar kepada ubat makan serta-merta apabila pesakit stabil, tiada demam 48j, dan saluran pemakanan berfungsi.
-            </p>
-          </div>
-
-          <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 space-y-1">
-            <ShieldCheck className="w-5 h-5 text-emerald-300 mb-2" />
-            <h3 className="text-xs font-bold">Kawalan Antibiotik Terhad (Tier R/Rsv)</h3>
-            <p className="text-[11px] text-emerald-100/80 leading-relaxed">
-              Antibiotik seperti Meropenem, Vancomycin, dan Colistin memerlukan kelulusan Pakar ID / Pegawai AMS.
-            </p>
-          </div>
+          <NAGClinicalMonograph
+            guideline={activeGuideline}
+            onOpenCalculator={handleOpenCalculator}
+          />
         </div>
       </div>
 
-      {/* Filter Ribbon */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 space-y-4">
-        <div className="flex flex-col md:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Cari indikasi klinikal, patogen atau rejimen antibiotik (cth: Pneumonia, Meningitis, Ceftriaxone)..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 focus:bg-white"
-            />
-          </div>
+      {/* 5. MODALS */}
+      <PaediatricDoseCalculatorModal
+        isOpen={isCalculatorOpen}
+        onClose={() => setIsCalculatorOpen(false)}
+        initialDrugName={calculatorDrugHint}
+      />
 
-          <select
-            value={selectedSystem}
-            onChange={e => setSelectedSystem(e.target.value)}
-            className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-700"
-          >
-            <option value="ALL">Semua Sistem Badan</option>
-            {bodySystems.map(sys => (
-              <option key={sys} value={sys}>{sys}</option>
-            ))}
-          </select>
-
-          <select
-            value={selectedSetting}
-            onChange={e => setSelectedSetting(e.target.value)}
-            className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-700"
-          >
-            <option value="ALL">Semua Persekitaran Rawatan</option>
-            {settings.map(st => (
-              <option key={st} value={st}>{st}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Guidelines Table Component */}
-      <AntimicrobialTable
-        guidelines={filteredGuidelines}
-        filterSystem={selectedSystem}
-        filterSetting={selectedSetting}
+      <NAGSyncManagerModal
+        isOpen={isSyncModalOpen}
+        onClose={() => setIsSyncModalOpen(false)}
+        onSyncCompleted={() => {
+          setGuidelines(getAllNAGGuidelines())
+          setSyncMeta(getNAGSyncMetadata())
+        }}
       />
     </div>
   )

@@ -20,9 +20,11 @@ import {
   ListPlus,
   CheckCheck,
   ExternalLink,
-  Table
+  Table,
+  Wrench,
+  RefreshCw
 } from 'lucide-react';
-import { getCylinderByQrOrSerial, registerScannedCylinderOnTheFly } from '@/services/pharmacy/oxygenService';
+import { getCylinderByQrOrSerial, registerScannedCylinderOnTheFly, updateCylinderValveType } from '@/services/pharmacy/oxygenService';
 import { useAuthStore } from '@/stores/authStore';
 import type { OxygenCylinderWithRelations } from '@/types/pharmacy';
 
@@ -41,18 +43,18 @@ export const isStoreUnit = (unit?: string | null) => {
 };
 
 export const RECONCILIATION_UNITS = [
+  { id: 'Pharmacy Store', label: 'Pharmacy Store (Central)', icon: '🏬' },
   { id: 'Emergency & Trauma', label: 'Emergency & Trauma', icon: '🚨' },
   { id: 'General Ward', label: 'General Ward', icon: '🛏️' },
   { id: 'Paediatric Ward', label: 'Paediatric Ward', icon: '👶' },
   { id: 'Radiology & Radiography', label: 'Radiology', icon: '🩻' },
   { id: 'Anaesthesiology / OT', label: 'Anaesthesiology (Anaes)', icon: '💉' },
   { id: 'Nephrology', label: 'Nephrology', icon: '🩺' },
-  { id: 'Pharmacy Store', label: 'Pharmacy Store (Central)', icon: '🏬' },
 ];
 
 export const RECONCILIATION_STATUSES = [
-  { id: 'used', label: 'Used / In Use (Ward)', desc: 'In use or active in department / ward' },
   { id: 'available', label: 'Available (Store)', desc: 'Full cylinder ready in store' },
+  { id: 'used', label: 'Used / In Use (Ward)', desc: 'In use or active in department / ward' },
   { id: 'empty', label: 'Empty (Store)', desc: 'Empty cylinder waiting in store' },
   { id: 'return', label: 'Return (Supplier)', desc: 'Returned back to supplier' },
 ];
@@ -73,6 +75,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
   onClose,
   onScanMatch,
   onBatchScanMatch,
+  onNewCylinderRegistered,
   existingCylinders,
 }) => {
   const { user } = useAuthStore();
@@ -84,9 +87,9 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
   // Applied Items Summary (Track items applied to audit draft)
   const [appliedSummary, setAppliedSummary] = useState<ScannedBatchItem[]>([]);
 
-  // Batch Defaults
-  const [batchUnit, setBatchUnit] = useState<string>('General Ward');
-  const [batchStatus, setBatchStatus] = useState<string>('used');
+  // Batch Defaults - Default to Pharmacy Store & available for store stock auditing
+  const [batchUnit, setBatchUnit] = useState<string>('Pharmacy Store');
+  const [batchStatus, setBatchStatus] = useState<string>('available');
 
   // Instant Auto-Register on Scan Mode
   const [autoRegisterOnScan, setAutoRegisterOnScan] = useState<boolean>(true);
@@ -109,6 +112,11 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
   // Animation states
   const [isRendered, setIsRendered] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // Valve type correction state — tracks the last successfully scanned cylinder so staff can
+  // fix wrong BN/PI classification immediately (QR labels do NOT encode valve type)
+  const [lastScannedCylinder, setLastScannedCylinder] = useState<OxygenCylinderWithRelations | null>(null);
+  const [isCorrectingValveType, setIsCorrectingValveType] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -349,6 +357,9 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
             ? `⚡ Auto-Registered & Added: ${cyl.serial_number} (${cyl.type_info?.type_name || 'Standard'}) → Assigned to ${batchUnit}`
             : `Added Cylinder: ${cyl.serial_number} → Assigned to ${batchUnit}`
         });
+
+        // Track for valve type correction (QR labels do NOT encode valve type)
+        setLastScannedCylinder(cyl);
       } else {
         playBeep('error');
         setStatusMessage({
@@ -419,6 +430,40 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
     });
 
     setScannedBatch([]);
+  };
+
+  // Corrects valve type (BN/PI) for the last scanned cylinder.
+  // QR labels on MOH cylinders only encode serial number — valve type must be verified physically.
+  const handleCorrectValveType = async (targetCode: 'BN' | 'PI') => {
+    if (!lastScannedCylinder || isCorrectingValveType) return;
+    setIsCorrectingValveType(true);
+    try {
+      const userId = user?.id || undefined;
+      const res = await updateCylinderValveType(hospitalId, lastScannedCylinder.id, targetCode, userId);
+      if (res.error) {
+        setStatusMessage({ type: 'error', text: `Valve type correction failed: ${res.error}` });
+      } else {
+        const valveLabel = targetCode === 'BN' ? 'Bullnose (BN)' : 'Pin Index (PI)';
+        setStatusMessage({
+          type: 'success',
+          text: `✓ Valve type corrected → ${valveLabel} for ${lastScannedCylinder.serial_number}`
+        });
+        // Update the batch list
+        const corrected = { ...lastScannedCylinder, type_info: { ...lastScannedCylinder.type_info, code: targetCode } };
+        setScannedBatch(prev =>
+          prev.map(item => item.cylinder.id === corrected.id
+            ? { ...item, cylinder: corrected }
+            : item
+          )
+        );
+        setLastScannedCylinder(null);
+      }
+    } catch (err) {
+      console.error('Valve type correction error:', err);
+      setStatusMessage({ type: 'error', text: 'Failed to correct valve type.' });
+    } finally {
+      setIsCorrectingValveType(false);
+    }
   };
 
   if (!isRendered) return null;
@@ -690,6 +735,82 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
             </div>
           )}
 
+          {/* ── VALVE TYPE CORRECTION PANEL ──────────────────────────────────
+              QR labels on MOH cylinders do NOT encode valve type (BN/PI).
+              Staff must visually confirm against the physical label sticker. */}
+          {lastScannedCylinder && (
+            <div className="p-4 rounded-2xl border-2 border-amber-300 bg-amber-50 space-y-3 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0">
+                  <Wrench className="w-4 h-4 text-amber-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-black text-amber-900">Verify Valve Type</span>
+                    <span className="font-mono text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-md truncate">
+                      {lastScannedCylinder.serial_number}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-amber-700 font-semibold mt-0.5 leading-snug">
+                    QR labels do <strong>not</strong> encode valve type. Check the physical label sticker — Bullnose or Pin Index?
+                  </p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-[9px] text-amber-600 font-bold uppercase tracking-wider">Recorded as:</span>
+                    <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${
+                      lastScannedCylinder.type_info?.code === 'BN'
+                        ? 'bg-blue-100 text-blue-800 border-blue-200'
+                        : lastScannedCylinder.type_info?.code === 'PI'
+                        ? 'bg-purple-100 text-purple-800 border-purple-200'
+                        : 'bg-slate-100 text-slate-600 border-slate-200'
+                    }`}>
+                      {lastScannedCylinder.type_info?.code === 'BN'
+                        ? '🔵 Bullnose (BN)'
+                        : lastScannedCylinder.type_info?.code === 'PI'
+                        ? '🟣 Pin Index (PI)'
+                        : '⚪ Unknown'}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setLastScannedCylinder(null)}
+                  className="text-amber-400 hover:text-amber-600 p-1 rounded cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <span className="text-[9px] text-amber-600 font-bold uppercase tracking-wider shrink-0">Fix to →</span>
+                <button
+                  type="button"
+                  onClick={() => handleCorrectValveType('BN')}
+                  disabled={isCorrectingValveType}
+                  className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer border-2 flex items-center justify-center gap-1.5 ${
+                    lastScannedCylinder.type_info?.code === 'BN'
+                      ? 'bg-blue-100 border-blue-300 text-blue-700 opacity-60 cursor-default'
+                      : 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50 shadow-xs'
+                  }`}
+                >
+                  🔵 Bullnose (BN)
+                  {lastScannedCylinder.type_info?.code === 'BN' && <Check className="w-3 h-3 ml-1" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleCorrectValveType('PI')}
+                  disabled={isCorrectingValveType}
+                  className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer border-2 flex items-center justify-center gap-1.5 ${
+                    lastScannedCylinder.type_info?.code === 'PI'
+                      ? 'bg-purple-100 border-purple-300 text-purple-700 opacity-60 cursor-default'
+                      : 'bg-white border-purple-300 text-purple-700 hover:bg-purple-50 shadow-xs'
+                  }`}
+                >
+                  {isCorrectingValveType ? <RefreshCw className="w-3 h-3 animate-spin" /> : '🟣 Pin Index (PI)'}
+                  {lastScannedCylinder.type_info?.code === 'PI' && <Check className="w-3 h-3 ml-1" />}
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* APPLIED TO AUDIT DRAFT SUMMARY SECTION */}
           {appliedSummary.length > 0 && (
             <div className="bg-emerald-50/70 border-2 border-emerald-200/80 rounded-2xl p-4 space-y-3 shadow-xs">
@@ -775,6 +896,18 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-mono font-black text-sm text-slate-900">{item.cylinder.serial_number}</span>
+                          {/* Valve type badge — BN (Bullnose) or PI (Pin Index) — must be verified against physical label */}
+                          {item.cylinder.type_info?.code && (
+                            <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full border ${
+                              item.cylinder.type_info.code === 'BN'
+                                ? 'bg-blue-100 text-blue-700 border-blue-200'
+                                : item.cylinder.type_info.code === 'PI'
+                                ? 'bg-purple-100 text-purple-700 border-purple-200'
+                                : 'bg-slate-100 text-slate-500 border-slate-200'
+                            }`}>
+                              {item.cylinder.type_info.code === 'BN' ? '🔵 BN' : item.cylinder.type_info.code === 'PI' ? '🟣 PI' : item.cylinder.type_info.code}
+                            </span>
+                          )}
                           <span className="text-[10px] font-bold text-slate-400">{item.scannedAt}</span>
                         </div>
                         <p className="text-[11px] font-bold text-slate-500 mt-0.5">

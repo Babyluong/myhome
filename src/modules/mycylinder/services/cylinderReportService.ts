@@ -47,6 +47,10 @@ export interface CylinderReportData {
     budgetUtilization: number // percentage
     totalDeliveries: number
     avgMonthlyUsage: number
+    avgWeeklyUsage: number
+    avgDailyUsage: number
+    peakDayUsage: { date: string; formattedDate: string; count: number }
+    peakWeekUsage: { week: string; count: number }
     currentBalance: number
     runwayMonths: number
   }
@@ -59,13 +63,19 @@ export interface CylinderReportData {
     byType: { type: string; count: number; percentage: number }[]
     byDepartment: { department: string; count: number }[]
     monthlyTrend: { month: string; [sizeCode: string]: number }[]
+    weeklyTrend: { week: string; shortWeek: string; startDate: string; endDate: string; issued: number; [sizeCode: string]: any }[]
+    dailyTrend: { date: string; formattedDate: string; dayOfWeek: string; issued: number; [sizeCode: string]: any }[]
     averageMonthly: { type: string; avgUsage: number }[]
+    averageWeekly: { type: string; avgUsage: number }[]
+    averageDaily: { type: string; avgUsage: number }[]
     topConsumingDepartments: { department: string; usage: number; percentage: number }[]
   }
   deliveries: {
     total: number
     monthlyTrend: { month: string; count: number; amount: number }[]
     receivedMonthlyTrend: { month: string; [sizeCode: string]: number }[]
+    receivedWeeklyTrend: { week: string; shortWeek: string; received: number; [sizeCode: string]: any }[]
+    receivedDailyTrend: { date: string; formattedDate: string; received: number; [sizeCode: string]: any }[]
     byStatus: { status: string; count: number }[]
     recentDeliveries: DeliveryEntry[]
     avgDeliveryValue: number
@@ -134,6 +144,45 @@ function calculateLinearRegression(y: number[]): { slope: number; intercept: num
     intercept,
     r2: Math.max(0, Math.min(1, r2)),
   }
+}
+
+// ─── Date Utility Helpers for Daily & Weekly Trend Aggregation ───────────────
+function formatDateKey(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function formatDayLabel(d: Date): string {
+  const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${day} ${monthsShort[d.getMonth()]}`
+}
+
+function getWeekStart(d: Date): Date {
+  const date = new Date(d)
+  const day = date.getDay()
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1) // Monday start
+  date.setDate(diff)
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+function getWeekEnd(d: Date): Date {
+  const start = getWeekStart(d)
+  const end = new Date(start)
+  end.setDate(end.getDate() + 6)
+  end.setHours(23, 59, 59, 999)
+  return end
+}
+
+function getWeekNumber(d: Date): number {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
+  const dayNum = date.getUTCDay() || 7
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum)
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1))
+  return Math.ceil((((date.getTime() - yearStart.getTime()) / 86400000) + 1) / 7)
 }
 
 /**
@@ -365,6 +414,181 @@ export async function generateCylinderReport(
 
       const avgMonthlyUsage = totalConsumptionQty / activeMonthsCount
 
+      // 7b. Daily Usage & Reception Aggregation (for all cylinder types)
+      let dailyStartDate = new Date(dateRange.startDate)
+      const dailyEndDate = new Date(dateRange.endDate)
+
+      if (targetConsumptions.length > 0) {
+        const sortedDates = targetConsumptions
+          .map(c => new Date(c.consumption_date || c.created_at))
+          .sort((a, b) => a.getTime() - b.getTime())
+
+        const earliestRec = sortedDates[0]
+        const spanDays = Math.ceil((dateRange.endDate.getTime() - dateRange.startDate.getTime()) / 86400000)
+        if (spanDays > 45) {
+          // Anchor to first day of earliest active month or last 45 days
+          const startOfActiveMonth = new Date(earliestRec.getFullYear(), earliestRec.getMonth(), 1)
+          dailyStartDate = new Date(Math.max(dateRange.startDate.getTime(), startOfActiveMonth.getTime()))
+        }
+      }
+
+      const dailyMap: Record<string, any> = {}
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+      const curD = new Date(dailyStartDate)
+      curD.setHours(0, 0, 0, 0)
+      const endD = new Date(dailyEndDate)
+      endD.setHours(23, 59, 59, 999)
+
+      while (curD <= endD) {
+        const k = formatDateKey(curD)
+        dailyMap[k] = {
+          date: k,
+          formattedDate: formatDayLabel(curD),
+          dayOfWeek: dayNames[curD.getDay()],
+          issued: 0,
+          received: 0,
+        }
+        curD.setDate(curD.getDate() + 1)
+      }
+
+      targetConsumptions.forEach(c => {
+        const cDate = new Date(c.consumption_date || c.created_at)
+        const k = formatDateKey(cDate)
+        const type = c.cylinder_size || 'Size D'
+        const qty = Number(c.quantity || 0)
+        if (dailyMap[k]) {
+          dailyMap[k].issued += qty
+          dailyMap[k][type] = (dailyMap[k][type] || 0) + qty
+        }
+      })
+
+      ;(receptionsRaw || []).forEach(r => {
+        if (r.status === 'completed') {
+          const rDate = new Date(r.reception_date)
+          const k = formatDateKey(rDate)
+          if (dailyMap[k]) {
+            ;(r.items || []).forEach((item: any) => {
+              const sizeCode = item.size_info?.code || 'Size D'
+              const qty = Number(item.quantity || 1)
+              dailyMap[k].received += qty
+              dailyMap[k][`received_${sizeCode}`] = (dailyMap[k][`received_${sizeCode}`] || 0) + qty
+            })
+          }
+        }
+      })
+
+      const usageDailyTrend = Object.values(dailyMap)
+      const receivedDailyTrend = usageDailyTrend.map(d => {
+        const res: any = {
+          date: d.date,
+          formattedDate: d.formattedDate,
+          received: d.received,
+        }
+        Object.keys(d).forEach(key => {
+          if (key.startsWith('received_')) {
+            res[key.replace('received_', '')] = d[key]
+          }
+        })
+        return res
+      })
+
+      // 7c. Weekly Usage & Reception Aggregation (for all cylinder types)
+      const weeklyMap: Record<string, any> = {}
+      const curWStart = getWeekStart(dailyStartDate)
+      const endWBoundary = getWeekEnd(dailyEndDate)
+
+      while (curWStart <= endWBoundary) {
+        const wEnd = getWeekEnd(curWStart)
+        const wkNum = getWeekNumber(curWStart)
+        const shortWeek = `Wk ${wkNum}`
+        const weekLabel = `${shortWeek} (${formatDayLabel(curWStart)} - ${formatDayLabel(wEnd)})`
+        const wKey = formatDateKey(curWStart)
+
+        weeklyMap[wKey] = {
+          week: weekLabel,
+          shortWeek,
+          startDate: formatDateKey(curWStart),
+          endDate: formatDateKey(wEnd),
+          issued: 0,
+          received: 0,
+        }
+        curWStart.setDate(curWStart.getDate() + 7)
+      }
+
+      targetConsumptions.forEach(c => {
+        const cDate = new Date(c.consumption_date || c.created_at)
+        const wStart = getWeekStart(cDate)
+        const wKey = formatDateKey(wStart)
+        const type = c.cylinder_size || 'Size D'
+        const qty = Number(c.quantity || 0)
+        if (weeklyMap[wKey]) {
+          weeklyMap[wKey].issued += qty
+          weeklyMap[wKey][type] = (weeklyMap[wKey][type] || 0) + qty
+        }
+      })
+
+      ;(receptionsRaw || []).forEach(r => {
+        if (r.status === 'completed') {
+          const rDate = new Date(r.reception_date)
+          const wStart = getWeekStart(rDate)
+          const wKey = formatDateKey(wStart)
+          if (weeklyMap[wKey]) {
+            ;(r.items || []).forEach((item: any) => {
+              const sizeCode = item.size_info?.code || 'Size D'
+              const qty = Number(item.quantity || 1)
+              weeklyMap[wKey].received += qty
+              weeklyMap[wKey][`received_${sizeCode}`] = (weeklyMap[wKey][`received_${sizeCode}`] || 0) + qty
+            })
+          }
+        }
+      })
+
+      const usageWeeklyTrend = Object.values(weeklyMap)
+      const receivedWeeklyTrend = usageWeeklyTrend.map(w => {
+        const res: any = {
+          week: w.week,
+          shortWeek: w.shortWeek,
+          received: w.received,
+        }
+        Object.keys(w).forEach(key => {
+          if (key.startsWith('received_')) {
+            res[key.replace('received_', '')] = w[key]
+          }
+        })
+        return res
+      })
+
+      // Peak Day & Peak Week
+      let peakDayUsage = { date: 'N/A', formattedDate: 'N/A', count: 0 }
+      usageDailyTrend.forEach(d => {
+        if (d.issued > peakDayUsage.count) {
+          peakDayUsage = { date: d.date, formattedDate: d.formattedDate, count: d.issued }
+        }
+      })
+
+      let peakWeekUsage = { week: 'N/A', count: 0 }
+      usageWeeklyTrend.forEach(w => {
+        if (w.issued > peakWeekUsage.count) {
+          peakWeekUsage = { week: w.shortWeek, count: w.issued }
+        }
+      })
+
+      const activeDaysCount = usageDailyTrend.filter(d => d.issued > 0).length || usageDailyTrend.length || 1
+      const activeWeeksCount = usageWeeklyTrend.filter(w => w.issued > 0).length || usageWeeklyTrend.length || 1
+
+      const avgDailyUsage = totalConsumptionQty > 0 ? parseFloat((totalConsumptionQty / activeDaysCount).toFixed(1)) : 0
+      const avgWeeklyUsage = totalConsumptionQty > 0 ? parseFloat((totalConsumptionQty / activeWeeksCount).toFixed(1)) : 0
+
+      const averageDailyUsageByType = usageByType.map(t => ({
+        type: t.type,
+        avgUsage: parseFloat((t.count / activeDaysCount).toFixed(1)),
+      }))
+
+      const averageWeeklyUsageByType = usageByType.map(t => ({
+        type: t.type,
+        avgUsage: parseFloat((t.count / activeWeeksCount).toFixed(1)),
+      }))
+
       // 8. Deliveries & Receptions
       const deliveriesCount = (receptionsRaw || []).length
       const deliveryTrendMap: Record<string, { count: number; amount: number }> = {}
@@ -578,6 +802,10 @@ export async function generateCylinderReport(
             budgetUtilization,
             totalDeliveries: deliveriesCount,
             avgMonthlyUsage,
+            avgWeeklyUsage,
+            avgDailyUsage,
+            peakDayUsage,
+            peakWeekUsage,
             currentBalance,
             runwayMonths: Math.max(0, parseFloat(runwayMonths.toFixed(1))),
           },
@@ -590,13 +818,19 @@ export async function generateCylinderReport(
             byType: usageByType,
             byDepartment: usageByDepartment,
             monthlyTrend: usageMonthlyTrend,
+            weeklyTrend: usageWeeklyTrend,
+            dailyTrend: usageDailyTrend,
             averageMonthly: averageMonthlyUsageByType,
+            averageWeekly: averageWeeklyUsageByType,
+            averageDaily: averageDailyUsageByType,
             topConsumingDepartments,
           },
           deliveries: {
             total: deliveriesCount,
             monthlyTrend: deliveriesMonthlyTrend,
             receivedMonthlyTrend,
+            receivedWeeklyTrend,
+            receivedDailyTrend,
             byStatus: deliveriesByStatus,
             recentDeliveries: recentDeliveriesList,
             avgDeliveryValue,
@@ -851,6 +1085,83 @@ function generateMockReport(
     }
   })
 
+  // Daily Trend Mock (Last 14 days)
+  const usageDailyTrend = Array.from({ length: 14 }).map((_, i) => {
+    const d = new Date(dateRange.endDate)
+    d.setDate(d.getDate() - (13 - i))
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const base = 25 + Math.round(Math.sin(i) * 10)
+    const issued = base
+    const received = i % 3 === 0 ? base + 5 : 0
+    return {
+      date: formatDateKey(d),
+      formattedDate: formatDayLabel(d),
+      dayOfWeek: dayNames[d.getDay()],
+      issued,
+      received,
+      'Size D': Math.round(issued * 0.4),
+      'Size F': Math.round(issued * 0.3),
+      'Size G': Math.round(issued * 0.2),
+      'Size K': Math.round(issued * 0.1),
+    }
+  })
+
+  const receivedDailyTrend = usageDailyTrend.map(d => ({
+    date: d.date,
+    formattedDate: d.formattedDate,
+    received: d.received,
+    'Size D': Math.round(d.received * 0.4),
+    'Size F': Math.round(d.received * 0.3),
+    'Size G': Math.round(d.received * 0.2),
+    'Size K': Math.round(d.received * 0.1),
+  }))
+
+  // Weekly Trend Mock (Last 6 weeks)
+  const usageWeeklyTrend = Array.from({ length: 6 }).map((_, i) => {
+    const wStart = new Date(dateRange.endDate)
+    wStart.setDate(wStart.getDate() - (5 - i) * 7)
+    const wEnd = new Date(wStart)
+    wEnd.setDate(wEnd.getDate() + 6)
+    const wkNum = 30 + i
+    const base = 175 + Math.round(Math.sin(i) * 35)
+    return {
+      week: `Wk ${wkNum} (${formatDayLabel(wStart)} - ${formatDayLabel(wEnd)})`,
+      shortWeek: `Wk ${wkNum}`,
+      startDate: formatDateKey(wStart),
+      endDate: formatDateKey(wEnd),
+      issued: base,
+      received: base + 10,
+      'Size D': Math.round(base * 0.4),
+      'Size F': Math.round(base * 0.3),
+      'Size G': Math.round(base * 0.2),
+      'Size K': Math.round(base * 0.1),
+    }
+  })
+
+  const receivedWeeklyTrend = usageWeeklyTrend.map(w => ({
+    week: w.week,
+    shortWeek: w.shortWeek,
+    received: w.received,
+    'Size D': Math.round(w.received * 0.4),
+    'Size F': Math.round(w.received * 0.3),
+    'Size G': Math.round(w.received * 0.2),
+    'Size K': Math.round(w.received * 0.1),
+  }))
+
+  const averageDailyUsageByType = [
+    { type: 'Size D', avgUsage: 10.2 },
+    { type: 'Size F', avgUsage: 7.7 },
+    { type: 'Size G', avgUsage: 5.1 },
+    { type: 'Size K', avgUsage: 2.6 },
+  ]
+
+  const averageWeeklyUsageByType = [
+    { type: 'Size D', avgUsage: 71.4 },
+    { type: 'Size F', avgUsage: 53.6 },
+    { type: 'Size G', avgUsage: 35.7 },
+    { type: 'Size K', avgUsage: 17.9 },
+  ]
+
   return {
     data: {
       summary: {
@@ -862,6 +1173,10 @@ function generateMockReport(
         budgetUtilization,
         totalDeliveries: 130,
         avgMonthlyUsage: 766,
+        avgWeeklyUsage: 178.5,
+        avgDailyUsage: 25.5,
+        peakDayUsage: { date: '2026-06-15', formattedDate: '15 Jun', count: 35 },
+        peakWeekUsage: { week: 'Wk 34', count: 210 },
         currentBalance,
         runwayMonths: 8.8,
       },
@@ -874,13 +1189,19 @@ function generateMockReport(
         byType: usageByType,
         byDepartment: usageByDepartment,
         monthlyTrend: usageMonthlyTrend,
+        weeklyTrend: usageWeeklyTrend,
+        dailyTrend: usageDailyTrend,
         averageMonthly: averageMonthlyUsageByType,
+        averageWeekly: averageWeeklyUsageByType,
+        averageDaily: averageDailyUsageByType,
         topConsumingDepartments,
       },
       deliveries: {
         total: 130,
         monthlyTrend: deliveriesMonthlyTrend,
         receivedMonthlyTrend,
+        receivedWeeklyTrend,
+        receivedDailyTrend,
         byStatus: deliveriesByStatus,
         recentDeliveries,
         avgDeliveryValue: 5621.53,

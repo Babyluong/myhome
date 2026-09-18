@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
 import { useAuthStore } from '@/stores/authStore'
-
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { useToast } from '@/stores/toastStore'
 import { 
   getTransporterAggregateStats,
@@ -40,6 +40,8 @@ import {
 const TransporterDashboardPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
+  const { language } = useLanguage()
+  const isEn = language !== 'ms'
   const toast = useToast()
   
   const [stats, setStats] = useState<any>(null)
@@ -77,34 +79,37 @@ const TransporterDashboardPage: React.FC = () => {
           setRequests(reqsRes.data.slice(0, 5)) // get recent 5
         }
       } catch (err: any) {
-        toast.error('Gagal Memuatkan Data', err.message || 'Ralat semasa mengambil data dashboard.')
+        toast.error(
+          isEn ? 'Failed to Load Data' : 'Gagal Memuatkan Data', 
+          err.message || (isEn ? 'An error occurred while fetching dashboard data.' : 'Ralat semasa mengambil data dashboard.')
+        )
       } finally {
         setLoading(false)
       }
     }
     fetchData()
-  }, [loggedUser?.id])
+  }, [loggedUser?.id, isEn])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'draft':
-        return <Badge variant="gray">Draf</Badge>
+        return <Badge variant="gray">{isEn ? 'Draft' : 'Draf'}</Badge>
       case 'submitted':
-        return <Badge variant="info">Dihantar (Baru)</Badge>
+        return <Badge variant="info">{isEn ? 'Submitted (New)' : 'Dihantar (Baharu)'}</Badge>
       case 'driver_accepted':
-        return <Badge variant="warning">Diterima Pemandu</Badge>
+        return <Badge variant="warning">{isEn ? 'Driver Accepted' : 'Diterima Pemandu'}</Badge>
       case 'driver_rejected':
-        return <Badge variant="error">Pemandu Tolak</Badge>
+        return <Badge variant="error">{isEn ? 'Driver Rejected' : 'Ditolak Pemandu'}</Badge>
       case 'approved':
-        return <Badge variant="success">Diluluskan</Badge>
+        return <Badge variant="success">{isEn ? 'Approved' : 'Diluluskan'}</Badge>
       case 'rejected':
-        return <Badge variant="error">Ditolak Pentadbir</Badge>
+        return <Badge variant="error">{isEn ? 'Admin Rejected' : 'Ditolak Pentadbir'}</Badge>
       case 'in_transit':
-        return <Badge variant="warning">Dalam Perjalanan</Badge>
+        return <Badge variant="warning">{isEn ? 'In Transit' : 'Dalam Perjalanan'}</Badge>
       case 'completed':
-        return <Badge variant="success">Selesai</Badge>
+        return <Badge variant="success">{isEn ? 'Completed' : 'Selesai'}</Badge>
       case 'cancelled':
-        return <Badge variant="gray">Dibatalkan</Badge>
+        return <Badge variant="gray">{isEn ? 'Cancelled' : 'Dibatalkan'}</Badge>
       default:
         return <Badge variant="gray">{status}</Badge>
     }
@@ -114,7 +119,9 @@ const TransporterDashboardPage: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-slate-500 font-medium animate-pulse">Memuatkan Papan Pemuka MyTransporter...</p>
+        <p className="text-slate-500 font-medium animate-pulse">
+          {isEn ? 'Loading MyTransporter Dashboard...' : 'Memuatkan Papan Pemuka MyTransporter...'}
+        </p>
       </div>
     )
   }
@@ -129,7 +136,9 @@ const TransporterDashboardPage: React.FC = () => {
             MyTransporter
           </h1>
           <p className="text-slate-500 text-sm mt-1">
-            Sistem Bersepadu Pengurusan Ambulans & Kereta Jabatan Hospital
+            {isEn 
+              ? 'Integrated Hospital Fleet & Transport Management System'
+              : 'Sistem Bersepadu Pengurusan Ambulans & Kereta Jabatan Hospital'}
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -138,7 +147,7 @@ const TransporterDashboardPage: React.FC = () => {
             className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md border-0 transition-all duration-200 active:scale-95"
           >
             <Plus className="w-4 h-4" />
-            <span>Permohonan Baru</span>
+            <span>{isEn ? 'New Request' : 'Permohonan Baharu'}</span>
           </Button>
 
           {userRole === 'transport_admin' && (
@@ -148,7 +157,7 @@ const TransporterDashboardPage: React.FC = () => {
               className="flex items-center gap-2 border-slate-200 hover:bg-slate-50 text-slate-700"
             >
               <Settings className="w-4 h-4 text-slate-500" />
-              <span>Kebenaran Pemandu</span>
+              <span>{isEn ? 'Driver Role Permissions' : 'Kebenaran Pemandu'}</span>
             </Button>
           )}
         </div>
@@ -159,7 +168,9 @@ const TransporterDashboardPage: React.FC = () => {
         <Card className="border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Jumlah Permohonan</p>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                {isEn ? 'Total Requests' : 'Jumlah Permohonan'}
+              </p>
               <h3 className="text-3xl font-extrabold text-slate-800 tabular-nums">{stats?.totalRequests || 0}</h3>
             </div>
             <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
@@ -171,7 +182,9 @@ const TransporterDashboardPage: React.FC = () => {
         <Card className="border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Menunggu Kelulusan</p>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                {isEn ? 'Pending Approvals' : 'Menunggu Kelulusan'}
+              </p>
               <h3 className="text-3xl font-extrabold text-amber-600 tabular-nums">{stats?.pendingApprovals || 0}</h3>
             </div>
             <div className="p-3 bg-amber-50 text-amber-600 rounded-xl animate-pulse">
@@ -183,7 +196,9 @@ const TransporterDashboardPage: React.FC = () => {
         <Card className="border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dalam Perjalanan</p>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                {isEn ? 'Active Trips' : 'Dalam Perjalanan'}
+              </p>
               <h3 className="text-3xl font-extrabold text-indigo-600 tabular-nums">{stats?.activeTrips || 0}</h3>
             </div>
             <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -195,7 +210,9 @@ const TransporterDashboardPage: React.FC = () => {
         <Card className="border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Isu Kenderaan Terbuka</p>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                {isEn ? 'Open Vehicle Issues' : 'Isu Kenderaan Terbuka'}
+              </p>
               <h3 className="text-3xl font-extrabold text-rose-600 tabular-nums">{stats?.totalIssuesOpen || 0}</h3>
             </div>
             <div className="p-3 bg-rose-50 text-rose-600 rounded-xl">
@@ -213,8 +230,14 @@ const TransporterDashboardPage: React.FC = () => {
             <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-3">
               <FileText className="w-5 h-5" />
             </div>
-            <CardTitle className="text-lg font-bold text-slate-800">Portal Kakitangan</CardTitle>
-            <p className="text-xs text-slate-500">Buat permohonan Ambulans/SG dan semak status kelulusan semasa.</p>
+            <CardTitle className="text-lg font-bold text-slate-800">
+              {isEn ? 'Staff Portal' : 'Portal Kakitangan'}
+            </CardTitle>
+            <p className="text-xs text-slate-500">
+              {isEn 
+                ? 'Submit Ambulance or Department Vehicle requests and track approval statuses in real-time.' 
+                : 'Buat permohonan Ambulans/SG dan semak status kelulusan semasa.'}
+            </p>
           </CardHeader>
           <CardContent className="pt-4 border-t border-slate-100 flex justify-between items-center bg-white/50">
             <Button 
@@ -222,7 +245,7 @@ const TransporterDashboardPage: React.FC = () => {
               onClick={() => navigate('/transporter/requests/my')}
               className="text-xs font-bold text-blue-600 hover:text-blue-800 p-0 flex items-center gap-1 group-hover:translate-x-1 transition-transform bg-transparent hover:bg-transparent"
             >
-              <span>Urus Permohonan Saya</span>
+              <span>{isEn ? 'Manage My Requests' : 'Urus Permohonan Saya'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </CardContent>
@@ -236,8 +259,14 @@ const TransporterDashboardPage: React.FC = () => {
             <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3">
               <Ambulance className="w-5 h-5" />
             </div>
-            <CardTitle className="text-lg font-bold text-slate-800">Panel Pemandu</CardTitle>
-            <p className="text-xs text-slate-500">Terima tugasan perjalanan, lakukan pemeriksaan kenderaan (pre/post-trip), dan pantau sejarah tugasan.</p>
+            <CardTitle className="text-lg font-bold text-slate-800">
+              {isEn ? 'Driver Operations Panel' : 'Panel Pemandu'}
+            </CardTitle>
+            <p className="text-xs text-slate-500">
+              {isEn 
+                ? 'Accept trip dispatches, conduct vehicle inspections (pre/post-trip), and log mileage.' 
+                : 'Terima tugasan perjalanan, lakukan pemeriksaan kenderaan (pre/post-trip), dan pantau sejarah tugasan.'}
+            </p>
           </CardHeader>
           <CardContent className="pt-4 border-t border-slate-100 flex justify-between items-center bg-white/50">
             {userRole === 'transport_driver' || userRole === 'transport_admin' ? (
@@ -246,11 +275,13 @@ const TransporterDashboardPage: React.FC = () => {
                 onClick={() => navigate('/transporter/driver/panel')}
                 className="text-xs font-bold text-emerald-600 hover:text-emerald-800 p-0 flex items-center gap-1 group-hover:translate-x-1 transition-transform bg-transparent hover:bg-transparent"
               >
-                <span>Buka Panel Tugasan</span>
+                <span>{isEn ? 'Open Driver Panel' : 'Buka Panel Tugasan'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Button>
             ) : (
-              <span className="text-xs font-semibold text-slate-400 italic">Terhad untuk Pemandu Bertugas sahaja</span>
+              <span className="text-xs font-semibold text-slate-400 italic">
+                {isEn ? 'Restricted to duty drivers only' : 'Terhad untuk Pemandu Bertugas sahaja'}
+              </span>
             )}
           </CardContent>
         </Card>
@@ -263,8 +294,14 @@ const TransporterDashboardPage: React.FC = () => {
             <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mb-3">
               <ClipboardList className="w-5 h-5" />
             </div>
-            <CardTitle className="text-lg font-bold text-slate-800">Menu Pentadbir</CardTitle>
-            <p className="text-xs text-slate-500">Kelulusan permohonan, pendaftaran kenderaan, laporan kerosakan, dan pemantauan pergerakan bulanan fleet.</p>
+            <CardTitle className="text-lg font-bold text-slate-800">
+              {isEn ? 'Fleet Administrator' : 'Menu Pentadbir'}
+            </CardTitle>
+            <p className="text-xs text-slate-500">
+              {isEn 
+                ? 'Approve requests, manage vehicle registry, resolve defect issues, and audit monthly movements.' 
+                : 'Kelulusan permohonan, pendaftaran kenderaan, laporan kerosakan, dan pemantauan pergerakan bulanan fleet.'}
+            </p>
           </CardHeader>
           <CardContent className="pt-4 border-t border-slate-100 flex justify-between items-center bg-white/50">
             {userRole === 'transport_admin' ? (
@@ -273,11 +310,13 @@ const TransporterDashboardPage: React.FC = () => {
                 onClick={() => navigate('/transporter/admin/approval')}
                 className="text-xs font-bold text-indigo-600 hover:text-indigo-800 p-0 flex items-center gap-1 group-hover:translate-x-1 transition-transform bg-transparent hover:bg-transparent"
               >
-                <span>Urus Urusan Pentadbiran</span>
+                <span>{isEn ? 'Open Admin Console' : 'Urus Urusan Pentadbiran'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Button>
             ) : (
-              <span className="text-xs font-semibold text-slate-400 italic">Akses Terhad Pentadbir Sahaja</span>
+              <span className="text-xs font-semibold text-slate-400 italic">
+                {isEn ? 'Administrator access only' : 'Akses Terhad Pentadbir Sahaja'}
+              </span>
             )}
           </CardContent>
         </Card>
@@ -289,7 +328,7 @@ const TransporterDashboardPage: React.FC = () => {
           <CardHeader className="pb-3 border-b border-slate-100">
             <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
               <Settings className="w-4 h-4 text-indigo-600" />
-              Hab Pentadbiran Penuh (Transport Administrator)
+              {isEn ? 'Full Fleet Administration Hub' : 'Hab Pentadbiran Penuh (Transport Administrator)'}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -298,35 +337,45 @@ const TransporterDashboardPage: React.FC = () => {
               className="p-4 bg-slate-50 hover:bg-indigo-50 border border-slate-200/50 hover:border-indigo-200 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
             >
               <Truck className="w-6 h-6 text-slate-600 group-hover:text-indigo-600" />
-              <span className="text-xs font-bold text-slate-700">Daftar & Urus Fleet</span>
+              <span className="text-xs font-bold text-slate-700">
+                {isEn ? 'Fleet Registry' : 'Daftar & Urus Fleet'}
+              </span>
             </button>
             <button 
               onClick={() => navigate('/transporter/admin/vehicles/issues')}
               className="p-4 bg-slate-50 hover:bg-rose-50 border border-slate-200/50 hover:border-rose-200 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
             >
               <AlertOctagon className="w-6 h-6 text-slate-600 group-hover:text-rose-600" />
-              <span className="text-xs font-bold text-slate-700">Aduan Kerosakan</span>
+              <span className="text-xs font-bold text-slate-700">
+                {isEn ? 'Vehicle Defect Logs' : 'Aduan Kerosakan'}
+              </span>
             </button>
             <button 
               onClick={() => navigate('/transporter/admin/vehicles/movement')}
               className="p-4 bg-slate-50 hover:bg-emerald-50 border border-slate-200/50 hover:border-emerald-200 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
             >
               <Activity className="w-6 h-6 text-slate-600 group-hover:text-emerald-600" />
-              <span className="text-xs font-bold text-slate-700">Pergerakan Bulanan</span>
+              <span className="text-xs font-bold text-slate-700">
+                {isEn ? 'Monthly Movements' : 'Pergerakan Bulanan'}
+              </span>
             </button>
             <button 
               onClick={() => navigate('/transporter/driver/monitor')}
               className="p-4 bg-slate-50 hover:bg-blue-50 border border-slate-200/50 hover:border-blue-200 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
             >
               <Users className="w-6 h-6 text-slate-600 group-hover:text-blue-600" />
-              <span className="text-xs font-bold text-slate-700">Pantau Pemandu</span>
+              <span className="text-xs font-bold text-slate-700">
+                {isEn ? 'Driver Monitor' : 'Pantau Pemandu'}
+              </span>
             </button>
             <button 
               onClick={() => navigate('/transporter/admin/reports')}
               className="p-4 bg-slate-50 hover:bg-amber-50 border border-slate-200/50 hover:border-amber-200 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
             >
               <TrendingUp className="w-6 h-6 text-slate-600 group-hover:text-amber-600" />
-              <span className="text-xs font-bold text-slate-700">Laporan & Tuntutan</span>
+              <span className="text-xs font-bold text-slate-700">
+                {isEn ? 'Reports & Claims' : 'Laporan & Tuntutan'}
+              </span>
             </button>
           </CardContent>
         </Card>
@@ -335,30 +384,34 @@ const TransporterDashboardPage: React.FC = () => {
       {/* Recent Requests Queue */}
       <Card className="border border-slate-150 shadow-sm">
         <CardHeader className="pb-3 border-b border-slate-100 flex flex-row justify-between items-center">
-          <CardTitle className="text-lg font-bold text-slate-800">Senarai Permohonan Terkini</CardTitle>
+          <CardTitle className="text-lg font-bold text-slate-800">
+            {isEn ? 'Recent Transport Requests' : 'Senarai Permohonan Terkini'}
+          </CardTitle>
           <Button 
             variant="ghost" 
             onClick={() => navigate('/transporter/requests/my')}
             className="text-xs font-bold text-blue-600 hover:text-blue-800 p-0 flex items-center gap-1"
           >
-            <span>Semua Rekod</span>
+            <span>{isEn ? 'All Records' : 'Semua Rekod'}</span>
             <ChevronRight className="w-4 h-4" />
           </Button>
         </CardHeader>
         <CardContent className="p-0">
           {requests.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">Tiada permohonan dijumpai dalam rekod.</div>
+            <div className="p-12 text-center text-slate-500">
+              {isEn ? 'No transport requests found in record.' : 'Tiada permohonan dijumpai dalam rekod.'}
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    <th className="px-6 py-4">No. Rujukan</th>
-                    <th className="px-6 py-4">Jenis</th>
-                    <th className="px-6 py-4">Destinasi / Tujuan</th>
-                    <th className="px-6 py-4">Tarikh & Masa</th>
-                    <th className="px-6 py-4">Kenderaan / Driver</th>
-                    <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4">{isEn ? 'Reference No.' : 'No. Rujukan'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Vehicle Type' : 'Jenis Kenderaan'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Destination / Purpose' : 'Destinasi / Tujuan'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Date & Time' : 'Tarikh & Masa'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Assigned Vehicle / Driver' : 'Kenderaan / Pemandu'}</th>
+                    <th className="px-6 py-4">{isEn ? 'Status' : 'Status'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
@@ -376,10 +429,10 @@ const TransporterDashboardPage: React.FC = () => {
                           )}
                           <span>
                             {req.jenis_permohonan === 'sg' 
-                              ? 'Kereta Jabatan (SG)' 
+                              ? (isEn ? 'Official Car (SG)' : 'Kereta Jabatan (SG)') 
                               : req.jenis_permohonan === 'van_jenazah' 
-                              ? 'Van Jenazah' 
-                              : 'Ambulans'}
+                              ? (isEn ? 'Hearse Van' : 'Van Jenazah') 
+                              : (isEn ? 'Ambulance' : 'Ambulans')}
                           </span>
                         </div>
                       </td>
@@ -390,7 +443,7 @@ const TransporterDashboardPage: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
                           <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          {new Date(req.tarikh_masa_diperlukan).toLocaleString('ms-MY', {
+                          {new Date(req.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY', {
                             dateStyle: 'short',
                             timeStyle: 'short'
                           })}
@@ -403,7 +456,9 @@ const TransporterDashboardPage: React.FC = () => {
                             <div className="text-xs text-slate-400">{req.kenderaan.model}</div>
                           </div>
                         ) : (
-                          <span className="text-slate-400 italic text-xs">Belum diagihkan</span>
+                          <span className="text-slate-400 italic text-xs">
+                            {isEn ? 'Not yet assigned' : 'Belum diagihkan'}
+                          </span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(req.status_semasa)}</td>

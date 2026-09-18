@@ -15,6 +15,7 @@ import {
 import { Ambulance } from '../components/AmbulanceIcon'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { createRequest, getRequestById, updateRequest, logRequestTransition } from '../services/transporterService'
 import { getUnlinkedCrossborderTransfers } from '@/modules/mycrossborder/services/crossborderService'
 import type { CrossborderTransfer, JenisDokumen, Jantina } from '@/shared/types/mycrossborder'
@@ -48,6 +49,8 @@ const TransporterRequestFormPage: React.FC = () => {
   const isEditMode = !!id
   const editReason = (location.state as any)?.reason || ''
   const loggedUser = useAuthStore((state) => state.user)
+  const { language } = useLanguage()
+  const isEn = language !== 'ms'
   const toast = useToast()
   const [originalStatus, setOriginalStatus] = useState('')
 
@@ -379,16 +382,16 @@ const TransporterRequestFormPage: React.FC = () => {
 
   const getVisibleSteps = () => {
     const steps = [
-      { id: 1, label: 'Butiran Trip' }
+      { id: 1, label: isEn ? 'Trip Details' : 'Butiran Trip' }
     ]
     if (jenisPermohonan === 'ambulance' || jenisPermohonan === 'van_jenazah' || (jenisPermohonan === 'sg' && bawaPesakit)) {
-      steps.push({ id: 2, label: 'Unit & Pengiring' })
-      steps.push({ id: 3, label: 'Pesakit' })
+      steps.push({ id: 2, label: isEn ? 'Unit & Escorts' : 'Unit & Pengiring' })
+      steps.push({ id: 3, label: isEn ? 'Patient Details' : 'Pesakit' })
     }
     if (isCrossborder && jenisPermohonan === 'ambulance') {
-      steps.push({ id: 4, label: 'Sempadan' })
+      steps.push({ id: 4, label: isEn ? 'Cross-Border' : 'Sempadan' })
     }
-    steps.push({ id: 5, label: 'Sahkan & Hantar' })
+    steps.push({ id: 5, label: isEn ? 'Confirm & Submit' : 'Sahkan & Hantar' })
     return steps
   }
 
@@ -397,37 +400,58 @@ const TransporterRequestFormPage: React.FC = () => {
     // Basic validation per step
     if (step === 1) {
       if (!tujuanPermohonan || !destinasi || !tarikhDiperlukan || !masaDiperlukan) {
-        toast.error('Borang Tidak Lengkap', 'Sila isi tujuan, destinasi, tarikh dan masa diperlukan.')
+        toast.error(
+          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Please fill in purpose, destination, date, and required time.' : 'Sila isi tujuan, destinasi, tarikh dan masa diperlukan.'
+        )
         return
       }
       if (jenisPermohonan === 'sg') {
         if (!tarikhTamat || !masaTamat) {
-          toast.error('Borang Tidak Lengkap', 'Sila isi tarikh dan masa tamat tempahan.')
+          toast.error(
+            isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+            isEn ? 'Please specify reservation end date and time.' : 'Sila isi tarikh dan masa tamat tempahan.'
+          )
           return
         }
         const startDt = new Date(`${tarikhDiperlukan}T${masaDiperlukan}`)
         const endDt = new Date(`${tarikhTamat}T${masaTamat}`)
         if (endDt <= startDt) {
-          toast.error('Ralat Masa Tempahan', 'Tarikh dan masa tamat mestilah selepas tarikh dan masa mula.')
+          toast.error(
+            isEn ? 'Invalid Time Range' : 'Ralat Masa Tempahan', 
+            isEn ? 'End date/time must be strictly after start date/time.' : 'Tarikh dan masa tamat mestilah selepas tarikh dan masa mula.'
+          )
           return
         }
       }
     } else if (step === 2) {
       if (!unitPemohon) {
-        toast.error('Borang Tidak Lengkap', 'Sila nyatakan Unit/Wad Pemohon.')
+        toast.error(
+          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Please specify Requester Unit/Ward.' : 'Sila nyatakan Unit/Wad Pemohon.'
+        )
         return
       }
       if (!namaPemohon.trim()) {
-        toast.error('Borang Tidak Lengkap', 'Sila nyatakan Nama Pemohon.')
+        toast.error(
+          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Please specify Applicant Name.' : 'Sila nyatakan Nama Pemohon.'
+        )
         return
       }
       if (!referringDoctorName.trim() || !referringDoctorDept.trim()) {
-        toast.error('Borang Tidak Lengkap', 'Sila nyatakan nama dan jabatan Pegawai Perubatan Merujuk.')
+        toast.error(
+          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Please specify Referring Medical Officer name and department.' : 'Sila nyatakan nama dan jabatan Pegawai Perubatan Merujuk.'
+        )
         return
       }
       const invalidEscort = escortList.some(escort => !escort.name.trim())
       if (invalidEscort) {
-        toast.error('Borang Tidak Lengkap', 'Sila isi nama bagi setiap kakitangan pengiring.')
+        toast.error(
+          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Please provide names for all escort personnel.' : 'Sila isi nama bagi setiap kakitangan pengiring.'
+        )
         return
       }
     } else if (step === 3) {
@@ -438,42 +462,65 @@ const TransporterRequestFormPage: React.FC = () => {
           // Validate crossborder patient data (first patient must be filled)
           const p1 = crossborderPatients[0]
           if (!p1 || !p1.nama.trim() || !p1.no_dokumen.trim() || !p1.tarikh_lahir) {
-            toast.error('Borang Tidak Lengkap', 'Sila isi butiran lengkap Pesakit 1 (Nama, Tarikh Lahir, Warganegara, No. Dokumen).')
+            toast.error(
+              isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+              isEn ? 'Please provide complete details for Patient 1 (Name, Date of Birth, Nationality, ID/Doc No).' : 'Sila isi butiran lengkap Pesakit 1 (Nama, Tarikh Lahir, Warganegara, No. Dokumen).'
+            )
             return
           }
           if (!diagnosisPesakit) {
-            toast.error('Borang Tidak Lengkap', 'Sila nyatakan Diagnosis Utama Pesakit.')
+            toast.error(
+              isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+              isEn ? 'Please state the Primary Diagnosis of the patient.' : 'Sila nyatakan Diagnosis Utama Pesakit.'
+            )
             return
           }
           if (jenisPermohonan !== 'van_jenazah' && !patientMobility) {
-            toast.error('Borang Tidak Lengkap', 'Sila pilih Keupayaan Bergerak Pesakit (Patient Mobility).')
+            toast.error(
+              isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+              isEn ? 'Please select Patient Mobility.' : 'Sila pilih Keupayaan Bergerak Pesakit (Patient Mobility).'
+            )
             return
           }
         } else {
           if (!namaPesakit || !rnPesakit || !jantinaPesakit || !diagnosisPesakit || !patientMobility) {
-            const patientLabel = jenisPermohonan === 'van_jenazah' ? 'jenazah' : 'pesakit'
-            const diagnosisLabel = jenisPermohonan === 'van_jenazah' ? 'Sebab Kematian' : 'Diagnosis'
-            toast.error('Borang Tidak Lengkap', `Sila isi butiran lengkap ${patientLabel} (Nama, RN, Jantina, ${diagnosisLabel}, Mobiliti).`)
+            const patientLabel = jenisPermohonan === 'van_jenazah' ? (isEn ? 'deceased' : 'jenazah') : (isEn ? 'patient' : 'pesakit')
+            const diagnosisLabel = jenisPermohonan === 'van_jenazah' ? (isEn ? 'Cause of Death' : 'Sebab Kematian') : (isEn ? 'Diagnosis' : 'Diagnosis')
+            toast.error(
+              isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+              isEn 
+                ? `Please fill in complete details for ${patientLabel} (Name, RN, Gender, ${diagnosisLabel}, Mobility).` 
+                : `Sila isi butiran lengkap ${patientLabel} (Nama, RN, Jantina, ${diagnosisLabel}, Mobiliti).`
+            )
             return
           }
         }
       }
       if (jenisPermohonan === 'ambulance' && oksigenDiperlukan) {
         if (!jenisOksigen) {
-          toast.error('Borang Tidak Lengkap', 'Sila pilih jenis sokongan oksigen.')
+          toast.error(
+            isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+            isEn ? 'Please select oxygen delivery mode.' : 'Sila pilih jenis sokongan oksigen.'
+          )
           return
         }
       }
       if (jenisPermohonan === 'ambulance' && selectedMesin.includes('others')) {
         if (!customMesin.trim()) {
-          toast.error('Borang Tidak Lengkap', 'Sila nyatakan mesin/peralatan lain yang diperlukan.')
+          toast.error(
+            isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+            isEn ? 'Please specify other equipment/devices required.' : 'Sila nyatakan mesin/peralatan lain yang diperlukan.'
+          )
           return
         }
       }
     } else if (step === 4) {
       // Validate crossborder specific data
       if (!borderControlPost.trim() || !tempatBerlepas.trim() || !pengarahNama.trim() || !doktorPerujukNama.trim()) {
-        toast.error('Borang Tidak Lengkap', 'Sila isi Pintu Kawalan Sempadan, Tempat Berlepas, Doktor Perujuk, dan Nama Pengarah.')
+        toast.error(
+          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Please fill in Border Post, Departure Place, Referring Doctor, and Hospital Director name.' : 'Sila isi Pintu Kawalan Sempadan, Tempat Berlepas, Doktor Perujuk, dan Nama Pengarah.'
+        )
         return
       }
     }
@@ -582,21 +629,23 @@ const TransporterRequestFormPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Papan Pemuka</span>
+        <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
       </button>
 
       {/* Title */}
       <div className="space-y-1">
         <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-          {isEditMode ? 'Kemaskini Permohonan Pengangkutan' : 'Borang Permohonan Pengangkutan'}
+          {isEditMode 
+            ? (isEn ? 'Update Transport Requisition' : 'Kemaskini Permohonan Pengangkutan') 
+            : (isEn ? 'Transport Requisition Form' : 'Borang Permohonan Pengangkutan')}
         </h1>
         <p className="text-slate-500 text-sm">
           {isEditMode 
-            ? 'Sila kemaskini butiran di bawah untuk pindaan tempahan pengangkutan.'
-            : 'Sila isi butiran di bawah untuk menempah Ambulans, Kereta Jabatan (SG), atau Van Jenazah.'}
+            ? (isEn ? 'Please amend the details below to update transport booking.' : 'Sila kemaskini butiran di bawah untuk pindaan tempahan pengangkutan.')
+            : (isEn ? 'Please fill in details below to book Ambulance, Official Vehicle (SG), or Hearse Van.' : 'Sila isi butiran di bawah untuk menempah Ambulans, Kereta Jabatan (SG), atau Van Jenazah.')}
         </p>
       </div>
 
@@ -628,11 +677,15 @@ const TransporterRequestFormPage: React.FC = () => {
             {/* STEP 1: TRIP DETAILS */}
             {step === 1 && (
               <div className="space-y-5 animate-fadeIn">
-                <h3 className="text-lg font-bold text-slate-800 pb-2 border-b border-slate-100">Langkah 1: Butiran Jenis Trip</h3>
+                <h3 className="text-lg font-bold text-slate-800 pb-2 border-b border-slate-100">
+                  {isEn ? 'Step 1: Trip Type & Itinerary Details' : 'Langkah 1: Butiran Jenis Trip'}
+                </h3>
                 
                 {/* Request Type Toggle */}
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Jenis Pengangkutan</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    {isEn ? 'Transport Category' : 'Jenis Pengangkutan'}
+                  </label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <button
                       type="button"
@@ -646,15 +699,17 @@ const TransporterRequestFormPage: React.FC = () => {
                         setSelectedDestinasi('')
                         setCustomDestinasi('')
                       }}
-                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
+                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all cursor-pointer ${
                         jenisPermohonan === 'ambulance'
                           ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm'
                           : 'border-slate-200 hover:border-slate-300 text-slate-600'
                       }`}
                     >
                       <Ambulance className="w-8 h-8" />
-                      <span className="font-bold text-sm">Ambulans</span>
-                      <span className="text-xxs text-slate-400 text-center">Referral, CT Scan, Emergency</span>
+                      <span className="font-bold text-sm">{isEn ? 'Ambulance' : 'Ambulans'}</span>
+                      <span className="text-xxs text-slate-400 text-center">
+                        {isEn ? 'Referral, CT Scan, Emergency' : 'Referral, CT Scan, Emergency'}
+                      </span>
                     </button>
                     
                     <button
@@ -667,15 +722,17 @@ const TransporterRequestFormPage: React.FC = () => {
                         setSelectedDestinasi('')
                         setCustomDestinasi('')
                       }}
-                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
+                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all cursor-pointer ${
                         jenisPermohonan === 'sg'
                           ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm'
                           : 'border-slate-200 hover:border-slate-300 text-slate-600'
                       }`}
                     >
                       <Car className="w-8 h-8" />
-                      <span className="font-bold text-sm">Kereta Jabatan (SG)</span>
-                      <span className="text-xxs text-slate-400 text-center">Tujuan Rasmi Staff / Penghantaran</span>
+                      <span className="font-bold text-sm">{isEn ? 'Official Vehicle (SG)' : 'Kereta Jabatan (SG)'}</span>
+                      <span className="text-xxs text-slate-400 text-center">
+                        {isEn ? 'Official Duties / Logistics / Admin' : 'Tujuan Rasmi Staff / Penghantaran'}
+                      </span>
                     </button>
 
                     <button
@@ -689,22 +746,26 @@ const TransporterRequestFormPage: React.FC = () => {
                         setSelectedDestinasi('')
                         setCustomDestinasi('')
                       }}
-                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
+                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all cursor-pointer ${
                         jenisPermohonan === 'van_jenazah'
                           ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm'
                           : 'border-slate-200 hover:border-slate-300 text-slate-600'
                       }`}
                     >
                       <Truck className="w-8 h-8" />
-                      <span className="font-bold text-sm">Van Jenazah</span>
-                      <span className="text-xxs text-slate-400 text-center">Pengurusan / Penghantaran Jenazah</span>
+                      <span className="font-bold text-sm">{isEn ? 'Hearse Van' : 'Van Jenazah'}</span>
+                      <span className="text-xxs text-slate-400 text-center">
+                        {isEn ? 'Mortuary / Funeral Transit' : 'Pengurusan / Penghantaran Jenazah'}
+                      </span>
                     </button>
                   </div>
                 </div>
 
                 {/* Purpose */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tujuan Perjalanan</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    {isEn ? 'Trip Purpose' : 'Tujuan Perjalanan'}
+                  </label>
                   {jenisPermohonan === 'ambulance' ? (
                     <div className="space-y-3">
                       <select 
@@ -725,19 +786,19 @@ const TransporterRequestFormPage: React.FC = () => {
                             setTujuanPermohonan('')
                           }
                         }}
-                        className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors"
+                        className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
                         required
                       >
-                        <option value="">Sila Pilih Tujuan</option>
+                        <option value="">{isEn ? 'Please Select Purpose' : 'Sila Pilih Tujuan'}</option>
                         <option value="refer_patient">Refer Patient to other government facility</option>
                         <option value="ct_scan">CT Scan to other government facility</option>
                         <option value="mri_scan">MRI Scan to other government facility</option>
-                        <option value="other">Other</option>
+                        <option value="other">{isEn ? 'Other' : 'Lain-lain (Other)'}</option>
                       </select>
                       
                       {selectedAmbulanceTujuan === 'other' && (
                         <Input 
-                          placeholder="Sila nyatakan tujuan perjalanan secara manual"
+                          placeholder={isEn ? 'Please specify journey purpose manually' : 'Sila nyatakan tujuan perjalanan secara manual'}
                           value={customTujuan}
                           onChange={(e) => {
                             setCustomTujuan(e.target.value)
@@ -751,8 +812,8 @@ const TransporterRequestFormPage: React.FC = () => {
                     <Input 
                       placeholder={
                         jenisPermohonan === 'van_jenazah' 
-                          ? "Contoh: Penghantaran jenazah ke Kampung Seberang / Tanah Perkuburan"
-                          : "Contoh: Menghantar sampel darah / Temujanji CT scan pesakit / Mesyuarat rasmi JKN"
+                          ? (isEn ? 'E.g., Transfer deceased to Kampung Seberang / Cemetery' : 'Contoh: Penghantaran jenazah ke Kampung Seberang / Tanah Perkuburan')
+                          : (isEn ? 'E.g., Blood sample courier / Patient appointment / Official meeting' : 'Contoh: Menghantar sampel darah / Temujanji CT scan pesakit / Mesyuarat rasmi JKN')
                       }
                       value={tujuanPermohonan}
                       onChange={(e) => setTujuanPermohonan(e.target.value)}
@@ -763,10 +824,12 @@ const TransporterRequestFormPage: React.FC = () => {
 
                 {/* Destination */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Destinasi</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    {isEn ? 'Destination' : 'Destinasi'}
+                  </label>
                   {jenisPermohonan === 'van_jenazah' ? (
                     <Input 
-                      placeholder="Masukkan nama kampung, rumah, atau tempat destinasi jenazah dihantar"
+                      placeholder={isEn ? 'Enter village name, residence, or funeral delivery destination' : 'Masukkan nama kampung, rumah, atau tempat destinasi jenazah dihantar'}
                       value={destinasi}
                       onChange={(e) => setDestinasi(e.target.value)}
                       required
@@ -786,22 +849,22 @@ const TransporterRequestFormPage: React.FC = () => {
                             setDestinasi('')
                           }
                         }}
-                        className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors"
+                        className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
                         required
                       >
-                        <option value="">Sila Pilih Destinasi</option>
+                        <option value="">{isEn ? 'Please Select Destination' : 'Sila Pilih Destinasi'}</option>
                         <option value="Hospital Limbang">Hospital Limbang</option>
                         <option value="Hospital Sipitang">Hospital Sipitang</option>
                         <option value="Hospital Miri">Hospital Miri</option>
                         <option value="Hospital Beaufort">Hospital Beaufort</option>
                         <option value="Hospital Queen Elizabeth I (HQE I)">Hospital Queen Elizabeth I (HQE I)</option>
                         <option value="Hospital Queen Elizabeth II (HQE II)">Hospital Queen Elizabeth II (HQE II)</option>
-                        <option value="others">Others (Specify)</option>
+                        <option value="others">{isEn ? 'Others (Specify)' : 'Lain-lain (Nyatakan)'}</option>
                       </select>
 
                       {selectedDestinasi === 'others' && (
                         <Input 
-                          placeholder="Sila nyatakan destinasi secara manual"
+                          placeholder={isEn ? 'Please specify destination manually' : 'Sila nyatakan destinasi secara manual'}
                           value={customDestinasi}
                           onChange={(e) => {
                             setCustomDestinasi(e.target.value)
@@ -819,9 +882,15 @@ const TransporterRequestFormPage: React.FC = () => {
                   <div className="space-y-1.5 p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between hover:bg-slate-100/50 transition-colors">
                     <div className="space-y-0.5">
                       <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block cursor-pointer" htmlFor="is_crossborder_check">
-                        Perjalanan Ini Melibatkan Rentasi Sempadan (Sabah-Sarawak / Sarawak-Brunei)
+                        {isEn 
+                          ? 'This Journey Involves Cross-Border Transit (Sabah-Sarawak / Sarawak-Brunei)'
+                          : 'Perjalanan Ini Melibatkan Rentasi Sempadan (Sabah-Sarawak / Sarawak-Brunei)'}
                       </label>
-                      <span className="block text-[10px] text-slate-500">Tandakan jika ambulans perlu melalui pos sempadan Sabah-Sarawak atau Sarawak-Brunei.</span>
+                      <span className="block text-[10px] text-slate-500">
+                        {isEn 
+                          ? 'Check this if the ambulance must cross Sabah-Sarawak or Sarawak-Brunei border checkpoints.'
+                          : 'Tandakan jika ambulans perlu melalui pos sempadan Sabah-Sarawak atau Sarawak-Brunei.'}
+                      </span>
                     </div>
                     <input
                       id="is_crossborder_check"
@@ -840,7 +909,9 @@ const TransporterRequestFormPage: React.FC = () => {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-3 p-4 bg-slate-50/50 rounded-xl border border-slate-200/60">
-                        <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Tarikh & Masa Mula Tempahan</span>
+                        <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
+                          {isEn ? 'Start Date & Time of Booking' : 'Tarikh & Masa Mula Tempahan'}
+                        </span>
                         <div className="grid grid-cols-2 gap-2">
                           <Input 
                             type="date"
@@ -858,7 +929,9 @@ const TransporterRequestFormPage: React.FC = () => {
                       </div>
 
                       <div className="space-y-3 p-4 bg-slate-50/50 rounded-xl border border-slate-200/60">
-                        <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Tarikh & Masa Tamat Tempahan</span>
+                        <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
+                          {isEn ? 'End Date & Time of Booking' : 'Tarikh & Masa Tamat Tempahan'}
+                        </span>
                         <div className="grid grid-cols-2 gap-2">
                           <Input 
                             type="date"
@@ -878,29 +951,31 @@ const TransporterRequestFormPage: React.FC = () => {
 
                     {/* Driver Requirement Toggle */}
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Keperluan Perkhidmatan</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        {isEn ? 'Service Requirement' : 'Keperluan Perkhidmatan'}
+                      </label>
                       <div className="grid grid-cols-2 gap-4">
                         <button
                           type="button"
                           onClick={() => setPemanduDiperlukan(false)}
-                          className={`p-3 rounded-xl border text-sm font-bold transition-all ${
+                          className={`p-3 rounded-xl border text-sm font-bold transition-all cursor-pointer ${
                             !pemanduDiperlukan
                               ? 'border-blue-600 bg-blue-50/50 text-blue-750 font-bold'
                               : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                           }`}
                         >
-                          Kereta Sahaja (Tanpa Pemandu)
+                          {isEn ? 'Vehicle Only (Self-Drive)' : 'Kereta Sahaja (Tanpa Pemandu)'}
                         </button>
                         <button
                           type="button"
                           onClick={() => setPemanduDiperlukan(true)}
-                          className={`p-3 rounded-xl border text-sm font-bold transition-all ${
+                          className={`p-3 rounded-xl border text-sm font-bold transition-all cursor-pointer ${
                             pemanduDiperlukan
                               ? 'border-blue-600 bg-blue-50/50 text-blue-750 font-bold'
                               : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                           }`}
                         >
-                          Pemandu & Kereta
+                          {isEn ? 'Driver & Vehicle' : 'Pemandu & Kereta'}
                         </button>
                       </div>
                     </div>
@@ -908,25 +983,29 @@ const TransporterRequestFormPage: React.FC = () => {
                     {/* Passenger List */}
                     <div className="space-y-3 pt-2">
                       <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Senarai Penumpang (Staf/Pengikut)</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                          {isEn ? 'Passenger Roster (Staff/Accompanying)' : 'Senarai Penumpang (Staf/Pengikut)'}
+                        </label>
                         <button
                           type="button"
                           onClick={() => setSenaraiPenumpang([...senaraiPenumpang, { name: '' }])}
-                          className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors font-semibold"
+                          className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors font-semibold cursor-pointer"
                         >
-                          + Tambah Penumpang
+                          {isEn ? '+ Add Passenger' : '+ Tambah Penumpang'}
                         </button>
                       </div>
                       {senaraiPenumpang.length === 0 ? (
                         <div className="text-center py-4 bg-slate-50/30 border border-dashed border-slate-200 rounded-xl text-slate-500 text-xs">
-                          Tiada penumpang ditambah. Sila klik "+ Tambah Penumpang" jika ada penumpang lain.
+                          {isEn 
+                            ? 'No passengers added. Click "+ Add Passenger" if additional staff are traveling.'
+                            : 'Tiada penumpang ditambah. Sila klik "+ Tambah Penumpang" jika ada penumpang lain.'}
                         </div>
                       ) : (
                         <div className="space-y-2">
                           {senaraiPenumpang.map((passenger, idx) => (
                             <div key={idx} className="flex gap-2 items-center">
                               <Input 
-                                placeholder={`Nama Penumpang ${idx + 1}`}
+                                placeholder={isEn ? `Passenger Name ${idx + 1}` : `Nama Penumpang ${idx + 1}`}
                                 value={passenger.name}
                                 onChange={(e) => {
                                   const updated = [...senaraiPenumpang]
@@ -939,7 +1018,7 @@ const TransporterRequestFormPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => setSenaraiPenumpang(senaraiPenumpang.filter((_, i) => i !== idx))}
-                                className="text-rose-600 hover:text-rose-800 text-lg font-bold p-1 px-2"
+                                className="text-rose-600 hover:text-rose-800 text-lg font-bold p-1 px-2 cursor-pointer"
                               >
                                 &times;
                               </button>
@@ -953,31 +1032,37 @@ const TransporterRequestFormPage: React.FC = () => {
                     <div className="p-4 bg-blue-50/30 border border-blue-100 rounded-xl">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
-                          <h4 className="text-sm font-bold text-slate-900">Trip Ini Membawa Pesakit?</h4>
-                          <p className="text-xs text-slate-500">Sila nyatakan jika kenderaan SG akan digunakan untuk membawa pesakit hospital.</p>
+                          <h4 className="text-sm font-bold text-slate-900">
+                            {isEn ? 'Does this trip carry a patient?' : 'Trip Ini Membawa Pesakit?'}
+                          </h4>
+                          <p className="text-xs text-slate-500">
+                            {isEn 
+                              ? 'Please indicate if this official SG vehicle will transport a hospital patient.'
+                              : 'Sila nyatakan jika kenderaan SG akan digunakan untuk membawa pesakit hospital.'}
+                          </p>
                         </div>
                         <div className="flex gap-2">
                           <button
                             type="button"
                             onClick={() => setBawaPesakit(true)}
-                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all border ${
+                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
                               bawaPesakit
                                 ? 'bg-blue-600 border-blue-600 text-white'
                                 : 'bg-white border-slate-200 text-slate-750 hover:bg-slate-50'
                             }`}
                           >
-                            Ya (Buka Butiran Pesakit)
+                            {isEn ? 'Yes (Open Patient Details)' : 'Ya (Buka Butiran Pesakit)'}
                           </button>
                           <button
                             type="button"
                             onClick={() => setBawaPesakit(false)}
-                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all border ${
+                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
                               !bawaPesakit
                                 ? 'bg-blue-600 border-blue-600 text-white'
                                 : 'bg-white border-slate-200 text-slate-750 hover:bg-slate-50'
                             }`}
                           >
-                            Tidak (Bypass)
+                            {isEn ? 'No (Bypass)' : 'Tidak (Bypass)'}
                           </button>
                         </div>
                       </div>
@@ -986,7 +1071,9 @@ const TransporterRequestFormPage: React.FC = () => {
                 ) : (
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tarikh Diperlukan</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        {isEn ? 'Required Date' : 'Tarikh Diperlukan'}
+                      </label>
                       <Input 
                         type="date"
                         value={tarikhDiperlukan}
@@ -995,7 +1082,9 @@ const TransporterRequestFormPage: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Masa Diperlukan</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        {isEn ? 'Required Time' : 'Masa Diperlukan'}
+                      </label>
                       <Input 
                         type="time"
                         value={masaDiperlukan}
@@ -1011,12 +1100,16 @@ const TransporterRequestFormPage: React.FC = () => {
             {/* STEP 2: UNIT & ESCORT */}
             {step === 2 && (
               <div className="space-y-5 animate-fadeIn">
-                <h3 className="text-lg font-bold text-slate-800 pb-2 border-b border-slate-100">Langkah 2: Unit Pemohon & Pengiring</h3>
+                <h3 className="text-lg font-bold text-slate-800 pb-2 border-b border-slate-100">
+                  {isEn ? 'Step 2: Requesting Unit & Escort Roster' : 'Langkah 2: Unit Pemohon & Pengiring'}
+                </h3>
 
                 {/* Requester Unit & Name */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Unit / Wad Pemohon</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      {isEn ? 'Applicant Unit / Ward' : 'Unit / Wad Pemohon'}
+                    </label>
                     <div className="space-y-3">
                       <select
                         value={selectedUnitPemohon}
@@ -1031,20 +1124,20 @@ const TransporterRequestFormPage: React.FC = () => {
                             setUnitPemohon('')
                           }
                         }}
-                        className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors"
+                        className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
                         required
                       >
-                        <option value="">Sila Pilih Unit / Wad</option>
+                        <option value="">{isEn ? 'Please Select Unit / Ward' : 'Sila Pilih Unit / Wad'}</option>
                         <option value="General ward">General ward</option>
                         <option value="Paediatric Ward">Paediatric Ward</option>
                         <option value="Maternity Ward">Maternity Ward</option>
                         <option value="Emergency & Trauma">Emergency & Trauma</option>
-                        <option value="others">Others (specify)</option>
+                        <option value="others">{isEn ? 'Others (specify)' : 'Lain-lain (Nyatakan)'}</option>
                       </select>
 
                       {selectedUnitPemohon === 'others' && (
                         <Input 
-                          placeholder="Sila nyatakan unit / wad secara manual"
+                          placeholder={isEn ? 'Please specify unit / ward manually' : 'Sila nyatakan unit / wad secara manual'}
                           value={customUnitPemohon}
                           onChange={(e) => {
                             setCustomUnitPemohon(e.target.value)
@@ -1057,9 +1150,11 @@ const TransporterRequestFormPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Pemohon / Requester Name</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      {isEn ? 'Applicant Name' : 'Nama Pemohon'}
+                    </label>
                     <Input 
-                      placeholder="Contoh: Sarah Ahmad"
+                      placeholder={isEn ? 'E.g., Sarah Ahmad' : 'Contoh: Sarah Ahmad'}
                       value={namaPemohon}
                       onChange={(e) => setNamaPemohon(e.target.value)}
                       required
@@ -1069,24 +1164,30 @@ const TransporterRequestFormPage: React.FC = () => {
 
                 {/* Referring Medical Officer */}
                 <div className="space-y-3 pt-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Pegawai Perubatan Merujuk (Referring Medical Officer)</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                    {isEn ? 'Referring Medical Officer (MO)' : 'Pegawai Perubatan Merujuk (Referring Medical Officer)'}
+                  </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">Nama Pegawai Perubatan / Medical Officer Name</label>
+                      <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+                        {isEn ? 'Medical Officer Name' : 'Nama Pegawai Perubatan'}
+                      </label>
                       <select
                         value={referringDoctorName}
                         onChange={(e) => setReferringDoctorName(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-xs outline-none focus:border-blue-600 transition-colors"
+                        className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-xs outline-none focus:border-blue-600 transition-colors cursor-pointer"
                         required
                       >
-                        <option value="">Sila Pilih Nama Pegawai Perubatan</option>
+                        <option value="">{isEn ? 'Please Select Medical Officer' : 'Sila Pilih Nama Pegawai Perubatan'}</option>
                         {DOCTOR_OPTIONS.map((dr) => (
                           <option key={dr} value={dr}>{dr}</option>
                         ))}
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">Jabatan / Department</label>
+                      <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+                        {isEn ? 'Department' : 'Jabatan'}
+                      </label>
                       <div className="space-y-2">
                         <select
                           value={selectedReferringDoctorDept}
@@ -1101,20 +1202,20 @@ const TransporterRequestFormPage: React.FC = () => {
                               setReferringDoctorDept('')
                             }
                           }}
-                          className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-xs outline-none focus:border-blue-600 transition-colors"
+                          className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-xs outline-none focus:border-blue-600 transition-colors cursor-pointer"
                           required
                         >
-                          <option value="">Sila Pilih Jabatan</option>
+                          <option value="">{isEn ? 'Please Select Department' : 'Sila Pilih Jabatan'}</option>
                           <option value="Emergency & Trauma">Emergency & Trauma</option>
                           <option value="General ward">General ward</option>
                           <option value="Paediatric Ward">Paediatric Ward</option>
                           <option value="Maternity Ward">Maternity Ward</option>
-                          <option value="others">Others (specify)</option>
+                          <option value="others">{isEn ? 'Others (specify)' : 'Lain-lain (Nyatakan)'}</option>
                         </select>
 
                         {selectedReferringDoctorDept === 'others' && (
                           <Input 
-                            placeholder="Sila nyatakan jabatan secara manual"
+                            placeholder={isEn ? 'Please specify department manually' : 'Sila nyatakan jabatan secara manual'}
                             value={customReferringDoctorDept}
                             onChange={(e) => {
                               setCustomReferringDoctorDept(e.target.value)
@@ -1133,19 +1234,23 @@ const TransporterRequestFormPage: React.FC = () => {
                 {!isCrossborder ? (
                   <div className="space-y-4 pt-2">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Kakitangan Pengiring Bertugas</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        {isEn ? 'Assigned Duty Escort Personnel' : 'Kakitangan Pengiring Bertugas'}
+                      </label>
                       <button
                         type="button"
                         onClick={() => setEscortList([...escortList, { job: 'nurse', name: '' }])}
-                        className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors font-semibold"
+                        className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors font-semibold cursor-pointer"
                       >
-                        + Tambah Kakitangan
+                        {isEn ? '+ Add Escort Staff' : '+ Tambah Kakitangan'}
                       </button>
                     </div>
 
                     {escortList.length === 0 ? (
                       <div className="text-center py-6 bg-slate-50/50 border border-dashed border-slate-200 rounded-xl text-slate-500 text-xs">
-                        Tiada Kakitangan Pengiring Ditambah. Sila klik "+ Tambah Kakitangan" jika ada pengiring bertugas.
+                        {isEn 
+                          ? 'No Escort Personnel Added. Click "+ Add Escort Staff" if medical escorts are assigned.'
+                          : 'Tiada Kakitangan Pengiring Ditambah. Sila klik "+ Tambah Kakitangan" jika ada pengiring bertugas.'}
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -1161,12 +1266,12 @@ const TransporterRequestFormPage: React.FC = () => {
                                   newList[index].name = ''
                                   setEscortList(newList)
                                 }}
-                                className="w-full bg-white border border-slate-200 hover:border-slate-300 rounded-lg px-3 py-2 text-xs outline-none focus:border-blue-600 transition-colors"
+                                className="w-full bg-white border border-slate-200 hover:border-slate-300 rounded-lg px-3 py-2 text-xs outline-none focus:border-blue-600 transition-colors cursor-pointer"
                               >
-                                <option value="nurse">Nurse / Jururawat</option>
-                                <option value="medical_officer">Medical Officer (MO)</option>
-                                <option value="assistant_medical_officer">Assistant Medical Officer (AMO)</option>
-                                <option value="ppk">Pembantu Perawatan Kesihatan (PPK)</option>
+                                <option value="nurse">{isEn ? 'Nurse' : 'Jururawat (Nurse)'}</option>
+                                <option value="medical_officer">{isEn ? 'Medical Officer (MO)' : 'Pegawai Perubatan (MO)'}</option>
+                                <option value="assistant_medical_officer">{isEn ? 'Assistant Medical Officer (AMO)' : 'Penolong Pegawai Perubatan (AMO)'}</option>
+                                <option value="ppk">{isEn ? 'Healthcare Assistant (PPK)' : 'Pembantu Perawatan Kesihatan (PPK)'}</option>
                               </select>
                             </div>
 
@@ -1180,10 +1285,10 @@ const TransporterRequestFormPage: React.FC = () => {
                                     newList[index].name = e.target.value
                                     setEscortList(newList)
                                   }}
-                                  className="w-full bg-white border border-slate-200 hover:border-slate-300 rounded-lg px-3 py-2 text-xs outline-none focus:border-blue-600 transition-colors"
+                                  className="w-full bg-white border border-slate-200 hover:border-slate-300 rounded-lg px-3 py-2 text-xs outline-none focus:border-blue-600 transition-colors cursor-pointer"
                                   required
                                 >
-                                  <option value="">Sila Pilih Nama Pegawai Perubatan</option>
+                                  <option value="">{isEn ? 'Please Select Medical Officer' : 'Sila Pilih Nama Pegawai Perubatan'}</option>
                                   <option value="DR AMIR">DR AMIR</option>
                                   <option value="DR JASON">DR JASON</option>
                                   <option value="DR NARVIN">DR NARVIN</option>
@@ -1196,7 +1301,7 @@ const TransporterRequestFormPage: React.FC = () => {
                                 </select>
                               ) : (
                                 <Input
-                                  placeholder="Nama Kakitangan"
+                                  placeholder={isEn ? 'Staff Full Name' : 'Nama Kakitangan'}
                                   value={escort.name}
                                   onChange={(e) => {
                                     const newList = [...escortList]
@@ -1217,8 +1322,8 @@ const TransporterRequestFormPage: React.FC = () => {
                                   const newList = escortList.filter((_, idx) => idx !== index)
                                   setEscortList(newList)
                                 }}
-                                className="text-rose-600 hover:text-rose-800 text-lg font-bold transition-colors p-1"
-                                title="Padam"
+                                className="text-rose-600 hover:text-rose-800 text-lg font-bold transition-colors p-1 cursor-pointer"
+                                title={isEn ? 'Delete' : 'Padam'}
                               >
                                 &times;
                               </button>
@@ -1234,8 +1339,12 @@ const TransporterRequestFormPage: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                         <div className="flex flex-col">
-                          <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">A. Pengiring Perubatan KKM</label>
-                          <span className="text-[10px] text-slate-400">Kakitangan perubatan bertugas merentas sempadan.</span>
+                          <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                            {isEn ? 'A. MOH (KKM) Medical Escorts' : 'A. Pengiring Perubatan KKM'}
+                          </label>
+                          <span className="text-[10px] text-slate-400">
+                            {isEn ? 'Medical personnel on duty for cross-border transit.' : 'Kakitangan perubatan bertugas merentas sempadan.'}
+                          </span>
                         </div>
                         <button
                           type="button"
@@ -1244,15 +1353,15 @@ const TransporterRequestFormPage: React.FC = () => {
                             setCrossborderKkmEscorts(newKkm)
                             setEscortList(newKkm.map(k => ({ job: k.jawatan as PengiringType, name: k.nama })))
                           }}
-                          className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors font-semibold"
+                          className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors font-semibold cursor-pointer"
                         >
-                          + Tambah Pengiring KKM
+                          {isEn ? '+ Add MOH Escort' : '+ Tambah Pengiring KKM'}
                         </button>
                       </div>
 
                       {crossborderKkmEscorts.length === 0 ? (
                         <div className="text-center py-6 bg-slate-50/50 border border-dashed border-slate-200 rounded-xl text-slate-500 text-xs">
-                          Tiada Pengiring KKM Ditambah. Klik "+ Tambah Pengiring KKM".
+                          {isEn ? 'No MOH Escorts Added. Click "+ Add MOH Escort".' : 'Tiada Pengiring KKM Ditambah. Klik "+ Tambah Pengiring KKM".'}
                         </div>
                       ) : (
                         <div className="space-y-3">
@@ -1269,12 +1378,12 @@ const TransporterRequestFormPage: React.FC = () => {
                                     setCrossborderKkmEscorts(newList)
                                     setEscortList(newList.map(k => ({ job: k.jawatan as PengiringType, name: k.nama })))
                                   }}
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-600 transition-colors"
+                                  className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-600 transition-colors cursor-pointer"
                                 >
-                                  <option value="nurse">Jururawat</option>
-                                  <option value="medical_officer">Pegawai Perubatan (MO)</option>
-                                  <option value="assistant_medical_officer">Penolong Pegawai Perubatan (AMO)</option>
-                                  <option value="ppk">PPK</option>
+                                  <option value="nurse">{isEn ? 'Nurse' : 'Jururawat'}</option>
+                                  <option value="medical_officer">{isEn ? 'Medical Officer (MO)' : 'Pegawai Perubatan (MO)'}</option>
+                                  <option value="assistant_medical_officer">{isEn ? 'Assistant Medical Officer (AMO)' : 'Penolong Pegawai Perubatan (AMO)'}</option>
+                                  <option value="ppk">{isEn ? 'Healthcare Assistant (PPK)' : 'PPK'}</option>
                                 </select>
                               </div>
 
@@ -1289,10 +1398,10 @@ const TransporterRequestFormPage: React.FC = () => {
                                       setCrossborderKkmEscorts(newList)
                                       setEscortList(newList.map(k => ({ job: k.jawatan as PengiringType, name: k.nama })))
                                     }}
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-600 transition-colors"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-600 transition-colors cursor-pointer"
                                     required
                                   >
-                                    <option value="">Pilih MO</option>
+                                    <option value="">{isEn ? 'Select MO' : 'Pilih MO'}</option>
                                     <option value="DR AMIR">DR AMIR</option>
                                     <option value="DR JASON">DR JASON</option>
                                     <option value="DR NARVIN">DR NARVIN</option>
@@ -1305,7 +1414,7 @@ const TransporterRequestFormPage: React.FC = () => {
                                   </select>
                                 ) : (
                                   <Input
-                                    placeholder="Nama Kakitangan"
+                                    placeholder={isEn ? 'Staff Full Name' : 'Nama Kakitangan'}
                                     value={escort.nama}
                                     onChange={(e) => {
                                       const newList = [...crossborderKkmEscorts]
@@ -1328,18 +1437,18 @@ const TransporterRequestFormPage: React.FC = () => {
                                     newList[index].jenis_dokumen = e.target.value as JenisDokumen
                                     setCrossborderKkmEscorts(newList)
                                   }}
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-600"
+                                  className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-600 cursor-pointer"
                                 >
                                   <option value="IC">IC</option>
                                   <option value="PASSPORT">PASSPORT</option>
-                                  <option value="OTHERS">OTHERS</option>
+                                  <option value="OTHERS">{isEn ? 'OTHERS' : 'LAIN-LAIN'}</option>
                                 </select>
                               </div>
 
                               {/* Document Number */}
                               <div className="col-span-3">
                                 <Input
-                                  placeholder="No. Dokumen"
+                                  placeholder={isEn ? 'Doc / IC No.' : 'No. Dokumen'}
                                   value={escort.no_dokumen}
                                   onChange={(e) => {
                                     const newList = [...crossborderKkmEscorts]
@@ -1360,7 +1469,7 @@ const TransporterRequestFormPage: React.FC = () => {
                                     setCrossborderKkmEscorts(newList)
                                     setEscortList(newList.map(k => ({ job: k.jawatan as PengiringType, name: k.nama })))
                                   }}
-                                  className="text-rose-600 hover:text-rose-800 text-lg font-bold p-1"
+                                  className="text-rose-600 hover:text-rose-800 text-lg font-bold p-1 cursor-pointer"
                                 >
                                   &times;
                                 </button>
@@ -1375,8 +1484,12 @@ const TransporterRequestFormPage: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                         <div className="flex flex-col">
-                          <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">B. Waris / Pengiring Terdekat (Maksimum 1 Per Pesakit)</label>
-                          <span className="text-[10px] text-slate-400">Pilihan: Waris yang dibenarkan menaiki ambulans merentas sempadan.</span>
+                          <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                            {isEn ? 'B. Next-of-Kin / Patient Escort (Max 1 per patient)' : 'B. Waris / Pengiring Terdekat (Maksimum 1 Per Pesakit)'}
+                          </label>
+                          <span className="text-[10px] text-slate-400">
+                            {isEn ? 'Optional: Authorized next-of-kin accompanying cross-border ambulance transfer.' : 'Pilihan: Waris yang dibenarkan menaiki ambulans merentas sempadan.'}
+                          </span>
                         </div>
                         <button
                           type="button"
@@ -1384,15 +1497,17 @@ const TransporterRequestFormPage: React.FC = () => {
                             const newWaris = [...crossborderWarisEscorts, { nama: '', hubungan: '', jenis_dokumen: 'IC' as JenisDokumen, no_dokumen: '' }]
                             setCrossborderWarisEscorts(newWaris)
                           }}
-                          className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors font-semibold"
+                          className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors font-semibold cursor-pointer"
                         >
-                          + Tambah Waris / Pengiring Pesakit
+                          {isEn ? '+ Add Next-of-Kin Escort' : '+ Tambah Waris / Pengiring Pesakit'}
                         </button>
                       </div>
 
                       {crossborderWarisEscorts.length === 0 ? (
                         <div className="text-center py-6 bg-slate-50/50 border border-dashed border-slate-200 rounded-xl text-slate-500 text-xs">
-                          Tiada Waris/Pengiring Pesakit Ditambah. Klik "+ Tambah Waris / Pengiring Pesakit" jika ada.
+                          {isEn 
+                            ? 'No Next-of-Kin Escorts Added. Click "+ Add Next-of-Kin Escort" if accompanying.'
+                            : 'Tiada Waris/Pengiring Pesakit Ditambah. Klik "+ Tambah Waris / Pengiring Pesakit" jika ada.'}
                         </div>
                       ) : (
                         <div className="space-y-4">
@@ -1400,7 +1515,7 @@ const TransporterRequestFormPage: React.FC = () => {
                             <div key={index} className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-3 relative animate-fadeIn">
                               <div className="flex items-center justify-between">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                                  Waris / Pengiring Pesakit {index + 1}
+                                  {isEn ? `Next-of-Kin / Escort #${index + 1}` : `Waris / Pengiring Pesakit ${index + 1}`}
                                 </span>
                                 <button
                                   type="button"
@@ -1408,18 +1523,20 @@ const TransporterRequestFormPage: React.FC = () => {
                                     const newWaris = crossborderWarisEscorts.filter((_, idx) => idx !== index)
                                     setCrossborderWarisEscorts(newWaris)
                                   }}
-                                  className="text-rose-650 hover:text-rose-800 text-xs font-bold transition-colors"
+                                  className="text-rose-600 hover:text-rose-800 text-xs font-bold transition-colors cursor-pointer"
                                 >
-                                  Padam
+                                  {isEn ? 'Delete' : 'Padam'}
                                 </button>
                               </div>
 
                               <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                                 {/* Name */}
                                 <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Nama Waris</label>
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                    {isEn ? 'Next-of-Kin Name' : 'Nama Waris'}
+                                  </label>
                                   <Input
-                                    placeholder="Nama Penuh Waris"
+                                    placeholder={isEn ? 'Full Name' : 'Nama Penuh Waris'}
                                     value={waris.nama}
                                     onChange={(e) => {
                                       const newWaris = [...crossborderWarisEscorts]
@@ -1433,7 +1550,9 @@ const TransporterRequestFormPage: React.FC = () => {
 
                                 {/* Relation */}
                                 <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Hubungan</label>
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                    {isEn ? 'Relationship' : 'Hubungan'}
+                                  </label>
                                   <select
                                     value={waris.hubungan}
                                     onChange={(e) => {
@@ -1441,23 +1560,25 @@ const TransporterRequestFormPage: React.FC = () => {
                                       newWaris[index].hubungan = e.target.value
                                       setCrossborderWarisEscorts(newWaris)
                                     }}
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-600"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-600 cursor-pointer"
                                     required
                                   >
-                                    <option value="">Pilih Hubungan</option>
-                                    <option value="Suami">Suami</option>
-                                    <option value="Isteri">Isteri</option>
-                                    <option value="Ibu">Ibu</option>
-                                    <option value="Bapa">Bapa</option>
-                                    <option value="Anak">Anak</option>
-                                    <option value="Adik-beradik">Adik-beradik</option>
-                                    <option value="Lain-lain">Lain-lain</option>
+                                    <option value="">{isEn ? 'Select Relation' : 'Pilih Hubungan'}</option>
+                                    <option value="Suami">{isEn ? 'Husband (Suami)' : 'Suami'}</option>
+                                    <option value="Isteri">{isEn ? 'Wife (Isteri)' : 'Isteri'}</option>
+                                    <option value="Ibu">{isEn ? 'Mother (Ibu)' : 'Ibu'}</option>
+                                    <option value="Bapa">{isEn ? 'Father (Bapa)' : 'Bapa'}</option>
+                                    <option value="Anak">{isEn ? 'Child (Anak)' : 'Anak'}</option>
+                                    <option value="Adik-beradik">{isEn ? 'Sibling (Adik-beradik)' : 'Adik-beradik'}</option>
+                                    <option value="Lain-lain">{isEn ? 'Other' : 'Lain-lain'}</option>
                                   </select>
                                 </div>
 
                                 {/* Document Type */}
                                 <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Jenis Dokumen</label>
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                    {isEn ? 'Document Type' : 'Jenis Dokumen'}
+                                  </label>
                                   <select
                                     value={waris.jenis_dokumen}
                                     onChange={(e) => {
@@ -1465,20 +1586,22 @@ const TransporterRequestFormPage: React.FC = () => {
                                       newWaris[index].jenis_dokumen = e.target.value as JenisDokumen
                                       setCrossborderWarisEscorts(newWaris)
                                     }}
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none cursor-pointer"
                                     required
                                   >
                                     <option value="IC">IC</option>
                                     <option value="PASSPORT">PASSPORT</option>
-                                    <option value="OTHERS">OTHERS</option>
+                                    <option value="OTHERS">{isEn ? 'OTHERS' : 'LAIN-LAIN'}</option>
                                   </select>
                                 </div>
 
                                 {/* Document Number */}
                                 <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-slate-450 uppercase tracking-wider">No. Dokumen</label>
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                    {isEn ? 'Document No.' : 'No. Dokumen'}
+                                  </label>
                                   <Input
-                                    placeholder="No. Kad Pengenalan / Passport"
+                                    placeholder={isEn ? 'ID Card / Passport No.' : 'No. Kad Pengenalan / Passport'}
                                     value={waris.no_dokumen}
                                     onChange={(e) => {
                                       const newWaris = [...crossborderWarisEscorts]
@@ -1506,10 +1629,12 @@ const TransporterRequestFormPage: React.FC = () => {
                       id="bawaPesakit"
                       checked={bawaPesakit}
                       onChange={(e) => setBawaPesakit(e.target.checked)}
-                      className="w-4.5 h-4.5 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                      className="w-4.5 h-4.5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 cursor-pointer"
                     />
                     <label htmlFor="bawaPesakit" className="text-sm font-bold text-slate-700 cursor-pointer">
-                      Trip ini melibatkan membawa pesakit (Buka Borang Butiran Pesakit)
+                      {isEn 
+                        ? 'This trip transports a patient (Enable Patient Clinical Form)' 
+                        : 'Trip ini melibatkan membawa pesakit (Buka Borang Butiran Pesakit)'}
                     </label>
                   </div>
                 )}
@@ -1520,7 +1645,9 @@ const TransporterRequestFormPage: React.FC = () => {
             {step === 3 && (
               <div className="space-y-5 animate-fadeIn">
                 <h3 className="text-lg font-bold text-slate-800 pb-2 border-b border-slate-100">
-                  {jenisPermohonan === 'van_jenazah' ? 'Langkah 3: Butiran Jenazah & Khas' : 'Langkah 3: Butiran Pesakit & Khas'}
+                  {jenisPermohonan === 'van_jenazah' 
+                    ? (isEn ? 'Step 3: Deceased & Special Transfer Details' : 'Langkah 3: Butiran Jenazah & Khas') 
+                    : (isEn ? 'Step 3: Patient Clinical & Special Needs' : 'Langkah 3: Butiran Pesakit & Khas')}
                 </h3>
                 
                 {isPatientSectionRequired ? (
@@ -1528,30 +1655,36 @@ const TransporterRequestFormPage: React.FC = () => {
                     <div className="space-y-6 animate-fadeIn">
                       <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                         <div className="flex flex-col">
-                          <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Senarai Pesakit Rentasi Sempadan</label>
-                          <span className="text-[10px] text-slate-400">Masukkan butiran dokumen perjalanan bagi setiap pesakit (Maksimum 3).</span>
+                          <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                            {isEn ? 'Cross-Border Patient Roster' : 'Senarai Pesakit Rentasi Sempadan'}
+                          </label>
+                          <span className="text-[10px] text-slate-400">
+                            {isEn ? 'Enter travel document details for each patient (Max 3).' : 'Masukkan butiran dokumen perjalanan bagi setiap pesakit (Maksimum 3).'}
+                          </span>
                         </div>
                         <button
                           type="button"
                           onClick={handleAddPatient}
-                          className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors font-semibold"
+                          className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors font-semibold cursor-pointer"
                         >
-                          + Tambah Pesakit
+                          {isEn ? '+ Add Patient' : '+ Tambah Pesakit'}
                         </button>
                       </div>
 
-                      <div className="space-y-6 divide-y divide-slate-105">
+                      <div className="space-y-6 divide-y divide-slate-100">
                         {crossborderPatients.map((patient, pIdx) => (
                           <div key={pIdx} className={`space-y-4 ${pIdx > 0 ? 'pt-6' : ''}`}>
                             <div className="flex justify-between items-center">
-                              <h4 className="text-xs font-bold text-blue-650 uppercase tracking-wide">Pesakit #{pIdx + 1}</h4>
+                              <h4 className="text-xs font-bold text-blue-600 uppercase tracking-wide">
+                                {isEn ? `Patient #${pIdx + 1}` : `Pesakit #${pIdx + 1}`}
+                              </h4>
                               {crossborderPatients.length > 1 && (
                                 <button
                                   type="button"
                                   onClick={() => handleRemovePatient(pIdx)}
-                                  className="text-rose-600 hover:text-rose-800 text-xs font-bold transition-colors flex items-center gap-1"
+                                  className="text-rose-600 hover:text-rose-800 text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
                                 >
-                                  Padam
+                                  {isEn ? 'Remove' : 'Padam'}
                                 </button>
                               )}
                             </div>
@@ -1559,10 +1692,10 @@ const TransporterRequestFormPage: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               <div className="md:col-span-2">
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                                  Nama Penuh (Seperti Pasport / IC) *
+                                  {isEn ? 'Full Name (As in Passport / IC) *' : 'Nama Penuh (Seperti Pasport / IC) *'}
                                 </label>
                                 <Input
-                                  placeholder="Nama Penuh Pesakit"
+                                  placeholder={isEn ? 'Patient Full Name' : 'Nama Penuh Pesakit'}
                                   value={patient.nama}
                                   onChange={(e) => handlePatientFieldChange(pIdx, 'nama', e.target.value.toUpperCase())}
                                   required
@@ -1570,21 +1703,21 @@ const TransporterRequestFormPage: React.FC = () => {
                               </div>
                               <div>
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                                  Jantina *
+                                  {isEn ? 'Gender *' : 'Jantina *'}
                                 </label>
                                 <select
                                   value={patient.jantina}
                                   onChange={(e) => handlePatientFieldChange(pIdx, 'jantina', e.target.value as Jantina)}
-                                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:border-blue-600"
+                                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:border-blue-600 cursor-pointer"
                                 >
-                                  <option value="Lelaki">Lelaki</option>
-                                  <option value="Perempuan">Perempuan</option>
+                                  <option value="Lelaki">{isEn ? 'Male (Lelaki)' : 'Lelaki'}</option>
+                                  <option value="Perempuan">{isEn ? 'Female (Perempuan)' : 'Perempuan'}</option>
                                 </select>
                               </div>
 
                               <div>
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                                  Tarikh Lahir *
+                                  {isEn ? 'Date of Birth *' : 'Tarikh Lahir *'}
                                 </label>
                                 <input
                                   type="date"
@@ -1596,7 +1729,7 @@ const TransporterRequestFormPage: React.FC = () => {
                               </div>
                               <div>
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                                  Warganegara *
+                                  {isEn ? 'Nationality *' : 'Warganegara *'}
                                 </label>
                                 <Input
                                   placeholder="Malaysia"
@@ -1607,25 +1740,25 @@ const TransporterRequestFormPage: React.FC = () => {
                               </div>
                               <div>
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                                  Jenis Dokumen Perjalanan *
+                                  {isEn ? 'Travel Document Type *' : 'Jenis Dokumen Perjalanan *'}
                                 </label>
                                 <select
                                   value={patient.jenis_dokumen}
                                   onChange={(e) => handlePatientFieldChange(pIdx, 'jenis_dokumen', e.target.value as JenisDokumen)}
-                                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:border-blue-600"
+                                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:border-blue-600 cursor-pointer"
                                 >
                                   <option value="IC">IC / MYKAD</option>
                                   <option value="PASSPORT">PASSPORT</option>
-                                  <option value="OTHERS">DOKUMEN LAIN</option>
+                                  <option value="OTHERS">{isEn ? 'OTHER DOCUMENT' : 'DOKUMEN LAIN'}</option>
                                 </select>
                               </div>
 
                               <div className="md:col-span-3">
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                                  No Dokumen *
+                                  {isEn ? 'Document / ID No. *' : 'No Dokumen *'}
                                 </label>
                                 <Input
-                                  placeholder="No. IC atau Passport"
+                                  placeholder={isEn ? 'IC or Passport Number' : 'No. IC atau Passport'}
                                   value={patient.no_dokumen}
                                   onChange={(e) => handlePatientFieldChange(pIdx, 'no_dokumen', e.target.value.toUpperCase())}
                                   required
@@ -1639,18 +1772,22 @@ const TransporterRequestFormPage: React.FC = () => {
                       {/* Diagnosis & Phone fields for the whole request */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-slate-550 uppercase tracking-wider">Diagnosis Utama Pesakit *</label>
+                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                            {isEn ? 'Primary Clinical Diagnosis *' : 'Diagnosis Utama Pesakit *'}
+                          </label>
                           <Input
-                            placeholder="Contoh: ACS / Head Injury"
+                            placeholder={isEn ? 'E.g., ACS / Severe Head Injury' : 'Contoh: ACS / Head Injury'}
                             value={diagnosisPesakit}
                             onChange={(e) => setDiagnosisPesakit(e.target.value)}
                             required
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-slate-550 uppercase tracking-wider">No. Telefon Hubungi (Waris/Pesakit)</label>
+                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                            {isEn ? 'Contact Phone No. (Next-of-Kin / Patient)' : 'No. Telefon Hubungi (Waris/Pesakit)'}
+                          </label>
                           <Input
-                            placeholder="Contoh: 013-8882190"
+                            placeholder={isEn ? 'E.g., 013-8882190' : 'Contoh: 013-8882190'}
                             value={telefonPesakit}
                             onChange={(e) => setTelefonPesakit(e.target.value)}
                           />
@@ -1662,8 +1799,12 @@ const TransporterRequestFormPage: React.FC = () => {
                         <div className="space-y-3 pt-3 border-t border-slate-100/50">
                           <div className="flex items-center justify-between p-4 bg-rose-50/30 border border-rose-100 rounded-xl">
                             <div className="space-y-0.5">
-                              <h4 className="text-sm font-bold text-rose-950">Sokongan Oksigen (Oxygenation Required)</h4>
-                              <p className="text-xs text-rose-800/80">Tandakan jika ambulans memerlukan tong oksigen sokongan bertugas.</p>
+                              <h4 className="text-sm font-bold text-rose-950">
+                                {isEn ? 'Oxygen Support (Oxygenation Required)' : 'Sokongan Oksigen (Oxygenation Required)'}
+                              </h4>
+                              <p className="text-xs text-rose-800/80">
+                                {isEn ? 'Check this if the patient requires oxygen cylinder support.' : 'Tandakan jika ambulans memerlukan tong oksigen sokongan bertugas.'}
+                              </p>
                             </div>
                             <input 
                               type="checkbox" 
@@ -1677,13 +1818,15 @@ const TransporterRequestFormPage: React.FC = () => {
                                   setJenisOksigen('')
                                 }
                               }}
-                              className="w-5 h-5 text-rose-600 border-rose-300 rounded focus:ring-rose-500"
+                              className="w-5 h-5 text-rose-600 border-rose-300 rounded focus:ring-rose-500 cursor-pointer"
                             />
                           </div>
 
                           {oksigenDiperlukan && (
                             <div className="p-4 bg-rose-50/10 border border-rose-100 rounded-xl space-y-3 animate-fadeIn">
-                              <label className="text-xs font-bold text-rose-900 uppercase tracking-wider block">Jenis Alat Oksigen</label>
+                              <label className="text-xs font-bold text-rose-900 uppercase tracking-wider block">
+                                {isEn ? 'Oxygen Delivery Mode' : 'Jenis Alat Oksigen'}
+                              </label>
                               <select
                                 value={selectedJenisOksigen}
                                 onChange={(e) => {
@@ -1697,22 +1840,22 @@ const TransporterRequestFormPage: React.FC = () => {
                                     setJenisOksigen('')
                                   }
                                 }}
-                                className="w-full bg-white border border-rose-100 rounded-lg px-3 py-2 text-xs outline-none focus:border-rose-600 transition-colors"
+                                className="w-full bg-white border border-rose-100 rounded-lg px-3 py-2 text-xs outline-none focus:border-rose-600 transition-colors cursor-pointer"
                                 required
                               >
-                                <option value="">Sila Pilih Jenis Oksigen</option>
+                                <option value="">{isEn ? 'Please Select Oxygen Delivery Mode' : 'Sila Pilih Jenis Oksigen'}</option>
                                 <option value="Nasal prong">Nasal prong</option>
                                 <option value="face mask">face mask</option>
                                 <option value="venturi mask">venturi mask</option>
                                 <option value="high flow mask">high flow mask</option>
                                 <option value="Tracheal Mask">Tracheal Mask</option>
                                 <option value="intubated">intubated</option>
-                                <option value="others">others (specify)</option>
+                                <option value="others">{isEn ? 'others (specify)' : 'lain-lain (nyatakan)'}</option>
                               </select>
 
                               {selectedJenisOksigen === 'others' && (
                                 <Input
-                                  placeholder="Sila nyatakan jenis oksigen secara manual"
+                                  placeholder={isEn ? 'Please specify oxygen apparatus manually' : 'Sila nyatakan jenis oksigen secara manual'}
                                   value={customJenisOksigen}
                                   onChange={(e) => {
                                     setCustomJenisOksigen(e.target.value)
@@ -1731,13 +1874,13 @@ const TransporterRequestFormPage: React.FC = () => {
                       {jenisPermohonan !== 'van_jenazah' && (
                         <div className="space-y-2.5 pt-3 border-t border-slate-100/50">
                           <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                            Keupayaan Bergerak Pesakit (Patient Mobility) *
+                            {isEn ? 'Patient Mobility Level *' : 'Keupayaan Bergerak Pesakit (Patient Mobility) *'}
                           </label>
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             {[
-                              { id: 'walking', label: 'Walking / Boleh Berjalan', desc: 'Boleh berjalan tanpa bantuan khas' },
-                              { id: 'wheelchair', label: 'Wheelchair / Kerusi Roda', desc: 'Memerlukan sokongan kerusi roda' },
-                              { id: 'stretcher', label: 'Stretcher / Usungan', desc: 'Pemandu WAJIB ambil pesakit dari wad' }
+                              { id: 'walking', label: isEn ? 'Ambulatory / Walking' : 'Walking / Boleh Berjalan', desc: isEn ? 'Can walk independently or with minimal aid' : 'Boleh berjalan tanpa bantuan khas' },
+                              { id: 'wheelchair', label: isEn ? 'Wheelchair Required' : 'Wheelchair / Kerusi Roda', desc: isEn ? 'Requires wheelchair assistance' : 'Memerlukan sokongan kerusi roda' },
+                              { id: 'stretcher', label: isEn ? 'Stretcher Required' : 'Stretcher / Usungan', desc: isEn ? 'Driver MANDATORY pickup from ward' : 'Pemandu WAJIB ambil pesakit dari wad' }
                             ].map((item) => (
                               <label
                                 key={item.id}
@@ -1767,9 +1910,13 @@ const TransporterRequestFormPage: React.FC = () => {
                             <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5 text-amber-900 animate-fadeIn">
                               <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                               <div>
-                                <p className="font-bold text-xs">Peringatan Penting (Driver Pickup Required):</p>
+                                <p className="font-bold text-xs">
+                                  {isEn ? 'Important Reminder (Driver Ward Pickup Mandatory):' : 'Peringatan Penting (Driver Pickup Required):'}
+                                </p>
                                 <p className="text-[10px] leading-relaxed mt-0.5 text-amber-800 font-medium">
-                                  Oleh kerana pesakit menggunakan usungan (stretcher), pemandu ambulans/kenderaan adalah **WAJIB** untuk naik ke wad dan mengambil pesakit bersama-sama dengan kakitangan pengiring.
+                                  {isEn 
+                                    ? 'Because the patient requires a stretcher, the transporter driver is MANDATED to proceed up to the ward and assist escort staff with patient transfer.' 
+                                    : 'Oleh kerana pesakit menggunakan usungan (stretcher), pemandu ambulans/kenderaan adalah WAJIB untuk naik ke wad dan mengambil pesakit bersama-sama dengan kakitangan pengiring.'}
                                 </p>
                               </div>
                             </div>
@@ -1781,7 +1928,7 @@ const TransporterRequestFormPage: React.FC = () => {
                       {jenisPermohonan === 'ambulance' && (
                         <div className="space-y-2.5 pt-3 border-t border-slate-100/50">
                           <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                            Mesin / Peralatan Diperlukan (Required Machine)
+                            {isEn ? 'Special Equipment / Devices Required' : 'Mesin / Peralatan Diperlukan (Required Machine)'}
                           </label>
                           <div className="grid grid-cols-2 gap-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
                             {[
@@ -1790,7 +1937,7 @@ const TransporterRequestFormPage: React.FC = () => {
                               { id: 'portable suction', label: 'Portable Suction' },
                               { id: 'Portable ventilator', label: 'Portable Ventilator' },
                               { id: 'Syringe pump', label: 'Syringe Pump' },
-                              { id: 'others', label: 'Others' }
+                              { id: 'others', label: isEn ? 'Others (Specify)' : 'Lain-lain' }
                             ].map((mach) => (
                               <div key={mach.id} className="flex items-center gap-2.5">
                                 <input 
@@ -1816,7 +1963,7 @@ const TransporterRequestFormPage: React.FC = () => {
                           {selectedMesin.includes('others') && (
                             <div className="animate-fadeIn">
                               <Input 
-                                placeholder="Sila nyatakan mesin/peralatan lain"
+                                placeholder={isEn ? 'Please specify other equipment required' : 'Sila nyatakan mesin/peralatan lain'}
                                 value={customMesin}
                                 onChange={(e) => setCustomMesin(e.target.value)}
                                 className="text-xs bg-white"
@@ -1832,10 +1979,16 @@ const TransporterRequestFormPage: React.FC = () => {
                       {/* Patient Name */}
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                          {jenisPermohonan === 'van_jenazah' ? 'Nama Jenazah' : 'Nama Pesakit'}
+                          {jenisPermohonan === 'van_jenazah' 
+                            ? (isEn ? 'Deceased Full Name' : 'Nama Jenazah') 
+                            : (isEn ? 'Patient Full Name' : 'Nama Pesakit')}
                         </label>
                         <Input 
-                          placeholder={jenisPermohonan === 'van_jenazah' ? "Masukkan nama penuh jenazah" : "Masukkan nama penuh pesakit"}
+                          placeholder={
+                            jenisPermohonan === 'van_jenazah' 
+                              ? (isEn ? 'Enter deceased full name' : 'Masukkan nama penuh jenazah') 
+                              : (isEn ? 'Enter patient full name' : 'Masukkan nama penuh pesakit')
+                          }
                           value={namaPesakit}
                           onChange={(e) => setNamaPesakit(e.target.value)}
                           required
@@ -1846,241 +1999,269 @@ const TransporterRequestFormPage: React.FC = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
                           <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                            {jenisPermohonan === 'van_jenazah' ? 'Nombor RN Jenazah' : 'Nombor RN Pesakit'}
+                            {jenisPermohonan === 'van_jenazah' 
+                              ? (isEn ? 'Deceased RN No.' : 'Nombor RN Jenazah') 
+                              : (isEn ? 'Patient RN No.' : 'Nombor RN Pesakit')}
                           </label>
                           <Input 
-                            placeholder="Contoh: RN-8841-26"
+                            placeholder={isEn ? 'E.g., RN-8841-26' : 'Contoh: RN-8841-26'}
                             value={rnPesakit}
                             onChange={(e) => setRnPesakit(e.target.value)}
                             required
                           />
                         </div>
                       
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Jantina</label>
-                        <select
-                          value={jantinaPesakit}
-                          onChange={(e) => setJantinaPesakit(e.target.value as any)}
-                          className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors"
-                          required
-                        >
-                          <option value="">Sila Pilih</option>
-                          <option value="M">Lelaki</option>
-                          <option value="F">Perempuan</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    {/* Diagnosis */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                        {jenisPermohonan === 'van_jenazah' ? 'Sebab Kematian (Diagnosis)' : 'Diagnosis Pesakit'}
-                      </label>
-                      <Input 
-                        placeholder={jenisPermohonan === 'van_jenazah' ? "Contoh: Myocardial Infarction / Old Age" : "Contoh: Severe Cardiac Arrest / Head Injury"}
-                        value={diagnosisPesakit}
-                        onChange={(e) => setDiagnosisPesakit(e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    {/* Phone */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                        {jenisPermohonan === 'van_jenazah' ? 'Nombor Telefon Waris (Pilihan)' : 'Nombor Telefon Waris / Pesakit (Pilihan)'}
-                      </label>
-                      <Input 
-                        placeholder="Contoh: 013-XXXXXXX"
-                        value={telefonPesakit}
-                        onChange={(e) => setTelefonPesakit(e.target.value)}
-                      />
-                    </div>
-
-                    {/* Oxygen toggle for Ambulance requests */}
-                    {jenisPermohonan === 'ambulance' && (
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between p-4 bg-rose-50/30 border border-rose-100 rounded-xl">
-                          <div className="space-y-0.5">
-                            <h4 className="text-sm font-bold text-rose-950">Sokongan Oksigen (Oxygenation Required)</h4>
-                            <p className="text-xs text-rose-800/80">Tandakan jika ambulans memerlukan tong oksigen sokongan bertugas.</p>
-                          </div>
-                          <input 
-                            type="checkbox" 
-                            checked={oksigenDiperlukan}
-                            onChange={(e) => {
-                              const val = e.target.checked
-                              setOksigenDiperlukan(val)
-                              if (!val) {
-                                setSelectedJenisOksigen('')
-                                setCustomJenisOksigen('')
-                                setJenisOksigen('')
-                              }
-                            }}
-                            className="w-5 h-5 text-rose-600 border-rose-300 rounded focus:ring-rose-500"
-                          />
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            {isEn ? 'Gender' : 'Jantina'}
+                          </label>
+                          <select
+                            value={jantinaPesakit}
+                            onChange={(e) => setJantinaPesakit(e.target.value as any)}
+                            className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
+                            required
+                          >
+                            <option value="">{isEn ? 'Please Select' : 'Sila Pilih'}</option>
+                            <option value="M">{isEn ? 'Male (Lelaki)' : 'Lelaki'}</option>
+                            <option value="F">{isEn ? 'Female (Perempuan)' : 'Perempuan'}</option>
+                          </select>
                         </div>
+                      </div>
 
-                        {oksigenDiperlukan && (
-                          <div className="p-4 bg-rose-50/10 border border-rose-100 rounded-xl space-y-3 animate-fadeIn">
-                            <label className="text-xs font-bold text-rose-900 uppercase tracking-wider block">Jenis Alat Oksigen</label>
-                            <select
-                              value={selectedJenisOksigen}
+                      {/* Diagnosis */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                          {jenisPermohonan === 'van_jenazah' 
+                            ? (isEn ? 'Cause of Death' : 'Sebab Kematian (Diagnosis)') 
+                            : (isEn ? 'Clinical Diagnosis' : 'Diagnosis Pesakit')}
+                        </label>
+                        <Input 
+                          placeholder={
+                            jenisPermohonan === 'van_jenazah' 
+                              ? (isEn ? 'E.g., Myocardial Infarction / Old Age' : 'Contoh: Myocardial Infarction / Old Age') 
+                              : (isEn ? 'E.g., Severe Cardiac Arrest / Head Injury' : 'Contoh: Severe Cardiac Arrest / Head Injury')
+                          }
+                          value={diagnosisPesakit}
+                          onChange={(e) => setDiagnosisPesakit(e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      {/* Phone */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                          {jenisPermohonan === 'van_jenazah' 
+                            ? (isEn ? 'Next-of-Kin Contact Phone No. (Optional)' : 'Nombor Telefon Waris (Pilihan)') 
+                            : (isEn ? 'Patient / Next-of-Kin Contact No. (Optional)' : 'Nombor Telefon Waris / Pesakit (Pilihan)')}
+                        </label>
+                        <Input 
+                          placeholder={isEn ? 'E.g., 013-XXXXXXX' : 'Contoh: 013-XXXXXXX'}
+                          value={telefonPesakit}
+                          onChange={(e) => setTelefonPesakit(e.target.value)}
+                        />
+                      </div>
+
+                      {/* Oxygen toggle for Ambulance requests */}
+                      {jenisPermohonan === 'ambulance' && (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between p-4 bg-rose-50/30 border border-rose-100 rounded-xl">
+                            <div className="space-y-0.5">
+                              <h4 className="text-sm font-bold text-rose-950">
+                                {isEn ? 'Oxygen Support (Oxygenation Required)' : 'Sokongan Oksigen (Oxygenation Required)'}
+                              </h4>
+                              <p className="text-xs text-rose-800/80">
+                                {isEn ? 'Check this if the ambulance requires oxygen cylinder support.' : 'Tandakan jika ambulans memerlukan tong oksigen sokongan bertugas.'}
+                              </p>
+                            </div>
+                            <input 
+                              type="checkbox" 
+                              checked={oksigenDiperlukan}
                               onChange={(e) => {
-                                const val = e.target.value
-                                setSelectedJenisOksigen(val)
-                                if (val === 'others') {
-                                  setJenisOksigen(customJenisOksigen)
-                                } else if (val) {
-                                  setJenisOksigen(val)
-                                } else {
+                                const val = e.target.checked
+                                setOksigenDiperlukan(val)
+                                if (!val) {
+                                  setSelectedJenisOksigen('')
+                                  setCustomJenisOksigen('')
                                   setJenisOksigen('')
                                 }
                               }}
-                              className="w-full bg-white border border-rose-100 rounded-lg px-3 py-2 text-xs outline-none focus:border-rose-600 transition-colors"
-                              required
-                            >
-                              <option value="">Sila Pilih Jenis Oksigen</option>
-                              <option value="Nasal prong">Nasal prong</option>
-                              <option value="face mask">face mask</option>
-                              <option value="venturi mask">venturi mask</option>
-                              <option value="high flow mask">high flow mask</option>
-                              <option value="Tracheal Mask">Tracheal Mask</option>
-                              <option value="intubated">intubated</option>
-                              <option value="others">others (specify)</option>
-                            </select>
+                              className="w-5 h-5 text-rose-600 border-rose-300 rounded focus:ring-rose-500 cursor-pointer"
+                            />
+                          </div>
 
-                            {selectedJenisOksigen === 'others' && (
-                              <Input
-                                placeholder="Sila nyatakan jenis oksigen secara manual"
-                                value={customJenisOksigen}
+                          {oksigenDiperlukan && (
+                            <div className="p-4 bg-rose-50/10 border border-rose-100 rounded-xl space-y-3 animate-fadeIn">
+                              <label className="text-xs font-bold text-rose-900 uppercase tracking-wider block">
+                                {isEn ? 'Oxygen Delivery Mode' : 'Jenis Alat Oksigen'}
+                              </label>
+                              <select
+                                value={selectedJenisOksigen}
                                 onChange={(e) => {
-                                  setCustomJenisOksigen(e.target.value)
-                                  setJenisOksigen(e.target.value)
+                                  const val = e.target.value
+                                  setSelectedJenisOksigen(val)
+                                  if (val === 'others') {
+                                    setJenisOksigen(customJenisOksigen)
+                                  } else if (val) {
+                                    setJenisOksigen(val)
+                                  } else {
+                                    setJenisOksigen('')
+                                  }
                                 }}
+                                className="w-full bg-white border border-rose-100 rounded-lg px-3 py-2 text-xs outline-none focus:border-rose-600 transition-colors cursor-pointer"
+                                required
+                              >
+                                <option value="">{isEn ? 'Please Select Oxygen Delivery Mode' : 'Sila Pilih Jenis Oksigen'}</option>
+                                <option value="Nasal prong">Nasal prong</option>
+                                <option value="face mask">face mask</option>
+                                <option value="venturi mask">venturi mask</option>
+                                <option value="high flow mask">high flow mask</option>
+                                <option value="Tracheal Mask">Tracheal Mask</option>
+                                <option value="intubated">intubated</option>
+                                <option value="others">{isEn ? 'others (specify)' : 'lain-lain (nyatakan)'}</option>
+                              </select>
+
+                              {selectedJenisOksigen === 'others' && (
+                                <Input
+                                  placeholder={isEn ? 'Please specify oxygen apparatus manually' : 'Sila nyatakan jenis oksigen secara manual'}
+                                  value={customJenisOksigen}
+                                  onChange={(e) => {
+                                    setCustomJenisOksigen(e.target.value)
+                                    setJenisOksigen(e.target.value)
+                                  }}
+                                  className="text-xs bg-white"
+                                  required
+                                />
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Patient Mobility */}
+                      {jenisPermohonan !== 'van_jenazah' && (
+                        <div className="space-y-2.5 pt-3 border-t border-slate-100/50">
+                          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                            {isEn ? 'Patient Mobility Level' : 'Keupayaan Bergerak Pesakit (Patient Mobility)'}
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {[
+                              { id: 'walking', label: isEn ? 'Ambulatory / Walking' : 'Walking / Boleh Berjalan', desc: isEn ? 'Can walk independently' : 'Boleh berjalan tanpa bantuan khas' },
+                              { id: 'wheelchair', label: isEn ? 'Wheelchair Required' : 'Wheelchair / Kerusi Roda', desc: isEn ? 'Requires wheelchair assistance' : 'Memerlukan sokongan kerusi roda' },
+                              { id: 'stretcher', label: isEn ? 'Stretcher Required' : 'Stretcher / Usungan', desc: isEn ? 'Driver MANDATORY pickup from ward' : 'Pemandu WAJIB ambil pesakit dari wad' }
+                            ].map((item) => (
+                              <label
+                                key={item.id}
+                                className={`flex flex-col p-3 rounded-xl border text-left cursor-pointer transition-all hover:bg-slate-50/50 ${
+                                  patientMobility === item.id 
+                                    ? 'bg-blue-50/30 border-blue-500 ring-1 ring-blue-500' 
+                                    : 'bg-white border-slate-200'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <input 
+                                    type="radio" 
+                                    name="patientMobility" 
+                                    value={item.id}
+                                    checked={patientMobility === item.id}
+                                    onChange={() => setPatientMobility(item.id as any)}
+                                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 cursor-pointer"
+                                  />
+                                  <span className="text-xs font-bold text-slate-800">{item.label}</span>
+                                </div>
+                                <span className="text-[10px] text-slate-400 mt-1 pl-6 leading-normal font-medium">{item.desc}</span>
+                              </label>
+                            ))}
+                          </div>
+
+                          {/* Stretcher compulsory warning alert */}
+                          {patientMobility === 'stretcher' && (
+                            <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5 text-amber-900 animate-fadeIn">
+                              <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                              <div>
+                                <p className="font-bold text-xs">
+                                  {isEn ? 'Important Reminder (Driver Ward Pickup Mandatory):' : 'Peringatan Penting (Driver Pickup Required):'}
+                                </p>
+                                <p className="text-[10px] leading-relaxed mt-0.5 text-amber-800 font-medium">
+                                  {isEn 
+                                    ? 'Because the patient requires a stretcher, the transporter driver is MANDATED to proceed up to the ward and assist escort staff with patient transfer.' 
+                                    : 'Oleh kerana pesakit menggunakan usungan (stretcher), pemandu ambulans/kenderaan adalah WAJIB untuk naik ke wad dan mengambil pesakit bersama-sama dengan kakitangan pengiring.'}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Required machines selector for Ambulance requests */}
+                      {jenisPermohonan === 'ambulance' && (
+                        <div className="space-y-2.5 pt-3 border-t border-slate-100/50">
+                          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                            {isEn ? 'Special Equipment / Devices Required' : 'Mesin / Peralatan Diperlukan (Required Machine)'}
+                          </label>
+                          <div className="grid grid-cols-2 gap-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                            {[
+                              { id: 'oxygen tank', label: 'Oxygen Tank' },
+                              { id: 'vital sign monitor', label: 'Vital Sign Monitor' },
+                              { id: 'portable suction', label: 'Portable Suction' },
+                              { id: 'Portable ventilator', label: 'Portable Ventilator' },
+                              { id: 'Syringe pump', label: 'Syringe Pump' },
+                              { id: 'others', label: isEn ? 'Others (Specify)' : 'Lain-lain' }
+                            ].map((mach) => (
+                              <div key={mach.id} className="flex items-center gap-2.5">
+                                <input 
+                                  type="checkbox"
+                                  id={`mach-${mach.id}`}
+                                  checked={selectedMesin.includes(mach.id)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setSelectedMesin([...selectedMesin, mach.id])
+                                    } else {
+                                      setSelectedMesin(selectedMesin.filter(m => m !== mach.id))
+                                    }
+                                  }}
+                                  className="w-4.5 h-4.5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 cursor-pointer"
+                                />
+                                <label htmlFor={`mach-${mach.id}`} className="text-xs font-semibold text-slate-700 cursor-pointer select-none">
+                                  {mach.label}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+
+                          {selectedMesin.includes('others') && (
+                            <div className="animate-fadeIn">
+                              <Input 
+                                placeholder={isEn ? 'Please specify other equipment required' : 'Sila nyatakan mesin/peralatan lain'}
+                                value={customMesin}
+                                onChange={(e) => setCustomMesin(e.target.value)}
                                 className="text-xs bg-white"
                                 required
                               />
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Patient Mobility */}
-                    {jenisPermohonan !== 'van_jenazah' && (
-                      <div className="space-y-2.5 pt-3 border-t border-slate-100/50">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                          Keupayaan Bergerak Pesakit (Patient Mobility)
-                        </label>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          {[
-                            { id: 'walking', label: 'Walking / Boleh Berjalan', desc: 'Boleh berjalan tanpa bantuan khas' },
-                            { id: 'wheelchair', label: 'Wheelchair / Kerusi Roda', desc: 'Memerlukan sokongan kerusi roda' },
-                            { id: 'stretcher', label: 'Stretcher / Usungan', desc: 'Pemandu WAJIB ambil pesakit dari wad' }
-                          ].map((item) => (
-                            <label
-                              key={item.id}
-                              className={`flex flex-col p-3 rounded-xl border text-left cursor-pointer transition-all hover:bg-slate-50/50 ${
-                                patientMobility === item.id 
-                                  ? 'bg-blue-50/30 border-blue-500 ring-1 ring-blue-500' 
-                                  : 'bg-white border-slate-200'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2">
-                                <input 
-                                  type="radio" 
-                                  name="patientMobility" 
-                                  value={item.id}
-                                  checked={patientMobility === item.id}
-                                  onChange={() => setPatientMobility(item.id as any)}
-                                  className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 cursor-pointer"
-                                />
-                                <span className="text-xs font-bold text-slate-800">{item.label}</span>
-                              </div>
-                              <span className="text-[10px] text-slate-400 mt-1 pl-6 leading-normal font-medium">{item.desc}</span>
-                            </label>
-                          ))}
-                        </div>
-
-                        {/* Stretcher compulsory warning alert */}
-                        {patientMobility === 'stretcher' && (
-                          <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5 text-amber-900 animate-fadeIn">
-                            <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                            <div>
-                              <p className="font-bold text-xs">Peringatan Penting (Driver Pickup Required):</p>
-                              <p className="text-[10px] leading-relaxed mt-0.5 text-amber-800 font-medium">
-                                Oleh kerana pesakit menggunakan usungan (stretcher), pemandu ambulans/kenderaan adalah **WAJIB** untuk naik ke wad dan mengambil pesakit bersama-sama dengan kakitangan pengiring.
-                              </p>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Required machines selector for Ambulance requests */}
-                    {jenisPermohonan === 'ambulance' && (
-                      <div className="space-y-2.5 pt-3 border-t border-slate-100/50">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                          Mesin / Peralatan Diperlukan (Required Machine)
-                        </label>
-                        <div className="grid grid-cols-2 gap-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
-                          {[
-                            { id: 'oxygen tank', label: 'Oxygen Tank' },
-                            { id: 'vital sign monitor', label: 'Vital Sign Monitor' },
-                            { id: 'portable suction', label: 'Portable Suction' },
-                            { id: 'Portable ventilator', label: 'Portable Ventilator' },
-                            { id: 'Syringe pump', label: 'Syringe Pump' },
-                            { id: 'others', label: 'Others' }
-                          ].map((mach) => (
-                            <div key={mach.id} className="flex items-center gap-2.5">
-                              <input 
-                                type="checkbox"
-                                id={`mach-${mach.id}`}
-                                checked={selectedMesin.includes(mach.id)}
-                                onChange={(e) => {
-                                  if (e.target.checked) {
-                                    setSelectedMesin([...selectedMesin, mach.id])
-                                  } else {
-                                    setSelectedMesin(selectedMesin.filter(m => m !== mach.id))
-                                  }
-                                }}
-                                className="w-4.5 h-4.5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 cursor-pointer"
-                              />
-                              <label htmlFor={`mach-${mach.id}`} className="text-xs font-semibold text-slate-700 cursor-pointer select-none">
-                                {mach.label}
-                              </label>
-                            </div>
-                          ))}
+                          )}
                         </div>
-
-                        {selectedMesin.includes('others') && (
-                          <div className="animate-fadeIn">
-                            <Input 
-                              placeholder="Sila nyatakan mesin/peralatan lain"
-                              value={customMesin}
-                              onChange={(e) => setCustomMesin(e.target.value)}
-                              className="text-xs bg-white"
-                              required
-                            />
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>)
+                      )}
+                    </div>)
                 ) : (
                   <div className="py-8 text-center text-slate-500 space-y-2">
                     <User className="w-10 h-10 mx-auto text-slate-400" />
-                    <p className="font-bold text-sm">Butiran Pesakit Tidak Diperlukan</p>
-                    <p className="text-xs">Trip ini diformatkan untuk kegunaan staf rasmi/logistik sahaja.</p>
+                    <p className="font-bold text-sm">
+                      {isEn ? 'Patient Details Not Required' : 'Butiran Pesakit Tidak Diperlukan'}
+                    </p>
+                    <p className="text-xs">
+                      {isEn ? 'This trip is designated for official staff duty / logistics purposes only.' : 'Trip ini diformatkan untuk kegunaan staf rasmi/logistik sahaja.'}
+                    </p>
                   </div>
                 )}
 
                 {/* Special Remarks / Catatan Khas */}
                 <div className="space-y-1.5 pt-4 border-t border-slate-100">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Catatan Khas / Remarks</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    {isEn ? 'Special Remarks / Clinical Instructions' : 'Catatan Khas / Remarks'}
+                  </label>
                   <textarea 
                     rows={3}
-                    placeholder="Masukkan sebarang keperluan tambahan (contoh: Perlu kerusi roda, peti ais ubat, dll)"
+                    placeholder={isEn ? 'Enter any additional requirements (e.g. wheelchair, vaccine cold-box, etc.)' : 'Masukkan sebarang keperluan tambahan (contoh: Perlu kerusi roda, peti ais ubat, dll)'}
                     value={catatanKhas}
                     onChange={(e) => setCatatanKhas(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-600 focus:bg-white transition-colors font-medium shadow-xs"
@@ -2093,25 +2274,29 @@ const TransporterRequestFormPage: React.FC = () => {
             {step === 4 && isCrossborder && (
               <div className="space-y-5 animate-fadeIn">
                 <h3 className="text-lg font-bold text-slate-800 pb-2 border-b border-slate-100">
-                  Langkah 4: Butiran Rentasi Sempadan {borderControlPost.toLowerCase().includes('brunei') ? '(Sarawak - Brunei)' : borderControlPost.toLowerCase().includes('sabah') || borderControlPost.toLowerCase().includes('sindumin') ? '(Sabah - Sarawak)' : ''}
+                  {isEn ? 'Step 4: Cross-Border Clearance Details' : 'Langkah 4: Butiran Rentasi Sempadan'} {borderControlPost.toLowerCase().includes('brunei') ? '(Sarawak - Brunei)' : borderControlPost.toLowerCase().includes('sabah') || borderControlPost.toLowerCase().includes('sindumin') ? '(Sabah - Sarawak)' : ''}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Border Control Post */}
                   <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Pintu Kawalan Sempadan (Automik / Auto-generated Route)</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                      {isEn ? 'Border Checkpoint Post (Auto-generated Route)' : 'Pintu Kawalan Sempadan (Automik / Auto-generated Route)'}
+                    </label>
                     <textarea
                       value={borderControlPost}
                       readOnly
                       rows={borderControlPost.split('\n').length || 3}
-                      className="w-full bg-slate-100/80 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none font-medium text-slate-700 select-none cursor-not-allowed whitespace-pre-wrap"
+                      className="w-full bg-slate-100/80 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 select-none cursor-not-allowed whitespace-pre-wrap outline-none"
                       required
                     />
                   </div>
 
                   {/* Tempat Berlepas */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Tempat Berlepas / Point of Departure</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                      {isEn ? 'Departure Facility / Point of Departure' : 'Tempat Berlepas / Point of Departure'}
+                    </label>
                     <Input
                       placeholder="Hospital Lawas"
                       value={tempatBerlepas}
@@ -2122,7 +2307,9 @@ const TransporterRequestFormPage: React.FC = () => {
 
                   {/* Ref No */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">No. Rujukan Kebenaran</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                      {isEn ? 'Authorization Reference No.' : 'No. Rujukan Kebenaran'}
+                    </label>
                     <Input
                       placeholder="e.g. TF/HL/MW ( 12 ) 2026"
                       value={suratKebenaranRef}
@@ -2133,14 +2320,16 @@ const TransporterRequestFormPage: React.FC = () => {
 
                   {/* Doctor Perujuk */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Doktor Perujuk *</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                      {isEn ? 'Referring Doctor *' : 'Doktor Perujuk *'}
+                    </label>
                     <select
                       value={doktorPerujukNama}
                       onChange={(e) => setDoktorPerujukNama(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-600 focus:bg-white transition-colors font-medium shadow-xs"
+                      className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-600 focus:bg-white transition-colors font-medium shadow-xs cursor-pointer"
                       required
                     >
-                      <option value="">Sila Pilih Doktor Perujuk</option>
+                      <option value="">{isEn ? 'Please Select Referring Doctor' : 'Sila Pilih Doktor Perujuk'}</option>
                       {DOCTOR_OPTIONS.map((dr) => (
                         <option key={dr} value={dr}>{dr}</option>
                       ))}
@@ -2152,7 +2341,9 @@ const TransporterRequestFormPage: React.FC = () => {
 
                   {/* Pengarah Nama */}
                   <div className="md:col-span-2 space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Nama Pengarah Hospital (Bagi Tandatangan Kebenaran)</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                      {isEn ? 'Hospital Director Name (For Formal Authorization)' : 'Nama Pengarah Hospital (Bagi Tandatangan Kebenaran)'}
+                    </label>
                     <Input
                       placeholder="DR DOUGLAS CHU KIN SOON (Pengarah Hospital Lawas)"
                       value={pengarahNama}
@@ -2163,10 +2354,12 @@ const TransporterRequestFormPage: React.FC = () => {
 
                   {/* Catatan Sempadan */}
                   <div className="md:col-span-2 space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Catatan Sempadan (Remarks)</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                      {isEn ? 'Border Clearance Remarks' : 'Catatan Sempadan (Remarks)'}
+                    </label>
                     <textarea
                       rows={3}
-                      placeholder="Contoh: Pesakit dirujuk ke Hospital Limbang untuk rawatan pakar kecemasan."
+                      placeholder={isEn ? 'E.g., Patient urgently referred to Hospital Limbang for emergency specialist intervention.' : 'Contoh: Pesakit dirujuk ke Hospital Limbang untuk rawatan pakar kecemasan.'}
                       value={crossborderCatatan}
                       onChange={(e) => setCrossborderCatatan(e.target.value)}
                       className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-600 focus:bg-white transition-colors font-medium shadow-xs"
@@ -2180,48 +2373,58 @@ const TransporterRequestFormPage: React.FC = () => {
             {((!isCrossborder && step === 4) || (isCrossborder && step === 5)) && (
               <div className="space-y-5 animate-fadeIn">
                 <h3 className="text-lg font-bold text-slate-800 pb-2 border-b border-slate-100">
-                  {isCrossborder ? 'Langkah 5: Semak Maklumat' : 'Langkah 4: Semak Maklumat'}
+                  {isCrossborder 
+                    ? (isEn ? 'Step 5: Review & Confirm Details' : 'Langkah 5: Semak Maklumat') 
+                    : (isEn ? 'Step 4: Review & Confirm Details' : 'Langkah 4: Semak Maklumat')}
                 </h3>
 
                 <div className="space-y-4 text-sm divide-y divide-slate-100">
                   <div className="grid grid-cols-3 py-3 gap-2">
-                    <span className="font-bold text-slate-500">Jenis Perjalanan</span>
+                    <span className="font-bold text-slate-500">
+                      {isEn ? 'Transport Category' : 'Jenis Perjalanan'}
+                    </span>
                     <span className="col-span-2 font-bold text-slate-900 capitalize">
                       {jenisPermohonan === 'sg' 
-                        ? 'Kereta Jabatan (SG)' 
+                        ? (isEn ? 'Official Vehicle (SG)' : 'Kereta Jabatan (SG)') 
                         : jenisPermohonan === 'van_jenazah' 
-                        ? 'Van Jenazah' 
-                        : 'Ambulans'}
+                        ? (isEn ? 'Hearse Van' : 'Van Jenazah') 
+                        : (isEn ? 'Ambulance' : 'Ambulans')}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-3 py-3 gap-2">
-                    <span className="font-bold text-slate-500">Tujuan Perjalanan</span>
+                    <span className="font-bold text-slate-500">
+                      {isEn ? 'Trip Purpose' : 'Tujuan Perjalanan'}
+                    </span>
                     <span className="col-span-2 text-slate-900 font-semibold">{tujuanPermohonan}</span>
                   </div>
 
                   <div className="grid grid-cols-3 py-3 gap-2">
-                    <span className="font-bold text-slate-500">Destinasi</span>
+                    <span className="font-bold text-slate-500">
+                      {isEn ? 'Destination' : 'Destinasi'}
+                    </span>
                     <span className="col-span-2 text-slate-900 font-semibold">{destinasi}</span>
                   </div>
 
                   <div className="grid grid-cols-3 py-3 gap-2">
-                    <span className="font-bold text-slate-500">Tarikh & Masa</span>
+                    <span className="font-bold text-slate-500">
+                      {isEn ? 'Required Date & Time' : 'Tarikh & Masa'}
+                    </span>
                     <span className="col-span-2 text-slate-900 font-bold">
                       {jenisPermohonan === 'sg' ? (
                         <span>
-                          {new Date(`${tarikhDiperlukan}T${masaDiperlukan}`).toLocaleString('ms-MY', {
+                          {new Date(`${tarikhDiperlukan}T${masaDiperlukan}`).toLocaleString(isEn ? 'en-US' : 'ms-MY', {
                             dateStyle: 'medium',
                             timeStyle: 'short'
                           })}
-                          {' hingga '}
-                          {tarikhTamat && masaTamat ? new Date(`${tarikhTamat}T${masaTamat}`).toLocaleString('ms-MY', {
+                          {isEn ? ' to ' : ' hingga '}
+                          {tarikhTamat && masaTamat ? new Date(`${tarikhTamat}T${masaTamat}`).toLocaleString(isEn ? 'en-US' : 'ms-MY', {
                             dateStyle: 'medium',
                             timeStyle: 'short'
                           }) : '-'}
                         </span>
                       ) : (
-                        new Date(`${tarikhDiperlukan}T${masaDiperlukan}`).toLocaleString('ms-MY', {
+                        new Date(`${tarikhDiperlukan}T${masaDiperlukan}`).toLocaleString(isEn ? 'en-US' : 'ms-MY', {
                           dateStyle: 'medium',
                           timeStyle: 'short'
                         })
@@ -2232,22 +2435,32 @@ const TransporterRequestFormPage: React.FC = () => {
                   {jenisPermohonan === 'sg' && (
                     <>
                       <div className="grid grid-cols-3 py-3 gap-2">
-                        <span className="font-bold text-slate-500">Keperluan Pemandu</span>
+                        <span className="font-bold text-slate-500">
+                          {isEn ? 'Driver Requirement' : 'Keperluan Pemandu'}
+                        </span>
                         <span className="col-span-2 text-slate-900 font-semibold">
-                          {pemanduDiperlukan ? 'Pemandu & Kereta' : 'Kereta Sahaja (Tanpa Pemandu)'}
+                          {pemanduDiperlukan 
+                            ? (isEn ? 'Driver & Vehicle' : 'Pemandu & Kereta') 
+                            : (isEn ? 'Vehicle Only (Self-Drive)' : 'Kereta Sahaja (Tanpa Pemandu)')}
                         </span>
                       </div>
                       <div className="grid grid-cols-3 py-3 gap-2">
-                        <span className="font-bold text-slate-500">Membawa Pesakit</span>
+                        <span className="font-bold text-slate-500">
+                          {isEn ? 'Transports Patient' : 'Membawa Pesakit'}
+                        </span>
                         <span className="col-span-2 text-slate-900 font-semibold">
-                          {bawaPesakit ? 'Ya (Bawa Pesakit)' : 'Tidak'}
+                          {bawaPesakit ? (isEn ? 'Yes (Patient Onboard)' : 'Ya (Bawa Pesakit)') : (isEn ? 'No' : 'Tidak')}
                         </span>
                       </div>
                       <div className="grid grid-cols-3 py-3 gap-2">
-                        <span className="font-bold text-slate-500">Senarai Penumpang</span>
+                        <span className="font-bold text-slate-500">
+                          {isEn ? 'Passenger Roster' : 'Senarai Penumpang'}
+                        </span>
                         <div className="col-span-2 text-slate-900 space-y-1">
                           {senaraiPenumpang.length === 0 ? (
-                            <span className="text-slate-500 font-medium">Tiada Penumpang Lain</span>
+                            <span className="text-slate-500 font-medium">
+                              {isEn ? 'No other passengers' : 'Tiada Penumpang Lain'}
+                            </span>
                           ) : (
                             senaraiPenumpang.map((passenger, idx) => (
                               <div key={idx} className="font-semibold text-xs">
@@ -2261,15 +2474,21 @@ const TransporterRequestFormPage: React.FC = () => {
                   )}
 
                   <div className="grid grid-cols-3 py-3 gap-2">
-                    <span className="font-bold text-slate-500">Unit Pemohon</span>
+                    <span className="font-bold text-slate-500">
+                      {isEn ? 'Applicant Unit / Ward' : 'Unit Pemohon'}
+                    </span>
                     <span className="col-span-2 text-slate-900">{unitPemohon}</span>
                   </div>
 
                   <div className="grid grid-cols-3 py-3 gap-2">
-                    <span className="font-bold text-slate-500">Kakitangan Pengiring</span>
+                    <span className="font-bold text-slate-500">
+                      {isEn ? 'Escort Personnel' : 'Kakitangan Pengiring'}
+                    </span>
                     <div className="col-span-2 text-slate-900 space-y-1">
                       {escortList.length === 0 ? (
-                        <span className="text-slate-500 font-medium">Tiada Pengiring</span>
+                        <span className="text-slate-500 font-medium">
+                          {isEn ? 'No escort staff' : 'Tiada Pengiring'}
+                        </span>
                       ) : (
                         escortList.map((escort, idx) => (
                           <div key={idx} className="font-semibold text-xs">
@@ -2285,27 +2504,35 @@ const TransporterRequestFormPage: React.FC = () => {
                       {isCrossborder ? (
                         <>
                           <div className="grid grid-cols-3 py-3 gap-2 border-t border-slate-100 bg-blue-50/20 px-2 rounded-lg">
-                            <span className="font-bold text-blue-800">Rentasi Sempadan</span>
+                            <span className="font-bold text-blue-800">
+                              {isEn ? 'Cross-Border Transit' : 'Rentasi Sempadan'}
+                            </span>
                             <span className="col-span-2 text-blue-700 font-bold">
-                              YA ({borderControlPost === 'Sindumin/Merapok Border Post' ? 'Sabah - Sarawak' : 'Sarawak - Brunei'} Border Crossing)
+                              {isEn ? 'YES' : 'YA'} ({borderControlPost === 'Sindumin/Merapok Border Post' ? 'Sabah - Sarawak' : 'Sarawak - Brunei'} Border Crossing)
                             </span>
                           </div>
                           <div className="grid grid-cols-3 py-3 gap-2">
-                            <span className="font-bold text-slate-500">Pintu Sempadan</span>
+                            <span className="font-bold text-slate-500">
+                              {isEn ? 'Border Checkpoint' : 'Pintu Sempadan'}
+                            </span>
                             <span className="col-span-2 text-slate-800 font-semibold">{borderControlPost}</span>
                           </div>
                           <div className="grid grid-cols-3 py-3 gap-2">
-                            <span className="font-bold text-slate-500">Senarai Pesakit ({crossborderPatients.length})</span>
+                            <span className="font-bold text-slate-500">
+                              {isEn ? `Patient List (${crossborderPatients.length})` : `Senarai Pesakit (${crossborderPatients.length})`}
+                            </span>
                             <div className="col-span-2 space-y-1">
                               {crossborderPatients.map((p, idx) => (
-                                <div key={idx} className="text-slate-850 font-medium">
+                                <div key={idx} className="text-slate-800 font-medium">
                                   {idx + 1}. {p.nama} ({p.jantina}, {p.warganegara}) - <span className="font-mono text-xs">{p.jenis_dokumen}: {p.no_dokumen}</span>
                                 </div>
                               ))}
                             </div>
                           </div>
                           <div className="grid grid-cols-3 py-3 gap-2">
-                            <span className="font-bold text-slate-500">Pengiring KKM ({crossborderKkmEscorts.length})</span>
+                            <span className="font-bold text-slate-500">
+                              {isEn ? `MOH Escorts (${crossborderKkmEscorts.length})` : `Pengiring KKM (${crossborderKkmEscorts.length})`}
+                            </span>
                             <div className="col-span-2 space-y-1">
                               {crossborderKkmEscorts.map((e, idx) => (
                                 <div key={idx} className="text-slate-700 text-xs">
@@ -2316,7 +2543,9 @@ const TransporterRequestFormPage: React.FC = () => {
                           </div>
                           {crossborderWarisEscorts.some(w => w && w.nama) && (
                             <div className="grid grid-cols-3 py-3 gap-2">
-                              <span className="font-bold text-slate-500">Pengiring Waris</span>
+                              <span className="font-bold text-slate-500">
+                                {isEn ? 'Next-of-Kin Escort' : 'Pengiring Waris'}
+                              </span>
                               <div className="col-span-2 space-y-1">
                                 {crossborderWarisEscorts.filter(w => w && w.nama).map((w, idx) => (
                                   <div key={idx} className="text-slate-700 text-xs">
@@ -2327,11 +2556,15 @@ const TransporterRequestFormPage: React.FC = () => {
                             </div>
                           )}
                           <div className="grid grid-cols-3 py-3 gap-2">
-                            <span className="font-bold text-slate-500">Doktor Perujuk</span>
+                            <span className="font-bold text-slate-500">
+                              {isEn ? 'Referring Doctor' : 'Doktor Perujuk'}
+                            </span>
                             <span className="col-span-2 text-slate-800 font-semibold">{doktorPerujukNama}</span>
                           </div>
                           <div className="grid grid-cols-3 py-3 gap-2">
-                            <span className="font-bold text-slate-500">Kebenaran Pengarah</span>
+                            <span className="font-bold text-slate-500">
+                              {isEn ? 'Director Approval' : 'Kebenaran Pengarah'}
+                            </span>
                             <span className="col-span-2 text-slate-800 text-xs">{pengarahNama}</span>
                           </div>
                         </>
@@ -2339,19 +2572,25 @@ const TransporterRequestFormPage: React.FC = () => {
                         <>
                           <div className="grid grid-cols-3 py-3 gap-2">
                             <span className="font-bold text-slate-500">
-                              {jenisPermohonan === 'van_jenazah' ? 'Nama Jenazah' : 'Nama Pesakit'}
+                              {jenisPermohonan === 'van_jenazah' 
+                                ? (isEn ? 'Deceased Name' : 'Nama Jenazah') 
+                                : (isEn ? 'Patient Name' : 'Nama Pesakit')}
                             </span>
                             <span className="col-span-2 text-slate-900 font-bold">{namaPesakit}</span>
                           </div>
                           <div className="grid grid-cols-3 py-3 gap-2">
                             <span className="font-bold text-slate-500">
-                              {jenisPermohonan === 'van_jenazah' ? 'No RN Jenazah' : 'No RN Pesakit'}
+                              {jenisPermohonan === 'van_jenazah' 
+                                ? (isEn ? 'Deceased RN No.' : 'No RN Jenazah') 
+                                : (isEn ? 'Patient RN No.' : 'No RN Pesakit')}
                             </span>
                             <span className="col-span-2 text-slate-900 font-mono font-semibold">{rnPesakit}</span>
                           </div>
                           <div className="grid grid-cols-3 py-3 gap-2">
                             <span className="font-bold text-slate-500">
-                              {jenisPermohonan === 'van_jenazah' ? 'Sebab Kematian' : 'Diagnosis'}
+                              {jenisPermohonan === 'van_jenazah' 
+                                ? (isEn ? 'Cause of Death' : 'Sebab Kematian') 
+                                : (isEn ? 'Clinical Diagnosis' : 'Diagnosis')}
                             </span>
                             <span className="col-span-2 text-slate-900">{diagnosisPesakit}</span>
                           </div>
@@ -2359,17 +2598,21 @@ const TransporterRequestFormPage: React.FC = () => {
                       )}
                       {jenisPermohonan === 'ambulance' && (
                         <div className="grid grid-cols-3 py-3 gap-2">
-                          <span className="font-bold text-slate-500">Oksigen Diperlukan</span>
+                          <span className="font-bold text-slate-500">
+                            {isEn ? 'Oxygen Required' : 'Oksigen Diperlukan'}
+                          </span>
                           <span className={`col-span-2 font-bold ${oksigenDiperlukan ? 'text-rose-600' : 'text-slate-500'}`}>
-                            {oksigenDiperlukan ? `Ya (${jenisOksigen})` : 'Tidak'}
+                            {oksigenDiperlukan ? `${isEn ? 'Yes' : 'Ya'} (${jenisOksigen})` : (isEn ? 'No' : 'Tidak')}
                           </span>
                         </div>
                       )}
                       {jenisPermohonan === 'ambulance' && selectedMesin.length > 0 && (
                         <div className="grid grid-cols-3 py-3 gap-2">
-                          <span className="font-bold text-slate-500">Mesin Diperlukan</span>
+                          <span className="font-bold text-slate-500">
+                            {isEn ? 'Special Equipment' : 'Mesin Diperlukan'}
+                          </span>
                           <span className="col-span-2 text-slate-900 font-semibold text-xs">
-                            {selectedMesin.map(m => m === 'others' ? `Lain-lain (${customMesin})` : m).join(', ')}
+                            {selectedMesin.map(m => m === 'others' ? `${isEn ? 'Others' : 'Lain-lain'} (${customMesin})` : m).join(', ')}
                           </span>
                         </div>
                       )}
@@ -2378,7 +2621,9 @@ const TransporterRequestFormPage: React.FC = () => {
 
                   {catatanKhas && (
                     <div className="grid grid-cols-3 py-3 gap-2">
-                      <span className="font-bold text-slate-500">Catatan Khas</span>
+                      <span className="font-bold text-slate-500">
+                        {isEn ? 'Special Remarks' : 'Catatan Khas'}
+                      </span>
                       <span className="col-span-2 text-slate-700 italic">{catatanKhas}</span>
                     </div>
                   )}
@@ -2387,8 +2632,10 @@ const TransporterRequestFormPage: React.FC = () => {
                 <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 leading-normal mt-6">
                   <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                   <p>
-                    <strong>Nota Pengesahan KKM:</strong> Pengesahan palsu atau tidak rasmi untuk kegunaan peribadi 
-                    boleh dikenakan tindakan disiplin penjawat awam. Sila pastikan trip ini diluluskan oleh ketua unit anda.
+                    <strong>{isEn ? 'MOH Compliance Notice:' : 'Nota Pengesahan KKM:'}</strong>{' '}
+                    {isEn 
+                      ? 'False declaration or unauthorized vehicle requisition for personal purposes is strictly prohibited under civil service regulations. Please ensure this trip is approved by your unit head.' 
+                      : 'Pengesahan palsu atau tidak rasmi untuk kegunaan peribadi boleh dikenakan tindakan disiplin penjawat awam. Sila pastikan trip ini diluluskan oleh ketua unit anda.'}
                   </p>
                 </div>
               </div>
@@ -2403,9 +2650,9 @@ const TransporterRequestFormPage: React.FC = () => {
                 type="button" 
                 variant="outline" 
                 onClick={handlePrevStep}
-                className="border-slate-200 text-slate-700"
+                className="border-slate-200 text-slate-700 cursor-pointer"
               >
-                Kembali
+                {isEn ? 'Previous' : 'Kembali'}
               </Button>
             ) : (
               <div />
@@ -2415,17 +2662,19 @@ const TransporterRequestFormPage: React.FC = () => {
               <Button 
                 type="button" 
                 onClick={handleNextStep}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer"
               >
-                Seterusnya
+                {isEn ? 'Next Step' : 'Seterusnya'}
               </Button>
             ) : (
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-2"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-2 cursor-pointer"
               >
-                {isSubmitting ? 'Menghantar...' : 'Hantar Permohonan'}
+                {isSubmitting 
+                  ? (isEn ? 'Submitting...' : 'Menghantar...') 
+                  : (isEn ? 'Submit Requisition' : 'Hantar Permohonan')}
               </Button>
             )}
           </div>

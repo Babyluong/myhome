@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { 
   getKunciDaftar, 
   addKunci, 
@@ -44,6 +45,7 @@ const MOCK_DEPARTMENTS = [
 ];
 
 export const KunciRegistryPage: React.FC = () => {
+  const { language } = useLanguage()
   const loggedUser = useAuthStore((state) => state.user)
   const hospitalId = loggedUser?.hospital_id || 'hosp-1'
   const toast = useToast()
@@ -86,7 +88,7 @@ export const KunciRegistryPage: React.FC = () => {
       setKeys(res.data || [])
     } catch (err) {
       console.error('Failed to fetch keys', err)
-      toast.error('Gagal memuatkan rekod kunci')
+      toast.error(language === 'ms' ? 'Gagal memuatkan rekod kunci' : 'Failed to load key registry records')
     } finally {
       setLoading(false)
     }
@@ -113,9 +115,13 @@ export const KunciRegistryPage: React.FC = () => {
   }
 
   const handleOpenEditModal = (key: KunciDaftar) => {
-    const pw = window.prompt('Sila masukkan kata laluan untuk mengemaskini rekod kunci:')
+    const pw = window.prompt(
+      language === 'ms' 
+        ? 'Sila masukkan kata laluan untuk mengemaskini rekod kunci:' 
+        : 'Please enter security password to edit key record:'
+    )
     if (pw !== ' F@rmasi.2016 ' && pw?.trim() !== 'F@rmasi.2016') {
-      toast.error('Kata laluan salah! Tindakan dibatalkan.')
+      toast.error(language === 'ms' ? 'Kata laluan salah! Tindakan dibatalkan.' : 'Incorrect password! Action cancelled.')
       return
     }
     setIsEditing(true)
@@ -136,7 +142,7 @@ export const KunciRegistryPage: React.FC = () => {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!kodKunci || !namaKunci || !deptId || !lokasiFizikal) {
-      toast.error('Sila lengkapkan semua medan wajib!')
+      toast.error(language === 'ms' ? 'Sila lengkapkan semua medan wajib!' : 'Please complete all mandatory fields!')
       return
     }
 
@@ -158,34 +164,50 @@ export const KunciRegistryPage: React.FC = () => {
       if (isEditing && editingKeyId) {
         const res = await updateKunci(editingKeyId, payload)
         if (res.error) throw new Error(res.error)
-        toast.success('Rekod kunci berjaya dikemas kini')
+        toast.success(language === 'ms' ? 'Rekod kunci berjaya dikemas kini' : 'Key record updated successfully')
       } else {
         const res = await addKunci(payload)
         if (res.error) throw new Error(res.error)
-        toast.success('Pendaftaran kunci baru berjaya disimpan')
+        toast.success(language === 'ms' ? 'Pendaftaran kunci baru berjaya disimpan' : 'New key registered successfully')
       }
       setModalOpen(false)
       loadKeys()
     } catch (err: any) {
-      toast.error(`Ralat menyimpan rekod: ${err.message}`)
+      toast.error(
+        language === 'ms' 
+          ? `Ralat menyimpan rekod: ${err.message}` 
+          : `Error saving record: ${err.message}`
+      )
     }
   }
 
   const handleDelete = async (id: string) => {
-    const pw = window.prompt('Sila masukkan kata laluan untuk memadam rekod kunci:')
+    const pw = window.prompt(
+      language === 'ms' 
+        ? 'Sila masukkan kata laluan untuk memadam rekod kunci:' 
+        : 'Please enter security password to delete key record:'
+    )
     if (pw !== ' F@rmasi.2016 ' && pw?.trim() !== 'F@rmasi.2016') {
-      toast.error('Kata laluan salah! Tindakan dibatalkan.')
+      toast.error(language === 'ms' ? 'Kata laluan salah! Tindakan dibatalkan.' : 'Incorrect password! Action cancelled.')
       return
     }
-    if (!window.confirm('Adakah anda pasti mahu memadamkan kunci ini dari daftar induk?')) return
+    if (!window.confirm(
+      language === 'ms' 
+        ? 'Adakah anda pasti mahu memadamkan kunci ini dari daftar induk?' 
+        : 'Are you sure you want to delete this key from the master registry?'
+    )) return
 
     try {
       const res = await deleteKunci(id)
       if (res.error) throw new Error(res.error)
-      toast.success('Kunci telah dipadam dari daftar')
+      toast.success(language === 'ms' ? 'Kunci telah dipadam dari daftar' : 'Key deleted from master registry')
       loadKeys()
     } catch (err: any) {
-      toast.error(`Gagal memadam: ${err.message}`)
+      toast.error(
+        language === 'ms' 
+          ? `Gagal memadam: ${err.message}` 
+          : `Failed to delete key: ${err.message}`
+      )
     }
   }
 
@@ -205,7 +227,7 @@ export const KunciRegistryPage: React.FC = () => {
       setQrModalOpen(true)
     } catch (err) {
       console.error('Failed to generate QR Code', err)
-      toast.error('Gagal menghasilkan QR Code')
+      toast.error(language === 'ms' ? 'Gagal menghasilkan QR Code' : 'Failed to generate QR Code')
     }
   }
 
@@ -214,18 +236,20 @@ export const KunciRegistryPage: React.FC = () => {
     
     const printWindow = window.open('', '_blank')
     if (!printWindow) {
-      toast.error('Popup blocker menghalang tindakan cetak!')
+      toast.error(language === 'ms' ? 'Popup blocker menghalang tindakan cetak!' : 'Popup blocker prevented printing!')
       return
     }
 
-    const deptName = MOCK_DEPARTMENTS.find(d => d.id === selectedQrKey.department_id)?.department_name || 'Lain-lain'
-    const securityLabel = selectedQrKey.tahap_kawalan === 'high' ? '⚠️ KAWALAN TINGGI (DDA)' : 'KAWALAN AM'
+    const deptName = MOCK_DEPARTMENTS.find(d => d.id === selectedQrKey.department_id)?.department_name || (language === 'ms' ? 'Lain-lain' : 'Others')
+    const securityLabel = selectedQrKey.tahap_kawalan === 'high' 
+      ? (language === 'ms' ? '⚠️ KAWALAN TINGGI (DDA)' : '⚠️ HIGH SECURITY (DDA)')
+      : (language === 'ms' ? 'KAWALAN AM' : 'GENERAL ACCESS')
     
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Cetak Label Kunci - ${selectedQrKey.kod_kunci}</title>
+        <title>Print Key Label - ${selectedQrKey.kod_kunci}</title>
         <style>
           @page {
             size: 80mm 50mm;
@@ -292,7 +316,7 @@ export const KunciRegistryPage: React.FC = () => {
         <div class="code">${selectedQrKey.kod_kunci}</div>
         <img class="qr-img" src="${qrDataUrl}" />
         <div class="meta"><b>${selectedQrKey.nama_kunci}</b></div>
-        <div class="meta">Jabatan: ${deptName} | Lokasi: ${selectedQrKey.lokasi_fizikal}</div>
+        <div class="meta">Dept: ${deptName} | Location: ${selectedQrKey.lokasi_fizikal}</div>
         <div class="security">${securityLabel}</div>
         <script>
           window.onload = function() {
@@ -324,13 +348,29 @@ export const KunciRegistryPage: React.FC = () => {
   const getStatusBadge = (status: KunciStatus) => {
     switch (status) {
       case 'available':
-        return <Badge className="border-emerald-200 text-emerald-700 bg-emerald-50 font-bold uppercase text-[10px]">Tersedia</Badge>
+        return (
+          <Badge className="border-emerald-200 text-emerald-700 bg-emerald-50 font-bold uppercase text-[10px]">
+            {language === 'ms' ? 'Tersedia' : 'Available'}
+          </Badge>
+        )
       case 'borrowed':
-        return <Badge className="border-amber-200 text-amber-700 bg-amber-50 font-bold uppercase text-[10px]">Dipinjam</Badge>
+        return (
+          <Badge className="border-amber-200 text-amber-700 bg-amber-50 font-bold uppercase text-[10px]">
+            {language === 'ms' ? 'Dipinjam' : 'Borrowed'}
+          </Badge>
+        )
       case 'damaged':
-        return <Badge className="border-rose-200 text-rose-700 bg-rose-50 font-bold uppercase text-[10px]">Rosak</Badge>
+        return (
+          <Badge className="border-rose-200 text-rose-700 bg-rose-50 font-bold uppercase text-[10px]">
+            {language === 'ms' ? 'Rosak' : 'Damaged'}
+          </Badge>
+        )
       case 'lost':
-        return <Badge className="border-slate-300 text-slate-700 bg-slate-100 font-bold uppercase text-[10px]">Hilang</Badge>
+        return (
+          <Badge className="border-slate-300 text-slate-700 bg-slate-100 font-bold uppercase text-[10px]">
+            {language === 'ms' ? 'Hilang' : 'Lost'}
+          </Badge>
+        )
       default:
         return <Badge className="border-slate-200 text-slate-600 bg-slate-50">{status}</Badge>
     }
@@ -345,15 +385,27 @@ export const KunciRegistryPage: React.FC = () => {
         </Badge>
       )
     }
-    return <Badge variant="gray" className="text-[10px]">Normal</Badge>
+    return (
+      <Badge variant="gray" className="text-[10px]">
+        {language === 'ms' ? 'Kawalan Normal' : 'Normal Control'}
+      </Badge>
+    )
   }
 
   const getSampulBadge = (status: SampulStatus) => {
     switch (status) {
       case 'sealed':
-        return <Badge className="border-emerald-200 text-emerald-700 bg-emerald-50 text-[10px]">Utuh (Sealed)</Badge>
+        return (
+          <Badge className="border-emerald-200 text-emerald-700 bg-emerald-50 text-[10px]">
+            {language === 'ms' ? 'Utuh (Sealed)' : 'Intact (Sealed)'}
+          </Badge>
+        )
       case 'broken':
-        return <Badge className="border-rose-200 text-rose-700 bg-rose-50 text-[10px] animate-pulse">Terbuka (Broken)</Badge>
+        return (
+          <Badge className="border-rose-200 text-rose-700 bg-rose-50 text-[10px] animate-pulse">
+            {language === 'ms' ? 'Terbuka (Broken)' : 'Broken / Opened'}
+          </Badge>
+        )
       default:
         return <span className="text-slate-400 text-xs">-</span>
     }
@@ -366,10 +418,12 @@ export const KunciRegistryPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
             <Building2 className="w-7 h-7 text-amber-500" />
-            Daftar Kunci & Inventori Jabatan
+            {language === 'ms' ? 'Daftar Kunci & Inventori Jabatan' : 'Key Registry & Department Inventory'}
           </h1>
           <p className="text-sm text-slate-500">
-            Daftar induk anak kunci, ibu kunci, peti simpanan, dan pengkelasan tahap keselamatan
+            {language === 'ms' 
+              ? 'Daftar induk anak kunci, ibu kunci, peti simpanan, dan pengkelasan tahap keselamatan'
+              : 'Master registry of keys, padlocks, storage cabinets, and security clearance levels'}
           </p>
         </div>
         <Button
@@ -377,7 +431,7 @@ export const KunciRegistryPage: React.FC = () => {
           className="bg-amber-500 hover:bg-amber-600 text-white rounded-xl shadow-soft font-semibold flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
-          Daftar Kunci Baru
+          {language === 'ms' ? 'Daftar Kunci Baru' : 'Register New Key'}
         </Button>
       </div>
 
@@ -388,7 +442,7 @@ export const KunciRegistryPage: React.FC = () => {
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
             <input
               type="text"
-              placeholder="Cari nama, kod, lokasi..."
+              placeholder={language === 'ms' ? 'Cari nama, kod, lokasi...' : 'Search key name, code, location...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full rounded-xl border border-slate-200 pl-9 pr-4 py-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
@@ -401,7 +455,7 @@ export const KunciRegistryPage: React.FC = () => {
               onChange={(e) => setDeptFilter(e.target.value)}
               className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
             >
-              <option value="">Semua Jabatan</option>
+              <option value="">{language === 'ms' ? 'Semua Jabatan' : 'All Departments'}</option>
               {MOCK_DEPARTMENTS.map((d) => (
                 <option key={d.id} value={d.id}>
                   {d.department_name}
@@ -416,9 +470,9 @@ export const KunciRegistryPage: React.FC = () => {
               onChange={(e) => setLevelFilter(e.target.value)}
               className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
             >
-              <option value="">Semua Tahap Kawalan</option>
-              <option value="normal">Kawalan Normal</option>
-              <option value="high">Kawalan DDA (High Security)</option>
+              <option value="">{language === 'ms' ? 'Semua Tahap Kawalan' : 'All Clearance Levels'}</option>
+              <option value="normal">{language === 'ms' ? 'Kawalan Normal' : 'Normal Control'}</option>
+              <option value="high">{language === 'ms' ? 'Kawalan DDA (High Security)' : 'High Security (DDA Cabinet)'}</option>
             </select>
           </div>
 
@@ -428,11 +482,11 @@ export const KunciRegistryPage: React.FC = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
             >
-              <option value="">Semua Status</option>
-              <option value="available">Tersedia</option>
-              <option value="borrowed">Dipinjam</option>
-              <option value="damaged">Rosak</option>
-              <option value="lost">Hilang</option>
+              <option value="">{language === 'ms' ? 'Semua Status' : 'All Status'}</option>
+              <option value="available">{language === 'ms' ? 'Tersedia' : 'Available'}</option>
+              <option value="borrowed">{language === 'ms' ? 'Dipinjam' : 'Borrowed'}</option>
+              <option value="damaged">{language === 'ms' ? 'Rosak' : 'Damaged'}</option>
+              <option value="lost">{language === 'ms' ? 'Hilang' : 'Lost'}</option>
             </select>
           </div>
         </div>
@@ -442,87 +496,180 @@ export const KunciRegistryPage: React.FC = () => {
       <Card className="rounded-2xl shadow-soft bg-white border border-slate-200">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-8 text-center text-slate-400 text-sm">Memuatkan daftar...</div>
+            <div className="p-8 text-center text-slate-400 text-sm">
+              {language === 'ms' ? 'Memuatkan daftar...' : 'Loading key registry...'}
+            </div>
           ) : filteredKeys.length === 0 ? (
             <div className="p-12 text-center text-slate-400 text-sm flex flex-col items-center justify-center gap-2">
               <AlertCircle className="w-8 h-8 text-slate-300" />
-              <span>Tiada rekod ditemui. Sila cuba kata kunci lain atau daftar kunci baru.</span>
+              <span>
+                {language === 'ms' 
+                  ? 'Tiada rekod ditemui. Sila cuba kata kunci lain atau daftar kunci baru.' 
+                  : 'No key records found. Please try another search term or register a new key.'}
+              </span>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-600">
-                <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
-                  <tr>
-                    <th className="p-4">Kod Kunci</th>
-                    <th className="p-4">Nama Kunci / Lokasi</th>
-                    <th className="p-4">Jabatan</th>
-                    <th className="p-4">Tahap Kawalan</th>
-                    <th className="p-4">No. Peti Simpanan</th>
-                    <th className="p-4">Sampul Bermeterai</th>
-                    <th className="p-4">Status</th>
-                    <th className="p-4 text-right">Tindakan</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filteredKeys.map((key) => {
-                    const deptName = MOCK_DEPARTMENTS.find(d => d.id === key.department_id)?.department_name || 'Lain-lain'
-                    return (
-                      <tr key={key.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="p-4 font-mono font-bold text-slate-700">
-                          {key.kod_kunci}
-                        </td>
-                        <td className="p-4">
-                          <div className="font-semibold text-slate-800">{key.nama_kunci}</div>
-                          <div className="text-xs text-slate-400 mt-0.5">{key.lokasi_fizikal}</div>
-                        </td>
-                        <td className="p-4 text-slate-700 font-medium">
-                          {deptName}
-                        </td>
-                        <td className="p-4">
-                          {getKawalanBadge(key.tahap_kawalan)}
-                        </td>
-                        <td className="p-4 font-mono text-xs">
-                          {key.nombor_peti || <span className="text-slate-300">-</span>}
-                        </td>
-                        <td className="p-4">
-                          {getSampulBadge(key.status_sampul)}
-                        </td>
-                        <td className="p-4">
+            <>
+              {/* Desktop View: Full Table */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-sm text-slate-600">
+                  <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+                    <tr>
+                      <th className="p-4">{language === 'ms' ? 'Kod Kunci' : 'Key Code'}</th>
+                      <th className="p-4">{language === 'ms' ? 'Nama Kunci / Lokasi' : 'Key Name / Location'}</th>
+                      <th className="p-4">{language === 'ms' ? 'Jabatan' : 'Department'}</th>
+                      <th className="p-4">{language === 'ms' ? 'Tahap Kawalan' : 'Security Level'}</th>
+                      <th className="p-4">{language === 'ms' ? 'No. Peti Simpanan' : 'Key Box No.'}</th>
+                      <th className="p-4">{language === 'ms' ? 'Sampul Bermeterai' : 'Sealed Envelope'}</th>
+                      <th className="p-4">{language === 'ms' ? 'Status' : 'Status'}</th>
+                      <th className="p-4 text-right">{language === 'ms' ? 'Tindakan' : 'Actions'}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredKeys.map((key) => {
+                      const deptName = MOCK_DEPARTMENTS.find(d => d.id === key.department_id)?.department_name || (language === 'ms' ? 'Lain-lain' : 'Others')
+                      return (
+                        <tr key={key.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="p-4 font-mono font-bold text-slate-700">
+                            {key.kod_kunci}
+                          </td>
+                          <td className="p-4">
+                            <div className="font-semibold text-slate-800">{key.nama_kunci}</div>
+                            <div className="text-xs text-slate-400 mt-0.5">{key.lokasi_fizikal}</div>
+                          </td>
+                          <td className="p-4 text-slate-700 font-medium">
+                            {deptName}
+                          </td>
+                          <td className="p-4">
+                            {getKawalanBadge(key.tahap_kawalan)}
+                          </td>
+                          <td className="p-4 font-mono text-xs">
+                            {key.nombor_peti || <span className="text-slate-300">-</span>}
+                          </td>
+                          <td className="p-4">
+                            {getSampulBadge(key.status_sampul)}
+                          </td>
+                          <td className="p-4">
+                            {getStatusBadge(key.status)}
+                          </td>
+                          <td className="p-4 text-right space-x-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleOpenQrModal(key)}
+                              className="text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 p-1"
+                              title={language === 'ms' ? 'Papar/Cetak QR Code' : 'View/Print QR Code'}
+                            >
+                              <QrCode className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleOpenEditModal(key)}
+                              className="text-slate-400 hover:text-amber-500 hover:bg-amber-50 p-1"
+                              title={language === 'ms' ? 'Kemaskini' : 'Edit'}
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(key.id)}
+                              className="text-slate-400 hover:text-rose-500 hover:bg-rose-50 p-1"
+                              title={language === 'ms' ? 'Padam' : 'Delete'}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
+              <div className="md:hidden divide-y divide-slate-100">
+                {filteredKeys.map((key) => {
+                  const deptName = MOCK_DEPARTMENTS.find(d => d.id === key.department_id)?.department_name || (language === 'ms' ? 'Lain-lain' : 'Others')
+                  return (
+                    <div key={key.id} className="p-4 space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="font-mono font-black text-slate-800 text-sm tracking-wider block">
+                            {key.kod_kunci}
+                          </span>
+                          <h4 className="font-bold text-slate-900 text-sm mt-0.5">
+                            {key.nama_kunci}
+                          </h4>
+                        </div>
+                        <div className="flex flex-col items-end gap-1 flex-shrink-0">
                           {getStatusBadge(key.status)}
-                        </td>
-                        <td className="p-4 text-right space-x-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleOpenQrModal(key)}
-                            className="text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 p-1"
-                            title="Papar/Cetak QR Code"
-                          >
-                            <QrCode className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleOpenEditModal(key)}
-                            className="text-slate-400 hover:text-amber-500 hover:bg-amber-50 p-1"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(key.id)}
-                            className="text-slate-400 hover:text-rose-500 hover:bg-rose-50 p-1"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
+                          {getKawalanBadge(key.tahap_kawalan)}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50/70 p-3 rounded-xl border border-slate-100">
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            {language === 'ms' ? 'Lokasi' : 'Location'}
+                          </span>
+                          <span className="font-medium text-slate-700 truncate block">
+                            {key.lokasi_fizikal || '-'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            {language === 'ms' ? 'Jabatan' : 'Department'}
+                          </span>
+                          <span className="font-medium text-slate-700 truncate block">
+                            {deptName}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            {language === 'ms' ? 'No. Peti' : 'Box No.'}
+                          </span>
+                          <span className="font-mono font-bold text-slate-700">
+                            {key.nombor_peti || '-'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">
+                            {language === 'ms' ? 'Sampul' : 'Envelope'}
+                          </span>
+                          {getSampulBadge(key.status_sampul)}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-2 pt-1">
+                        <button
+                          onClick={() => handleOpenQrModal(key)}
+                          className="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold border border-indigo-200 transition-all flex items-center gap-1.5 active:scale-95"
+                        >
+                          <QrCode className="w-3.5 h-3.5 text-indigo-600" />
+                          <span>QR</span>
+                        </button>
+                        <button
+                          onClick={() => handleOpenEditModal(key)}
+                          className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold border border-slate-200 transition-all flex items-center gap-1.5 active:scale-95"
+                        >
+                          <Edit2 className="w-3.5 h-3.5 text-slate-600" />
+                          <span>{language === 'ms' ? 'Edit' : 'Edit'}</span>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(key.id)}
+                          className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-bold border border-rose-200 transition-all flex items-center gap-1.5 active:scale-95"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                          <span>{language === 'ms' ? 'Padam' : 'Delete'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
@@ -531,14 +678,18 @@ export const KunciRegistryPage: React.FC = () => {
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={isEditing ? 'Kemaskini Butiran Kunci' : 'Daftar Kunci Baru'}
+        title={
+          isEditing 
+            ? (language === 'ms' ? 'Kemaskini Butiran Kunci' : 'Edit Key Record Details')
+            : (language === 'ms' ? 'Daftar Kunci Baru' : 'Register New Master Key')
+        }
         size="2xl"
       >
         <form onSubmit={handleFormSubmit} className="space-y-4 pt-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Kod Kunci *
+                {language === 'ms' ? 'Kod Kunci *' : 'Key Code *'}
               </label>
               <input
                 type="text"
@@ -552,12 +703,12 @@ export const KunciRegistryPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Nama Kunci *
+                {language === 'ms' ? 'Nama Kunci *' : 'Key Name *'}
               </label>
               <input
                 type="text"
                 required
-                placeholder="E.g., Kunci Stor Logistik A"
+                placeholder={language === 'ms' ? 'E.g., Kunci Stor Logistik A' : 'E.g., Pharmacy Logistics Store A Key'}
                 value={namaKunci}
                 onChange={(e) => setNamaKunci(e.target.value)}
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
@@ -568,7 +719,7 @@ export const KunciRegistryPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Milik Jabatan *
+                {language === 'ms' ? 'Milik Jabatan *' : 'Department Owner *'}
               </label>
               <select
                 value={deptId}
@@ -586,12 +737,12 @@ export const KunciRegistryPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Lokasi Fizikal Pintu/Peti *
+                {language === 'ms' ? 'Lokasi Fizikal Pintu/Peti *' : 'Physical Door / Cabinet Location *'}
               </label>
               <input
                 type="text"
                 required
-                placeholder="E.g., Pintu Masuk Stor Vaksin"
+                placeholder={language === 'ms' ? 'E.g., Pintu Masuk Stor Vaksin' : 'E.g., Vaccine Cold Room Main Entrance'}
                 value={lokasiFizikal}
                 onChange={(e) => setLokasiFizikal(e.target.value)}
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
@@ -602,55 +753,55 @@ export const KunciRegistryPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Jenis Kunci
+                {language === 'ms' ? 'Jenis Kunci' : 'Key Type'}
               </label>
               <select
                 value={jenisKunci}
                 onChange={(e) => setJenisKunci(e.target.value as any)}
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
               >
-                <option value="room">Pintu Bilik / Premis</option>
-                <option value="cabinet">Drawer / Kabinet</option>
-                <option value="cabinet_dda">Peti Dadah Kawalan (DDA)</option>
-                <option value="vehicle">Kenderaan / Ambulans</option>
-                <option value="other">Lain-lain</option>
+                <option value="room">{language === 'ms' ? 'Pintu Bilik / Premis' : 'Room / Facility Door'}</option>
+                <option value="cabinet">{language === 'ms' ? 'Drawer / Kabinet' : 'Drawer / Storage Cabinet'}</option>
+                <option value="cabinet_dda">{language === 'ms' ? 'Peti Dadah Kawalan (DDA)' : 'Dangerous Drugs Cabinet (DDA)'}</option>
+                <option value="vehicle">{language === 'ms' ? 'Kenderaan / Ambulans' : 'Vehicle / Ambulance'}</option>
+                <option value="other">{language === 'ms' ? 'Lain-lain' : 'Others'}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Tahap Kawalan Keselamatan
+                {language === 'ms' ? 'Tahap Kawalan Keselamatan' : 'Security Clearance Level'}
               </label>
               <select
                 value={tahapKawalan}
                 onChange={(e) => {
                   setTahapKawalan(e.target.value as any)
                   if (e.target.value === 'high' && jenisKunci === 'room') {
-                    setStatusSampul('sealed') // Auto-default for duplicates
+                    setStatusSampul('sealed')
                   } else {
                     setStatusSampul('not_applicable')
                   }
                 }}
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
               >
-                <option value="normal">Normal Control</option>
-                <option value="high">High Security (Witness Required)</option>
+                <option value="normal">{language === 'ms' ? 'Kawalan Normal' : 'Normal Control'}</option>
+                <option value="high">{language === 'ms' ? 'Kawalan Tinggi (Saksi Mandatori)' : 'High Security (Witness Required)'}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Status Kunci
+                {language === 'ms' ? 'Status Kunci' : 'Key Status'}
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as any)}
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
               >
-                <option value="available">Tersedia (Dalam Peti)</option>
-                <option value="borrowed">Dipinjam (Digunakan)</option>
-                <option value="damaged">Rosak (Patah/Bengkok)</option>
-                <option value="lost">Hilang / Dilaporkan</option>
+                <option value="available">{language === 'ms' ? 'Tersedia (Dalam Peti)' : 'Available (In Cabinet)'}</option>
+                <option value="borrowed">{language === 'ms' ? 'Dipinjam (Digunakan)' : 'Borrowed (Checked Out)'}</option>
+                <option value="damaged">{language === 'ms' ? 'Rosak (Patah/Bengkok)' : 'Damaged (Bent / Broken)'}</option>
+                <option value="lost">{language === 'ms' ? 'Hilang / Dilaporkan' : 'Lost / Reported Incident'}</option>
               </select>
             </div>
           </div>
@@ -658,7 +809,7 @@ export const KunciRegistryPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Nombor Peti Simpanan (Peti Kunci)
+                {language === 'ms' ? 'Nombor Peti Simpanan (Peti Kunci)' : 'Key Box / Storage Cabinet Number'}
               </label>
               <input
                 type="text"
@@ -671,16 +822,16 @@ export const KunciRegistryPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Status Sampul (Kunci Pendua Sahaja)
+                {language === 'ms' ? 'Status Sampul (Kunci Pendua Sahaja)' : 'Sealed Envelope Status (Duplicate Keys Only)'}
               </label>
               <select
                 value={statusSampul}
                 onChange={(e) => setStatusSampul(e.target.value as any)}
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
               >
-                <option value="not_applicable">Tidak Berkenaan (Bukan Pendua)</option>
-                <option value="sealed">Meterai Utuh (Sealed)</option>
-                <option value="broken">Meterai Terbuka (Broken)</option>
+                <option value="not_applicable">{language === 'ms' ? 'Tidak Berkenaan (Bukan Pendua)' : 'Not Applicable (Primary Key)'}</option>
+                <option value="sealed">{language === 'ms' ? 'Meterai Utuh (Sealed)' : 'Intact (Sealed Envelope)'}</option>
+                <option value="broken">{language === 'ms' ? 'Meterai Terbuka (Broken)' : 'Broken / Opened Envelope'}</option>
               </select>
             </div>
           </div>
@@ -691,13 +842,13 @@ export const KunciRegistryPage: React.FC = () => {
               onClick={() => setModalOpen(false)}
               className="border-slate-200 text-slate-500 hover:bg-slate-50 px-4 py-2 border rounded-xl"
             >
-              Batal
+              {language === 'ms' ? 'Batal' : 'Cancel'}
             </Button>
             <Button
               type="submit"
               className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2 rounded-xl shadow-soft"
             >
-              Simpan Rekod
+              {language === 'ms' ? 'Simpan Rekod' : 'Save Key Record'}
             </Button>
           </div>
         </form>
@@ -707,13 +858,15 @@ export const KunciRegistryPage: React.FC = () => {
       <Modal
         isOpen={qrModalOpen}
         onClose={() => setQrModalOpen(false)}
-        title="Label QR Code Anak Kunci"
+        title={language === 'ms' ? 'Label QR Code Anak Kunci' : 'Physical Key QR Code Label'}
         size="md"
       >
         {selectedQrKey && (
           <div className="space-y-6 pt-2 pb-1 text-slate-800">
             <div className="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-100 rounded-2xl">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Hospital Lawas - MyKunci</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">
+                Hospital Lawas - MyKunci
+              </span>
               <span className="text-sm font-bold font-mono border border-slate-300 px-3 py-1 bg-white rounded-lg shadow-sm mb-4">
                 {selectedQrKey.kod_kunci}
               </span>
@@ -732,12 +885,14 @@ export const KunciRegistryPage: React.FC = () => {
                 {selectedQrKey.nama_kunci}
               </span>
               <span className="text-[11px] text-slate-500 font-semibold mt-1">
-                Lokasi: {selectedQrKey.lokasi_fizikal}
+                {language === 'ms' ? 'Lokasi:' : 'Location:'} {selectedQrKey.lokasi_fizikal}
               </span>
             </div>
 
             <div className="p-4 bg-amber-50/50 border border-amber-100/70 rounded-2xl text-[11px] text-amber-700 leading-relaxed font-semibold">
-              💡 Label ini boleh ditampal pada tag anak kunci fizikal. Gunakan butang di bawah untuk mencetak label sticker bersaiz 80mm x 50mm untuk dilekatkan pada kunci/peti.
+              {language === 'ms' 
+                ? '💡 Label ini boleh ditampal pada tag anak kunci fizikal. Gunakan butang di bawah untuk mencetak label sticker bersaiz 80mm x 50mm untuk dilekatkan pada kunci/peti.'
+                : '💡 This QR label can be attached to the physical key tag. Use the print button below to print an 80mm x 50mm sticker label to affix onto the key tag or cabinet.'}
             </div>
 
             <div className="flex justify-end gap-3 pt-2">
@@ -746,14 +901,14 @@ export const KunciRegistryPage: React.FC = () => {
                 onClick={() => setQrModalOpen(false)}
                 className="border-slate-200 text-slate-500 hover:bg-slate-50 px-4 py-2 border rounded-xl"
               >
-                Tutup
+                {language === 'ms' ? 'Tutup' : 'Close'}
               </Button>
               <Button
                 type="button"
                 onClick={handlePrintQr}
                 className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2 rounded-xl shadow-soft flex items-center gap-1.5"
               >
-                Cetak Label Kunci
+                {language === 'ms' ? 'Cetak Label Kunci' : 'Print Key Label'}
               </Button>
             </div>
           </div>

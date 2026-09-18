@@ -26,21 +26,23 @@ import {
   Room,
   Booking
 } from '@/shared/types/mytempahan'
-import { PUBLIC_HOLIDAYS_DATABASE } from '../constants/defaultVenues'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
+import { PUBLIC_HOLIDAYS_DATABASE, getPublicHolidayName } from '../constants/defaultVenues'
 import { getRooms, getBookings } from '../services/tempahanService'
 import { BookingDetailDrawer } from '../components/BookingDetailDrawer'
 import { cn } from '@/lib/utils'
 
 type CalendarView = 'month' | 'week' | 'day'
 
-const DAYS_SHORT = ['Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab', 'Ahd']
+const DAYS_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const MONTH_NAMES = [
-  'Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun',
-  'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ]
 
 export const TempahanCalendarPage: React.FC = () => {
   const navigate = useNavigate()
+  const { language } = useLanguage()
   const [searchParams] = useSearchParams()
   const initialRoomId = searchParams.get('roomId') || 'all'
 
@@ -125,7 +127,7 @@ export const TempahanCalendarPage: React.FC = () => {
         dateStr: dStr,
         dayNum: dNum,
         isCurrentMonth: false,
-        holiday: PUBLIC_HOLIDAYS_DATABASE[dStr],
+        holiday: getPublicHolidayName(dStr, language as any),
         bookings: filteredBookings.filter(b => b.date === dStr)
       })
     }
@@ -138,7 +140,7 @@ export const TempahanCalendarPage: React.FC = () => {
         dateStr: dStr,
         dayNum: day,
         isCurrentMonth: true,
-        holiday: PUBLIC_HOLIDAYS_DATABASE[dStr],
+        holiday: getPublicHolidayName(dStr, language as any),
         bookings: filteredBookings.filter(b => b.date === dStr)
       })
     }
@@ -153,14 +155,14 @@ export const TempahanCalendarPage: React.FC = () => {
           dateStr: dStr,
           dayNum: day,
           isCurrentMonth: false,
-          holiday: PUBLIC_HOLIDAYS_DATABASE[dStr],
+          holiday: getPublicHolidayName(dStr, language as any),
           bookings: filteredBookings.filter(b => b.date === dStr)
         })
       }
     }
 
     return matrix
-  }, [year, month, filteredBookings])
+  }, [year, month, filteredBookings, language])
 
   // Week Grid generation
   const weekDays = useMemo(() => {
@@ -179,11 +181,11 @@ export const TempahanCalendarPage: React.FC = () => {
         dateStr: dStr,
         dayName: DAYS_SHORT[i],
         dayNum: d.getDate(),
-        holiday: PUBLIC_HOLIDAYS_DATABASE[dStr]
+        holiday: getPublicHolidayName(dStr, language as any)
       })
     }
     return days
-  }, [currentDate])
+  }, [currentDate, language])
 
   const hoursList = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']
 
@@ -195,7 +197,7 @@ export const TempahanCalendarPage: React.FC = () => {
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN)}
             className="p-2.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
-            title="Kembali ke Papan Pemuka"
+            title="Back to Dashboard"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -210,11 +212,11 @@ export const TempahanCalendarPage: React.FC = () => {
                 {MONTH_NAMES[month]} {year}
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                {filteredBookings.length} Tempahan
+                {filteredBookings.length} Bookings
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Jadual ketersediaan bilik mesyuarat dan dewan persidangan Hospital Lawas
+              Availability schedule for Lawas Hospital meeting rooms and conference halls
             </p>
           </div>
         </div>
@@ -229,7 +231,7 @@ export const TempahanCalendarPage: React.FC = () => {
               onChange={e => setSelectedRoomId(e.target.value)}
               className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
             >
-              <option value="all">Semua Fasiliti & Bilik</option>
+              <option value="all">All Facilities & Rooms</option>
               {rooms.map(r => (
                 <option key={r.id} value={r.id}>
                   {r.name} ({r.floor_level})
@@ -251,7 +253,7 @@ export const TempahanCalendarPage: React.FC = () => {
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 )}
               >
-                {v === 'month' ? 'Bulan' : v === 'week' ? 'Minggu' : 'Hari'}
+                {v === 'month' ? 'Month' : v === 'week' ? 'Week' : 'Day'}
               </button>
             ))}
           </div>
@@ -261,7 +263,7 @@ export const TempahanCalendarPage: React.FC = () => {
             <button
               onClick={prevMonth}
               className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-              title="Bulan Sebelumnya"
+              title="Previous Month"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -269,12 +271,12 @@ export const TempahanCalendarPage: React.FC = () => {
               onClick={goToToday}
               className="px-2.5 py-1 text-xs font-semibold hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-200 transition-colors"
             >
-              Hari Ini
+              Today
             </button>
             <button
               onClick={nextMonth}
               className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-              title="Bulan Berikutnya"
+              title="Next Month"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -286,7 +288,7 @@ export const TempahanCalendarPage: React.FC = () => {
             className="px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-xs transition-all flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            <span>Tempah Slot</span>
+            <span>Book Slot</span>
           </button>
         </div>
       </div>
@@ -339,7 +341,7 @@ export const TempahanCalendarPage: React.FC = () => {
                       <button
                         onClick={() => navigate(`${ROUTES.TEMPAHAN_REQUEST_NEW}?date=${cell.dateStr}${selectedRoomId !== 'all' ? `&roomId=${selectedRoomId}` : ''}`)}
                         className="opacity-0 group-hover:opacity-100 p-1 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-slate-500 hover:text-teal-700 transition-all"
-                        title="Tempah pada tarikh ini"
+                        title="Book on this date"
                       >
                         <Plus className="w-3 h-3" />
                       </button>
@@ -378,7 +380,7 @@ export const TempahanCalendarPage: React.FC = () => {
 
                     {cell.bookings.length > 3 && (
                       <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 px-1">
-                        +{cell.bookings.length - 3} lagi acara
+                        +{cell.bookings.length - 3} more events
                       </div>
                     )}
                   </div>
@@ -395,7 +397,7 @@ export const TempahanCalendarPage: React.FC = () => {
           <div className="min-w-[800px]">
             {/* Header Columns */}
             <div className="grid grid-cols-8 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-center py-3">
-              <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">Masa</div>
+              <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">Time</div>
               {weekDays.map(d => (
                 <div key={d.dateStr} className="text-xs font-bold text-slate-700 dark:text-slate-200">
                   <div className="uppercase text-[10px] text-slate-400">{d.dayName}</div>
@@ -458,17 +460,17 @@ export const TempahanCalendarPage: React.FC = () => {
           <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Agenda Harian: {currentDate.toISOString().slice(0, 10)}
+                Daily Agenda: {currentDate.toISOString().slice(0, 10)}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Susunan jadual tempahan sepanjang waktu operasi hospital.
+                Schedule of bookings across hospital operation hours.
               </p>
             </div>
             <button
               onClick={() => navigate(`${ROUTES.TEMPAHAN_REQUEST_NEW}?date=${currentDate.toISOString().slice(0, 10)}`)}
               className="px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold"
             >
-              + Tempah Hari Ini
+              + Book Today
             </button>
           </div>
 
@@ -486,7 +488,7 @@ export const TempahanCalendarPage: React.FC = () => {
                   </span>
                   <div className="flex-1 space-y-2">
                     {match.length === 0 ? (
-                      <div className="text-xs text-slate-300 dark:text-slate-700 italic">Slot kosong</div>
+                      <div className="text-xs text-slate-300 dark:text-slate-700 italic">Empty slot</div>
                     ) : (
                       match.map(b => (
                         <div
@@ -508,7 +510,7 @@ export const TempahanCalendarPage: React.FC = () => {
                             </div>
                             <h4 className="font-bold text-sm text-slate-900 dark:text-white mt-1">{b.purpose}</h4>
                             <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                              Pemohon: {b.pemohon_name} ({b.pemohon_department}) • {b.attendees_count} Pax
+                              Applicant: {b.pemohon_name} ({b.pemohon_department}) • {b.attendees_count} Pax
                             </div>
                           </div>
                           <ChevronRight className="w-4 h-4 text-slate-400" />

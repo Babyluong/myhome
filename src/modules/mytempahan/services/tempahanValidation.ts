@@ -61,7 +61,7 @@ export function isWithinOperatingHours(
   if (operatingHours.operatingDays && !operatingHours.operatingDays.includes(dayOfWeek)) {
     return {
       isValid: false,
-      message: 'Fasiliti ini tidak beroperasi pada hari yang dipilih.'
+      message: 'This facility does not operate on the selected day of the week.'
     }
   }
 
@@ -73,7 +73,7 @@ export function isWithinOperatingHours(
   if (bookingStartMin < opStartMin || bookingEndMin > opEndMin) {
     return {
       isValid: false,
-      message: `Waktu tempahan mesti berada dalam waktu operasi fasiliti (${operatingHours.start} - ${operatingHours.end}).`
+      message: `Booking time must be within facility operating hours (${operatingHours.start} - ${operatingHours.end}).`
     }
   }
 
@@ -97,7 +97,7 @@ export function validateBookingLeadTime(
   if (bookingStartDateTime.getTime() <= now.getTime() - 5 * 60 * 1000) { // allow 5 min grace
     return {
       isValid: false,
-      message: 'Tarikh dan masa tempahan mestilah pada waktu masa hadapan.'
+      message: 'Booking date and time must be in the future.'
     }
   }
 
@@ -107,7 +107,7 @@ export function validateBookingLeadTime(
     if (diffHours < minNoticeHours && diffHours >= 0) {
       return {
         isValid: false,
-        message: `Tempahan bilik ini memerlukan notis awal sekurang-kurangnya ${minNoticeHours} jam sebelum acara bermula.`
+        message: `Booking for this facility requires at least ${minNoticeHours} hours advance notice before the event starts.`
       }
     }
   }
@@ -118,7 +118,7 @@ export function validateBookingLeadTime(
     if (diffDays > maxAdvanceDays) {
       return {
         isValid: false,
-        message: `Tempahan tidak boleh dibuat melebihi ${maxAdvanceDays} hari (kira-kira ${Math.round(maxAdvanceDays / 30)} bulan) dari sekarang.`
+        message: `Bookings cannot be made more than ${maxAdvanceDays} days (approximately ${Math.round(maxAdvanceDays / 30)} months) in advance.`
       }
     }
   }
@@ -174,7 +174,7 @@ export function evaluateAutoStatusTransition(booking: Booking, currentDateTime: 
     return {
       ...booking,
       status: 'expired',
-      rejection_reason: 'Permohonan luput secara automatik kerana tidak diluluskan sebelum masa mula acara.',
+      rejection_reason: 'Booking request expired automatically as it was not endorsed prior to event start time.',
       updated_at: new Date().toISOString()
     }
   }

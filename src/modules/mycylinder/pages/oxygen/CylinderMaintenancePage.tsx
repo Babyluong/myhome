@@ -669,10 +669,11 @@ export const CylinderMaintenancePage: React.FC = () => {
                     </label>
                     <select
                       value={selectedBudgetSource}
-                      disabled
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm bg-slate-50 text-slate-500 cursor-not-allowed focus:outline-none"
+                      onChange={(e) => setSelectedBudgetSource(e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold bg-white text-slate-800 focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-all outline-none"
                     >
-                      <option value="warrant">Warrant (Vote: 080702 / Act: 27402) - Medical Oxygen</option>
+                      <option value="080702">Waran (Vot: 080702 / CC - 27402) - Oksigen Perubatan</option>
+                      <option value="080600">Waran (Vot: 080600 / Duit Khas - 27402) - Silinder & Gas</option>
                     </select>
                   </div>
                 </div>

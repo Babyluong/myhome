@@ -112,14 +112,14 @@ export const TempahanMyBookingsPage: React.FC = () => {
     try {
       setCancelling(true)
       const res = await updateBookingStatus(cancelModalBooking.id, 'cancelled', {
-        reason: cancelReason || 'Dibatalkan oleh pemohon.'
+        reason: cancelReason || 'Cancelled by applicant.'
       })
 
       if (res.data) {
         addToast({
           type: 'info',
-          title: 'Permohonan Dibatalkan',
-          message: `Tempahan ${cancelModalBooking.booking_number} telah berjaya dibatalkan.`
+          title: 'Booking Cancelled',
+          message: `Booking ${cancelModalBooking.booking_number} has been cancelled.`
         })
         setCancelModalBooking(null)
         setCancelReason('')
@@ -129,8 +129,8 @@ export const TempahanMyBookingsPage: React.FC = () => {
       console.error(err)
       addToast({
         type: 'error',
-        title: 'Ralat',
-        message: 'Gagal membatalkan permohonan.'
+        title: 'Error',
+        message: 'Failed to cancel booking.'
       })
     } finally {
       setCancelling(false)
@@ -145,7 +145,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN)}
             className="p-2.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
-            title="Kembali ke Papan Pemuka"
+            title="Back to Dashboard"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -157,14 +157,14 @@ export const TempahanMyBookingsPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-                Permohonan Tempahan Saya
+                My Booking Requests
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
-                {filteredBookings.length} Rekod
+                {filteredBookings.length} Records
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Semak status kelulusan, cetak slip pengesahan rasmi dan paparkan kod QR daftar masuk fasiliti.
+              Review approval status, print official confirmation slip, and display facility check-in QR code.
             </p>
           </div>
         </div>
@@ -174,20 +174,20 @@ export const TempahanMyBookingsPage: React.FC = () => {
           className="px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>Tempahan Baharu</span>
+          <span>New Booking</span>
         </button>
       </div>
 
       {/* 2. Tabs & Search Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs">
         {/* Status Tabs */}
-        <div className="flex items-center gap-1 overflow-x-auto pb-1 max-w-full">
+        <div className="flex items-center gap-1.5 flex-wrap max-w-full">
           {[
-            { id: 'all', label: 'Semua Tempahan' },
-            { id: 'upcoming', label: 'Akan Datang' },
-            { id: 'pending', label: 'Dalam Semakan' },
-            { id: 'approved', label: 'Diluluskan' },
-            { id: 'history', label: 'Sejarah & Selesai' }
+            { id: 'all', label: 'All Bookings' },
+            { id: 'upcoming', label: 'Upcoming' },
+            { id: 'pending', label: 'Under Review' },
+            { id: 'approved', label: 'Approved' },
+            { id: 'history', label: 'History & Completed' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -211,7 +211,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Cari no. rujukan, tujuan..."
+            placeholder="Search reference no., purpose..."
             className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
           />
         </div>
@@ -221,15 +221,15 @@ export const TempahanMyBookingsPage: React.FC = () => {
       {filteredBookings.length === 0 ? (
         <div className="p-12 text-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
           <Calendar className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto stroke-1" />
-          <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">Tiada Rekod Tempahan Dijumpai</h3>
+          <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">No Booking Records Found</h3>
           <p className="text-xs text-slate-400 dark:text-slate-500 max-w-sm mx-auto">
-            Anda belum mempunyai permohonan tempahan di bawah kategori ini.
+            You do not have any booking requests in this category.
           </p>
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN_REQUEST_NEW)}
             className="mt-2 px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold"
           >
-            Buat Tempahan Sekarang
+            Create a Booking Now
           </button>
         </div>
       ) : (
@@ -265,7 +265,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
                         isCompleted && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                       )}
                     >
-                      {isApproved ? 'DILULUSKAN' : isPending ? 'DALAM SEMAKAN' : isRejected ? 'DITOLAK' : isCancelled ? 'DIBATALKAN' : 'SELESAI'}
+                      {isApproved ? 'APPROVED' : isPending ? 'UNDER REVIEW' : isRejected ? 'REJECTED' : isCancelled ? 'CANCELLED' : 'COMPLETED'}
                     </span>
                   </div>
 
@@ -276,7 +276,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
                   <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
                     <div className="flex items-center gap-1.5 font-medium text-slate-800 dark:text-slate-200">
                       <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">{b.room?.name || 'Fasiliti'} ({b.room?.location})</span>
+                      <span className="truncate">{b.room?.name || 'Facility'} ({b.room?.location})</span>
                     </div>
 
                     <div className="flex items-center gap-3 pt-1 text-[11px]">
@@ -299,7 +299,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
                       <button
                         onClick={() => downloadBookingConfirmationPdf(b)}
                         className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-teal-950/60 text-slate-600 dark:text-slate-300 hover:text-teal-700 transition-colors"
-                        title="Cetak Slip Pengesahan PDF"
+                        title="Print Confirmation PDF"
                       >
                         <Printer className="w-4 h-4 text-teal-700 dark:text-teal-400" />
                       </button>
@@ -309,7 +309,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
                       <button
                         onClick={() => setQrModalBooking(b)}
                         className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-                        title="Paparkan Kod QR Daftar Masuk"
+                        title="Display Check-in QR Code"
                       >
                         <QrCode className="w-4 h-4 text-slate-700 dark:text-slate-300" />
                       </button>
@@ -320,7 +320,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
                         onClick={() => setCancelModalBooking(b)}
                         className="px-2.5 py-1.5 rounded-xl border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-[11px] font-semibold transition-colors"
                       >
-                        Batal
+                        Cancel
                       </button>
                     )}
                   </div>
@@ -332,7 +332,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
                     }}
                     className="px-3.5 py-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-semibold transition-colors flex items-center gap-1"
                   >
-                    Perincian <ChevronRight className="w-3.5 h-3.5" />
+                    Details <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </motion.div>
@@ -359,7 +359,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
               className="relative w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-4 z-10"
             >
               <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-                <span className="text-xs font-bold text-slate-400 uppercase">Pas Masuk Fasiliti</span>
+                <span className="text-xs font-bold text-slate-400 uppercase">Facility Access Pass</span>
                 <button onClick={() => setQrModalBooking(null)} className="text-slate-400 hover:text-slate-600">
                   <X className="w-4 h-4" />
                 </button>
@@ -379,7 +379,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
               </div>
 
               <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between">
-                <span>PIN Kunci Pintu:</span>
+                <span>Door Lock PIN:</span>
                 <span className="font-mono text-sm tracking-widest text-teal-700 dark:text-teal-400">
                   {qrModalBooking.checkin_pin || '8842'}
                 </span>
@@ -411,18 +411,18 @@ export const TempahanMyBookingsPage: React.FC = () => {
                   <AlertCircle className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-white text-base">Sahkan Pembatalan Tempahan</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">No. Rujukan: {cancelModalBooking.booking_number}</p>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-base">Confirm Booking Cancellation</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Reference No.: {cancelModalBooking.booking_number}</p>
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">Sebab Pembatalan</label>
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">Cancellation Reason</label>
                 <textarea
                   rows={3}
                   value={cancelReason}
                   onChange={e => setCancelReason(e.target.value)}
-                  placeholder="cth. Mesyuarat ditangguhkan ke tarikh baharu..."
+                  placeholder="e.g. Meeting postponed to a new date..."
                   className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-rose-500 focus:outline-hidden"
                 />
               </div>
@@ -433,7 +433,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
                   onClick={() => setCancelModalBooking(null)}
                   className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
-                  Kembali
+                  Back
                 </button>
                 <button
                   type="button"
@@ -441,7 +441,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
                   disabled={cancelling}
                   className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs"
                 >
-                  {cancelling ? 'Membatalkan...' : 'Sahkan Batal'}
+                  {cancelling ? 'Cancelling...' : 'Confirm Cancellation'}
                 </button>
               </div>
             </motion.div>

@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/lib/constants'
@@ -727,7 +727,7 @@ export default function ProcurementReportPage() {
             </div>
 
             {/* â”€â”€ TAB NAVIGATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-hide bg-slate-50/50 backdrop-blur-xl rounded-2xl border border-slate-200/80 shadow-sm p-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap pb-2 bg-slate-50/50 backdrop-blur-xl rounded-2xl border border-slate-200/80 shadow-sm p-1.5">
               {TABS.map(tab => {
                 const Icon = tab.icon
                 const isActive = activeTab === tab.id

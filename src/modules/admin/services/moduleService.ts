@@ -332,79 +332,13 @@ export async function isModuleEnabled(
  * Helper: Sync department from module state
  */
 async function syncDepartmentFromModule(
-  hospitalId: string,
-  moduleCode: ModuleCode,
-  isEnabled: boolean
+  _hospitalId: string,
+  _moduleCode: ModuleCode,
+  _isEnabled: boolean
 ): Promise<void> {
-  if (!isSupabaseConfigured()) return
-
-  try {
-    const moduleDef = MODULE_DEFINITIONS.find((m) => m.code === moduleCode)
-    if (!moduleDef) {
-      console.warn(`Module definition not found for code: ${moduleCode}`)
-      return
-    }
-
-    if (isEnabled) {
-      // Check if department already exists (case-insensitive search)
-      const { data: existing } = await supabase
-        .from('departments')
-        .select('id')
-        .eq('hospital_id', hospitalId)
-        .ilike('department_code', moduleCode)
-        .maybeSingle()
-
-      if (existing) {
-        // Update existing department
-        const { error } = await supabase
-          .from('departments')
-          .update({
-            department_name: moduleDef.name,
-            description: moduleDef.description,
-            status: 'active',
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', existing.id)
-
-        if (error) {
-          console.error('Error updating department:', error)
-          throw error
-        }
-      } else {
-        // Create new department
-        const { error } = await supabase.from('departments').insert({
-          hospital_id: hospitalId,
-          department_code: moduleCode,
-          department_name: moduleDef.name,
-          description: moduleDef.description,
-          status: 'active',
-        })
-
-        if (error) {
-          console.error('Error creating department:', error)
-          throw error
-        }
-      }
-    } else {
-      // Deactivate department
-      const { error } = await supabase
-        .from('departments')
-        .update({
-          status: 'inactive',
-          updated_at: new Date().toISOString(),
-        })
-        .eq('hospital_id', hospitalId)
-        .eq('department_code', moduleCode)
-
-      if (error) {
-        console.error('Error deactivating department:', error)
-        throw error
-      }
-    }
-  } catch (err) {
-    console.error('Failed to sync department from module:', err)
-    throw err // Re-throw to ensure errors are visible
-  }
+  // Software modules (MyKunci, MySuhu, MyInventory, etc.) are system applications, NOT hospital departments/wards.
+  // Modules must never be created or synced as rows in the departments table.
+  return;
 }
 
 /**

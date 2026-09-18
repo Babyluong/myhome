@@ -52,7 +52,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
   // Action Modals
   const [actionModalBooking, setActionModalBooking] = useState<Booking | null>(null)
   const [actionType, setActionType] = useState<'approve' | 'reject'>('approve')
-  const [approvalNotes, setApprovalNotes] = useState('Permohonan diluluskan. Sila pastikan SOP kebersihan dipatuhi.')
+  const [approvalNotes, setApprovalNotes] = useState('Application approved. Please ensure cleanliness SOP is observed.')
   const [rejectionReason, setRejectionReason] = useState('')
   const [checklistKeys, setChecklistKeys] = useState(true)
   const [checklistAv, setChecklistAv] = useState(true)
@@ -107,7 +107,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
     setActionModalBooking(booking)
     setActionType(type)
     if (type === 'approve') {
-      setApprovalNotes('Permohonan diluluskan. Sila pastikan SOP kebersihan bilik dipatuhi.')
+      setApprovalNotes('Application approved. Please ensure room cleanliness SOP is observed.')
     } else {
       setRejectionReason('')
     }
@@ -122,15 +122,15 @@ export const TempahanApprovalQueuePage: React.FC = () => {
       if (actionType === 'approve') {
         const res = await updateBookingStatus(actionModalBooking.id, 'approved', {
           userId: user?.id || 'admin-user',
-          userName: user?.full_name || 'Pentadbir Fasiliti Hospital',
+          userName: user?.full_name || 'Hospital Facility Admin',
           notes: approvalNotes
         })
 
         if (res.data) {
           addToast({
             type: 'success',
-            title: 'Permohonan Diluluskan',
-            message: `Tempahan ${actionModalBooking.booking_number} telah disahkan dan diluluskan.`
+            title: 'Application Approved',
+            message: `Booking ${actionModalBooking.booking_number} has been approved.`
           })
           setActionModalBooking(null)
         }
@@ -138,8 +138,8 @@ export const TempahanApprovalQueuePage: React.FC = () => {
         if (!rejectionReason.trim()) {
           addToast({
             type: 'warning',
-            title: 'Sebab Diperlukan',
-            message: 'Sila nyatakan sebab penolakan permohonan tempahan ini.'
+            title: 'Reason Required',
+            message: 'Please provide a reason for rejecting this booking request.'
           })
           setProcessing(false)
           return
@@ -147,15 +147,15 @@ export const TempahanApprovalQueuePage: React.FC = () => {
 
         const res = await updateBookingStatus(actionModalBooking.id, 'rejected', {
           userId: user?.id || 'admin-user',
-          userName: user?.full_name || 'Pentadbir Fasiliti Hospital',
+          userName: user?.full_name || 'Hospital Facility Admin',
           reason: rejectionReason
         })
 
         if (res.data) {
           addToast({
             type: 'info',
-            title: 'Permohonan Ditolak',
-            message: `Tempahan ${actionModalBooking.booking_number} telah ditolak.`
+            title: 'Application Rejected',
+            message: `Booking ${actionModalBooking.booking_number} has been rejected.`
           })
           setActionModalBooking(null)
         }
@@ -164,8 +164,8 @@ export const TempahanApprovalQueuePage: React.FC = () => {
       console.error(err)
       addToast({
         type: 'error',
-        title: 'Ralat',
-        message: 'Gagal mengemaskini status permohonan.'
+        title: 'Error',
+        message: 'Failed to update booking status.'
       })
     } finally {
       setProcessing(false)
@@ -180,7 +180,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN)}
             className="p-2.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
-            title="Kembali ke Papan Pemuka"
+            title="Back to Dashboard"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -192,16 +192,16 @@ export const TempahanApprovalQueuePage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-                Semakan & Kelulusan Tempahan Fasiliti
+                Facility Booking Review & Approval Queue
               </h1>
               {pendingCount > 0 && (
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 animate-pulse">
-                  {pendingCount} Menunggu Tindakan
+                  {pendingCount} Pending Action
                 </span>
               )}
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Panel kawalan Pegawai Pentadbir & Penjaga Bilik untuk mengesahkan permohonan ruang hospital.
+              Control panel for Facility Administrators & Custodians to verify and approve hospital venue requests.
             </p>
           </div>
         </div>
@@ -209,12 +209,12 @@ export const TempahanApprovalQueuePage: React.FC = () => {
 
       {/* 2. Filter Tabs & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs">
-        <div className="flex items-center gap-1 overflow-x-auto pb-1 max-w-full">
+        <div className="flex items-center gap-1.5 flex-wrap max-w-full">
           {[
-            { id: 'pending', label: `Menunggu (${pendingCount})` },
-            { id: 'approved', label: 'Telah Diluluskan' },
-            { id: 'rejected', label: 'Ditolak' },
-            { id: 'all', label: 'Semua Rekod' }
+            { id: 'pending', label: `Pending (${pendingCount})` },
+            { id: 'approved', label: 'Approved' },
+            { id: 'rejected', label: 'Rejected' },
+            { id: 'all', label: 'All Records' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -237,7 +237,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Cari pemohon, jabatan, no rujukan..."
+            placeholder="Search applicant, department, reference no..."
             className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
           />
         </div>
@@ -247,9 +247,9 @@ export const TempahanApprovalQueuePage: React.FC = () => {
       {queueBookings.length === 0 ? (
         <div className="p-12 text-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
           <ShieldCheck className="w-12 h-12 text-emerald-500 mx-auto stroke-1" />
-          <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">Tiada Permohonan Tertangguh</h3>
+          <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">No Pending Applications</h3>
           <p className="text-xs text-slate-400 dark:text-slate-500 max-w-sm mx-auto">
-            Semua permohonan tempahan fasiliti telah disemak dan diambil tindakan.
+            All facility booking requests have been reviewed and acted upon.
           </p>
         </div>
       ) : (
@@ -289,7 +289,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                         b.status === 'rejected' && 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
                       )}
                     >
-                      {isPending ? 'MENUNGGU KELULUSAN' : isApproved ? 'DILULUSKAN' : b.status.toUpperCase()}
+                      {isPending ? 'PENDING APPROVAL' : isApproved ? 'APPROVED' : b.status.toUpperCase()}
                     </span>
 
                     {b.tetamu_vip?.ada_vip && (
@@ -300,7 +300,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
 
                     {b.priority === 'urgent' && (
                       <span className="px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-[10px] font-bold">
-                        SEGERA
+                        URGENT
                       </span>
                     )}
                   </div>
@@ -344,13 +344,13 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                         onClick={e => handleOpenActionModal(b, 'reject', e)}
                         className="px-4 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-bold transition-colors"
                       >
-                        Tolak
+                        Reject
                       </button>
                       <button
                         onClick={e => handleOpenActionModal(b, 'approve', e)}
                         className="px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shadow-xs transition-colors"
                       >
-                        Luluskan
+                        Approve
                       </button>
                     </>
                   ) : (
@@ -361,7 +361,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                       }}
                       className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
                     >
-                      Lihat Butiran
+                      View Details
                     </button>
                   )}
                 </div>
@@ -386,7 +386,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                   {actionModalBooking.booking_number}
                 </span>
                 <h3 className="font-bold text-slate-900 dark:text-white text-lg">
-                  {actionType === 'approve' ? 'Luluskan Permohonan Tempahan' : 'Tolak Permohonan Tempahan'}
+                  {actionType === 'approve' ? 'Approve Booking Application' : 'Reject Booking Application'}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   {actionModalBooking.purpose} • {actionModalBooking.room?.name}
@@ -397,7 +397,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                 <div className="space-y-4 text-xs">
                   {/* Readiness Checklist */}
                   <div className="p-4 rounded-xl bg-teal-50/60 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 space-y-2.5">
-                    <span className="font-bold text-teal-950 dark:text-teal-200 block">Senarai Semak Ketersediaan Fasiliti:</span>
+                    <span className="font-bold text-teal-950 dark:text-teal-200 block">Facility Readiness Checklist:</span>
                     <label className="flex items-center gap-2 cursor-pointer text-teal-900 dark:text-teal-300">
                       <input
                         type="checkbox"
@@ -405,7 +405,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                         onChange={e => setChecklistKeys(e.target.checked)}
                         className="rounded text-teal-600 focus:ring-teal-500"
                       />
-                      <span>Kunci bilik dan akses fizikal disahkan tersedia</span>
+                      <span>Room keys and physical access confirmed ready</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer text-teal-900 dark:text-teal-300">
                       <input
@@ -414,12 +414,12 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                         onChange={e => setChecklistAv(e.target.checked)}
                         className="rounded text-teal-600 focus:ring-teal-500"
                       />
-                      <span>Peralatan AV & projektor yang dimohon telah disahkan berfungsi</span>
+                      <span>Requested AV equipment & projector confirmed functional</span>
                     </label>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Catatan Kelulusan (Kepada Pemohon)</label>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Approval Notes (To Applicant)</label>
                     <textarea
                       rows={3}
                       value={approvalNotes}
@@ -432,17 +432,17 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                 <div className="space-y-3 text-xs">
                   <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-900 dark:text-rose-300">
                     <p className="font-semibold">
-                      Sila nyatakan sebab penolakan yang jelas untuk makluman pemohon bagi membolehkan mereka membuat penjadualan semula atau memilih fasiliti alternatif.
+                      Please provide a clear reason for rejection so the applicant can reschedule or choose an alternative facility.
                     </p>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Sebab Penolakan *</label>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Rejection Reason *</label>
                     <textarea
                       rows={3}
                       value={rejectionReason}
                       onChange={e => setRejectionReason(e.target.value)}
-                      placeholder="cth. Fasiliti ini digunakan untuk Taklimat Pengarah KKM yang tidak dapat dipinda..."
+                      placeholder="e.g. This facility is reserved for an unshiftable MOH Director Briefing..."
                       className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium focus:ring-2 focus:ring-rose-500 focus:outline-hidden"
                     />
                   </div>
@@ -456,7 +456,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                   disabled={processing}
                   className="py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold"
                 >
-                  Batal
+                  Cancel
                 </button>
 
                 <button
@@ -470,7 +470,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                       : 'bg-rose-600 hover:bg-rose-700'
                   )}
                 >
-                  {processing ? 'Memproses...' : actionType === 'approve' ? 'Sahkan Kelulusan' : 'Sahkan Tolak'}
+                  {processing ? 'Processing...' : actionType === 'approve' ? 'Confirm Approval' : 'Confirm Rejection'}
                 </button>
               </div>
             </motion.div>

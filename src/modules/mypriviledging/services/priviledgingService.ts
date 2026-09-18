@@ -24,7 +24,7 @@ interface StoredPriviledgingState {
   lastSynced: string;
 }
 
-const STORAGE_VERSION = 'v1.0';
+const STORAGE_VERSION = 'v2.0';
 
 /**
  * Initialize storage with default mock data if not present or outdated
@@ -324,7 +324,7 @@ export const priviledgingService = {
     const groupedMap = new Map<string, { name: string; level: PrivilegingLevel; approvedDate: string; validUntil: string }[]>();
 
     approvedSubs.forEach((sub) => {
-      const catName = sub.categoryName || 'Prosedur Klinikal Umum';
+      const catName = sub.categoryName || 'General Clinical Procedures';
       if (!groupedMap.has(catName)) {
         groupedMap.set(catName, []);
       }
@@ -346,21 +346,21 @@ export const priviledgingService = {
 
     return {
       certificateNo: certNumber,
-      referenceNo: `SURAT PENURUNAN KUASA KLINIKAL (${certNumber})`,
-      issueDate: '01 Januari ' + issueYear,
-      expiryDate: '31 Disember ' + (issueYear + 3),
+      referenceNo: `CLINICAL PRIVILEGING AUTHORISATION LETTER (${certNumber})`,
+      issueDate: '01 January ' + issueYear,
+      expiryDate: '31 December ' + (issueYear + 3),
       staff,
       approvedProcedures,
       jkcpChairperson: {
         name: 'Dr. Nor Azman bin Sulaiman',
-        designation: 'Pengerusi Jawatankuasa Credentialing & Privileging (JKCP) Hospital Lawas'
+        designation: 'Chairperson, Hospital Credentialing & Privileging Committee (JKCP), Hospital Lawas'
       },
       hospitalDirector: {
         name: 'Dr. Evelyn Tan Siew Lee',
-        designation: 'Pengarah Hospital Lawas, Kementerian Kesihatan Malaysia'
+        designation: 'Hospital Director, Hospital Lawas, Ministry of Health Malaysia'
       },
       hospitalName: 'HOSPITAL LAWAS',
-      ministryName: 'KEMENTERIAN KESIHATAN MALAYSIA',
+      ministryName: 'MINISTRY OF HEALTH MALAYSIA',
       qrVerificationUrl: `https://home-lawas.moh.gov.my/verify/priviledging/${encodeURIComponent(certNumber)}`
     };
   },

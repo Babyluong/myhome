@@ -68,11 +68,7 @@ export const DrugCard: React.FC<DrugCardProps> = ({ drug, onSelect }) => {
           {/* Drug Title */}
           <div className="mb-1">
             <h3 className="text-base font-bold text-slate-900 group-hover:text-violet-600 transition-colors leading-snug">
-              {drug.isLASA && drug.tallManName ? (
-                <TallManLettering name={drug.tallManName} />
-              ) : (
-                drug.genericName
-              )}
+              {drug.genericName}
             </h3>
             
             {drug.brandNames && drug.brandNames.length > 0 && (

@@ -7,6 +7,7 @@ import {
   getHospitalById,
   MOCK_PASSWORD,
 } from '../../../services/mockData'
+import { recordAuditLog } from '@/services/auditLogService'
 import type { UserWithRelations } from '@/shared/types'
 import { MAX_LOGIN_ATTEMPTS, LOCKOUT_DURATION_MINUTES } from '@/shared/lib/constants'
 
@@ -145,6 +146,20 @@ async function loginWithMock(employeeId: string, password: string): Promise<Logi
     role,
     department,
     hospital,
+  }
+
+  // Record audit log for mock login
+  try {
+    recordAuditLog({
+      userId: user.id,
+      action: 'LOGIN',
+      module: 'auth',
+      entityType: 'session',
+      entityId: user.id,
+      details: `Pengguna ${user.full_name} (${user.employee_id}) berjaya log masuk ke sistem.`,
+    })
+  } catch (logErr) {
+    console.warn('Failed to record mock login audit log:', logErr)
   }
 
   return {
@@ -348,12 +363,13 @@ async function loginWithSupabase(employeeId: string, password: string): Promise<
 
   // Create audit log for login
   try {
-    await supabase.from('audit_logs').insert({
-      user_id: userData.id,
-      action: 'Login',
+    await recordAuditLog({
+      userId: userData.id,
+      action: 'LOGIN',
       module: 'auth',
-      entity_type: 'users',
-      entity_id: userData.id,
+      entityType: 'users',
+      entityId: userData.id,
+      details: `Pengguna berjaya log masuk ke sistem melalui Supabase.`,
     })
   } catch (logErr) {
     console.error('Failed to log login event:', logErr)
@@ -458,6 +474,18 @@ export async function resetPassword(newPassword: string): Promise<ResetPasswordR
  * Handles errors gracefully - even if logout fails, we clear local state
  */
 export async function logout(): Promise<void> {
+  // Record logout event
+  try {
+    recordAuditLog({
+      action: 'LOGOUT',
+      module: 'auth',
+      entityType: 'session',
+      details: 'Pengguna log keluar dari sistem.',
+    })
+  } catch (err) {
+    console.warn('Failed to record logout audit:', err)
+  }
+
   if (isSupabaseConfigured()) {
     try {
       // Try to sign out with local scope first

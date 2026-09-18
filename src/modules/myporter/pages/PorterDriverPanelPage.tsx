@@ -1,4 +1,4 @@
-﻿// src/modules/myporter/pages/PorterDriverPanelPage.tsx
+// src/modules/myporter/pages/PorterDriverPanelPage.tsx
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
@@ -100,10 +100,10 @@ export const PorterDriverPanelPage: React.FC = () => {
       const res = await updatePorterProfileStatus(currentPorter.id, newStatus)
       if (res.data) {
         setCurrentPorter(res.data)
-        toast.success('Status Dikemaskini', `Status PPK anda kini: ${newStatus.toUpperCase()}`)
+        toast.success('Status Updated', `Your porter status is now: ${newStatus.toUpperCase()}`)
       }
     } catch (err: any) {
-      toast.error('Ralat Mengemaskini Status', err.message)
+      toast.error('Error Updating Status', err.message)
     }
   }
 
@@ -114,11 +114,11 @@ export const PorterDriverPanelPage: React.FC = () => {
       if (res.data) {
         setIsRadarOpen(false)
         setActiveJob(res.data)
-        toast.success('Tugasan Diterima!', 'Sila bergerak ke lokasi ambil.')
+        toast.success('Task Accepted!', 'Please proceed to the pickup location.')
         fetchDriverData()
       }
     } catch (err: any) {
-      toast.error('Gagal Menerima Tugasan', err.message)
+      toast.error('Failed to Accept Task', err.message)
     }
   }
 
@@ -134,11 +134,11 @@ export const PorterDriverPanelPage: React.FC = () => {
       if (res.data) {
         soundAlert.playSuccessTone()
         setActiveJob(res.data)
-        toast.success('Fasa Dikemaskini', `Status tugasan: [${res.data.status.toUpperCase()}]`)
+        toast.success('Phase Updated', `Task status: [${res.data.status.toUpperCase()}]`)
         fetchDriverData()
       }
     } catch (err: any) {
-      toast.error('Ralat Mengemaskini Fasa', err.message)
+      toast.error('Error Updating Phase', err.message)
     }
   }
 
@@ -151,7 +151,7 @@ export const PorterDriverPanelPage: React.FC = () => {
           <div className="relative">
             <img
               src={currentPorter?.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80'}
-              alt="PPK"
+              alt="Porter"
               className="w-14 h-14 rounded-2xl object-cover ring-2 ring-sky-500/50"
             />
             <span
@@ -180,7 +180,7 @@ export const PorterDriverPanelPage: React.FC = () => {
                 {currentPorter?.average_rating}
               </span>
               <span>•</span>
-              <span>{currentPorter?.total_completed_today} Selesai Hari Ini</span>
+              <span>{currentPorter?.total_completed_today} Completed Today</span>
             </div>
           </div>
         </div>
@@ -195,7 +195,7 @@ export const PorterDriverPanelPage: React.FC = () => {
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Bersedia (Online)
+            Available (Online)
           </button>
           <button
             onClick={() => handleStatusToggle('on_break')}
@@ -205,7 +205,7 @@ export const PorterDriverPanelPage: React.FC = () => {
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Rehat (Break)
+            On Break
           </button>
           <button
             onClick={() => handleStatusToggle('offline')}
@@ -215,7 +215,7 @@ export const PorterDriverPanelPage: React.FC = () => {
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Luar Talian
+            Offline
           </button>
         </div>
       </div>
@@ -228,9 +228,9 @@ export const PorterDriverPanelPage: React.FC = () => {
           {/* Active Job Header */}
           <div className="flex flex-wrap justify-between items-start gap-2 border-b border-slate-800 pb-4">
             <div>
-              <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">Tugasan Aktif Anda</span>
+              <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">Your Active Task</span>
               <h3 className="text-xl font-black text-white">{activeJob.sub_category || activeJob.category}</h3>
-              <p className="text-xs text-slate-400 font-mono mt-0.5">No Rujukan: {activeJob.no_rujukan}</p>
+              <p className="text-xs text-slate-400 font-mono mt-0.5">Reference No: {activeJob.no_rujukan}</p>
             </div>
             <UrgencyBadge urgency={activeJob.urgency} />
           </div>
@@ -238,18 +238,18 @@ export const PorterDriverPanelPage: React.FC = () => {
           {/* Locations */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950 p-4 rounded-2xl border border-slate-800">
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-emerald-400 uppercase">1. Ambil di (Asal):</span>
+              <span className="text-[10px] font-bold text-emerald-400 uppercase">1. Pickup at (Origin):</span>
               <p className="text-sm font-extrabold text-white">{activeJob.origin_department_name}</p>
               <p className="text-xs text-slate-400">{activeJob.origin_location_details}</p>
-              <p className="text-[11px] text-slate-500 mt-1">Pemohon: {activeJob.requester_name} ({activeJob.requester_phone})</p>
+              <p className="text-[11px] text-slate-500 mt-1">Requester: {activeJob.requester_name} ({activeJob.requester_phone})</p>
             </div>
 
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-rose-400 uppercase">2. Hantar ke (Destinasi):</span>
+              <span className="text-[10px] font-bold text-rose-400 uppercase">2. Deliver to (Destination):</span>
               <p className="text-sm font-extrabold text-white">{activeJob.destination_department_name}</p>
               <p className="text-xs text-slate-400">{activeJob.destination_location_details}</p>
               {activeJob.recipient_name && (
-                <p className="text-[11px] text-slate-500 mt-1">Penerima: {activeJob.recipient_name}</p>
+                <p className="text-[11px] text-slate-500 mt-1">Recipient: {activeJob.recipient_name}</p>
               )}
             </div>
           </div>
@@ -258,10 +258,10 @@ export const PorterDriverPanelPage: React.FC = () => {
           {activeJob.patient_data && (
             <div className="p-4 bg-sky-950/30 border border-sky-800/50 rounded-2xl text-xs space-y-1">
               <p className="font-bold text-sky-300">
-                Pesakit: {activeJob.patient_data.patient_name} ({activeJob.patient_data.patient_rn})
+                Patient: {activeJob.patient_data.patient_name} ({activeJob.patient_data.patient_rn})
               </p>
               <p className="text-slate-400">
-                Mod: <strong className="text-white uppercase">{activeJob.patient_data.mobility_type}</strong> | Oksigen: <strong className="text-white">{activeJob.patient_data.o2_dependent ? 'Diperlukan' : 'Tidak'}</strong>
+                Mode: <strong className="text-white uppercase">{activeJob.patient_data.mobility_type}</strong> | Oxygen: <strong className="text-white">{activeJob.patient_data.o2_dependent ? 'Required' : 'None'}</strong>
               </p>
             </div>
           )}
@@ -274,7 +274,7 @@ export const PorterDriverPanelPage: React.FC = () => {
                 className="w-full py-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-black rounded-2xl shadow-xl shadow-sky-500/25 text-base flex items-center justify-center gap-3"
               >
                 <MapPin className="w-6 h-6" />
-                <span>1. SAYA SUDAH TIBA DI LOKASI AMBIL</span>
+                <span>1. I HAVE ARRIVED AT PICKUP LOCATION</span>
               </Button>
             )}
 
@@ -284,7 +284,7 @@ export const PorterDriverPanelPage: React.FC = () => {
                 className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black rounded-2xl shadow-xl shadow-blue-500/25 text-base flex items-center justify-center gap-3"
               >
                 <Play className="w-6 h-6" />
-                <span>2. SAHKAN AMBILAN & MULA PERJALANAN</span>
+                <span>2. CONFIRM PICKUP & START TRANSIT</span>
               </Button>
             )}
 
@@ -294,7 +294,7 @@ export const PorterDriverPanelPage: React.FC = () => {
                 className="w-full py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-black rounded-2xl shadow-xl shadow-indigo-500/25 text-base flex items-center justify-center gap-3"
               >
                 <MapPin className="w-6 h-6" />
-                <span>3. SAYA SUDAH TIBA DI DESTINASI</span>
+                <span>3. I HAVE ARRIVED AT DESTINATION</span>
               </Button>
             )}
 
@@ -304,16 +304,16 @@ export const PorterDriverPanelPage: React.FC = () => {
                 className="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black rounded-2xl shadow-xl shadow-emerald-500/25 text-base flex items-center justify-center gap-3"
               >
                 <CheckCircle2 className="w-6 h-6" />
-                <span>4. SELESAI HANTAR & MINTA PENGESAHAN PENERIMA</span>
+                <span>4. COMPLETE DELIVERY & REQUEST RECIPIENT VERIFICATION</span>
               </Button>
             )}
 
             {activeJob.status === 'pending_receiver_confirmation' && (
               <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-center space-y-2">
                 <Clock className="w-8 h-8 text-amber-400 mx-auto animate-spin" />
-                <h4 className="text-sm font-extrabold text-white">Menunggu Pengesahan Kakitangan Penerima</h4>
+                <h4 className="text-sm font-extrabold text-white">Awaiting Recipient Staff Verification</h4>
                 <p className="text-xs text-slate-400">
-                  Sila maklumkan kepada jururawat/pegawai wad penerima untuk mengesahkan penyerahan pada portal mereka.
+                  Please inform the receiving ward nurse or clinical officer to verify delivery on their portal.
                 </p>
               </div>
             )}
@@ -325,17 +325,17 @@ export const PorterDriverPanelPage: React.FC = () => {
           <div className="flex justify-between items-center">
             <h3 className="text-base font-bold text-white flex items-center gap-2">
               <Radio className="w-5 h-5 text-sky-400 animate-pulse" />
-              <span>Kolam Tugasan Baharu (Hospital Pool Queue)</span>
+              <span>Hospital Pool Queue (Available Tasks)</span>
             </h3>
-            <span className="text-xs font-mono text-slate-400">{poolJobs.length} Permohonan Tersedia</span>
+            <span className="text-xs font-mono text-slate-400">{poolJobs.length} Requests Available</span>
           </div>
 
           <div className="space-y-3">
             {poolJobs.length === 0 ? (
               <div className="p-16 text-center text-slate-500 bg-slate-900/60 rounded-3xl border border-slate-800">
                 <Truck className="w-12 h-12 mx-auto text-slate-700 mb-3" />
-                <p className="font-bold text-slate-400">Tiada tugasan baharu dalam kolam.</p>
-                <p className="text-xs text-slate-500 mt-1">Radar sedang aktif mendengar siaran permohonan wad.</p>
+                <p className="font-bold text-slate-400">No new tasks in pool.</p>
+                <p className="text-xs text-slate-500 mt-1">Radar is actively listening for ward requests.</p>
               </div>
             ) : (
               poolJobs.map((job) => (
@@ -350,7 +350,7 @@ export const PorterDriverPanelPage: React.FC = () => {
                       <span className="text-xs font-extrabold text-white">{job.sub_category || job.category}</span>
                     </div>
                     <p className="text-xs text-slate-400">
-                      Dari: <strong className="text-slate-200">{job.origin_department_name}</strong> ➔ Ke: <strong className="text-slate-200">{job.destination_department_name}</strong>
+                      From: <strong className="text-slate-200">{job.origin_department_name}</strong> ➔ To: <strong className="text-slate-200">{job.destination_department_name}</strong>
                     </p>
                   </div>
 
@@ -358,7 +358,7 @@ export const PorterDriverPanelPage: React.FC = () => {
                     onClick={() => handleAcceptRadarJob(job.id)}
                     className="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white font-bold px-5 text-xs shrink-0"
                   >
-                    Terima Tugasan
+                    Accept Task
                   </Button>
                 </div>
               ))

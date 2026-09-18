@@ -1,5 +1,7 @@
 import { DrugEntry } from '../types/formulariTypes'
 import officialFukkmData from './officialFukkmData.json'
+import { KKM_LASA_MASTER_REGISTRY, getLasaPairsForDrug } from './lasaDatabase'
+import { getKkmDilutionProtocol, KKM_DILUTION_MASTER_DATABASE } from './kkmDilutionMasterDatabase'
 
 const DETAILED_SPECIALIST_MONOGRAPHS: DrugEntry[] = [
   // 1. Concentrated Electrolyte - KCl (HAM CRITICAL)
@@ -2099,10 +2101,312 @@ const DETAILED_SPECIALIST_MONOGRAPHS: DrugEntry[] = [
     ],
     lastUpdated: '2026-08-20',
     verifiedBy: 'Hospital Cardiology & Non-Communicable Disease (NCD) Clinic'
+  },
+
+  // 17. Rabies Vaccine Injection (KKM / WHO Standard Clinical Monograph)
+  {
+    id: 'DRUG-KKM-1345',
+    genericName: 'Rabies Vaccine Injection',
+    brandNames: ['Rabipur (PCECV)', 'Verorab (PVRV)', 'Rabitec (MOHMF)', 'Speeda'],
+    mohDrugCode: 'J07BG01000P4001XX',
+    atcCode: 'J07BG01',
+    atcCategory: 'Antiinfectives for Systemic Use - Vaccines',
+    therapeuticClass: 'Inactivated Viral Vaccine (Anti-Rabies Prophylaxis)',
+    prescriberCategory: 'B',
+    poisonCategory: 'Group B',
+    skimPerolehan: 'APPL',
+    dosageForms: ['Lyophilised Powder with Diluent for Injection (Vial)'],
+    strengths: ['≥ 2.5 IU/dose (Purified Inactivated Rabies Vaccine: PCECV / PVRV)'],
+    indications: [
+      'Post-Exposure Prophylaxis (PEP) - Pencegahan Selepas Pendedahan Gigitan/Cakaran Haiwan Berisiko Rabies (Kategori II & III mengikut Garis Panduan KKM & WHO)',
+      'Pre-Exposure Prophylaxis (PrEP) - Pencegahan Sebelum Pendedahan bagi Kumpulan Berisiko Tinggi (Doktor Veterinar, Pengendali Haiwan Liar, Kakitangan Makmal Rabies)',
+      'Re-exposure PEP - Pendedahan Semula pada Individu yang Telah Menerima Vaksinasi Lengkap Terdahulu'
+    ],
+    contraindications: [
+      'Post-Exposure Prophylaxis (PEP): TIADA KONTRAINDIKASI (NO CONTRAINDICATION). Penyakit rabies adalah 100% membawa maut sekiranya gejala klinikal muncul. Kehamilan, penyusuan susu ibu, umur bayi/kanak-kanak, dan penyakit akut BUKAN halangan untuk pemberian vaksin PEP.',
+      'Pre-Exposure Prophylaxis (PrEP) SAHAJA: Penyakit demam akut yang teruk (tangguhkan hingga sembuh), sejarah anafilaksis teruk terhadap komponen vaksin terdahulu.'
+    ],
+    neml: 'Y',
+    standardDosage: {
+      adult: `[PROTOKOL UTAMA KKM & WHO: 2-SITE INTRADERMAL (ID) REGIMEN]:
+• Regimen: 2-Site Intradermal (ID) Injection pada Hari 0, Hari 3, dan Hari 7.
+• Dos: 0.1 mL bagi setiap tapak suntikan Intradermal (ID).
+• Lokasi Suntikan: 2 tapak suntikan setiap lawatan — Suntik 0.1 mL pada Deltoid Kiri DAN 0.1 mL pada Deltoid Kanan (Bilateral Deltoid).
+• Jadual Lawatan:
+  - Hari 0: 2 suntikan ID (0.1 mL kiri + 0.1 mL kanan)
+  - Hari 3: 2 suntikan ID (0.1 mL kiri + 0.1 mL kanan)
+  - Hari 7: 2 suntikan ID (0.1 mL kiri + 0.1 mL kanan)
+  (Jumlah: 6 dos suntikan ID dalam 3 kali lawatan klinik).
+• Pesakit Imunokompromais: Wajib terima 2-site ID pada Hari 0, 3, 7, 14, dan 28 serta WAJIB menerima Rabies Immunoglobulin (RIG).
+
+[REGIMEN ALTERNATIF: INTRAMUSCULAR (IM) - ESSEN 4-DOS]:
+• Dos: 1 vial penuh (1.0 mL atau 0.5 mL mengikut formulasi pengeluar) IM Deltoid pada Hari 0, 3, 7, dan 14.
+• AMARAN KESELAMATAN: JANGAN SEKALI-KALI SUNTIK DI BAHAGIAN PUNGGUNG (GLUTEAL AREA). Lemak gluteal melambatkan penyerapan dan mengurangkan titer antibodi secara mendadak sehingga boleh menyebabkan kegagalan imunisasi dan kematian.
+
+[PENDEDAHAN SEMULA (RE-EXPOSURE) PADA PESAKIT TELAH LENGKAP DIVAKSIN]:
+• 1 tapak ID (0.1 mL) pada Hari 0 dan Hari 3 (atau 1 dos IM pada Hari 0 dan Hari 3). TIDAK PERLU Rabies Immunoglobulin (RIG).
+
+[PRE-EXPOSURE PROPHYLAXIS (PrEP)]:
+• 2 tapak ID (0.1 mL setiap satu) pada Hari 0 dan Hari 7 (atau 1 dos IM pada Hari 0 dan Hari 7).`,
+      pediatric: `[DOS PEDIATRIK, BAYI & KANAK-KANAK]:
+• Dos dan jadual vaksinasi rabies kanak-kanak adalah SAMA TEPAT DENGAN DEWASA (0.1 mL ID pada setiap tapak bilateral deltoid pada Hari 0, Hari 3, dan Hari 7).
+• Tiada pengurangan dos berdasarkan berat badan atau umur untuk vaksin rabies.
+• Lokasi Suntikan Bayi / Kanak-kanak < 2 tahun: Suntik Intradermal (ID) atau IM pada bahagian anterolateral paha (anterolateral thigh) secara bilateral jika otot deltoid belum cukup berkembang.`,
+      elderlyOrRenal: `[GANGGUAN BUAH PINGGANG (RENAL DOSING) & DIALISIS]:
+• TIADA PENGURANGAN DOS DIPERLUKAN (CrCl > 50, 30-50, 10-29, < 10 mL/min atau Hemodialisis: Berikan dos standard penuh 100%). Pengurangan dos adalah DILARANG kerana berisiko menyebabkan kegagalan pembentukan antibodi pelindung rabies yang membawa maut.
+
+[WARGA EMAS & GANGGUAN HATI (GERIATRIC & HEPATIC)]:
+• Berikan dos standard penuh. Tiada pelarasan dos diperlukan untuk pesakit geriatrik atau pesakit sirosis hati.`
+    },
+    administrationRoutes: [
+      'Intradermal (ID) - 0.1 mL bilateral deltoid (Day 0, 3, 7)',
+      'Intramuscular (IM) - Deltoid / Anterolateral Thigh',
+      'STRICTLY CONTRAINDICATED IV (NEVER IV)',
+      'STRICTLY PROHIBITED IN GLUTEAL REGION'
+    ],
+    sideEffects: [
+      'Reaksi setempat: Eritema, bengkak, sakit ringan dan gatal di tapak suntikan intradermal (lazim dan tanda tindak balas imun tempatan)',
+      'Reaksi sistemik ringan: Demam ringan sementara, malaise, sakit kepala, loya, mialgia',
+      'Reaksi anafilaksis / hipersensitiviti (sangat jarang berlaku)'
+    ],
+    cautionsAndWarnings: [
+      'TEKNIK SUNTIKAN INTRADERMAL (ID) WAJIB BETUL: Gunakan picagari 1 mL (tuberculin/insulin) dengan jarum halus (27G - 30G) bersudut 10-15 darjah sehingga menghasilkan lepuh benjolan (wheal / peau d\'orange) yang jelas.',
+      'JIKA SUNTIKAN ID TERSILAP MASUK SUBKUTAN ATAU IM: Suntikan semula dos 0.1 mL secara ID pada tapak bersebelahan.',
+      'AMARAN KESELAMATAN: JANGAN SUNTIK DI OTOT PUNGGUNG (GLUTEAL MUSCLE) — Kegagalan penyerapan lemak gluteal telah menyebabkan kegagalan imunisasi dan kematian akibat rabies.',
+      'PENGURUSAN LUKA KECEMASAN: Cuci luka gigitan/cakaran dengan air paip mengalir dan sabun secara mencurah sekurang-kurangnya 15 MINIT segera selepas gigitan, sapu Povidone Iodine 10%, dan JANGAN jahit luka secara primer.',
+      'PEMBERIAN RIG: Bagi pendedahan Kategori III (luka tembus kulit/pendarahan), Rabies Immunoglobulin (RIG) wajib disuntik mengelilingi luka pada Hari 0.'
+    ],
+    isHAM: false,
+    isLASA: false,
+    interactions: [
+      {
+        interactingDrug: 'Kortikosteroid Sistemik & Ubat Imunosupresif',
+        severity: 'MAJOR',
+        effect: 'Menindas tindak balas imunisasi aktif dan mengurangkan penghasilan antibodi pelindung rabies.',
+        management: 'Tangguhkan terapi imunosupresif jika boleh. Sekiranya tidak dapat dielakkan, lakukan ujian serologi titer antibodi atau berikan dos tambahan pada Hari 28.'
+      },
+      {
+        interactingDrug: 'Rabies Immunoglobulin (RIG)',
+        severity: 'MODERATE',
+        effect: 'Dos RIG berlebihan atau dicampur dalam picagari yang sama boleh melemahkan keberkesanan vaksin.',
+        management: 'Suntik RIG pada tapak anatomi yang berbeza daripada tapak vaksin dan jangan melebihi dos 20 IU/kg (HRIG) atau 40 IU/kg (ERIG).'
+      }
+    ],
+    pregnancyAndLactation: {
+      fdaCategory: 'C',
+      pregnancyStatus: 'BOLEH',
+      pregnancyVerdict: 'SAFE & MANDATORY FOR POST-EXPOSURE PROPHYLAXIS (PEP)',
+      pregnancyReason: 'Penyakit rabies adalah 100% membawa maut sekiranya gejala bermula. Vaksin rabies dinyahaktif (inactivated) adalah selamat dan WAJIB diberikan serta-merta kepada ibu hamil dalam mana-mana trimester. Tiada kesan teratogenik atau keguguran dilaporkan.',
+      trimester1: 'Selamat dan wajib diberikan mengikut jadual standard (Hari 0, 3, 7).',
+      trimester2_3: 'Selamat dan wajib diberikan mengikut jadual standard.',
+      safeAlternativesInPregnancy: ['Rabies Vaccine Injection (PCECV / PVRV) + Rabies Immunoglobulin jika Kategori III'],
+      lactationStatus: 'BOLEH',
+      lactationVerdict: 'SAFE TO USE DURING BREASTFEEDING',
+      lactationReason: 'Vaksin rabies yang dinyahaktif tidak dirembeskan ke dalam susu ibu dalam bentuk aktif. Ibu boleh meneruskan penyusuan bayi seperti biasa.',
+      infantMonitoringAdvice: 'Teruskan penyusuan susu ibu tanpa gangguan.',
+      isContraindicatedInPregnancy: false,
+      isContraindicatedInLactation: false,
+      pregnancySummary: 'MANDATORY for Rabies Post-Exposure Prophylaxis. Rabies is 100% fatal once clinical symptoms develop; pregnancy is NOT a contraindication.',
+      lactationSummary: 'Safe during breastfeeding. Inactivated virus does not transmit through breast milk.'
+    },
+    reconstitution: { isApplicable: false },
+    dilution: {
+      isApplicable: false,
+      compatibleDiluents: [],
+      incompatibleDiluents: ['DILARANG SAMA SEKALI MEMBANCUH VAKSIN RABIES KE DALAM BEG INFUSI IV (IV INFUSION IS STRICTLY PROHIBITED)'],
+      standardDilution: { doseRange: '', volume: '', finalConcentration: '', route: 'IM', infusionDuration: '' },
+      ySiteCompatibility: { compatible: [], incompatible: [], requiresSeparateLine: false },
+      monitoringParameters: [
+        'Reaksi anafilaksis 15-30 minit selepas suntikan',
+        'Pematuhan tarikh lawatan vaksinasi Hari 0, 3, dan 7',
+        'Penyembuhan luka gigitan haiwan'
+      ]
+    },
+    shelfLife: {
+      dosageCategory: 'Vaccine / Biological (Vaksin Rantaian Sejuk)',
+      intactShelfLife: '36 - 48 bulan dari tarikh pengilangan',
+      storageConditions: {
+        temperature: 'Cold Chain / Refrigerated (2-8°C)',
+        protectFromLight: true,
+        protectFromMoisture: true,
+        specialStorageNote: 'RANTAIAN SEJUK 2-8°C WAJIB DIKEKALKAN. JANGAN DIBEKUKAN (DO NOT FREEZE). Lindungi dari cahaya terus.'
+      },
+      postReconstitutionStability: {
+        roomTempDuration: 'Gunakan serta-merta atau dalam tempoh 6 jam jika disimpan pada 2-8°C bawah kawalan aseptik.',
+        refrigeratedDuration: 'Maksimum 6-8 jam pada suhu 2-8°C (untuk sesi multi-puncture ID klinikal).'
+      },
+      postDilutionStability: { roomTempDuration: 'N/A', refrigeratedDuration: 'N/A' },
+      multiDoseVialPolicy: 'Use within 6-8 hours once reconstituted at 2-8°C for ID session'
+    },
+    quota: {
+      monthlyQuota: 200,
+      quotaUsed: 45,
+      quotaRemaining: 155,
+      unit: 'Vials',
+      lowStockThreshold: 30,
+      isLowStock: false,
+      isCriticalShortage: false,
+      estimatedRunOutDays: 90,
+      lastRestockedDate: '2026-08-18',
+      bufferStockLevel: 25
+    },
+    alternativeDrugs: [
+      {
+        drugId: 'DRUG-KKM-1346',
+        drugName: 'Antirabies Immunoglobulin Injection (HRIG / ERIG)',
+        prescriberCategory: 'B',
+        therapeuticEquivalence: 'Class Equivalent',
+        reasonForChoice: 'Wajib ditambah bersama vaksin rabies untuk pendedahan Kategori III (luka gigitan tembus pendarahan) bagi imuniti pasif segera.',
+        stockStatus: 'In Stock'
+      }
+    ],
+    lastUpdated: '2026-08-31',
+    verifiedBy: 'National Antimicrobial & Infectious Disease Committee (KKM) / Garis Panduan Pengendalian Rabies KKM'
+  },
+
+  // 18. Antirabies Immunoglobulin Injection (HRIG / ERIG - KKM / WHO Standard)
+  {
+    id: 'DRUG-KKM-1346',
+    genericName: 'Antirabies Immunoglobulin Injection',
+    brandNames: ['Berirab P (HRIG)', 'KamRAB (HRIG)', 'Equirab (ERIG)', 'Favirab (ERIG)', 'Antirabies (MOHMF)'],
+    mohDrugCode: 'J06BB05-000-P30-01-XXX',
+    atcCode: 'J06BB05',
+    atcCategory: 'Antiinfectives for Systemic Use - Immune Sera and Immunoglobulins',
+    therapeuticClass: 'Passive Immunizing Agent / Antirabies Hyperimmune Globulin',
+    prescriberCategory: 'B',
+    poisonCategory: 'Group B',
+    skimPerolehan: 'APPL',
+    dosageForms: ['Solution for Injection (Vial / Ampoule)'],
+    strengths: ['HRIG 150 IU/mL (2 mL / 10 mL vial)', 'ERIG 200 - 400 IU/mL (5 mL vial)'],
+    indications: [
+      'Post-Exposure Prophylaxis (PEP) Rabies Kategori III: Luka gigitan/cakaran tembus dermis dengan pendarahan, air liur haiwan terkena membran mukosa atau luka terbuka, pendedahan kelawar.',
+      'Post-Exposure Prophylaxis (PEP) Rabies Kategori II pada Pesakit Imunokompromais.'
+    ],
+    contraindications: [
+      'TIADA KONTRAINDIKASI untuk profilaksis selepas pendedahan Kategori III. Rabies adalah penyakit membawa maut 100%. Tiada halangan kehamilan atau penyakit kronik.',
+      'TIDAK DIPERLUKAN bagi pesakit yang telah menerima vaksinasi rabies lengkap terdahulu (re-exposure).',
+      'TIDAK DIBERI selepas Hari ke-7 dari dos pertama vaksin rabies kerana tindak balas antibodi aktif telah mula terbentuk.'
+    ],
+    neml: 'Y',
+    standardDosage: {
+      adult: `[DOS KKM / WHO ANTIRABIES IMMUNOGLOBULIN (RIG)]:
+• Human Rabies Immunoglobulin (HRIG): 20 IU / kg berat badan (Maksimum 20 IU/kg, jangan melebihi dos kerana boleh menekan antibodi aktif).
+• Equine Rabies Immunoglobulin (ERIG): 40 IU / kg berat badan.
+
+[PROTOKOL PEMBERIAN RIG & INFILTRASI LUKA]:
+• Infiltrasi Tempatan (Local Infiltration): Suntik seberapa banyak isipadu RIG yang mungkin secara anatomi TERUS KE DALAM DAN SEKELILING SEMUA LUKA GIGITAN / CAKARAN.
+• Baki Isipadu RIG: Sekiranya ada baki selepas infiltrasi luka selesai, suntik secara Intramuskular (IM) dalam pada tapak anatomi yang JAUH daripada tapak suntikan vaksin (contohnya paha anterolateral jika vaksin disuntik pada deltoid).
+• Masa Pemberian: Berikan pada Hari 0 serentak dengan dos pertama vaksin rabies. Boleh diberikan sehingga Hari ke-7 jika lewat.
+• JANGAN CAMPUR RIG DENGAN VAKSIN DALAM SATU PICAGARI ATAU SUNTIK PADA TAPAK ANATOMI YANG SAMA.`,
+      pediatric: `[DOS PEDIATRIK & KANAK-KANAK]:
+• Dos dihitung berdasarkan berat badan: HRIG 20 IU/kg atau ERIG 40 IU/kg.
+• PENTING UNTUK LUKA BANYAK PADA KANAK-KANAK: Sekiranya isipadu dos RIG yang dihitung terlalu sedikit untuk menginfiltrasi semua luka gigitan yang banyak/luas, isipadu RIG boleh dicairkan 2 hingga 3 kali ganda menggunakan larutan steril 0.9% Sodium Chloride (Normal Saline) bagi memastikan liputan menyeluruh pada setiap luka.`,
+      elderlyOrRenal: `[GANGGUAN BUAH PINGGANG (RENAL DOSING) & GANGGUAN HATI]:
+• TIADA PENGURANGAN DOS DIPERLUKAN (CrCl-independent). Berikan dos penuh 20 IU/kg (HRIG) atau 40 IU/kg (ERIG) berdasarkan berat badan pesakit.`
+    },
+    administrationRoutes: [
+      'Local Wound Infiltration (Direct into and around bite wounds)',
+      'Intramuscular (IM) distant from vaccine site',
+      'STRICTLY CONTRAINDICATED IV (NEVER IV)'
+    ],
+    sideEffects: [
+      'Sakit setempat, pedih dan bengkak di kawasan infiltrasi luka',
+      'Demam ringan, mialgia, sakit kepala',
+      'Reaksi hipersensitiviti / serum sickness (terutamanya bagi ERIG berasaskan serum kuda — pantau tanda urticaria, pruritus, bronkospasme)'
+    ],
+    cautionsAndWarnings: [
+      'AMARAN SUNTIKAN: JANGAN SEKALI-KALI DISUNTIK SECARA INTRAVENA (IV) — Risiko anafilaksis dan tindak balas vasovagal yang teruk.',
+      'AMARAN TAPAK SUNTIKAN: JANGAN suntik RIG pada anggota badan atau tapak anatomi yang sama dengan suntikan vaksin rabies.',
+      'HAD DOS: Jangan berikan melebihi dos yang dihitung (20 IU/kg HRIG / 40 IU/kg ERIG) kerana dos berlebihan boleh menyekat (suppress) tindak balas antibodi aktif yang dirangsang oleh vaksin.',
+      'SELEPAS HARI KE-7: Pemberian RIG tidak lagi disyorkan selepas Hari 7 dari dos vaksin pertama.'
+    ],
+    isHAM: false,
+    isLASA: false,
+    interactions: [
+      {
+        interactingDrug: 'Rabies Vaccine (Active Immunization)',
+        severity: 'MODERATE',
+        effect: 'Pemberian dos RIG melebihi had boleh menindas pembentukan titer antibodi aktif daripada vaksin.',
+        management: 'Patuhi dos maksimum 20 IU/kg (HRIG) atau 40 IU/kg (ERIG) dan suntik di tapak berasingan.'
+      },
+      {
+        interactingDrug: 'Vaksin Virus Hidup (MMR, Varicella)',
+        severity: 'MODERATE',
+        effect: 'Antibodi pasif boleh mengurangkan keberkesanan vaksin virus hidup yang diberikan serentak.',
+        management: 'Tangguhkan vaksin virus hidup selama sekurang-kurangnya 3-4 bulan selepas pemberian imunoglobulin.'
+      }
+    ],
+    pregnancyAndLactation: {
+      fdaCategory: 'C',
+      pregnancyStatus: 'BOLEH',
+      pregnancyVerdict: 'SAFE & MANDATORY FOR CATEGORY III EXPOSURE',
+      pregnancyReason: 'Rabies membawa maut 100%. Antibodi pasif RIG tidak membahayakan janin dan menyelamatkan nyawa ibu serta janin daripada jangkitan rabies.',
+      trimester1: 'Selamat dan wajib diberikan serta-merta untuk pendedahan Kategori III.',
+      trimester2_3: 'Selamat dan wajib diberikan serta-merta untuk pendedahan Kategori III.',
+      safeAlternativesInPregnancy: ['Human Rabies Immunoglobulin (HRIG) 20 IU/kg lebih diutamakan berbanding ERIG jika ada'],
+      lactationStatus: 'BOLEH',
+      lactationVerdict: 'SAFE TO USE DURING BREASTFEEDING',
+      lactationReason: 'Imunoglobulin tidak memasuki susu ibu dalam kuantiti yang memudaratkan bayi. Teruskan penyusuan seperti biasa.',
+      infantMonitoringAdvice: 'Pantau bayi seperti biasa.',
+      isContraindicatedInPregnancy: false,
+      isContraindicatedInLactation: false,
+      pregnancySummary: 'MANDATORY for Category III bite exposure in pregnancy. Passive neutralization saves lives.',
+      lactationSummary: 'Safe during lactation. Breastfeeding should continue uninterrupted.'
+    },
+    reconstitution: { isApplicable: false },
+    dilution: {
+      isApplicable: false,
+      compatibleDiluents: ['0.9% Sodium Chloride (untuk pencairan infiltrasi luka sahaja, BUKAN untuk infusi IV)'],
+      incompatibleDiluents: ['DILARANG INFUSI INTRAVENA (IV)'],
+      standardDilution: { doseRange: '', volume: '', finalConcentration: '', route: 'IM', infusionDuration: '' },
+      ySiteCompatibility: { compatible: [], incompatible: [], requiresSeparateLine: true },
+      monitoringParameters: [
+        'Pemantauan anafilaksis 30 minit selepas suntikan (terutamanya ERIG)',
+        'Pemeriksaan luka gigitan',
+        'Pematuhan jadual vaksinasi Hari 0, 3, 7'
+      ]
+    },
+    shelfLife: {
+      dosageCategory: 'Immunoglobulin / Biological (Rantaian Sejuk)',
+      intactShelfLife: '24 - 36 bulan dari tarikh pengilangan',
+      storageConditions: {
+        temperature: 'Cold Chain / Refrigerated (2-8°C)',
+        protectFromLight: true,
+        protectFromMoisture: false,
+        specialStorageNote: 'RANTAIAN SEJUK 2-8°C. JANGAN DIBEKUKAN. Lindungi dari cahaya.'
+      },
+      postReconstitutionStability: { roomTempDuration: 'N/A', refrigeratedDuration: 'N/A' },
+      postDilutionStability: { roomTempDuration: 'Gunakan serta-merta untuk infiltrasi luka', refrigeratedDuration: 'N/A' },
+      multiDoseVialPolicy: 'Single Use Only - Discard Remainder'
+    },
+    quota: {
+      monthlyQuota: 50,
+      quotaUsed: 12,
+      quotaRemaining: 38,
+      unit: 'Vials',
+      lowStockThreshold: 10,
+      isLowStock: false,
+      isCriticalShortage: false,
+      estimatedRunOutDays: 95,
+      lastRestockedDate: '2026-08-15',
+      bufferStockLevel: 8
+    },
+    alternativeDrugs: [
+      {
+        drugId: 'DRUG-KKM-1345',
+        drugName: 'Rabies Vaccine Injection',
+        prescriberCategory: 'B',
+        therapeuticEquivalence: 'Class Equivalent',
+        reasonForChoice: 'Wajib diberikan bersama-sama RIG untuk membina imuniti aktif berpanjangan.',
+        stockStatus: 'In Stock'
+      }
+    ],
+    lastUpdated: '2026-08-31',
+    verifiedBy: 'National Infectious Disease / Antimicrobial Guideline Committee KKM'
   }
 ]
 
-export const FORMULARI_DATABASE: DrugEntry[] = [
+const ALL_BASE_FORMULARI_DRUGS: DrugEntry[] = [
   ...DETAILED_SPECIALIST_MONOGRAPHS,
   ...(officialFukkmData as DrugEntry[]).filter(
     kkm => !DETAILED_SPECIALIST_MONOGRAPHS.some(
@@ -2111,4 +2415,73 @@ export const FORMULARI_DATABASE: DrugEntry[] = [
     )
   )
 ]
+
+export const FORMULARI_DATABASE: DrugEntry[] = ALL_BASE_FORMULARI_DRUGS.map(drug => {
+  let updatedDrug: DrugEntry = { ...drug }
+
+  // Check if drug is parenteral before attaching dilution protocols
+  const isParenteral = (drug.dosageForms && drug.dosageForms.some(f => /inject|infus|ampoul|vial|powder for recon|parenteral|iv|im/i.test(f))) ||
+    /injection|infusion|solution for injection|ampoule|vial/i.test(drug.genericName)
+
+  if (isParenteral) {
+    const kkmProtocol = getKkmDilutionProtocol(drug.genericName) ||
+      (drug.brandNames && drug.brandNames.length > 0 ? getKkmDilutionProtocol(drug.brandNames[0]) : undefined)
+
+    if (kkmProtocol) {
+      updatedDrug = {
+        ...updatedDrug,
+        dilution: {
+          isApplicable: true,
+          compatibleDiluents: kkmProtocol.compatibleDiluents || [kkmProtocol.diluentText],
+          incompatibleDiluents: kkmProtocol.incompatibleDiluents || [],
+          standardDilution: {
+            doseRange: kkmProtocol.rawTitle,
+            volume: kkmProtocol.suggestedMinimumDilutions,
+            finalConcentration: kkmProtocol.suggestedMinimumDilutions,
+            route: 'IV Infusion',
+            infusionDuration: kkmProtocol.administrationText
+          },
+          ySiteCompatibility: {
+            compatible: kkmProtocol.compatibleDiluents || [],
+            incompatible: kkmProtocol.incompatibleDiluents || [],
+            requiresSeparateLine: false
+          },
+          sourceGuideline: kkmProtocol.sourceGuideline,
+          clinicalRemarks: kkmProtocol.comments,
+          references: kkmProtocol.references,
+          monitoringParameters: [
+            'Tanda-tanda vital (Tekanan darah, Nadi, SpO2, Pernafasan)',
+            'Pemantauan tapak infusi (Phlebitis, Ekstravasasi, Kemerahan)',
+            'Kesan terapeutik dan tindak balas klinikal pesakit'
+          ]
+        },
+        reconstitution: {
+          isApplicable: kkmProtocol.isReconstitutionRequired,
+          preferredSolvent: kkmProtocol.isReconstitutionRequired ? 'Water for Injection (WFI)' : undefined,
+          solventVolume: kkmProtocol.isReconstitutionRequired ? kkmProtocol.reconstitutionText : undefined,
+          stepByStepInstructions: kkmProtocol.isReconstitutionRequired ? [kkmProtocol.reconstitutionText] : undefined
+        }
+      }
+    }
+  }
+
+  const dynamicPairs = getLasaPairsForDrug(updatedDrug.genericName)
+  if (dynamicPairs.length > 0) {
+    const existingPairs = updatedDrug.lasaPairs || []
+    const mergedPairs = [...existingPairs]
+    dynamicPairs.forEach(dp => {
+      if (!mergedPairs.some(ep => ep.tallManOther.toLowerCase() === dp.tallManOther.toLowerCase() || ep.confusedWith.toLowerCase() === dp.confusedWith.toLowerCase())) {
+        mergedPairs.push(dp)
+      }
+    })
+
+    return {
+      ...updatedDrug,
+      isLASA: true,
+      tallManName: updatedDrug.tallManName || dynamicPairs[0].tallManThis,
+      lasaPairs: mergedPairs
+    }
+  }
+  return updatedDrug
+})
 

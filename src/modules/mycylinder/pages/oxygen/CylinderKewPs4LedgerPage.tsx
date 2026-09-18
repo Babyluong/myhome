@@ -112,6 +112,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
   // Data states
   const [cylinderItems, setCylinderItems] = useState<CylinderLedgerItem[]>([])
   const [selectedSizeId, setSelectedSizeId] = useState<string>('size-004')
+  const [selectedItemId, setSelectedItemId] = useState<string>('')
   const [selectedItem, setSelectedItem] = useState<CylinderLedgerItem | null>(null)
   const [ledgerRows, setLedgerRows] = useState<CylinderTransactionRow[]>([])
   const [deptBreakdown, setDeptBreakdown] = useState<CylinderDeptBreakdown[]>([])
@@ -189,10 +190,18 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
     const res = await getCylinderLedgerItems(hospitalId)
     if (res.data && res.data.length > 0) {
       setCylinderItems(res.data)
-      const target = res.data.find(i => i.size_id === selectedSizeId || i.id === selectedSizeId || i.item_code === '101-N') || res.data[0]
+      const querySize = searchParams.get('sizeId')
+      const target = querySize
+        ? res.data.find(i => i.id === querySize || i.size_id === querySize || i.item_code?.toLowerCase().includes(querySize.toLowerCase()))
+        : (res.data.find(i => i.id === selectedItemId || i.size_id === selectedSizeId || i.item_code === '101-N') || res.data[0])
+
       if (target) {
+        setSelectedItemId(target.id)
         setSelectedSizeId(target.size_id || target.id)
         setSelectedItem(target)
+      }
+      if (searchParams.get('action') === 'check_found') {
+        setIsCheckFoundModalOpen(true)
       }
     }
     setIsLoadingCatalog(false)
@@ -209,15 +218,17 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
 
     const [txRes, deptRes, verRes] = await Promise.all([
       getCylinderTransactions(hospitalId, {
-        sizeId: selectedSizeId,
+        sizeId: selectedItem?.size_id || selectedSizeId,
+        typeId: selectedItem?.type_id,
+        comboId: selectedItem?.id,
         transaction_type: selectedTxType,
         date_from: dateFrom,
         date_to: dateTo,
         search_query: refSearch,
         ward_name: selectedWard
       }),
-      getCylinderDepartmentBreakdown(hospitalId, selectedSizeId, dateFrom, dateTo),
-      getCylinderStoreVerificationHistory(hospitalId, selectedSizeId)
+      getCylinderDepartmentBreakdown(hospitalId, selectedItem?.size_id || selectedSizeId, dateFrom, dateTo),
+      getCylinderStoreVerificationHistory(hospitalId, selectedItem?.size_id || selectedSizeId)
     ])
 
     if (txRes.data) {
@@ -235,10 +246,11 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
 
   useEffect(() => {
     loadLedgerDetails()
-  }, [selectedSizeId, selectedTxType, dateFrom, dateTo, refSearch, selectedWard, hospitalId])
+  }, [selectedItemId, selectedSizeId, selectedItem?.type_id, selectedTxType, dateFrom, dateTo, refSearch, selectedWard, hospitalId])
 
   // Handle Size Selection
   const handleSelectSize = (item: CylinderLedgerItem) => {
+    setSelectedItemId(item.id)
     setSelectedSizeId(item.size_id || item.id)
     setSelectedItem(item)
     setIsMobileSearchExpanded(false)
@@ -324,7 +336,8 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
 
   // Open Check & Found Modal
   const openCheckFoundModal = () => {
-    setCheckFoundPhysicalQty(currentStockBalance.toString())
+    const targetQty = selectedItem?.current_stock !== undefined ? selectedItem.current_stock : currentStockBalance
+    setCheckFoundPhysicalQty(targetQty.toString())
     setCheckFoundDate(new Date().toISOString().split('T')[0])
     setCheckFoundOfficer(user?.full_name || 'Pegawai Pemeriksa Stor')
     setCheckFoundRemarks('Semakan Kiraan Stok Fizikal Silinder / Audit Dalaman')
@@ -348,6 +361,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
       item_code: selectedItem?.item_code,
       item_name: selectedItem?.item_name,
       physical_quantity: physical,
+      current_kewps_balance: currentStockBalance,
       officer_name: checkFoundOfficer.trim() || (user?.full_name || 'Pegawai Pemeriksa Stor'),
       check_date: checkFoundDate,
       remarks: checkFoundRemarks.trim() || undefined
@@ -929,7 +943,9 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
             ) : (
               <div className="space-y-2 max-h-[460px] overflow-y-auto pr-1">
                 {filteredCatalogItems.map(item => {
-                  const isSelected = selectedSizeId === (item.size_id || item.id)
+                  const isSelected = selectedItemId
+                    ? selectedItemId === item.id
+                    : (selectedItem ? selectedItem.id === item.id : selectedSizeId === (item.size_id || item.id))
                   const isItemLow = item.current_stock <= (item.min_stock || 0)
 
                   return (
@@ -1576,8 +1592,48 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
             </div>
           )}
 
+          {/* Comparison Preview Card */}
+          <div className="p-3.5 bg-slate-900 text-white rounded-2xl space-y-2.5">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-slate-400">Silinder:</span>
+              <span className="font-bold text-teal-300">{selectedItem?.item_name} ({selectedItem?.item_code})</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-center">
+              <div className="bg-slate-800/90 p-2 rounded-xl">
+                <span className="text-[10px] text-slate-400 block uppercase">Baki Lejar KEW.PS-4</span>
+                <span className="font-mono font-black text-sm text-teal-300">{currentStockBalance} Tabung</span>
+              </div>
+              <div className="bg-slate-800/90 p-2 rounded-xl">
+                <span className="text-[10px] text-slate-400 block uppercase">Fizikal Tersedia di Stor</span>
+                <span className="font-mono font-black text-sm text-cyan-300">{selectedItem?.current_stock || 0} Tabung</span>
+              </div>
+            </div>
+
+            {/* Calculated variance feedback */}
+            {(() => {
+              const entered = parseInt(checkFoundPhysicalQty || '0', 10)
+              const diff = entered - currentStockBalance
+              if (isNaN(entered)) return null
+              return (
+                <div className={`text-[11px] font-bold p-2 rounded-xl text-center flex items-center justify-center gap-1.5 ${
+                  diff === 0 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+                  diff < 0 ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+                  'bg-teal-500/20 text-teal-300 border border-teal-500/30'
+                }`}>
+                  {diff === 0 ? (
+                    <span>✓ Kiraan sepadan dengan baki lejar</span>
+                  ) : diff < 0 ? (
+                    <span>⚠ Pelarasan Lejar: Keluar (-{Math.abs(diff)}) → Baki Baru: {entered} Tabung</span>
+                  ) : (
+                    <span>▲ Pelarasan Lejar: Terima (+{diff}) → Baki Baru: {entered} Tabung</span>
+                  )}
+                </div>
+              )
+            })()}
+          </div>
+
           <div>
-            <label className="block font-bold text-slate-600 mb-1">Kiraan Fizikal Sebenar *</label>
+            <label className="block font-bold text-slate-600 mb-1">Kiraan Fizikal Sebenar (Tabung) *</label>
             <Input
               type="number"
               min="0"

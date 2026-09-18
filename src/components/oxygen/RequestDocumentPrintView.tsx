@@ -67,12 +67,19 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
     if (doc.items && doc.items.length > 0) {
       doc.items.forEach((item, index) => {
         let sizeDesc = '';
-        if (item.size_code === '101-N') {
-          sizeDesc = 'Silinder Sewaan Gas Oksigen BN (8.0m³)';
-        } else if (item.size_code === '101-F-BN' || item.size_code === 'P101-F-BN') {
+        const cleanCode = (item.size_code || '').toUpperCase().trim();
+        if (cleanCode.includes('HS') || cleanCode.includes('6.4')) {
+          sizeDesc = 'Silinder Gas Oksigen HS (6.4m³)';
+        } else if (cleanCode.includes('101-F-BN') || cleanCode.includes('P101-F-BN') || (cleanCode.includes('-F') && cleanCode.includes('BN'))) {
           sizeDesc = 'Silinder Gas Oksigen BN (1.4m³)';
-        } else if (item.size_code === 'P101-F' || item.size_code === '101-F') {
+        } else if (cleanCode.includes('101-F') || cleanCode.includes('P101-F') || cleanCode.includes('-F')) {
           sizeDesc = 'Silinder Sewaan Gas Oksigen PI (1.4m³)';
+        } else if (cleanCode.includes('101-E') || cleanCode.includes('P101-E') || cleanCode.includes('-E')) {
+          sizeDesc = 'Silinder Gas Oksigen PI (0.7m³)';
+        } else if (cleanCode.includes('101-D') || cleanCode.includes('P101-D') || cleanCode.includes('-D')) {
+          sizeDesc = 'Silinder Gas Oksigen PI (0.5m³)';
+        } else if (cleanCode.includes('101-N') || cleanCode.includes('P101-N') || cleanCode.includes('-N')) {
+          sizeDesc = 'Silinder Sewaan Gas Oksigen BN (8.0m³)';
         } else {
           sizeDesc = `Silinder Oksigen ${item.size_code}`;
         }
@@ -381,12 +388,19 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
                       if (doc.items && doc.items.length > 0) {
                         doc.items.forEach((item, index) => {
                           let sizeDesc = '';
-                          if (item.size_code === '101-N') {
-                            sizeDesc = 'Silinder Sewaan Gas Oksigen BN (8.0m³)';
-                          } else if (item.size_code === '101-F-BN' || item.size_code === 'P101-F-BN') {
+                          const cleanCode = (item.size_code || '').toUpperCase().trim();
+                          if (cleanCode.includes('HS') || cleanCode.includes('6.4')) {
+                            sizeDesc = 'Silinder Gas Oksigen HS (6.4m³)';
+                          } else if (cleanCode.includes('101-F-BN') || cleanCode.includes('P101-F-BN') || (cleanCode.includes('-F') && cleanCode.includes('BN'))) {
                             sizeDesc = 'Silinder Gas Oksigen BN (1.4m³)';
-                          } else if (item.size_code === 'P101-F' || item.size_code === '101-F') {
+                          } else if (cleanCode.includes('101-F') || cleanCode.includes('P101-F') || cleanCode.includes('-F')) {
                             sizeDesc = 'Silinder Sewaan Gas Oksigen PI (1.4m³)';
+                          } else if (cleanCode.includes('101-E') || cleanCode.includes('P101-E') || cleanCode.includes('-E')) {
+                            sizeDesc = 'Silinder Gas Oksigen PI (0.7m³)';
+                          } else if (cleanCode.includes('101-D') || cleanCode.includes('P101-D') || cleanCode.includes('-D')) {
+                            sizeDesc = 'Silinder Gas Oksigen PI (0.5m³)';
+                          } else if (cleanCode.includes('101-N') || cleanCode.includes('P101-N') || cleanCode.includes('-N')) {
+                            sizeDesc = 'Silinder Sewaan Gas Oksigen BN (8.0m³)';
                           } else {
                             sizeDesc = `Silinder Oksigen ${item.size_code}`;
                           }

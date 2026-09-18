@@ -34,7 +34,7 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!paymentRef.trim() || amount <= 0) {
-      toast.error('Sila lengkapkan rujukan bayaran dan jumlah yang sah.')
+      toast.error('Please complete a valid payment reference and amount.')
       return
     }
 
@@ -51,12 +51,12 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
 
       if (error) throw error
 
-      toast.success('Bayaran EFT Berjaya Direkodkan ke Lejar!')
+      toast.success('EFT Payment Successfully Recorded to Ledger!')
       onSuccess()
       onClose()
     } catch (err: any) {
       console.error('Error recording payment:', err)
-      toast.error('Gagal merekod bayaran', err.message || 'Ralat sistem.')
+      toast.error('Failed to record payment', err.message || 'System error.')
     } finally {
       setIsSubmitting(false)
     }
@@ -76,7 +76,7 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
               <CreditCard className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-slate-900">Rekod Baucar / Bayaran EFT</h3>
+              <h3 className="text-lg font-black text-slate-900">Record Payment Voucher / EFT Disbursement</h3>
               <p className="text-xs text-slate-500 font-mono">LPO: {lpo.lpo_number}</p>
             </div>
           </div>
@@ -91,7 +91,7 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-slate-600 mb-1.5">
-              No. Rujukan Baucar / No. Transaksi EFT
+              Voucher Reference No. / EFT Transaction No.
             </label>
             <input
               type="text"
@@ -105,7 +105,7 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold text-slate-600 mb-1.5">
-                Tarikh Bayaran Selesai
+                Payment Completion Date
               </label>
               <input
                 type="date"
@@ -118,7 +118,7 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-slate-600 mb-1.5">
-                Jumlah Bayaran (RM)
+                Payment Amount (RM)
               </label>
               <input
                 type="number"
@@ -135,10 +135,10 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
           <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
             <p className="font-bold flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Kesan Pengemaskinian Lejar:</span>
+              <span>Ledger Synchronization Impact:</span>
             </p>
             <p className="text-[11px] text-slate-600 mt-1">
-              Selepas bayaran direkodkan, status pesanan akan ditukar ke <strong>SELESAI (COMPLETED)</strong> dan baki peruntukan bebas akan dikemaskini secara rasmi.
+              After recording payment, order status will change to <strong>COMPLETED</strong> and official warrant balance will update automatically.
             </p>
           </div>
 
@@ -149,14 +149,14 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
               onClick={onClose}
               className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold"
             >
-              Batal
+              Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 rounded-xl shadow-sm"
             >
-              {isSubmitting ? 'Merekod...' : 'Sahkan Bayaran'}
+              {isSubmitting ? 'Recording...' : 'Record EFT Payment'}
             </Button>
           </div>
         </form>

@@ -32,7 +32,7 @@ export const DEFAULT_ADMIN_PROGRAMS: AdminProgram[] = [
     id: '986e6b71-7a24-4e8a-985d-5e80382c6e49',
     hospital_id: DEFAULT_HOSPITAL_ID,
     code: '020200',
-    label: 'Pengurusan Hospital',
+    label: 'Hospital Management',
     description: 'Hospital Management operational expenses',
     budget_type: 'warrant',
     is_active: true
@@ -41,7 +41,7 @@ export const DEFAULT_ADMIN_PROGRAMS: AdminProgram[] = [
     id: '9f5961b6-b7c8-4ff7-a127-defde3c6d186',
     hospital_id: DEFAULT_HOSPITAL_ID,
     code: '022300',
-    label: 'Dietetik Dan Sajian',
+    label: 'Dietetics & Food Services',
     description: 'Dietetics and Food Service expenses',
     budget_type: 'warrant',
     is_active: true
@@ -50,7 +50,7 @@ export const DEFAULT_ADMIN_PROGRAMS: AdminProgram[] = [
     id: '998cd36f-ec9e-4a0e-b4d5-137a70bf682d',
     hospital_id: DEFAULT_HOSPITAL_ID,
     code: 'P42',
-    label: 'Pembangunan',
+    label: 'Hospital Development',
     description: 'Development Program & Equipment Leasing',
     budget_type: 'pembangunan',
     is_active: true
@@ -63,7 +63,7 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '986e6b71-7a24-4e8a-985d-5e80382c6e49',
     code: '22000',
-    label: 'Pengangkutan',
+    label: 'Transportation',
     description: 'Transportation expenses',
     is_active: true
   },
@@ -72,7 +72,7 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '986e6b71-7a24-4e8a-985d-5e80382c6e49',
     code: '24000',
-    label: 'Sewaan',
+    label: 'Rental & Leasing',
     description: 'Rental expenses',
     is_active: true
   },
@@ -81,7 +81,7 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '986e6b71-7a24-4e8a-985d-5e80382c6e49',
     code: '27000',
-    label: 'Bekalan dan Bahan Lain',
+    label: 'Supplies & Other Materials',
     description: 'Supplies and other materials',
     is_active: true
   },
@@ -90,7 +90,7 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '986e6b71-7a24-4e8a-985d-5e80382c6e49',
     code: '28000',
-    label: 'Penyelenggaraan',
+    label: 'Maintenance & Repairs',
     description: 'Maintenance expenses',
     is_active: true
   },
@@ -99,7 +99,7 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '986e6b71-7a24-4e8a-985d-5e80382c6e49',
     code: '29000',
-    label: 'Perkhidmatan Iktisas Yang Lain',
+    label: 'Other Professional Services',
     description: 'Other professional services',
     is_active: true
   },
@@ -109,7 +109,7 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '9f5961b6-b7c8-4ff7-a127-defde3c6d186',
     code: '25000',
-    label: 'Bahan Makanan dan Minuman',
+    label: 'Food & Beverage Supplies',
     description: 'Food and beverage supplies',
     is_active: true
   },
@@ -118,7 +118,7 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '9f5961b6-b7c8-4ff7-a127-defde3c6d186',
     code: '27000',
-    label: 'Bekalan dan Bahan Lain',
+    label: 'Dietetic Supplies & Other Materials',
     description: 'Supplies and other materials',
     is_active: true
   },
@@ -127,7 +127,7 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '9f5961b6-b7c8-4ff7-a127-defde3c6d186',
     code: '29000',
-    label: 'Perkhidmatan',
+    label: 'Dietetic & Outsource Services',
     description: 'Dietetic Services & Outsource Food',
     is_active: true
   },
@@ -137,7 +137,7 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '998cd36f-ec9e-4a0e-b4d5-137a70bf682d',
     code: '01100 117 4002',
-    label: 'Sewaan Peralatan Perubatan (Leasing 3.0)',
+    label: 'Medical Equipment Leasing (Leasing 3.0)',
     description: 'Medical Equipment Rental',
     is_active: true
   },
@@ -146,7 +146,7 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '998cd36f-ec9e-4a0e-b4d5-137a70bf682d',
     code: '01200 117 1002',
-    label: 'Perkhidmatan Sokongan Hospital (PSH)',
+    label: 'Hospital Support Services (PSH)',
     description: 'Hospital Support Services Concession',
     is_active: true
   },
@@ -155,8 +155,8 @@ export const DEFAULT_ADMIN_OBJEKS: AdminObjek[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     program_id: '998cd36f-ec9e-4a0e-b4d5-137a70bf682d',
     code: '00105 106 1105',
-    label: 'Latihan Dalam Perkhidmatan (LDP)',
-    description: 'Latihan Dalam Perkhidmatan',
+    label: 'In-Service Training (LDP)',
+    description: 'In-Service Training & Development',
     is_active: true
   }
 ]
@@ -167,7 +167,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: '107d44b9-ea5b-47a6-bc16-7eedfc6751e1',
     code: '22000',
-    label: 'Pengangkutan Barang',
+    label: 'Goods Transportation',
     is_shared_budget: false,
     is_active: true
   },
@@ -176,7 +176,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: 'ed0e2c7e-aefa-4d22-b606-d91d8c7cdb80',
     code: '24699',
-    label: 'Sewaan Mesin Penyalin',
+    label: 'Photocopier Rental',
     is_shared_budget: false,
     is_active: true
   },
@@ -185,7 +185,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: 'ed0e2c7e-aefa-4d22-b606-d91d8c7cdb80',
     code: '24999',
-    label: 'Sewaan Gas Perubatan (Linde)',
+    label: 'Medical Gas Rental (Linde)',
     is_shared_budget: false,
     is_active: true
   },
@@ -194,7 +194,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: 'ed0e2c7e-aefa-4d22-b606-d91d8c7cdb80',
     code: '24202',
-    label: 'Sewaan Bangunan Pejabat',
+    label: 'Office Building Rental',
     is_shared_budget: false,
     is_active: true
   },
@@ -203,7 +203,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: 'b95f1b5a-4fc6-4860-aa70-620c30ba4f22',
     code: '27000',
-    label: 'Bekalan dan Bahan-bahan Lain',
+    label: 'Supplies & Other Materials',
     is_shared_budget: false,
     is_active: true
   },
@@ -212,7 +212,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: '07eb6681-a257-4fce-b662-e6b585f0255b',
     code: '28000',
-    label: 'Penyelenggaraan & Pembaikan',
+    label: 'Maintenance & Repairs',
     is_shared_budget: false,
     is_active: true
   },
@@ -221,7 +221,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: 'c00c105f-f0ff-408a-a438-25b8e73425b2',
     code: '29201',
-    label: 'Perkhidmatan Percetakan',
+    label: 'Printing Services',
     is_shared_budget: true,
     budget_group_code: 'percetakan_020200_29000',
     is_active: true
@@ -231,7 +231,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: 'c00c105f-f0ff-408a-a438-25b8e73425b2',
     code: '29126',
-    label: 'Perkhidmatan Persediaan Makanan',
+    label: 'Food Preparation Services',
     is_shared_budget: true,
     budget_group_code: 'makanan_020200_29000',
     is_active: true
@@ -241,7 +241,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: 'c00c105f-f0ff-408a-a438-25b8e73425b2',
     code: '29122',
-    label: 'Perkhidmatan Kawalan Keselamatan',
+    label: 'Security Services',
     is_shared_budget: false,
     is_active: true
   },
@@ -251,7 +251,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: '3e96b593-a78a-408b-98ed-e51c269c6d1f',
     code: '25000',
-    label: 'Bahan Makanan dan Minuman Mentah',
+    label: 'Raw Food & Beverage Supplies',
     is_shared_budget: true,
     budget_group_code: 'makanan_022300_25000',
     is_active: true
@@ -261,7 +261,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: 'cc6796b3-4aff-470d-a886-7723eac04b9c',
     code: '27000',
-    label: 'Bekalan dan Bahan Dietetik',
+    label: 'Dietetic Supplies & Materials',
     is_shared_budget: false,
     is_active: true
   },
@@ -270,7 +270,7 @@ export const DEFAULT_ADMIN_KATEGORIS: AdminKategori[] = [
     hospital_id: DEFAULT_HOSPITAL_ID,
     objek_id: 'a6f0352a-2933-418a-b31e-d1b19fb5ef19',
     code: '29126',
-    label: 'Perkhidmatan Persediaan Makanan (Outsource)',
+    label: 'Food Preparation Services (Outsource)',
     is_shared_budget: false,
     is_active: true
   },

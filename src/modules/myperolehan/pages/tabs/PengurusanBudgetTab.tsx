@@ -62,13 +62,13 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-black text-slate-900">Bajet Pengurusan (Waran KKM)</h2>
+              <h2 className="text-xl font-black text-slate-900">Operating Budget (MOH Warrants)</h2>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                 OPERATIONAL BUDGET
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              Pemantauan peruntukan dan perbelanjaan operasi Hospital & Sajian Pesakit
+              Monitoring operating allocations & healthcare expenditures for Lawas Hospital
             </p>
           </div>
         </div>
@@ -80,7 +80,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-1.5 shadow-sm text-xs rounded-xl px-4 py-2"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Tambah Waran Masuk</span>
+            <span>+ Add Inflow Warrant</span>
           </Button>
           <Button
             size="sm"
@@ -88,7 +88,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
             onClick={() => onOpenCreatePO('020200')}
             className="border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl px-4 py-2 shadow-sm"
           >
-            + Cipta PO Pengurusan
+            + Create Operating PO
           </Button>
         </div>
       </div>
@@ -103,7 +103,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
               : 'text-slate-500 hover:text-slate-800 bg-white border border-slate-200'
           }`}
         >
-          Semua Program ({pengurusanPrograms.length})
+          All Programs ({pengurusanPrograms.length})
         </button>
         <button
           onClick={() => setSelectedProgram('020200')}
@@ -113,7 +113,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
               : 'text-slate-500 hover:text-slate-800 bg-white border border-slate-200'
           }`}
         >
-          020200 - Pengurusan Hospital
+          020200 - Hospital Management
         </button>
         <button
           onClick={() => setSelectedProgram('022300')}
@@ -123,7 +123,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
               : 'text-slate-500 hover:text-slate-800 bg-white border border-slate-200'
           }`}
         >
-          022300 - Dietetik Dan Sajian
+          022300 - Dietetics & Food Services
         </button>
       </div>
 
@@ -141,28 +141,28 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
               <div>
                 <div className="flex items-center gap-2.5">
                   <span className="px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-black font-mono rounded-lg border border-blue-200">
-                    KOD {prog.programCode}
+                    CODE {prog.programCode}
                   </span>
                   <h3 className="text-lg font-black text-slate-900">{prog.programLabel}</h3>
                 </div>
                 <p className="text-xs text-slate-500 mt-1">
-                  Peruntukan Asal + Tambahan Waran KKM Tahun Semasa
+                  Original Allocation + Additional MOH Warrants (Current Fiscal Year)
                 </p>
               </div>
 
               <div className="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-center">
                 <div className="px-3">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Peruntukan</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Allocation</span>
                   <span className="text-sm font-black text-slate-900 font-mono">{formatCurrency(prog.totalAllocated)}</span>
                 </div>
                 <div className="px-3 border-x border-slate-200">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Komitmen & Belanja</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Committed & Spent</span>
                   <span className="text-sm font-black text-amber-600 font-mono">
                     {formatCurrency(prog.committedAmount + prog.actualSpent)}
                   </span>
                 </div>
                 <div className="px-3">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Baki Bersih</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Net Balance</span>
                   <span className="text-sm font-black text-emerald-600 font-mono">
                     {formatCurrency(prog.remainingBalance)}
                   </span>
@@ -181,7 +181,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
             {/* Objek & Kategori Nested Accordions */}
             <div className="space-y-3">
               <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
-                Pecahan Kod Objek Sebagai & Kategori ({prog.objekSummaries.length} Kod Objek)
+                Object & Category Breakdown ({prog.objekSummaries.length} Object Codes)
               </h4>
 
               <div className="space-y-3">
@@ -204,7 +204,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
                           <div>
                             <h5 className="text-xs sm:text-sm font-black text-slate-900">{obj.objekLabel}</h5>
                             <span className="text-[10px] text-slate-500">
-                              {obj.kategoriSummaries.length} Kategori Di bawah Objek Ini
+                              {obj.kategoriSummaries.length} Categories under this Object
                             </span>
                           </div>
                         </div>
@@ -212,10 +212,10 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
                         <div className="flex items-center gap-4">
                           <div className="text-right hidden sm:block">
                             <span className="text-[10px] text-slate-500 block font-mono">
-                              Baki: <strong className="text-emerald-600">{formatCurrency(obj.remainingBalance)}</strong>
+                              Balance: <strong className="text-emerald-600">{formatCurrency(obj.remainingBalance)}</strong>
                             </span>
                             <span className="text-[10px] text-slate-400">
-                              Peruntukan: {formatCurrency(obj.totalAllocated)}
+                              Allocated: {formatCurrency(obj.totalAllocated)}
                             </span>
                           </div>
 
@@ -231,12 +231,12 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
                           <table className="w-full text-left text-xs border-collapse">
                             <thead>
                               <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500">
-                                <th className="py-2.5 px-3">Kod Kategori</th>
-                                <th className="py-2.5 px-3">Keterangan / Butiran</th>
-                                <th className="py-2.5 px-3 text-right">Peruntukan</th>
-                                <th className="py-2.5 px-3 text-right">Komitmen / Belanja</th>
-                                <th className="py-2.5 px-3 text-right">Baki Bersih</th>
-                                <th className="py-2.5 px-3 text-center w-28">% Guna</th>
+                                <th className="py-2.5 px-3">Category Code</th>
+                                <th className="py-2.5 px-3">Description / Details</th>
+                                <th className="py-2.5 px-3 text-right">Allocated</th>
+                                <th className="py-2.5 px-3 text-right">Committed / Spent</th>
+                                <th className="py-2.5 px-3 text-right">Net Balance</th>
+                                <th className="py-2.5 px-3 text-center w-28">% Utilized</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -292,23 +292,23 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-black text-slate-900">Rekod Waran Agihan Diterima (Waran Ledger)</h3>
-              <p className="text-[11px] text-slate-500">Senarai kemasukan peruntukan rasmi daripada KKM</p>
+              <h3 className="text-sm font-black text-slate-900">Received Warrant Allocation Ledger</h3>
+              <p className="text-[11px] text-slate-500">Official incoming fund inflows recorded from MOH</p>
             </div>
           </div>
-          <span className="text-xs font-mono text-slate-500 font-bold">{warrants.length} Dokumen Waran</span>
+          <span className="text-xs font-mono text-slate-500 font-bold">{warrants.length} Warrant Documents</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-slate-50/80 border-y border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
-                <th className="py-2.5 px-3">No. Dokumen Waran</th>
-                <th className="py-2.5 px-3">Tarikh</th>
-                <th className="py-2.5 px-3">Program / Aktiviti</th>
-                <th className="py-2.5 px-3">Kod Vote / Objek</th>
-                <th className="py-2.5 px-3">Keterangan</th>
-                <th className="py-2.5 px-3 text-right">Jumlah Waran (RM)</th>
+                <th className="py-2.5 px-3">Warrant Doc No.</th>
+                <th className="py-2.5 px-3">Date</th>
+                <th className="py-2.5 px-3">Program / Activity</th>
+                <th className="py-2.5 px-3">Vote / Object Code</th>
+                <th className="py-2.5 px-3">Description</th>
+                <th className="py-2.5 px-3 text-right">Warrant Amount (RM)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

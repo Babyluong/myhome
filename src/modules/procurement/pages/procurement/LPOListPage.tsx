@@ -381,32 +381,14 @@ export const LPOListPage: React.FC = () => {
       // A. Calculate Hash (Bulletproof Duplicate Detection)
       const fileHash = await calculateFileHash(file)
 
-      // B. Extract TRUE LPO number from PDF content (Industry Standard)
-      // B. LPO Extraction Logic - Improved patterns for PO-2026-XXXX format
+      // B. Extract TRUE LPO number from PDF content (Government ePerolehan Standard)
       let inDocLpo = ''
       let extractedPdfText = ''
       try {
         extractedPdfText = await extractTextFromPdf(file)
-        // Robust patterns for various LPO formats (expanded for long Malaysian IDs up to 20 digits)
-        const poPatterns = [
-          /((?:LPO|PO|CO|DO|MOF|MOEF|KPLB|PKKM|KKM|SST|JPA)[-_\s/]?\d{2,6}[-_\s/]?\d{4,20})/gi,
-          /(\d{4}[-_\s/]\d{2,20})/g,
-          /\b(1\d{9,15})\b/g
-        ]
-        
-        const normalize = (s: string) => s.toUpperCase().replace(/[\s\-_]/g, '')
-        
-        for (const pattern of poPatterns) {
-          const matches = Array.from(extractedPdfText.matchAll(pattern))
-          for (const match of matches) {
-            const raw = match[1] || match[0]
-            const cleaned = normalize(raw)
-            if (cleaned.length >= 6) {
-              inDocLpo = raw.toUpperCase().trim()
-              break
-            }
-          }
-          if (inDocLpo) break
+        const detectedLpo = await extractLpoNumberFromPdf(file)
+        if (detectedLpo) {
+          inDocLpo = detectedLpo
         }
       } catch (e) { console.error("PDF Extraction failed", e) }
 
@@ -593,7 +575,7 @@ export const LPOListPage: React.FC = () => {
       // suggested binding between unrelated drugs from the same distributor.
       if (bestMatch && highestScore >= 80) {
         selectedPoId = bestMatch.id
-        finalLpo = bestMatch.po_number
+        // Keep genuine document LPO number (inDocLpo / extractedLpo), never overwrite with PO number!
         matchScore = highestScore
         
         if (highestScore >= 120) matchReason = 'Perfect Match: ID, Amount & Items'
@@ -602,7 +584,7 @@ export const LPOListPage: React.FC = () => {
         else matchReason = 'Auto-Matched'
       } else if (bestMatch && highestScore >= 60) {
         selectedPoId = bestMatch.id
-        finalLpo = bestMatch.po_number
+        // Keep genuine document LPO number (inDocLpo / extractedLpo), never overwrite with PO number!
         matchScore = highestScore
         matchReason = 'Suggested: Verify Match'
       }
@@ -886,10 +868,14 @@ export const LPOListPage: React.FC = () => {
       
       const poMap = new Map(pos?.map(p => [p.id, p.po_number]) || [])
       
-      // Filter for actual placeholders (where lpo_number === po_number) OR invalid text like 'Tarikh'
+      // Filter for actual placeholders (where lpo_number === po_number) OR invalid text like 'Tarikh' OR starts with PO-202%
       const actualPlaceholders = placeholders.filter(p => {
         const poNum = poMap.get(p.po_id)
-        return p.lpo_number === poNum || p.lpo_number === 'Tarikh' || p.lpo_number?.toUpperCase().includes('TARIKH')
+        return p.lpo_number === poNum || 
+               p.lpo_number === 'Tarikh' || 
+               p.lpo_number?.toUpperCase().includes('TARIKH') ||
+               /^PO[-_\s]?\d{4}[-_\s]?\d{3,5}$/i.test(p.lpo_number || '') ||
+               (p.lpo_number && p.lpo_number.startsWith('PO-202'))
       })
 
       if (actualPlaceholders.length === 0) {
@@ -2017,6 +2003,11 @@ export const LPOListPage: React.FC = () => {
                                     }`}>
                                       {row.status.toUpperCase()}
                                     </span>
+                                    {row.lpoNumber ? (
+                                      <span className="text-[8px] font-mono font-bold text-blue-600 truncate max-w-[120px]">
+                                        • {row.lpoNumber}
+                                      </span>
+                                    ) : null}
                                     {row.matchScore ? (
                                       <span className="text-[8px] font-bold text-slate-400">
                                         • {row.matchScore} pts
@@ -2190,9 +2181,25 @@ export const LPOListPage: React.FC = () => {
                                       </div>
                                     </div>
                                     
-                                    <div className="pt-3 border-t border-slate-50">
-                                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Supplier</p>
-                                      <p className="text-sm font-bold text-slate-700">{(matchedPo as any).supplier_name}</p>
+                                    <div className="pt-3 border-t border-slate-50 flex items-center justify-between gap-4">
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Detected LPO Number</p>
+                                        <input
+                                          type="text"
+                                          value={bulkPdfRows[activeRowIndex]?.lpoNumber || ''}
+                                          onChange={(e) => {
+                                            const newRows = [...bulkPdfRows];
+                                            newRows[activeRowIndex].lpoNumber = e.target.value;
+                                            setBulkPdfRows(newRows);
+                                          }}
+                                          placeholder="e.g. CO26... / PO26..."
+                                          className="w-full px-2.5 py-1 text-xs font-mono font-bold text-blue-600 bg-blue-50/50 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        />
+                                      </div>
+                                      <div className="text-right shrink-0">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Supplier</p>
+                                        <p className="text-xs font-bold text-slate-700 truncate max-w-[160px]">{(matchedPo as any).supplier_name}</p>
+                                      </div>
                                     </div>
                                   </div>
 
@@ -2280,8 +2287,10 @@ export const LPOListPage: React.FC = () => {
                                     newRows[activeRowIndex].selectedPoId = po.id
                                     newRows[activeRowIndex].status = 'matched'
                                     newRows[activeRowIndex].matchReason = 'Manual Match'
-                                    newRows[activeRowIndex].matchScore = 100
-                                    newRows[activeRowIndex].lpoNumber = po.po_number
+                                    // Preserve genuine extracted LPO number, never overwrite with PO number!
+                                    if (!newRows[activeRowIndex].lpoNumber && newRows[activeRowIndex].inDocLpo) {
+                                      newRows[activeRowIndex].lpoNumber = newRows[activeRowIndex].inDocLpo
+                                    }
                                     setBulkPdfRows(newRows)
                                     setPoSearch('') // Reset search after choosing
                                     if (activeRowIndex < bulkPdfRows.length - 1) {

@@ -1,4 +1,4 @@
-﻿// src/modules/myporter/components/PorterRadarAlertModal.tsx
+// src/modules/myporter/components/PorterRadarAlertModal.tsx
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
@@ -15,6 +15,7 @@ import {
 import type { PorterJobRequest } from '@/shared/types/myporter'
 import { UrgencyBadge } from './PorterStatusBadge'
 import { soundAlert } from './PorterAudioAlert'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 
 interface Props {
   job: PorterJobRequest | null
@@ -29,6 +30,7 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
   onAccept,
   onDecline
 }) => {
+  const { language } = useLanguage()
   const [countdown, setCountdown] = useState(30)
 
   useEffect(() => {
@@ -80,8 +82,12 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
                   <Bell className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black tracking-tight">TUGASAN RADAR BAHARU!</h3>
-                  <p className="text-xs text-white/80">Sila respon dalam tempoh masa ditetapkan</p>
+                  <h3 className="text-lg font-black tracking-tight">
+                    {language === 'ms' ? 'TUGASAN RADAR BAHARU!' : 'NEW RADAR DISPATCH TASK!'}
+                  </h3>
+                  <p className="text-xs text-white/80">
+                    {language === 'ms' ? 'Sila respon dalam tempoh masa ditetapkan' : 'Please respond within the countdown timer'}
+                  </p>
                 </div>
               </div>
 
@@ -97,7 +103,9 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
             {/* Urgency & Task Type */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kategori Tugas</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  {language === 'ms' ? 'Kategori Tugas' : 'Task Category'}
+                </span>
                 <h4 className="text-base font-extrabold text-slate-800">{job.sub_category || job.category}</h4>
               </div>
               <UrgencyBadge urgency={job.urgency} />
@@ -110,7 +118,9 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
                   A
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold text-emerald-600 uppercase">Lokasi Ambil (Asal)</p>
+                  <p className="text-[10px] font-bold text-emerald-600 uppercase">
+                    {language === 'ms' ? 'Lokasi Ambil (Asal)' : 'Pickup Location (Origin)'}
+                  </p>
                   <p className="text-sm font-extrabold text-slate-800">{job.origin_department_name}</p>
                   <p className="text-xs text-slate-500">{job.origin_location_details}</p>
                 </div>
@@ -123,7 +133,9 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
                   B
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold text-rose-600 uppercase">Lokasi Hantar (Destinasi)</p>
+                  <p className="text-[10px] font-bold text-rose-600 uppercase">
+                    {language === 'ms' ? 'Lokasi Hantar (Destinasi)' : 'Delivery Location (Destination)'}
+                  </p>
                   <p className="text-sm font-extrabold text-slate-800">{job.destination_department_name}</p>
                   <p className="text-xs text-slate-500">{job.destination_location_details}</p>
                 </div>
@@ -135,17 +147,19 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
               <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-xl text-xs space-y-1 text-slate-700">
                 <p className="font-bold text-blue-900 flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5 text-blue-600" />
-                  Pesakit: {job.patient_data.patient_name} ({job.patient_data.patient_rn})
+                  {language === 'ms' ? 'Pesakit:' : 'Patient:'} {job.patient_data.patient_name} ({job.patient_data.patient_rn})
                 </p>
                 <p className="text-slate-600">
-                  Mod: <span className="font-semibold uppercase">{job.patient_data.mobility_type}</span> | Oksigen: <span className="font-semibold">{job.patient_data.o2_dependent ? `Ya (${job.patient_data.o2_flow_rate_lpm} L/min)` : 'Tiada'}</span>
+                  {language === 'ms' ? 'Mod:' : 'Mobility:'} <span className="font-semibold uppercase">{job.patient_data.mobility_type}</span> | {language === 'ms' ? 'Oksigen:' : 'Oxygen:'} <span className="font-semibold">{job.patient_data.o2_dependent ? `${language === 'ms' ? 'Ya' : 'Yes'} (${job.patient_data.o2_flow_rate_lpm} L/min)` : (language === 'ms' ? 'Tiada' : 'None')}</span>
                 </p>
               </div>
             )}
 
             {job.notes && (
               <p className="text-xs text-slate-500 bg-amber-50/60 border border-amber-200/60 rounded-xl p-3">
-                <span className="font-bold text-amber-900">Nota Pemohon:</span> {job.notes}
+                <span className="font-bold text-amber-900">
+                  {language === 'ms' ? 'Nota Pemohon:' : 'Requester Notes:'}
+                </span> {job.notes}
               </p>
             )}
 
@@ -157,7 +171,7 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
                 className="w-full py-3.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95 text-sm"
               >
                 <X className="w-4 h-4 text-slate-500" />
-                <span>Tolak Tugas</span>
+                <span>{language === 'ms' ? 'Tolak Tugas' : 'Decline Task'}</span>
               </button>
 
               <button
@@ -173,7 +187,7 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
                 }`}
               >
                 <Check className="w-5 h-5" />
-                <span>TERIMA TUGAS</span>
+                <span>{language === 'ms' ? 'TERIMA TUGAS' : 'ACCEPT TASK'}</span>
               </button>
             </div>
           </div>

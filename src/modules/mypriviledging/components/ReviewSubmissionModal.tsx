@@ -1,5 +1,6 @@
 // src/modules/mypriviledging/components/ReviewSubmissionModal.tsx
 // Admin verification & clinical endorsement drawer/modal for JKCP committee members
+// Full English default with seamless language toggle support
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -8,15 +9,10 @@ import {
   CheckCircle2,
   AlertCircle,
   XCircle,
-  Calendar,
-  Building,
-  User,
-  Paperclip,
-  Award,
-  Sparkles,
-  FileText
+  Paperclip
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/shared/contexts/LanguageContext';
 import type {
   ProcedureSubmission,
   PrivilegingLevel
@@ -41,6 +37,9 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
   submission,
   onRecordDecision
 }) => {
+  const { language } = useLanguage();
+  const isMs = language === 'ms';
+
   const [decision, setDecision] = useState<'approved' | 'changes_requested' | 'rejected'>('approved');
   const [adminNotes, setAdminNotes] = useState<string>('');
   const [privilegingLevel, setPrivilegingLevel] = useState<PrivilegingLevel>('core');
@@ -51,12 +50,14 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
     if (!isOpen || !submission) return;
     setDecision('approved');
     setAdminNotes(
-      'Kompetensi klinikal dan rekod log prosedur disemak serta diperakui memenuhi standard Credentialing & Privileging Hospital Lawas.'
+      isMs
+        ? 'Kompetensi klinikal dan rekod log prosedur disemak serta diperakui memenuhi standard Credentialing & Privileging Hospital Lawas.'
+        : 'Clinical competency and procedural logbook verified and approved in accordance with MOH Credentialing & Privileging standards.'
     );
     setPrivilegingLevel('core');
     setValidityYears(3);
     setErrorMsg('');
-  }, [isOpen, submission]);
+  }, [isOpen, submission, isMs]);
 
   if (!isOpen || !submission) return null;
 
@@ -65,7 +66,11 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
     setErrorMsg('');
 
     if (decision !== 'approved' && !adminNotes.trim()) {
-      setErrorMsg('Sila nyatakan ulasan atau catatan maklum balas untuk staf.');
+      setErrorMsg(
+        isMs
+          ? 'Sila nyatakan ulasan atau catatan maklum balas untuk staf.'
+          : 'Please provide evaluation notes or feedback for the clinical staff.'
+      );
       return;
     }
 
@@ -83,13 +88,13 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
   const getSupervisionBadge = (lvl: string) => {
     switch (lvl) {
       case 'level_4_independent':
-        return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300">Tahap 4: Mandiri & Berdikari</span>;
+        return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300">{isMs ? 'Tahap 4: Mandiri & Berdikari' : 'Level 4: Independent Practice'}</span>;
       case 'level_3_indirect_supervision':
-        return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300">Tahap 3: Pengawasan Tidak Terus</span>;
+        return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300">{isMs ? 'Tahap 3: Pengawasan Tidak Terus' : 'Level 3: Indirect Supervision'}</span>;
       case 'level_2_direct_supervision':
-        return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300">Tahap 2: Pengawasan Terus</span>;
+        return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300">{isMs ? 'Tahap 2: Pengawasan Terus' : 'Level 2: Direct Supervision'}</span>;
       default:
-        return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Tahap 1: Pemerhatian Sahaja</span>;
+        return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">{isMs ? 'Tahap 1: Pemerhatian Sahaja' : 'Level 1: Observed Only'}</span>;
     }
   };
 
@@ -104,10 +109,12 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
             </div>
             <div>
               <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
-                Semakan & Penilaian JKCP
+                {isMs ? 'Semakan & Penilaian JKCP' : 'JKCP Review & Clinical Endorsement'}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Pengesahan kelayakan dan penganugerahan priviledging klinikal
+                {isMs
+                  ? 'Pengesahan kelayakan dan penganugerahan priviledging klinikal'
+                  : 'Clinical competency verification and credentialing award'}
               </p>
             </div>
           </div>
@@ -145,7 +152,7 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
                   </div>
                 </div>
                 <div className="text-left sm:text-right text-xs">
-                  <p className="text-slate-500 dark:text-slate-400">No. Pendaftaran:</p>
+                  <p className="text-slate-500 dark:text-slate-400">{isMs ? 'No. Pendaftaran:' : 'Registration No:'}</p>
                   <p className="font-mono font-semibold text-slate-900 dark:text-white">
                     {submission.staffRegistrationNo}
                   </p>
@@ -156,25 +163,25 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
               {/* Procedure Details */}
               <div className="mt-3 pt-1 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Kategori:</span>
+                  <span className="text-slate-500 dark:text-slate-400">{isMs ? 'Kategori:' : 'Category:'}</span>
                   <p className="font-semibold text-slate-800 dark:text-slate-200">
                     {submission.categoryName}
                   </p>
                 </div>
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Prosedur:</span>
+                  <span className="text-slate-500 dark:text-slate-400">{isMs ? 'Prosedur:' : 'Procedure:'}</span>
                   <p className="font-semibold text-slate-800 dark:text-slate-200">
                     {submission.procedureName}
                   </p>
                 </div>
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Tarikh Dilakukan:</span>
+                  <span className="text-slate-500 dark:text-slate-400">{isMs ? 'Tarikh Dilakukan:' : 'Date Performed:'}</span>
                   <p className="font-semibold text-slate-800 dark:text-slate-200">
-                    {submission.procedureDate} {submission.patientIdentifier ? `(Kes: ${submission.patientIdentifier})` : ''}
+                    {submission.procedureDate} {submission.patientIdentifier ? `(${isMs ? 'Kes' : 'Case'}: ${submission.patientIdentifier})` : ''}
                   </p>
                 </div>
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Tahap Pengawasan:</span>
+                  <span className="text-slate-500 dark:text-slate-400">{isMs ? 'Tahap Pengawasan:' : 'Supervision Level:'}</span>
                   <div className="mt-0.5">{getSupervisionBadge(submission.supervisionLevel)}</div>
                 </div>
               </div>
@@ -184,26 +191,26 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
             <div className="space-y-3 text-xs">
               <div>
                 <span className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                  Pelan Klinikal & Rasionale:
+                  {isMs ? 'Pelan Klinikal & Rasionale:' : 'Clinical Plan & Rationale:'}
                 </span>
                 <p className="mt-1 p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
-                  {submission.clinicalPlan || 'Tiada maklumat pelan.'}
+                  {submission.clinicalPlan || (isMs ? 'Tiada maklumat pelan.' : 'No clinical plan provided.')}
                 </p>
               </div>
 
               <div>
                 <span className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                  Peralatan Digunakan & Langkah Keselamatan:
+                  {isMs ? 'Peralatan Digunakan & Langkah Keselamatan:' : 'Equipment Used & Safety Measures:'}
                 </span>
                 <p className="mt-1 p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
-                  {submission.equipmentUsed || 'Tiada maklumat peralatan.'}
+                  {submission.equipmentUsed || (isMs ? 'Tiada maklumat peralatan.' : 'No equipment details provided.')}
                 </p>
               </div>
 
               {submission.complicationsOrNotes && (
                 <div>
                   <span className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                    Refleksi / Catatan Kes:
+                    {isMs ? 'Refleksi / Catatan Kes:' : 'Clinical Reflection / Case Notes:'}
                   </span>
                   <p className="mt-1 p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200">
                     {submission.complicationsOrNotes}
@@ -215,7 +222,9 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
               {submission.attachments && submission.attachments.length > 0 && (
                 <div>
                   <span className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                    Lampiran Bukti Log ({submission.attachments.length}):
+                    {isMs
+                      ? `Lampiran Bukti Log (${submission.attachments.length}):`
+                      : `Logbook Evidence Attachments (${submission.attachments.length}):`}
                   </span>
                   <div className="mt-1.5 space-y-1.5">
                     {submission.attachments.map((att) => (
@@ -224,13 +233,13 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
                         className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
                       >
                         <div className="flex items-center gap-2">
-                          <Paperclip className="w-4 h-4 text-lime-600 dark:text-lime-400" />
+                          <Paperclip className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
                           <span className="font-medium text-slate-800 dark:text-slate-200">
                             {att.name} ({(att.size / 1024).toFixed(0)} KB)
                           </span>
                         </div>
-                        <span className="text-[11px] text-lime-600 dark:text-lime-400 font-semibold">
-                          Telah Disahkan
+                        <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold">
+                          {isMs ? 'Telah Disahkan' : 'Verified'}
                         </span>
                       </div>
                     ))}
@@ -242,7 +251,7 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
             {/* Decision Selection Bar */}
             <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                Keputusan Penilaian JKCP
+                {isMs ? 'Keputusan Penilaian JKCP' : 'JKCP Evaluation Decision'}
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <button
@@ -256,7 +265,7 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
                   )}
                 >
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Luluskan (Approve)</span>
+                  <span>{isMs ? 'Luluskan (Approve)' : 'Approve Privilege'}</span>
                 </button>
 
                 <button
@@ -270,7 +279,7 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
                   )}
                 >
                   <AlertCircle className="w-4 h-4 text-amber-600" />
-                  <span>Minta Pindaan</span>
+                  <span>{isMs ? 'Minta Pindaan' : 'Request Changes'}</span>
                 </button>
 
                 <button
@@ -284,7 +293,7 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
                   )}
                 >
                   <XCircle className="w-4 h-4 text-rose-600" />
-                  <span>Tolak (Reject)</span>
+                  <span>{isMs ? 'Tolak (Reject)' : 'Reject'}</span>
                 </button>
               </div>
             </div>
@@ -295,31 +304,31 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                      Tahap Privileging Diberikan:
+                      {isMs ? 'Tahap Privileging Diberikan:' : 'Awarded Privilege Level:'}
                     </label>
                     <select
                       value={privilegingLevel}
                       onChange={(e) => setPrivilegingLevel(e.target.value as PrivilegingLevel)}
                       className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
                     >
-                      <option value="core">Prosedur Teras (Core Privileges)</option>
-                      <option value="specialized">Prosedur Khusus / Lanjutan</option>
-                      <option value="conditional">Bersyarat (Di Bawah Pengawasan)</option>
+                      <option value="core">{isMs ? 'Prosedur Teras (Core Privileges)' : 'Core Privileges (Level 1-4)'}</option>
+                      <option value="specialized">{isMs ? 'Prosedur Khusus / Lanjutan' : 'Specialized / Advanced Privileges'}</option>
+                      <option value="conditional">{isMs ? 'Bersyarat (Di Bawah Pengawasan)' : 'Conditional (Under Supervision)'}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                      Tempoh Sahlaku KKM:
+                      {isMs ? 'Tempoh Sahlaku KKM:' : 'MOH Validity Period:'}
                     </label>
                     <select
                       value={validityYears}
                       onChange={(e) => setValidityYears(Number(e.target.value))}
                       className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
                     >
-                      <option value={3}>3 Tahun (Standard KKM)</option>
-                      <option value={2}>2 Tahun</option>
-                      <option value={1}>1 Tahun (Percubaan / Khas)</option>
+                      <option value={3}>{isMs ? '3 Tahun (Standard KKM)' : '3 Years (MOH Standard)'}</option>
+                      <option value={2}>{isMs ? '2 Tahun' : '2 Years'}</option>
+                      <option value={1}>{isMs ? '1 Tahun (Percubaan / Khas)' : '1 Year (Provisional / Special)'}</option>
                     </select>
                   </div>
                 </div>
@@ -330,10 +339,10 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {decision === 'approved'
-                  ? 'Catatan Pengesahan JKCP / Perakuan'
+                  ? (isMs ? 'Catatan Pengesahan JKCP / Perakuan' : 'JKCP Endorsement & Committee Notes')
                   : decision === 'changes_requested'
-                  ? 'Perkara Yang Perlu Dipinda Oleh Staf (Wajib)'
-                  : 'Rasionale Penolakan (Wajib)'}
+                  ? (isMs ? 'Perkara Yang Perlu Dipinda Oleh Staf (Wajib)' : 'Required Staff Amendments (Mandatory)')
+                  : (isMs ? 'Rasionale Penolakan (Wajib)' : 'Rejection Rationale (Mandatory)')}
               </label>
               <textarea
                 rows={3}
@@ -341,10 +350,10 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
                 onChange={(e) => setAdminNotes(e.target.value)}
                 placeholder={
                   decision === 'changes_requested'
-                    ? 'Sila nyatakan dengan jelas dokumen atau pembetulan yang diperlukan...'
-                    : 'Catatan pengesahan...'
+                    ? (isMs ? 'Sila nyatakan dengan jelas dokumen atau pembetulan yang diperlukan...' : 'Please specify required documents or clinical corrections...')
+                    : (isMs ? 'Catatan pengesahan...' : 'Committee endorsement notes...')
                 }
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
           </div>
@@ -356,7 +365,7 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 text-xs md:text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-colors"
             >
-              Batal
+              {isMs ? 'Batal' : 'Cancel'}
             </button>
 
             <button
@@ -370,7 +379,9 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
                   : 'bg-rose-600 hover:bg-rose-700'
               )}
             >
-              Sahkan Keputusan ({decision === 'approved' ? 'Luluskan' : decision === 'changes_requested' ? 'Minta Pindaan' : 'Tolak'})
+              {isMs
+                ? `Sahkan Keputusan (${decision === 'approved' ? 'Luluskan' : decision === 'changes_requested' ? 'Minta Pindaan' : 'Tolak'})`
+                : `Confirm Decision (${decision === 'approved' ? 'Approve' : decision === 'changes_requested' ? 'Request Changes' : 'Reject'})`}
             </button>
           </div>
         </form>

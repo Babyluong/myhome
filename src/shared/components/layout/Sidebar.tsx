@@ -54,6 +54,9 @@ import {
   BookOpen,
   Printer,
   Award,
+  ShieldAlert,
+  QrCode,
+  X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
@@ -62,6 +65,7 @@ import { Avatar } from '@/components/ui'
 import { APP_NAME, ROUTES, SYSTEM_ROLES } from '@/lib/constants'
 import { logout } from '@/services/authService'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
+import { useRbacStore } from '@/stores/rbacStore'
 
 interface NavItem {
   label: string
@@ -69,31 +73,59 @@ interface NavItem {
   icon: React.ElementType
   roles?: string[]
   children?: NavItem[]
-  module?: 'admin' | 'pharmacy' | 'oxygen' | 'suhu' | 'myphis' | 'mymsds' | 'kunci' | 'transporter' | 'crossborder' | 'inventory' | 'staff' | 'perolehan' | 'formulari' | 'porter' | 'priviledging' | 'tempahan'
+  module?: 'admin' | 'pharmacy' | 'oxygen' | 'suhu' | 'myphis' | 'mymsds' | 'kunci' | 'transporter' | 'crossborder' | 'inventory' | 'staff' | 'perolehan' | 'formulari' | 'porter' | 'priviledging' | 'tempahan' | 'timeoff'
 }
 
 // Helper to check if user has access to nav item
 const hasAccess = (item: NavItem, userRole?: string): boolean => {
-  if (!userRole) return false
-  const normalizedRole = userRole.toLowerCase()
+  // If no roles specified, accessible to all authenticated users
+  if (!item.roles || item.roles.length === 0) return true
+
+  if (!userRole) return true
+
+  const normalizedRole = userRole.toLowerCase().trim()
 
   // Super Admin bypasses all restrictions
   if (
     normalizedRole === SYSTEM_ROLES.SYSTEM_ADMIN ||
     normalizedRole === 'superadmin' ||
-    normalizedRole === 'super_admin'
+    normalizedRole === 'super_admin' ||
+    normalizedRole === 'admin' ||
+    normalizedRole === 'hospital_admin' ||
+    normalizedRole === 'hospital_administrator'
   ) {
     return true
   }
 
-  // If no roles specified, accessible to authenticated users
-  if (!item.roles || item.roles.length === 0) return true
+  // Check stored custom permissions or overrides from useRbacStore
+  if (item.module) {
+    try {
+      const modKey = item.module === 'oxygen' ? 'cylinder' : item.module === 'suhu' ? 'mysuhu' : item.module === 'formulari' ? 'myformulari' : item.module === 'pharmacy' ? 'pharmacy_logistics' : item.module
+      const roleMatrix = useRbacStore.getState().getRoleMatrix(normalizedRole)
+      if (roleMatrix && roleMatrix[modKey] && typeof roleMatrix[modKey].view === 'boolean') {
+        return roleMatrix[modKey].view
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }
 
-  // Check if user role is explicitly allowed
-  return item.roles.some((r) => r.toLowerCase() === normalizedRole)
+  // Check if user role is explicitly allowed (with relaxed normalization)
+  const cleanUserRole = normalizedRole.replace(/[-_\s]/g, '')
+  return item.roles.some((r) => {
+    const cleanAllowed = r.toLowerCase().replace(/[-_\s]/g, '')
+    return (
+      cleanAllowed === cleanUserRole ||
+      normalizedRole.includes(cleanAllowed) ||
+      cleanAllowed.includes(cleanUserRole) ||
+      (cleanAllowed.includes('pharmacist') && cleanUserRole.includes('pharmacist')) ||
+      (cleanAllowed.includes('pharmacy') && cleanUserRole.includes('pharmacy'))
+    )
+  })
 }
 
-const getActiveModule = (pathname: string, userRole?: string, locationState?: any): 'admin' | 'pharmacy' | 'oxygen' | 'suhu' | 'myphis' | 'mymsds' | 'kunci' | 'transporter' | 'crossborder' | 'inventory' | 'staff' | 'perolehan' | 'formulari' | 'porter' | 'priviledging' | 'tempahan' => {
+const getActiveModule = (pathname: string, userRole?: string, locationState?: any): 'admin' | 'pharmacy' | 'oxygen' | 'suhu' | 'myphis' | 'mymsds' | 'kunci' | 'transporter' | 'crossborder' | 'inventory' | 'staff' | 'perolehan' | 'formulari' | 'porter' | 'priviledging' | 'tempahan' | 'timeoff' => {
+  if (pathname.startsWith('/timeoff') || pathname.startsWith('/hub/time-off')) return 'timeoff'
   if (pathname.startsWith('/tempahan') || pathname.startsWith('/hub/tempahan')) return 'tempahan'
   if (pathname.startsWith('/priviledging') || pathname.startsWith('/hub/priviledging')) return 'priviledging'
   if (pathname.startsWith('/porter') || pathname.startsWith('/hub/porter')) return 'porter'
@@ -106,21 +138,30 @@ const getActiveModule = (pathname: string, userRole?: string, locationState?: an
   if (pathname.startsWith('/hub/mymsds') || pathname.includes('/mymsds')) return 'mymsds'
   if (pathname.startsWith('/hub/myphis') || pathname.includes('/myphis')) return 'myphis'
   if (pathname.startsWith('/suhu')) return 'suhu'
-  if (pathname.startsWith('/pharmacy/oxygen')) return 'oxygen'
-  if (pathname.startsWith('/pharmacy/inventory')) return 'inventory'
-  if (pathname.startsWith('/pharmacy')) return 'pharmacy'
+  if (
+    pathname.startsWith('/pharmacy/oxygen') ||
+    pathname.startsWith('/oxygen') ||
+    pathname.startsWith('/cylinder') ||
+    pathname.startsWith('/mycylinder') ||
+    pathname.startsWith('/hub/cylinder')
+  ) {
+    return 'oxygen'
+  }
+  if (pathname.startsWith('/pharmacy/inventory') || pathname.startsWith('/inventory') || pathname.startsWith('/myinventory')) return 'inventory'
+  if (pathname.startsWith('/pharmacy') || pathname.startsWith('/mywarrant')) return 'pharmacy'
   if (pathname.startsWith('/admin')) return 'admin'
 
   // Check navigation state fallback (useful on shared pages like Profile)
   if (locationState && typeof locationState === 'object' && locationState.fromModule) {
     const fromModuleCode = locationState.fromModule.code
+    if (fromModuleCode === 'timeoff' || fromModuleCode === 'mytimeoff') return 'timeoff'
     if (fromModuleCode === 'tempahan' || fromModuleCode === 'mytempahan' || fromModuleCode === 'system_tempahan') return 'tempahan'
     if (fromModuleCode === 'priviledging' || fromModuleCode === 'mypriviledging' || fromModuleCode === 'system_priviledging') return 'priviledging'
     if (fromModuleCode === 'porter' || fromModuleCode === 'myporter' || fromModuleCode === 'system_porter') return 'porter'
     if (fromModuleCode === 'formulari' || fromModuleCode === 'myformulari' || fromModuleCode === 'pharmacy_formulari') return 'formulari'
     if (fromModuleCode === 'perolehan') return 'perolehan'
     if (fromModuleCode === 'suhu') return 'suhu'
-    if (fromModuleCode === 'oxygen' || fromModuleCode === 'cylinder') return 'oxygen'
+    if (fromModuleCode === 'oxygen' || fromModuleCode === 'cylinder' || fromModuleCode === 'mycylinder') return 'oxygen'
     if (fromModuleCode === 'pharmacy_logistics' || fromModuleCode === 'pharmacy') return 'pharmacy'
     if (fromModuleCode === 'inventory') return 'inventory'
     if (fromModuleCode === 'system_admin' || fromModuleCode === 'hospital_admin' || fromModuleCode === 'admin') return 'admin'
@@ -174,21 +215,39 @@ const PHARMACY_ROLES = [
   SYSTEM_ROLES.PHARMACY_STAFF,
 ]
 
+const OXYGEN_ROLES = [
+  SYSTEM_ROLES.SYSTEM_ADMIN,
+  SYSTEM_ROLES.HOSPITAL_ADMIN,
+  SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR,
+  SYSTEM_ROLES.PHARMACY_DIRECTOR,
+  SYSTEM_ROLES.PHARMACY_MANAGER,
+  SYSTEM_ROLES.PHARMACIST,
+  SYSTEM_ROLES.PHARMACY_ASSISTANT,
+  SYSTEM_ROLES.ASSISTANT_PHARMACIST,
+  SYSTEM_ROLES.PHARMACY_STOREKEEPER,
+  SYSTEM_ROLES.PHARMACY_STAFF,
+  SYSTEM_ROLES.NURSE,
+  SYSTEM_ROLES.DOCTOR,
+  SYSTEM_ROLES.MEDICAL_OFFICER,
+  SYSTEM_ROLES.ASSISTANT_MEDICAL_OFFICER,
+  SYSTEM_ROLES.STAFF,
+]
+
 const PRIVILEDGING_STAFF_CHILDREN: NavItem[] = [
-  { label: 'Papan Pemuka', href: '/priviledging', icon: LayoutDashboard },
-  { label: 'Kriteria Credentialing', href: '/priviledging/criteria', icon: Award },
-  { label: 'Katalog Prosedur (500+)', href: '/priviledging/catalog', icon: BookOpen },
-  { label: 'Log & Permohonan Saya', href: '/priviledging/my-submissions', icon: FileText },
-  { label: 'Cetak Sijil Privileging', href: '/priviledging/print', icon: Printer },
+  { label: 'Dashboard', href: '/priviledging', icon: LayoutDashboard },
+  { label: 'Credentialing Criteria', href: '/priviledging/criteria', icon: Award },
+  { label: 'Procedure Catalog (500+)', href: '/priviledging/catalog', icon: BookOpen },
+  { label: 'My Log & Submissions', href: '/priviledging/my-submissions', icon: FileText },
+  { label: 'Print Privileging Certificate', href: '/priviledging/print', icon: Printer },
 ]
 
 const PRIVILEDGING_ADMIN_CHILDREN: NavItem[] = [
-  { label: 'Papan Pemuka (JKCP)', href: '/priviledging', icon: LayoutDashboard },
-  { label: 'Semakan JKCP / Kelulusan', href: '/priviledging/review-queue', icon: ShieldCheck },
-  { label: 'Kemajuan Staf', href: '/priviledging/staff-progress', icon: Users },
-  { label: 'Kriteria Credentialing', href: '/priviledging/criteria', icon: Award },
-  { label: 'Katalog Prosedur KKM', href: '/priviledging/catalog', icon: BookOpen },
-  { label: 'Cetak & Perakuan Sijil', href: '/priviledging/print', icon: Printer },
+  { label: 'Dashboard (JKCP)', href: '/priviledging', icon: LayoutDashboard },
+  { label: 'JKCP Review & Approvals', href: '/priviledging/review-queue', icon: ShieldCheck },
+  { label: 'Staff Progress', href: '/priviledging/staff-progress', icon: Users },
+  { label: 'Credentialing Criteria', href: '/priviledging/criteria', icon: Award },
+  { label: 'MOH Procedure Catalog', href: '/priviledging/catalog', icon: BookOpen },
+  { label: 'Certificate Verification & Print', href: '/priviledging/print', icon: Printer },
 ]
 
 const navigation: NavItem[] = [
@@ -274,21 +333,52 @@ const navigation: NavItem[] = [
     ],
   },
   {
-    label: 'Medical Oxygen',
+    label: 'Oxygen Dashboard',
     href: ROUTES.PHARMACY_OXYGEN,
-    icon: AirVent,
-    roles: PHARMACY_ROLES,
+    icon: LayoutDashboard,
     module: 'oxygen',
-    children: [
-      { label: 'Oxygen Dashboard', href: ROUTES.PHARMACY_OXYGEN, icon: Activity },
-      { label: 'Cylinder Inventory', href: ROUTES.PHARMACY_OXYGEN_CYLINDERS, icon: Database },
-      { label: 'Cylinder Request', href: ROUTES.PHARMACY_OXYGEN_CONSUMPTION, icon: ShoppingCart },
-      { label: 'QR Generator', href: '/pharmacy/oxygen/qr', icon: ClipboardList },
-      { label: 'KEW.PS-4 Cylinder Ledger', href: ROUTES.PHARMACY_OXYGEN_LEDGER, icon: ScrollText },
-      { label: 'Stock Reconciliation', href: '/pharmacy/oxygen/reconciliation', icon: FileText },
-      { label: 'Cylinder Report', href: ROUTES.PHARMACY_OXYGEN_REPORTS, icon: BarChart3 },
-      { label: 'Cylinder Maintenance', href: '/pharmacy/oxygen/maintenance', icon: Wrench },
-    ],
+  },
+  {
+    label: 'Cylinder Inventory',
+    href: ROUTES.PHARMACY_OXYGEN_CYLINDERS,
+    icon: Database,
+    module: 'oxygen',
+  },
+  {
+    label: 'Cylinder Request',
+    href: ROUTES.PHARMACY_OXYGEN_CONSUMPTION,
+    icon: ShoppingCart,
+    module: 'oxygen',
+  },
+  {
+    label: 'QR Generator',
+    href: '/pharmacy/oxygen/qr',
+    icon: QrCode,
+    module: 'oxygen',
+  },
+  {
+    label: 'KEW.PS-4 Cylinder Ledger',
+    href: ROUTES.PHARMACY_OXYGEN_LEDGER,
+    icon: ScrollText,
+    module: 'oxygen',
+  },
+  {
+    label: 'Stock Reconciliation',
+    href: '/pharmacy/oxygen/reconciliation',
+    icon: FileText,
+    module: 'oxygen',
+  },
+  {
+    label: 'Cylinder Report',
+    href: ROUTES.PHARMACY_OXYGEN_REPORTS,
+    icon: BarChart3,
+    module: 'oxygen',
+  },
+  {
+    label: 'Cylinder Maintenance',
+    href: '/pharmacy/oxygen/maintenance',
+    icon: Wrench,
+    module: 'oxygen',
   },
   {
     label: 'Catalog',
@@ -456,10 +546,24 @@ const navigation: NavItem[] = [
     module: 'staff',
     children: [
       { label: 'Dashboard', href: '/staff/dashboard', icon: LayoutDashboard },
-      { label: 'Log Pergerakan', href: '/staff/movement', icon: Briefcase },
-      { label: 'Log Event', href: '/staff/reminders', icon: Bell },
-      { label: 'Kalendar Jabatan', href: '/staff/calendar', icon: Calendar },
-      { label: 'Carta Organisasi', href: '/staff/org-chart', icon: Network },
+      { label: 'Movement Log', href: '/staff/movement', icon: Briefcase },
+      { label: 'Event Log', href: '/staff/reminders', icon: Bell },
+      { label: 'Department Calendar', href: '/staff/calendar', icon: Calendar },
+      { label: 'Organizational Chart', href: '/staff/org-chart', icon: Network },
+    ],
+  },
+  {
+    label: 'MyTimeOff',
+    href: '/timeoff/dashboard',
+    icon: Clock,
+    module: 'timeoff',
+    children: [
+      { label: 'Dashboard', href: '/timeoff/dashboard', icon: LayoutDashboard },
+      { label: 'Submit Time Off Claim', href: '/timeoff/claim/new', icon: Plus },
+      { label: 'My Claims', href: '/timeoff/claims', icon: FileText },
+      { label: 'Redeem Time Off', href: '/timeoff/redeem', icon: CalendarDays },
+      { label: 'History & Ledger', href: '/timeoff/history', icon: Layers },
+      { label: 'HOD Approval Queue', href: '/timeoff/hod', icon: UserCheck },
     ],
   },
   {
@@ -480,31 +584,31 @@ const navigation: NavItem[] = [
     module: 'perolehan',
   },
   {
-    label: 'Bajet Pengurusan',
+    label: 'Management Budget',
     href: '/perolehan/pengurusan',
     icon: Building,
     module: 'perolehan',
   },
   {
-    label: 'Bajet Pembangunan',
+    label: 'Development Budget',
     href: '/perolehan/pembangunan',
     icon: HardHat,
     module: 'perolehan',
   },
   {
-    label: 'Pesanan & LPO',
+    label: 'Orders & LPO',
     href: '/perolehan/orders',
     icon: ShoppingCart,
     module: 'perolehan',
   },
   {
-    label: 'Terimaan & Bayaran',
+    label: 'Receiving & Payments',
     href: '/perolehan/payments',
     icon: CreditCard,
     module: 'perolehan',
   },
   {
-    label: 'Katalog & Pembekal',
+    label: 'Catalog & Suppliers',
     href: '/perolehan/catalog',
     icon: ClipboardList,
     module: 'perolehan',
@@ -515,13 +619,15 @@ const navigation: NavItem[] = [
     icon: Pill,
     module: 'formulari',
     children: [
-      { label: 'Carian & Katalog Ubat', href: '/formulari/dashboard', icon: Search },
-      { label: 'Ubat Berisiko Tinggi (HAM)', href: '/formulari/ham', icon: Flame },
-      { label: 'Daftar LASA & TALL-Man', href: '/formulari/lasa', icon: AlertTriangle },
-      { label: 'Protokol Pelarutan IV', href: '/formulari/dilution', icon: Droplets },
-      { label: 'Garis Panduan NAG 2024', href: '/formulari/antimicrobial', icon: ShieldCheck },
-      { label: 'Kuota & Amaran Stok', href: '/formulari/quota', icon: TrendingDown },
-      { label: 'Matriks Ubat Alternatif', href: '/formulari/alternatives', icon: Layers },
+      { label: 'Hospital Lawas Formulary', href: '/formulari/hospital-lawas', icon: Building2 },
+      { label: 'Drug Search & Catalog', href: '/formulari/dashboard', icon: Search },
+      { label: 'High Alert Medications (HAM)', href: '/formulari/ham', icon: Flame },
+      { label: 'LASA & TALL-Man Register', href: '/formulari/lasa', icon: AlertTriangle },
+      { label: 'IV Dilution Protocols', href: '/formulari/dilution', icon: Droplets },
+      { label: 'National Antimicrobial Guideline 2024', href: '/formulari/antimicrobial', icon: ShieldCheck },
+      { label: 'Stock Quota & Alerts', href: '/formulari/quota', icon: TrendingDown },
+      { label: 'Alternative Drugs', href: '/formulari/alternatives', icon: Layers },
+      { label: 'Antidote Protocols', href: '/formulari/antidotes', icon: ShieldAlert },
     ],
   },
   {
@@ -530,15 +636,15 @@ const navigation: NavItem[] = [
     icon: Truck,
     module: 'porter',
     children: [
-      { label: 'Papan Pemuka (Dashboard)', href: '/porter/dashboard', icon: LayoutDashboard },
-      { label: 'Pesan Porter Baharu', href: '/porter/requests/new', icon: Plus },
-      { label: 'Pesanan & Jejak Terkini', href: '/porter/requests/my', icon: ClipboardList },
-      { label: 'Panel PPK (Driver Rider)', href: '/porter/panel', icon: Radio },
-      { label: 'Penerimaan Kargo (Wad)', href: '/porter/receiver', icon: ShieldCheck },
-      { label: 'Pusat Kawalan Dispatch', href: '/porter/manager', icon: Shield },
-      { label: 'Jadual Bertugas PPK', href: '/porter/roster', icon: Calendar },
-      { label: 'Laporan Prestasi & KPI', href: '/porter/reports', icon: BarChart3 },
-      { label: 'Tetapan Peranan', href: '/porter/roles', icon: Users },
+      { label: 'Dashboard', href: '/porter/dashboard', icon: LayoutDashboard },
+      { label: 'New Porter Request', href: '/porter/requests/new', icon: Plus },
+      { label: 'My Requests & Live Tracking', href: '/porter/requests/my', icon: ClipboardList },
+      { label: 'Porter Panel (Driver/Rider)', href: '/porter/panel', icon: Radio },
+      { label: 'Cargo Receiving (Ward)', href: '/porter/receiver', icon: ShieldCheck },
+      { label: 'Dispatch Control Center', href: '/porter/manager', icon: Shield },
+      { label: 'Porter Duty Roster', href: '/porter/roster', icon: Calendar },
+      { label: 'Performance & KPI Reports', href: '/porter/reports', icon: BarChart3 },
+      { label: 'Role Assignments', href: '/porter/roles', icon: Users },
     ],
   },
   {
@@ -554,13 +660,13 @@ const navigation: NavItem[] = [
     icon: CalendarDays,
     module: 'tempahan',
     children: [
-      { label: 'Papan Pemuka', href: '/tempahan', icon: LayoutDashboard },
-      { label: 'Kalendar Interaktif', href: '/tempahan/kalendar', icon: Calendar },
-      { label: 'Tempahan Baharu', href: '/tempahan/permohonan-baru', icon: Plus },
-      { label: 'Permohonan Saya', href: '/tempahan/permohonan-saya', icon: ClipboardList },
-      { label: 'Semakan Kelulusan', href: '/tempahan/kelulusan', icon: ShieldCheck },
-      { label: 'Direktori Fasiliti & Bilik', href: '/tempahan/senarai-bilik', icon: Building2 },
-      { label: 'Laporan & Analisis', href: '/tempahan/laporan', icon: BarChart3 },
+      { label: 'Dashboard', href: '/tempahan', icon: LayoutDashboard },
+      { label: 'Interactive Calendar', href: '/tempahan/kalendar', icon: Calendar },
+      { label: 'New Booking', href: '/tempahan/permohonan-baru', icon: Plus },
+      { label: 'My Bookings', href: '/tempahan/permohonan-saya', icon: ClipboardList },
+      { label: 'Approval Review Queue', href: '/tempahan/kelulusan', icon: ShieldCheck },
+      { label: 'Facility & Room Directory', href: '/tempahan/senarai-bilik', icon: Building2 },
+      { label: 'Reports & Analytics', href: '/tempahan/laporan', icon: BarChart3 },
     ],
   },
 ]
@@ -573,7 +679,13 @@ export const Sidebar: React.FC = () => {
   const { language, t } = useLanguage()
   const [isMobile, setIsMobile] = useState(false)
 
-  const userRole = user?.role?.role_code
+  const userRole = (
+    user?.role?.role_code ||
+    (user as any)?.role_code ||
+    (typeof user?.role === 'string' ? user?.role : '') ||
+    user?.jawatan ||
+    ''
+  ).toLowerCase()
 
   const [transporterCounts, setTransporterCounts] = useState({
     myRequests: 0,
@@ -742,23 +854,30 @@ export const Sidebar: React.FC = () => {
     })
   }, [currentPath, fullPath])
 
-  // Auto-expand items with active children on mount and path change
+  // Auto-expand only items whose children contain the active route (on mount / path change).
+  // We track the last path we acted on so that manual toggles are preserved between navigations.
+  const lastAutoExpandPath = React.useRef<string | null>(null)
   useEffect(() => {
-    const newExpanded = new Set<string>()
-    
-    const checkAndExpand = (items: NavItem[]) => {
-      items.forEach((item) => {
-        if (item.children && item.children.length > 0) {
-          if (hasActiveChild(item)) {
-            newExpanded.add(item.href)
+    if (lastAutoExpandPath.current === currentPath) return
+    lastAutoExpandPath.current = currentPath
+
+    setExpandedItems((prev) => {
+      const newExpanded = new Set<string>(prev)
+
+      const checkAndExpand = (items: NavItem[]) => {
+        items.forEach((item) => {
+          if (item.children && item.children.length > 0) {
+            if (hasActiveChild(item)) {
+              newExpanded.add(item.href)
+            }
+            checkAndExpand(item.children)
           }
-          checkAndExpand(item.children)
-        }
-      })
-    }
-    
-    checkAndExpand(filteredNavigation)
-    setExpandedItems(newExpanded)
+        })
+      }
+
+      checkAndExpand(filteredNavigation)
+      return newExpanded
+    })
   }, [currentPath, filteredNavigation, hasActiveChild])
 
   const toggleExpanded = React.useCallback((href: string) => {
@@ -888,11 +1007,63 @@ export const Sidebar: React.FC = () => {
         'Alerts': language === 'ms' ? 'Amaran' : 'Alerts',
         'Audit Logs': language === 'ms' ? 'Log Audit' : 'Audit Logs',
         'Settings': language === 'ms' ? 'Tetapan' : 'Settings',
-        'Carta Organisasi': language === 'ms' ? 'Carta Organisasi' : 'Organizational Chart',
+        'Movement Log': language === 'ms' ? 'Log Pergerakan' : 'Movement Log',
+        'Event Log': language === 'ms' ? 'Log Event' : 'Event Log',
+        'Department Calendar': language === 'ms' ? 'Kalendar Jabatan' : 'Department Calendar',
         'Organizational Chart': language === 'ms' ? 'Carta Organisasi' : 'Organizational Chart',
-        'Log Pergerakan': language === 'ms' ? 'Log Pergerakan' : 'Movement Log',
-        'Log Event': language === 'ms' ? 'Log Event' : 'Event Log',
-        'Kalendar Jabatan': language === 'ms' ? 'Kalendar Jabatan' : 'Department Calendar',
+        'Management Budget': language === 'ms' ? 'Bajet Pengurusan' : 'Management Budget',
+        'Development Budget': language === 'ms' ? 'Bajet Pembangunan' : 'Development Budget',
+        'Orders & LPO': language === 'ms' ? 'Pesanan & LPO' : 'Orders & LPO',
+        'Receiving & Payments': language === 'ms' ? 'Terimaan & Bayaran' : 'Receiving & Payments',
+        'Catalog & Suppliers': language === 'ms' ? 'Katalog & Pembekal' : 'Catalog & Suppliers',
+        'Hospital Lawas Formulary': language === 'ms' ? 'Formulari Hospital Lawas' : 'Hospital Lawas Formulary',
+        'Drug Search & Catalog': language === 'ms' ? 'Carian & Katalog Ubat' : 'Drug Search & Catalog',
+        'High Alert Medications (HAM)': language === 'ms' ? 'Ubat Berisiko Tinggi (HAM)' : 'High Alert Medications (HAM)',
+        'LASA & TALL-Man Register': language === 'ms' ? 'Daftar LASA & TALL-Man' : 'LASA & TALL-Man Register',
+        'IV Dilution Protocols': language === 'ms' ? 'Protokol Pelarutan IV' : 'IV Dilution Protocols',
+        'National Antimicrobial Guideline 2024': language === 'ms' ? 'Garis Panduan NAG 2024' : 'National Antimicrobial Guideline 2024',
+        'Stock Quota & Alerts': language === 'ms' ? 'Kuota & Amaran Stok' : 'Stock Quota & Alerts',
+        'Alternative Drugs': language === 'ms' ? 'Ubat Alternatif' : 'Alternative Drugs',
+        'Antidote Protocols': language === 'ms' ? 'Daftar & Protokol Antidot' : 'Antidote Protocols',
+        'New Porter Request': language === 'ms' ? 'Pesan Porter Baharu' : 'New Porter Request',
+        'My Requests & Live Tracking': language === 'ms' ? 'Pesanan & Jejak Terkini' : 'My Requests & Live Tracking',
+        'Porter Panel (Driver/Rider)': language === 'ms' ? 'Panel PPK (Driver Rider)' : 'Porter Panel (Driver/Rider)',
+        'Cargo Receiving (Ward)': language === 'ms' ? 'Penerimaan Kargo (Wad)' : 'Cargo Receiving (Ward)',
+        'Dispatch Control Center': language === 'ms' ? 'Pusat Kawalan Dispatch' : 'Dispatch Control Center',
+        'Porter Duty Roster': language === 'ms' ? 'Jadual Bertugas PPK' : 'Porter Duty Roster',
+        'Performance & KPI Reports': language === 'ms' ? 'Laporan Prestasi & KPI' : 'Performance & KPI Reports',
+        'Role Assignments': language === 'ms' ? 'Tetapan Peranan' : 'Role Assignments',
+        'Credentialing Criteria': language === 'ms' ? 'Kriteria Credentialing' : 'Credentialing Criteria',
+        'Procedure Catalog (500+)': language === 'ms' ? 'Katalog Prosedur (500+)' : 'Procedure Catalog (500+)',
+        'MOH Procedure Catalog': language === 'ms' ? 'Katalog Prosedur KKM' : 'MOH Procedure Catalog',
+        'My Log & Submissions': language === 'ms' ? 'Log & Permohonan Saya' : 'My Log & Submissions',
+        'Print Privileging Certificate': language === 'ms' ? 'Cetak Sijil Privileging' : 'Print Privileging Certificate',
+        'Dashboard (JKCP)': language === 'ms' ? 'Papan Pemuka (JKCP)' : 'Dashboard (JKCP)',
+        'JKCP Review & Approvals': language === 'ms' ? 'Semakan JKCP / Kelulusan' : 'JKCP Review & Approvals',
+        'Staff Progress': language === 'ms' ? 'Kemajuan Staf' : 'Staff Progress',
+        'Certificate Verification & Print': language === 'ms' ? 'Cetak & Perakuan Sijil' : 'Certificate Verification & Print',
+        'Interactive Calendar': language === 'ms' ? 'Kalendar Interaktif' : 'Interactive Calendar',
+        'New Booking': language === 'ms' ? 'Tempahan Baharu' : 'New Booking',
+        'My Bookings': language === 'ms' ? 'Permohonan Saya' : 'My Bookings',
+        'Approval Review Queue': language === 'ms' ? 'Semakan Kelulusan' : 'Approval Review Queue',
+        'Facility & Room Directory': language === 'ms' ? 'Direktori Fasiliti & Bilik' : 'Facility & Room Directory',
+        'Reports & Analytics': language === 'ms' ? 'Laporan & Analisis' : 'Reports & Analytics',
+        'New Request': language === 'ms' ? 'Permohonan Baru' : 'New Request',
+        'Check SG Slot': language === 'ms' ? 'Semak Slot SG' : 'Check SG Slot',
+        'My Requests': language === 'ms' ? 'Permohonan Saya' : 'My Requests',
+        'Driver Panel': language === 'ms' ? 'Panel Pemandu' : 'Driver Panel',
+        'Admin Approvals': language === 'ms' ? 'Kelulusan Pentadbir' : 'Admin Approvals',
+        'Fleet Vehicles': language === 'ms' ? 'Kenderaan Fleet' : 'Fleet Vehicles',
+        'Driver Issues': language === 'ms' ? 'Aduan Pemandu' : 'Driver Issues',
+        'Mileage & Claims': language === 'ms' ? 'Batu & Tuntutan' : 'Mileage & Claims',
+        'New Permit Request': language === 'ms' ? 'Permohonan Baru' : 'New Permit Request',
+        'Store Location Management': language === 'ms' ? 'Pengurusan Lokasi Stor' : 'Store Location Management',
+        'KEW.PS-4 Ledger': language === 'ms' ? 'Lejar KEW.PS-4' : 'KEW.PS-4 Ledger',
+        'MSDS Directory': language === 'ms' ? 'Direktori MSDS' : 'MSDS Directory',
+        'Emergency Procedures': language === 'ms' ? 'Prosedur Kecemasan' : 'Emergency Procedures',
+        'Key Register': language === 'ms' ? 'Daftar Kunci' : 'Key Register',
+        'Monthly Verification': language === 'ms' ? 'Verifikasi Bulanan' : 'Monthly Verification',
+        'MOH Key Policy': language === 'ms' ? 'Polisi Kunci KKM' : 'MOH Key Policy',
       }
       return map[label] || label
     }
@@ -916,7 +1087,7 @@ export const Sidebar: React.FC = () => {
             }}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 group relative',
+                'flex items-center gap-2.5 px-3 py-2.5 min-h-[42px] rounded-lg text-xs font-medium transition-all duration-200 group relative',
                 isActive
                   ? 'text-teal-300 font-semibold bg-teal-500/10 border border-teal-500/20 shadow-[0_0_12px_rgba(20,184,166,0.12)]'
                   : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/40 border border-transparent'
@@ -953,7 +1124,7 @@ export const Sidebar: React.FC = () => {
             transition={{ type: 'spring', stiffness: 400, damping: 28 }}
             onClick={() => toggleExpanded(item.href)}
             className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 group relative',
+              'w-full flex items-center gap-3 px-3 py-2.5 min-h-[46px] rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 group relative',
               activeState
                 ? 'text-emerald-400 bg-slate-800/80 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.08)]'
                 : 'text-slate-300 hover:text-white hover:bg-slate-800/50 border border-transparent'
@@ -1024,7 +1195,7 @@ export const Sidebar: React.FC = () => {
           }}
           className={({ isActive }) =>
             cn(
-              'flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 group relative',
+              'flex items-center gap-3 px-3 py-2.5 min-h-[46px] rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 group relative',
               isActive
                 ? 'text-emerald-400 bg-slate-800/80 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.08)]'
                 : 'text-slate-300 hover:text-white hover:bg-slate-800/50 border border-transparent'
@@ -1070,7 +1241,7 @@ export const Sidebar: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[60] lg:hidden"
+            className="fixed inset-0 bg-slate-950/75 backdrop-blur-md z-[50] lg:hidden"
           />
         )}
       </AnimatePresence>
@@ -1078,24 +1249,33 @@ export const Sidebar: React.FC = () => {
       <motion.aside
         initial={false}
         animate={{ 
-          x: isMobile ? (sidebarOpen ? 0 : -280) : 0,
-          width: 280,
+          x: isMobile ? (sidebarOpen ? 0 : -300) : 0,
+          width: isMobile ? 270 : 280,
         }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className={cn(
-          'fixed left-0 bg-slate-950/95 backdrop-blur-xl border-r border-slate-800/80',
-          'flex flex-col z-[60] shadow-2xl shadow-slate-950/50',
+          'fixed left-0 bg-slate-950/98 backdrop-blur-2xl border-r border-slate-800/80',
+          'flex flex-col z-[60] shadow-2xl shadow-slate-950/60',
           'top-16 sm:top-20 lg:top-24 h-[calc(100vh-64px)] sm:h-[calc(100vh-80px)] lg:h-[calc(100vh-96px)]',
-          'lg:translate-x-0 lg:w-[280px]'
+          'w-[270px] max-w-[85vw] lg:translate-x-0 lg:w-[280px]'
         )}
       >
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto pt-5 px-3.5 pb-4 space-y-1.5 custom-scrollbar">
-          <div className="flex items-center gap-2 mb-3.5 px-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-              NAVIGATION PANEL
-            </p>
+        <nav className="flex-1 overflow-y-auto pt-5 px-3.5 pb-24 lg:pb-4 space-y-1.5 custom-scrollbar overscroll-contain touch-pan-y">
+          <div className="flex items-center justify-between mb-3.5 px-3">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                NAVIGATION PANEL
+              </p>
+            </div>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/80 active:scale-95 rounded-lg transition-all"
+              aria-label="Tutup Panel Navigasi"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
           {filteredNavigation.map((item) => renderNavItem(item))}
         </nav>

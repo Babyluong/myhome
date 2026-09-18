@@ -68,10 +68,10 @@ export const HamListPage: React.FC = () => {
           </div>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-              <span>Senarai Ubat Berisiko Tinggi (HAM)</span>
+              <span>High Alert Medications (HAM) Registry</span>
             </h1>
             <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              Pematuhan Garis Panduan Penggunaan Selamat Ubat Berisiko Tinggi KKM (Edisi Ke-2) Hospital Lawas
+              Compliance with MOH Safe Use of High Alert Medications Guidelines (2nd Edition) Lawas Hospital
             </p>
           </div>
         </div>
@@ -81,7 +81,7 @@ export const HamListPage: React.FC = () => {
           className="px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 transition-all self-start md:self-auto cursor-pointer"
         >
           <Printer className="w-4 h-4" />
-          <span>Cetak Senarai HAM Wad</span>
+          <span>Print Ward HAM List</span>
         </button>
       </div>
 
@@ -89,11 +89,11 @@ export const HamListPage: React.FC = () => {
       <div className="bg-gradient-to-r from-rose-950 via-rose-900 to-red-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
         <div className="flex items-center gap-2 text-rose-300 text-xs font-bold uppercase tracking-wider">
           <AlertOctagon className="w-4 h-4" />
-          <span>Dasar Keselamatan Ubat KKM (Patient Safety Standard)</span>
+          <span>MOH Medication Safety Policy (Patient Safety Standard)</span>
         </div>
 
         <h2 className="text-lg sm:text-xl font-bold leading-snug">
-          4 Prinsip Wajib Pengendalian High Alert Medication (HAM) di Semua Wad & Unit:
+          4 Mandatory Principles for Handling High Alert Medications (HAM) Across All Wards & Units:
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
@@ -101,31 +101,31 @@ export const HamListPage: React.FC = () => {
             <Users className="w-5 h-5 text-rose-300 mb-2" />
             <h3 className="text-xs font-bold">Independent Double-Check (IDC)</h3>
             <p className="text-[11px] text-rose-100/80 leading-relaxed">
-              Dua staf berasingan wajib mengira dos, kadar pam, dan identiti pesakit sebelum pemberian ubat.
+              Two independent staff must calculate doses, infusion pump rates, and verify patient identity prior to administration.
             </p>
           </div>
 
           <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 space-y-1">
             <ShieldAlert className="w-5 h-5 text-rose-300 mb-2" />
-            <h3 className="text-xs font-bold">Pelekat Amaran Merah</h3>
+            <h3 className="text-xs font-bold">Red Warning Auxiliary Labels</h3>
             <p className="text-[11px] text-rose-100/80 leading-relaxed">
-              Semua vial, picagari, dan beg infusi HAM wajib dilekatkan pelekat merah "HIGH ALERT".
+              All HAM vials, syringes, and infusion bags must be affixed with red "HIGH ALERT" auxiliary labels.
             </p>
           </div>
 
           <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 space-y-1">
             <Lock className="w-5 h-5 text-rose-300 mb-2" />
-            <h3 className="text-xs font-bold">Penyimpanan Berasingan</h3>
+            <h3 className="text-xs font-bold">Dedicated Segregated Storage</h3>
             <p className="text-[11px] text-rose-100/80 leading-relaxed">
-              Hadkan stok wad. Kalium Klorida pekat dilarang sama sekali berada di stok lantai wad am.
+              Strictly limit ward floor stock. Concentrated Potassium Chloride is strictly prohibited from general ward floor stock.
             </p>
           </div>
 
           <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 space-y-1">
             <Activity className="w-5 h-5 text-rose-300 mb-2" />
-            <h3 className="text-xs font-bold">Pam Infusi Elektronik</h3>
+            <h3 className="text-xs font-bold">Electronic Infusion Smart Pumps</h3>
             <p className="text-[11px] text-rose-100/80 leading-relaxed">
-              Wajib guna pam infusi bersensor volumetrik / picagari dengan had kadar terhad.
+              Must utilize volumetric / syringe infusion smart pumps with strict rate guardrails.
             </p>
           </div>
         </div>
@@ -138,7 +138,7 @@ export const HamListPage: React.FC = () => {
             <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Cari ubat HAM mengikut nama generik, jenama, atau kelas terapi..."
+              placeholder="Search HAM medications by generic name, brand, or therapeutic class..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-rose-500 focus:bg-white"
@@ -150,7 +150,7 @@ export const HamListPage: React.FC = () => {
             onChange={e => setSelectedCategory(e.target.value as any)}
             className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-700"
           >
-            <option value="ALL">Semua Kategori HAM</option>
+            <option value="ALL">All HAM Categories</option>
             {categories.map(cat => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
@@ -161,10 +161,10 @@ export const HamListPage: React.FC = () => {
             onChange={e => setSelectedRisk(e.target.value as any)}
             className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-700"
           >
-            <option value="ALL">Semua Tahap Risiko</option>
-            <option value="CRITICAL">Risiko KRITIKAL Sahaja</option>
-            <option value="HIGH">Risiko HIGH Sahaja</option>
-            <option value="MODERATE">Risiko MODERATE Sahaja</option>
+            <option value="ALL">All Risk Levels</option>
+            <option value="CRITICAL">CRITICAL Risk Only</option>
+            <option value="HIGH">HIGH Risk Only</option>
+            <option value="MODERATE">MODERATE Risk Only</option>
           </select>
         </div>
       </div>
@@ -194,21 +194,17 @@ export const HamListPage: React.FC = () => {
                   </div>
 
                   <h3 className="text-lg font-bold text-slate-900 leading-tight">
-                    {drug.isLASA && drug.tallManName ? (
-                      <TallManLettering name={drug.tallManName} />
-                    ) : (
-                      drug.genericName
-                    )}
+                    {drug.genericName}
                   </h3>
 
                   <p className="text-xs text-slate-500">
-                    Kekuatan & Bentuk: <strong className="text-slate-700">{drug.strengths.join(', ')} ({drug.dosageForms.join(', ')})</strong>
+                    Strength & Form: <strong className="text-slate-700">{drug.strengths.join(', ')} ({drug.dosageForms.join(', ')})</strong>
                   </p>
                 </div>
 
                 <div className="text-right shrink-0">
                   <span className="text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1 rounded-full">
-                    Kategori HAM: {drug.hamCategory}
+                    HAM Category: {drug.hamCategory}
                   </span>
                 </div>
               </div>
@@ -217,7 +213,7 @@ export const HamListPage: React.FC = () => {
               {drug.hamPrecautions && drug.hamPrecautions.length > 0 && (
                 <div className="bg-rose-50/50 p-4 rounded-2xl border border-rose-100 text-xs space-y-1.5">
                   <strong className="text-rose-950 font-bold block uppercase tracking-wider text-[11px]">
-                    Langkah Keselamatan Mandatori KKM:
+                    Mandatory MOH Safety Precautions:
                   </strong>
                   <ul className="space-y-1 text-slate-700">
                     {drug.hamPrecautions.map((pre, idx) => (
@@ -231,9 +227,9 @@ export const HamListPage: React.FC = () => {
               )}
 
               <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
-                <span>Laluan: <strong className="text-slate-700">{drug.administrationRoutes.join(', ')}</strong></span>
+                <span>Route: <strong className="text-slate-700">{drug.administrationRoutes.join(', ')}</strong></span>
                 <span className="text-rose-600 font-bold flex items-center gap-1">
-                  <span>Lihat Panduan Penuh & Protokol</span>
+                  <span>View Full Guidance & Protocol</span>
                   <ChevronRight className="w-4 h-4" />
                 </span>
               </div>
@@ -243,7 +239,7 @@ export const HamListPage: React.FC = () => {
 
         {filteredDrugs.length === 0 && (
           <div className="p-12 text-center bg-white rounded-3xl border border-dashed border-slate-300 text-slate-500 text-xs">
-            Tiada ubat HAM ditemui bagi kriteria pilihan.
+            No HAM medications found matching the selected criteria.
           </div>
         )}
       </div>

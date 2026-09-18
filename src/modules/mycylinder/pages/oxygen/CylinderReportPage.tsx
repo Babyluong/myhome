@@ -55,6 +55,25 @@ const STATUS_COLORS: Record<string, string> = {
 
 const getStatusColor = (status: string) => STATUS_COLORS[status] || '#64748b'
 
+const CYLINDER_TYPE_COLORS: Record<string, string> = {
+  'P101-F': '#00a68a',
+  '101-N': '#3b82f6',
+  '101-F': '#8b5cf6',
+  'P101-D': '#f59e0b',
+  'P101-HS': '#ec4899',
+  'P101-AG': '#06b6d4',
+  'P101-E': '#10b981',
+  'Liquid Medical Oxygen (VIE Tank)': '#64748b',
+  'Size D': '#00a68a',
+  'Size F': '#3b82f6',
+  'Size G': '#f59e0b',
+  'Size K': '#8b5cf6',
+}
+
+const getCylinderColor = (type: string, idx: number) => {
+  return CYLINDER_TYPE_COLORS[type] || CHART_COLORS[idx % CHART_COLORS.length]
+}
+
 // ─── Tab Definitions ────────────────────────────────────────────────────────
 const TABS = [
   { id: 'executive', label: 'Executive Summary', icon: Landmark, color: 'teal' },
@@ -264,6 +283,9 @@ export function CylinderReportPage() {
   const [loading, setLoading] = useState(true)
   const [reportData, setReportData] = useState<CylinderReportData | null>(null)
   const [selectedTrendSize, setSelectedTrendSize] = useState('all')
+  const [usageTrendGranularity, setUsageTrendGranularity] = useState<'daily' | 'weekly' | 'monthly'>('daily')
+  const [usageViewMode, setUsageViewMode] = useState<'metric' | 'types'>('metric')
+  const [breakdownView, setBreakdownView] = useState<'weekly' | 'daily' | 'quarterly'>('weekly')
   
   // Custom Dates (if custom range selected)
   const [customStartDate, setCustomStartDate] = useState(() => {
@@ -423,21 +445,170 @@ export function CylinderReportPage() {
     ]
   }, [quarterlyStats])
 
-  const filteredTrendData = useMemo(() => {
-    if (!reportData?.usage?.monthlyTrend || !reportData?.usage?.byType || !reportData?.deliveries?.receivedMonthlyTrend) return []
-    return reportData.usage.monthlyTrend.map(m => {
-      const result: any = { month: m.month }
-      const recM = reportData.deliveries.receivedMonthlyTrend.find(r => r.month === m.month) || {}
-      if (selectedTrendSize === 'all') {
-        result.issued = reportData.usage.byType.reduce((sum, t) => sum + Number(m[t.type] || 0), 0)
-        result.received = reportData.usage.byType.reduce((sum, t) => sum + Number(recM[t.type] || 0), 0)
-      } else {
-        result.issued = Number(m[selectedTrendSize] || 0)
-        result.received = Number(recM[selectedTrendSize] || 0)
+  const dynamicTrendData = useMemo(() => {
+    if (!reportData?.usage || !reportData?.deliveries) return []
+    const types = reportData.usage.byType || []
+
+    if (usageTrendGranularity === 'daily') {
+      const dailyTrend = reportData.usage.dailyTrend || []
+      const recDaily = reportData.deliveries.receivedDailyTrend || []
+
+      return dailyTrend.map(d => {
+        const rec = recDaily.find(r => r.date === d.date) || {}
+        const point: any = {
+          label: d.formattedDate,
+          date: d.date,
+          dayOfWeek: d.dayOfWeek,
+        }
+
+        if (selectedTrendSize === 'all') {
+          point.issued = d.issued
+          point.received = d.received
+          types.forEach(t => {
+            point[t.type] = Number(d[t.type] || 0)
+          })
+        } else {
+          point.issued = Number(d[selectedTrendSize] || 0)
+          point.received = Number(rec[selectedTrendSize] || d[`received_${selectedTrendSize}`] || 0)
+        }
+        return point
+      })
+    } else if (usageTrendGranularity === 'weekly') {
+      const weeklyTrend = reportData.usage.weeklyTrend || []
+      const recWeekly = reportData.deliveries.receivedWeeklyTrend || []
+
+      return weeklyTrend.map(w => {
+        const rec = recWeekly.find(r => r.week === w.week) || {}
+        const point: any = {
+          label: w.shortWeek,
+          fullLabel: w.week,
+          startDate: w.startDate,
+          endDate: w.endDate,
+        }
+
+        if (selectedTrendSize === 'all') {
+          point.issued = w.issued
+          point.received = w.received
+          types.forEach(t => {
+            point[t.type] = Number(w[t.type] || 0)
+          })
+        } else {
+          point.issued = Number(w[selectedTrendSize] || 0)
+          point.received = Number(rec[selectedTrendSize] || w[`received_${selectedTrendSize}`] || 0)
+        }
+        return point
+      })
+    } else {
+      // Monthly
+      const monthlyTrend = reportData.usage.monthlyTrend || []
+      const recMonthly = reportData.deliveries.receivedMonthlyTrend || []
+
+      return monthlyTrend.map(m => {
+        const recM = recMonthly.find(r => r.month === m.month) || {}
+        const point: any = {
+          label: m.month,
+        }
+        if (selectedTrendSize === 'all') {
+          point.issued = types.reduce((sum, t) => sum + Number(m[t.type] || 0), 0)
+          point.received = types.reduce((sum, t) => sum + Number(recM[t.type] || 0), 0)
+          types.forEach(t => {
+            point[t.type] = Number(m[t.type] || 0)
+          })
+        } else {
+          point.issued = Number(m[selectedTrendSize] || 0)
+          point.received = Number(recM[selectedTrendSize] || 0)
+        }
+        return point
+      })
+    }
+  }, [reportData, usageTrendGranularity, selectedTrendSize])
+
+  // Backward-compatible alias
+  const filteredTrendData = dynamicTrendData
+
+  // Weekly Performance Matrix
+  const weeklyStats = useMemo(() => {
+    if (!reportData?.usage?.weeklyTrend || !reportData?.usage?.byType) return { rows: [], weekKeys: [] }
+    const types = reportData.usage.byType.map(t => t.type)
+    const weeks = reportData.usage.weeklyTrend.slice(-6)
+    const weekKeys = weeks.map(w => w.shortWeek)
+
+    const rows = types.map(t => {
+      const weekCounts: Record<string, number> = {}
+      let total = 0
+      weeks.forEach(w => {
+        const val = Number(w[t] || 0)
+        weekCounts[w.shortWeek] = val
+        total += val
+      })
+      const avgWeekly = weeks.length > 0 ? parseFloat((total / weeks.length).toFixed(1)) : 0
+      return {
+        type: t,
+        weekCounts,
+        avgWeekly,
+        total,
       }
-      return result
     })
-  }, [reportData, selectedTrendSize])
+
+    return { rows, weekKeys }
+  }, [reportData])
+
+  const weeklyOverallTrend = useMemo(() => {
+    if (!reportData?.usage?.weeklyTrend?.length) return []
+    return reportData.usage.weeklyTrend.slice(-6).map(w => ({
+      name: w.shortWeek,
+      value: w.issued,
+      received: w.received,
+      fullLabel: w.week,
+    }))
+  }, [reportData])
+
+  // Daily Performance Matrix (stats per cylinder size)
+  const dailyStats = useMemo(() => {
+    if (!reportData?.usage?.dailyTrend || !reportData?.usage?.byType) return []
+    const types = reportData.usage.byType.map(t => t.type)
+    const days = reportData.usage.dailyTrend
+
+    return types.map(t => {
+      let total = 0
+      let maxDay = { formattedDate: 'N/A', count: 0 }
+      let activeDays = 0
+
+      days.forEach(d => {
+        const val = Number(d[t] || 0)
+        if (val > 0) {
+          total += val
+          activeDays += 1
+          if (val > maxDay.count) {
+            maxDay = { formattedDate: d.formattedDate, count: val }
+          }
+        }
+      })
+
+      const totalAllCylinders = reportData.usage.byType.reduce((s, item) => s + item.count, 0) || 1
+      const pct = (total / totalAllCylinders) * 100
+      const avgDaily = activeDays > 0 ? parseFloat((total / activeDays).toFixed(1)) : 0
+
+      return {
+        type: t,
+        avgDaily,
+        peakDay: maxDay,
+        activeDays,
+        total,
+        percentage: pct,
+      }
+    })
+  }, [reportData])
+
+  const dailyOverallTrend = useMemo(() => {
+    if (!reportData?.usage?.dailyTrend?.length) return []
+    const days = reportData.usage.dailyTrend
+    return days.slice(-14).map(d => ({
+      name: d.formattedDate,
+      value: d.issued,
+      received: d.received,
+    }))
+  }, [reportData])
 
   // Filtered detailed inventory items
   const filteredCylinders = useMemo(() => {
@@ -509,7 +680,33 @@ export function CylinderReportPage() {
         ...reportData.deliveries.recentDeliveries.map(d => [d.delivery_order_no, d.reception_date, d.items_count, d.status, d.total_amount])
       ]
 
-      // 6. Detailed Cylinders
+      // 6. Daily Usage Trend (All Cylinder Types)
+      const cylinderTypesList = (reportData.usage.byType || []).map(t => t.type)
+      const dailyUsageRows = [
+        ['Date', 'Day', 'Total Issued (Tanks)', 'Total Received (Tanks)', ...cylinderTypesList],
+        ...(reportData.usage.dailyTrend || []).map(d => [
+          d.date,
+          d.dayOfWeek || '',
+          d.issued || 0,
+          d.received || 0,
+          ...cylinderTypesList.map(t => d[t] || 0)
+        ])
+      ]
+
+      // 7. Weekly Usage Trend (All Cylinder Types)
+      const weeklyUsageRows = [
+        ['Week', 'Start Date', 'End Date', 'Total Issued (Tanks)', 'Total Received (Tanks)', ...cylinderTypesList],
+        ...(reportData.usage.weeklyTrend || []).map(w => [
+          w.week,
+          w.startDate || '',
+          w.endDate || '',
+          w.issued || 0,
+          w.received || 0,
+          ...cylinderTypesList.map(t => w[t] || 0)
+        ])
+      ]
+
+      // 8. Detailed Cylinders
       const detailRows = [
         ['Serial Number', 'Size Code', 'Full Description', 'Status', 'Current Location', 'Assigned Ward', 'QR Tagged', 'Last Movement Date'],
         ...reportData.detailed.map(c => [
@@ -526,6 +723,8 @@ export function CylinderReportPage() {
 
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summaryRows), 'Report Summary')
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(dailyUsageRows), 'Daily Usage Trend')
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(weeklyUsageRows), 'Weekly Usage Trend')
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(invRows), 'Inventory Status')
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptRows), 'Dept Allocation')
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(warrantRows), 'Warrants & Budgets')
@@ -1147,17 +1346,17 @@ export function CylinderReportPage() {
                     {/* KPI Cards Row */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                       <KpiCard 
-                        label="Average Monthly Usage" 
-                        value={reportData.summary.avgMonthlyUsage} 
-                        suffix=" Tanks" 
+                        label={usageTrendGranularity === 'daily' ? "Average Daily Usage" : usageTrendGranularity === 'weekly' ? "Average Weekly Usage" : "Average Monthly Usage"} 
+                        value={usageTrendGranularity === 'daily' ? (reportData.summary.avgDailyUsage || 0) : usageTrendGranularity === 'weekly' ? (reportData.summary.avgWeeklyUsage || 0) : reportData.summary.avgMonthlyUsage} 
+                        suffix={usageTrendGranularity === 'daily' ? " Tanks/Day" : usageTrendGranularity === 'weekly' ? " Tanks/Wk" : " Tanks/Mo"} 
                         icon={Activity} 
                         color="teal" 
                         decimals={1} 
                         trend={{ val: 4.8, isUp: true }}
                       />
                       <KpiCard 
-                        label="Peak Month Demand" 
-                        value={peakMonthDemandInfo.value} 
+                        label="Peak Consumption Volume" 
+                        value={usageTrendGranularity === 'daily' ? (reportData.summary.peakDayUsage?.count || peakMonthDemandInfo.value) : usageTrendGranularity === 'weekly' ? (reportData.summary.peakWeekUsage?.count || peakMonthDemandInfo.value) : peakMonthDemandInfo.value} 
                         suffix=" Tanks" 
                         icon={TrendingUp} 
                         color="teal" 
@@ -1180,181 +1379,490 @@ export function CylinderReportPage() {
                     </div>
 
                     {/* Secondary Metrics Row */}
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 bg-slate-50/50 p-4 border border-slate-100 rounded-xl">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50/50 p-4 border border-slate-100 rounded-xl">
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Peak Month</span>
-                        <span className="text-sm font-semibold text-slate-800 mt-0.5">{peakMonthDemandInfo.month}</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Daily & Weekly Velocity</span>
+                        <span className="text-sm font-semibold text-slate-800 mt-0.5">
+                          {(reportData.summary.avgDailyUsage || 0).toFixed(1)} / day • {(reportData.summary.avgWeeklyUsage || 0).toFixed(1)} / week
+                        </span>
                       </div>
-                      <div className="flex flex-col border-l border-slate-200/60 pl-4">
+                      <div className="flex flex-col sm:border-l border-slate-200/60 sm:pl-4">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Peak Demand Record</span>
+                        <span className="text-sm font-semibold text-slate-800 mt-0.5">
+                          {reportData.summary.peakDayUsage?.formattedDate && reportData.summary.peakDayUsage.count > 0
+                            ? `${reportData.summary.peakDayUsage.formattedDate} (${reportData.summary.peakDayUsage.count} Tanks)`
+                            : `${peakMonthDemandInfo.month} (${peakMonthDemandInfo.value} Tanks)`}
+                        </span>
+                      </div>
+                      <div className="flex flex-col lg:border-l border-slate-200/60 lg:pl-4">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Top Cylinder Share</span>
                         <span className="text-sm font-semibold text-slate-800 mt-0.5">{topUsedSize.type} ({topUsedSize.percentage.toFixed(1)}%)</span>
                       </div>
-                      <div className="flex flex-col border-l border-slate-200/60 pl-4">
+                      <div className="flex flex-col lg:border-l border-slate-200/60 lg:pl-4">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Top Consuming Ward</span>
                         <span className="text-sm font-semibold text-slate-800 mt-0.5">{topDepartmentInfo.department} ({topDepartmentInfo.count} Tanks)</span>
-                      </div>
-                      <div className="flex flex-col border-l border-slate-200/60 pl-4">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active Period Limit</span>
-                        <span className="text-sm font-semibold text-slate-800 mt-0.5">Last 6 Months (Live)</span>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                      {/* Left Side: Trends & Quarterly Dashboard */}
+                      {/* Left Side: Trends & Performance Dashboard */}
                       <div className="lg:col-span-2 space-y-6">
-                        {/* Monthly Composed Trend Chart with Interactive Filters */}
+                        {/* Usage Trend Chart with Daily, Weekly & Monthly View + All Types Comparison */}
                         <div className="bg-white border border-slate-200/50 rounded-xl p-5.5 shadow-[0_1px_3px_rgba(0,0,0,0.01),0_1px_2px_rgba(0,0,0,0.02)]">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-3">
-                            <SectionHeader title="Monthly Usage Trend" subtitle="Oxygen Consumption Volume" icon={Activity} />
+                          <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 border-b border-slate-100 pb-3.5">
+                            <SectionHeader 
+                              title={
+                                usageTrendGranularity === 'daily'
+                                  ? 'Daily Usage Trend'
+                                  : usageTrendGranularity === 'weekly'
+                                  ? 'Weekly Usage Trend'
+                                  : 'Monthly Usage Trend'
+                              } 
+                              subtitle={
+                                usageTrendGranularity === 'daily'
+                                  ? 'Daily Oxygen Velocity & Restock Volume'
+                                  : usageTrendGranularity === 'weekly'
+                                  ? 'Weekly Oxygen Consumption Volume'
+                                  : 'Monthly Oxygen Consumption Volume'
+                              } 
+                              icon={Activity} 
+                            />
                             
-                            {/* Toggle Pill Chips */}
-                            <div className="flex flex-wrap gap-1 bg-slate-50 border border-slate-100 p-0.5 rounded-lg shrink-0">
-                              <button
-                                onClick={() => setSelectedTrendSize('all')}
-                                className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded transition-all duration-200 ${
-                                  selectedTrendSize === 'all'
-                                    ? 'bg-[#00a68a] text-white shadow-sm'
-                                    : 'text-slate-500 hover:text-slate-800'
-                                }`}
-                              >
-                                All Sizes
-                              </button>
-                              {reportData.usage.byType.map((typeObj: any) => (
+                            {/* Controls: Granularity Toggle + View Mode + Cylinder Size Chips */}
+                            <div className="flex flex-wrap items-center gap-2">
+                              {/* Daily / Weekly / Monthly Switcher */}
+                              <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/40 shrink-0">
+                                {(['daily', 'weekly', 'monthly'] as const).map(gran => (
+                                  <button
+                                    key={gran}
+                                    onClick={() => setUsageTrendGranularity(gran)}
+                                    className={cn(
+                                      "px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-150",
+                                      usageTrendGranularity === gran
+                                        ? "bg-white text-slate-900 shadow-sm border border-slate-200/40"
+                                        : "text-slate-500 hover:text-slate-800"
+                                    )}
+                                  >
+                                    {gran === 'daily' ? 'Daily' : gran === 'weekly' ? 'Weekly' : 'Monthly'}
+                                  </button>
+                                ))}
+                              </div>
+
+                              {/* View Mode Toggle when 'all' sizes is chosen */}
+                              {selectedTrendSize === 'all' && (
+                                <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/40 shrink-0">
+                                  <button
+                                    onClick={() => setUsageViewMode('metric')}
+                                    className={cn(
+                                      "px-2 py-1 text-[10px] font-bold rounded-md transition-all duration-150",
+                                      usageViewMode === 'metric'
+                                        ? "bg-[#00a68a] text-white shadow-sm"
+                                        : "text-slate-500 hover:text-slate-800"
+                                    )}
+                                    title="Compare Total Issued to Wards vs Received from Supplier"
+                                  >
+                                    Issued vs Received
+                                  </button>
+                                  <button
+                                    onClick={() => setUsageViewMode('types')}
+                                    className={cn(
+                                      "px-2 py-1 text-[10px] font-bold rounded-md transition-all duration-150",
+                                      usageViewMode === 'types'
+                                        ? "bg-[#00a68a] text-white shadow-sm"
+                                        : "text-slate-500 hover:text-slate-800"
+                                    )}
+                                    title="Compare daily/weekly trends across all cylinder types side-by-side"
+                                  >
+                                    Compare All Types
+                                  </button>
+                                </div>
+                              )}
+
+                              {/* Toggle Pill Chips for Cylinder Types */}
+                              <div className="flex flex-wrap gap-1 bg-slate-50 border border-slate-100 p-0.5 rounded-lg shrink-0">
                                 <button
-                                  key={typeObj.type}
-                                  onClick={() => setSelectedTrendSize(typeObj.type)}
-                                  className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded transition-all duration-200 ${
-                                    selectedTrendSize === typeObj.type
+                                  onClick={() => setSelectedTrendSize('all')}
+                                  className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded transition-all duration-150 ${
+                                    selectedTrendSize === 'all'
                                       ? 'bg-[#00a68a] text-white shadow-sm'
                                       : 'text-slate-500 hover:text-slate-800'
                                   }`}
                                 >
-                                  {typeObj.type}
+                                  All Sizes
                                 </button>
-                              ))}
+                                {reportData.usage.byType.map((typeObj: any) => (
+                                  <button
+                                    key={typeObj.type}
+                                    onClick={() => setSelectedTrendSize(typeObj.type)}
+                                    className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded transition-all duration-150 ${
+                                      selectedTrendSize === typeObj.type
+                                        ? 'bg-[#00a68a] text-white shadow-sm'
+                                        : 'text-slate-500 hover:text-slate-800'
+                                    }`}
+                                  >
+                                    {typeObj.type}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           </div>
 
-                          <div className="h-[280px] w-full mt-4">
+                          <div className="h-[290px] w-full mt-4">
                             <ResponsiveContainer width="100%" height="100%">
-                              <ComposedChart data={filteredTrendData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+                              <ComposedChart data={dynamicTrendData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
-                                <XAxis dataKey="month" stroke="#94a3b8" fontSize={9.5} tickLine={false} axisLine={false} />
+                                <XAxis dataKey="label" stroke="#94a3b8" fontSize={9.5} tickLine={false} axisLine={false} minTickGap={20} />
                                 <YAxis stroke="#94a3b8" fontSize={9.5} tickLine={false} axisLine={false} />
                                 <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(0,0,0,0.04)', strokeWidth: 1 }} />
-                                 <Legend 
-                                   verticalAlign="top" 
-                                   height={36} 
-                                   iconType="circle" 
-                                   wrapperStyle={{ fontSize: '10px', fontWeight: 'bold' }} 
-                                   payload={[
-                                     { value: 'Issued to Wards (Tanks)', type: 'circle', id: 'issued', color: '#00a68a' },
-                                     { value: 'Received from Supplier (Tanks)', type: 'circle', id: 'received', color: '#3b82f6' }
-                                   ]}
-                                 />
-                                <Bar 
-                                  dataKey="issued" 
-                                  legendType="none"
-                                  fill="#00a68a" 
-                                  fillOpacity={0.06} 
-                                  stroke="#00a68a"
-                                  strokeWidth={1}
-                                  strokeOpacity={0.15}
-                                  radius={[4, 4, 0, 0]} 
-                                  barSize={20} 
-                                />
-                                <Bar 
-                                  dataKey="received" 
-                                  legendType="none"
-                                  fill="#3b82f6" 
-                                  fillOpacity={0.06} 
-                                  stroke="#3b82f6"
-                                  strokeWidth={1}
-                                  strokeOpacity={0.15}
-                                  radius={[4, 4, 0, 0]} 
-                                  barSize={20} 
-                                />
-                                <Line 
-                                  type="monotone" 
-                                  dataKey="issued" 
-                                  name="Issued to Wards (Tanks)" 
-                                  stroke="#00a68a" 
-                                  strokeWidth={2} 
-                                  dot={{ r: 3, strokeWidth: 0, fill: "#00a68a" }} 
-                                  activeDot={{ r: 5, strokeWidth: 0 }} 
-                                />
-                                <Line 
-                                  type="monotone" 
-                                  dataKey="received" 
-                                  name="Received from Supplier (Tanks)" 
-                                  stroke="#3b82f6" 
-                                  strokeWidth={2} 
-                                  dot={{ r: 3, strokeWidth: 0, fill: "#3b82f6" }} 
-                                  activeDot={{ r: 5, strokeWidth: 0 }} 
-                                />
+                                
+                                {selectedTrendSize === 'all' && usageViewMode === 'types' ? (
+                                  <>
+                                    <Legend 
+                                      verticalAlign="top" 
+                                      height={36} 
+                                      iconType="circle" 
+                                      wrapperStyle={{ fontSize: '10px', fontWeight: 'bold' }} 
+                                    />
+                                    {reportData.usage.byType.map((typeObj: any, idx: number) => {
+                                      const color = getCylinderColor(typeObj.type, idx)
+                                      return (
+                                        <Line 
+                                          key={typeObj.type}
+                                          type="monotone" 
+                                          dataKey={typeObj.type} 
+                                          name={`${typeObj.type} (Tanks)`} 
+                                          stroke={color} 
+                                          strokeWidth={2} 
+                                          dot={{ r: 3, strokeWidth: 0, fill: color }} 
+                                          activeDot={{ r: 5, strokeWidth: 0 }} 
+                                        />
+                                      )
+                                    })}
+                                  </>
+                                ) : (
+                                  <>
+                                    <Legend 
+                                      verticalAlign="top" 
+                                      height={36} 
+                                      iconType="circle" 
+                                      wrapperStyle={{ fontSize: '10px', fontWeight: 'bold' }} 
+                                      payload={[
+                                        { value: 'Issued to Wards (Tanks)', type: 'circle', id: 'issued', color: '#00a68a' },
+                                        { value: 'Received from Supplier (Tanks)', type: 'circle', id: 'received', color: '#3b82f6' }
+                                      ]}
+                                    />
+                                    <Bar 
+                                      dataKey="issued" 
+                                      legendType="none"
+                                      fill="#00a68a" 
+                                      fillOpacity={0.06} 
+                                      stroke="#00a68a"
+                                      strokeWidth={1}
+                                      strokeOpacity={0.15}
+                                      radius={[4, 4, 0, 0]} 
+                                      barSize={usageTrendGranularity === 'daily' ? 12 : 20} 
+                                    />
+                                    <Bar 
+                                      dataKey="received" 
+                                      legendType="none"
+                                      fill="#3b82f6" 
+                                      fillOpacity={0.06} 
+                                      stroke="#3b82f6"
+                                      strokeWidth={1}
+                                      strokeOpacity={0.15}
+                                      radius={[4, 4, 0, 0]} 
+                                      barSize={usageTrendGranularity === 'daily' ? 12 : 20} 
+                                    />
+                                    <Line 
+                                      type="monotone" 
+                                      dataKey="issued" 
+                                      name="Issued to Wards (Tanks)" 
+                                      stroke="#00a68a" 
+                                      strokeWidth={2} 
+                                      dot={{ r: 3, strokeWidth: 0, fill: "#00a68a" }} 
+                                      activeDot={{ r: 5, strokeWidth: 0 }} 
+                                    />
+                                    <Line 
+                                      type="monotone" 
+                                      dataKey="received" 
+                                      name="Received from Supplier (Tanks)" 
+                                      stroke="#3b82f6" 
+                                      strokeWidth={2} 
+                                      dot={{ r: 3, strokeWidth: 0, fill: "#3b82f6" }} 
+                                      activeDot={{ r: 5, strokeWidth: 0 }} 
+                                    />
+                                  </>
+                                )}
                               </ComposedChart>
                             </ResponsiveContainer>
                           </div>
                         </div>
 
-                        {/* Quarterly Performance Dashboard */}
+                        {/* Performance Matrix Section with Weekly, Daily & Quarterly Switcher */}
                         <div className="bg-white border border-slate-200/50 rounded-xl p-5.5 shadow-[0_1px_3px_rgba(0,0,0,0.01),0_1px_2px_rgba(0,0,0,0.02)]">
-                          <SectionHeader title="Quarterly Usage Performance" subtitle="Refill & Dispatch Summary" icon={BarChart3} />
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-                            <div className="md:col-span-1 border-r border-slate-100 pr-4">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Overall Quarterly Totals</span>
-                              <div className="h-[180px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                  <BarChart data={quarterlyOverallTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.02)" />
-                                    <XAxis dataKey="name" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                                    <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                                    <Tooltip content={<CustomTooltip />} />
-                                    <Bar dataKey="value" name="Tanks" fill="#00a68a" radius={[4, 4, 0, 0]} barSize={14} />
-                                  </BarChart>
-                                </ResponsiveContainer>
-                              </div>
-                            </div>
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-3">
+                            <SectionHeader 
+                              title={
+                                breakdownView === 'weekly'
+                                  ? 'Weekly Usage Performance'
+                                  : breakdownView === 'daily'
+                                  ? 'Daily Usage Performance'
+                                  : 'Quarterly Usage Performance'
+                              } 
+                              subtitle={
+                                breakdownView === 'weekly'
+                                  ? 'Weekly Consumption Volume by Cylinder Type'
+                                  : breakdownView === 'daily'
+                                  ? 'Daily Oxygen Velocity & Peak Demand by Type'
+                                  : 'Refill & Dispatch Summary'
+                              } 
+                              icon={breakdownView === 'daily' ? Calendar : BarChart3} 
+                            />
                             
-                            <div className="md:col-span-2">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Quarterly Performance Matrix</span>
-                              <div className="overflow-x-auto border border-slate-100 rounded-lg">
-                                <table className="w-full text-[11px] text-left border-collapse">
-                                  <thead>
-                                    <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
-                                      <th className="px-2.5 py-2 font-semibold text-slate-600">Type</th>
-                                      <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q1</th>
-                                      <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q2</th>
-                                      <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q3</th>
-                                      <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q4</th>
-                                      <th className="px-2.5 py-2 text-right font-bold text-slate-700">Total</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody className="divide-y divide-slate-50">
-                                    {(quarterlyStats as any[]).map((q: any) => (
-                                      <tr key={q.type} className="hover:bg-slate-50/50">
-                                        <td className="px-2.5 py-2 font-medium text-slate-700">{q.type}</td>
-                                        <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                          {q.q1 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q1 || 0}</span>
-                                        </td>
-                                        <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                          {q.q2 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q2 || 0}</span>
-                                        </td>
-                                        <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                          {q.q3 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q3 || 0}</span>
-                                        </td>
-                                        <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                          {q.q4 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q4 || 0}</span>
-                                        </td>
-                                        <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">{q.total}</td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
+                            {/* Breakdown Switcher Pills */}
+                            <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/40 shrink-0">
+                              {(['weekly', 'daily', 'quarterly'] as const).map(bView => (
+                                <button
+                                  key={bView}
+                                  onClick={() => setBreakdownView(bView)}
+                                  className={cn(
+                                    "px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-150",
+                                    breakdownView === bView
+                                      ? "bg-white text-slate-900 shadow-sm border border-slate-200/40"
+                                      : "text-slate-500 hover:text-slate-800"
+                                  )}
+                                >
+                                  {bView === 'weekly' ? 'Weekly' : bView === 'daily' ? 'Daily' : 'Quarterly'}
+                                </button>
+                              ))}
                             </div>
                           </div>
+                          
+                          {/* 1. WEEKLY BREAKDOWN VIEW */}
+                          {breakdownView === 'weekly' && (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                              <div className="md:col-span-1 border-r border-slate-100 pr-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Weekly Totals</span>
+                                  <span className="text-[10px] font-bold text-[#00a68a] bg-[#e6f7f4] px-2 py-0.5 rounded-full font-mono">
+                                    {(reportData.summary.avgWeeklyUsage || 0).toFixed(1)} / wk
+                                  </span>
+                                </div>
+                                <div className="h-[190px] w-full">
+                                  <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={weeklyOverallTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.02)" />
+                                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
+                                      <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
+                                      <Tooltip content={<CustomTooltip />} />
+                                      <Bar dataKey="value" name="Tanks" fill="#00a68a" radius={[4, 4, 0, 0]} barSize={16} />
+                                    </BarChart>
+                                  </ResponsiveContainer>
+                                </div>
+                              </div>
+                              
+                              <div className="md:col-span-2">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Weekly Performance Matrix (All Cylinder Types)</span>
+                                <div className="overflow-x-auto border border-slate-100 rounded-lg">
+                                  <table className="w-full text-[11px] text-left border-collapse">
+                                    <thead>
+                                      <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
+                                        <th className="px-2.5 py-2 font-semibold text-slate-600">Type</th>
+                                        {weeklyStats.weekKeys.map(wk => (
+                                          <th key={wk} className="px-2.5 py-2 text-center font-semibold text-slate-600">{wk}</th>
+                                        ))}
+                                        <th className="px-2.5 py-2 text-center font-semibold text-[#00a68a]">Wk Avg</th>
+                                        <th className="px-2.5 py-2 text-right font-bold text-slate-700">Total</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                      {weeklyStats.rows.map((row: any) => (
+                                        <tr key={row.type} className="hover:bg-slate-50/50">
+                                          <td className="px-2.5 py-2 font-medium text-slate-700 flex items-center gap-1.5">
+                                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: getCylinderColor(row.type, 0) }} />
+                                            {row.type}
+                                          </td>
+                                          {weeklyStats.weekKeys.map(wk => (
+                                            <td key={wk} className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
+                                              {row.weekCounts[wk] || 0}
+                                            </td>
+                                          ))}
+                                          <td className="px-2.5 py-2 text-center font-bold font-mono text-[#00a68a] tabular-nums">
+                                            {row.avgWeekly}
+                                          </td>
+                                          <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">{row.total}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                    <tfoot>
+                                      <tr className="bg-slate-50/80 border-t border-slate-100 font-bold text-slate-800 text-[10.5px]">
+                                        <td className="px-2.5 py-2 text-slate-600 uppercase tracking-wider">Total Dispatched</td>
+                                        {weeklyStats.weekKeys.map(wk => {
+                                          const colTotal = weeklyStats.rows.reduce((sum: number, r: any) => sum + (r.weekCounts[wk] || 0), 0)
+                                          return (
+                                            <td key={wk} className="px-2.5 py-2 text-center font-mono text-slate-900 tabular-nums">{colTotal}</td>
+                                          )
+                                        })}
+                                        <td className="px-2.5 py-2 text-center font-mono text-[#00a68a] tabular-nums">
+                                          {(reportData.summary.avgWeeklyUsage || 0).toFixed(1)}
+                                        </td>
+                                        <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">
+                                          {weeklyStats.rows.reduce((sum: number, r: any) => sum + r.total, 0)}
+                                        </td>
+                                      </tr>
+                                    </tfoot>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 2. DAILY BREAKDOWN VIEW */}
+                          {breakdownView === 'daily' && (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                              <div className="md:col-span-1 border-r border-slate-100 pr-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Daily Volume (Recent)</span>
+                                  <span className="text-[10px] font-bold text-[#00a68a] bg-[#e6f7f4] px-2 py-0.5 rounded-full font-mono">
+                                    {(reportData.summary.avgDailyUsage || 0).toFixed(1)} / day
+                                  </span>
+                                </div>
+                                <div className="h-[190px] w-full">
+                                  <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={dailyOverallTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.02)" />
+                                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={7.5} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+                                      <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
+                                      <Tooltip content={<CustomTooltip />} />
+                                      <Bar dataKey="value" name="Tanks" fill="#00a68a" radius={[3, 3, 0, 0]} barSize={10} />
+                                    </BarChart>
+                                  </ResponsiveContainer>
+                                </div>
+                              </div>
+                              
+                              <div className="md:col-span-2">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Daily Performance Matrix (All Cylinder Types)</span>
+                                <div className="overflow-x-auto border border-slate-100 rounded-lg">
+                                  <table className="w-full text-[11px] text-left border-collapse">
+                                    <thead>
+                                      <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
+                                        <th className="px-2.5 py-2 font-semibold text-slate-600">Type</th>
+                                        <th className="px-2.5 py-2 text-center font-semibold text-[#00a68a]">Daily Avg</th>
+                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Peak Day</th>
+                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Active Days</th>
+                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Share %</th>
+                                        <th className="px-2.5 py-2 text-right font-bold text-slate-700">Total Tanks</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                      {(dailyStats as any[]).map((d: any) => (
+                                        <tr key={d.type} className="hover:bg-slate-50/50">
+                                          <td className="px-2.5 py-2 font-medium text-slate-700 flex items-center gap-1.5">
+                                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: getCylinderColor(d.type, 0) }} />
+                                            {d.type}
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-bold font-mono text-[#00a68a] tabular-nums">
+                                            {d.avgDaily} <span className="text-[9px] text-slate-400 font-normal">/day</span>
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
+                                            {d.peakDay.count > 0 ? (
+                                              <span>{d.peakDay.formattedDate} <span className="text-[9px] font-bold text-slate-500">({d.peakDay.count})</span></span>
+                                            ) : (
+                                              <span className="text-slate-400 font-normal">-</span>
+                                            )}
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
+                                            {d.activeDays} days
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-600 tabular-nums">
+                                            {d.percentage.toFixed(1)}%
+                                          </td>
+                                          <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">{d.total}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                    <tfoot>
+                                      <tr className="bg-slate-50/80 border-t border-slate-100 font-bold text-slate-800 text-[10.5px]">
+                                        <td className="px-2.5 py-2 text-slate-600 uppercase tracking-wider">Total Consumed</td>
+                                        <td className="px-2.5 py-2 text-center font-mono text-[#00a68a] tabular-nums">
+                                          {(reportData.summary.avgDailyUsage || 0).toFixed(1)} /day
+                                        </td>
+                                        <td className="px-2.5 py-2 text-center font-mono text-slate-700 tabular-nums">
+                                          {reportData.summary.peakDayUsage?.formattedDate ? `${reportData.summary.peakDayUsage.formattedDate} (${reportData.summary.peakDayUsage.count})` : '-'}
+                                        </td>
+                                        <td className="px-2.5 py-2 text-center font-mono text-slate-700 tabular-nums">-</td>
+                                        <td className="px-2.5 py-2 text-center font-mono text-slate-700 tabular-nums">100%</td>
+                                        <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">
+                                          {(dailyStats as any[]).reduce((sum, d) => sum + d.total, 0)}
+                                        </td>
+                                      </tr>
+                                    </tfoot>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 3. QUARTERLY BREAKDOWN VIEW */}
+                          {breakdownView === 'quarterly' && (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                              <div className="md:col-span-1 border-r border-slate-100 pr-4">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Overall Quarterly Totals</span>
+                                <div className="h-[190px] w-full">
+                                  <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={quarterlyOverallTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.02)" />
+                                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
+                                      <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
+                                      <Tooltip content={<CustomTooltip />} />
+                                      <Bar dataKey="value" name="Tanks" fill="#00a68a" radius={[4, 4, 0, 0]} barSize={14} />
+                                    </BarChart>
+                                  </ResponsiveContainer>
+                                </div>
+                              </div>
+                              
+                              <div className="md:col-span-2">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Quarterly Performance Matrix</span>
+                                <div className="overflow-x-auto border border-slate-100 rounded-lg">
+                                  <table className="w-full text-[11px] text-left border-collapse">
+                                    <thead>
+                                      <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
+                                        <th className="px-2.5 py-2 font-semibold text-slate-600">Type</th>
+                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q1</th>
+                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q2</th>
+                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q3</th>
+                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q4</th>
+                                        <th className="px-2.5 py-2 text-right font-bold text-slate-700">Total</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                      {(quarterlyStats as any[]).map((q: any) => (
+                                        <tr key={q.type} className="hover:bg-slate-50/50">
+                                          <td className="px-2.5 py-2 font-medium text-slate-700 flex items-center gap-1.5">
+                                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: getCylinderColor(q.type, 0) }} />
+                                            {q.type}
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
+                                            {q.q1 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q1 || 0}</span>
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
+                                            {q.q2 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q2 || 0}</span>
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
+                                            {q.q3 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q3 || 0}</span>
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
+                                            {q.q4 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q4 || 0}</span>
+                                          </td>
+                                          <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">{q.total}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 

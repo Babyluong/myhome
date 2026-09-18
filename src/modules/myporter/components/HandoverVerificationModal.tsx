@@ -1,4 +1,4 @@
-﻿// src/modules/myporter/components/HandoverVerificationModal.tsx
+// src/modules/myporter/components/HandoverVerificationModal.tsx
 import React, { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import type { PorterJobRequest, HandoverProof, PorterRating } from '@/shared/types/myporter'
 import { Button, Input } from '@/components/ui'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 
 interface Props {
   job: PorterJobRequest | null
@@ -27,6 +28,7 @@ export const HandoverVerificationModal: React.FC<Props> = ({
   onClose,
   onSubmit
 }) => {
+  const { language } = useLanguage()
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [isDrawing, setIsDrawing] = useState(false)
   const [hasSignature, setHasSignature] = useState(false)
@@ -34,14 +36,20 @@ export const HandoverVerificationModal: React.FC<Props> = ({
   // Recipient form state
   const [recipientName, setRecipientName] = useState('')
   const [recipientStaffId, setRecipientStaffId] = useState('')
-  const [recipientJawatan, setRecipientJawatan] = useState('Jururawat U29')
+  const [recipientJawatan, setRecipientJawatan] = useState(language === 'ms' ? 'Jururawat U29' : 'Staff Nurse U29')
   const [handoverNotes, setHandoverNotes] = useState('')
 
   // Rating state
   const [stars, setStars] = useState(5)
-  const [selectedTags, setSelectedTags] = useState<string[]>(['Pantas', 'Cermat', 'Sopan'])
+  const [selectedTags, setSelectedTags] = useState<string[]>([
+    language === 'ms' ? 'Pantas' : 'Prompt & Fast',
+    language === 'ms' ? 'Cermat' : 'Careful & Safe',
+    language === 'ms' ? 'Sopan' : 'Polite & Courteous'
+  ])
 
-  const availableTags = ['Pantas', 'Cermat', 'Sopan', 'Patuh SOP', 'Tiba Tepat Masa', 'Bantuan Tambahan']
+  const availableTags = language === 'ms'
+    ? ['Pantas', 'Cermat', 'Sopan', 'Patuh SOP', 'Tiba Tepat Masa', 'Bantuan Tambahan']
+    : ['Prompt & Fast', 'Careful & Safe', 'Polite & Courteous', 'Followed SOP', 'Punctual Arrival', 'Extra Assistance']
 
   useEffect(() => {
     if (isOpen && job) {
@@ -119,7 +127,7 @@ export const HandoverVerificationModal: React.FC<Props> = ({
 
     const proof: HandoverProof = {
       proof_type: 'signature',
-      recipient_name: recipientName || 'Kakitangan Penerima',
+      recipient_name: recipientName || (language === 'ms' ? 'Kakitangan Penerima' : 'Recipient Staff'),
       recipient_staff_id: recipientStaffId || 'STF-UNKNOWN',
       recipient_jawatan: recipientJawatan,
       signature_url: sigDataUrl,
@@ -157,8 +165,12 @@ export const HandoverVerificationModal: React.FC<Props> = ({
                 <ShieldCheck className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-black tracking-tight">Pengesahan Penerimaan Kargo/Pesakit</h3>
-                <p className="text-xs text-white/80">No Rujukan: {job.no_rujukan}</p>
+                <h3 className="text-lg font-black tracking-tight">
+                  {language === 'ms' ? 'Pengesahan Penerimaan Kargo / Pesakit' : 'Cargo / Patient Handover Confirmation'}
+                </h3>
+                <p className="text-xs text-white/80">
+                  {language === 'ms' ? 'No Rujukan:' : 'Reference No:'} {job.no_rujukan}
+                </p>
               </div>
             </div>
             <button
@@ -175,43 +187,51 @@ export const HandoverVerificationModal: React.FC<Props> = ({
               <div className="flex justify-between items-center">
                 <span className="font-bold text-slate-700">{job.sub_category || job.category}</span>
                 <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-full">
-                  PPK: {job.assigned_porter_name || 'Porter'}
+                  {language === 'ms' ? 'PPK:' : 'Porter:'} {job.assigned_porter_name || 'Porter'}
                 </span>
               </div>
               <p className="text-slate-500">
-                Dari: <span className="font-semibold text-slate-700">{job.origin_department_name}</span> ➔ Ke: <span className="font-semibold text-slate-700">{job.destination_department_name}</span>
+                {language === 'ms' ? 'Dari:' : 'From:'} <span className="font-semibold text-slate-700">{job.origin_department_name}</span> ➔ {language === 'ms' ? 'Ke:' : 'To:'} <span className="font-semibold text-slate-700">{job.destination_department_name}</span>
               </p>
             </div>
 
             {/* Recipient Details */}
             <div className="space-y-4">
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Maklumat Pegawai / Kakitangan Penerima</h4>
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                {language === 'ms' ? 'Maklumat Pegawai / Kakitangan Penerima' : 'Recipient Staff Information'}
+              </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Nama Penerima *</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {language === 'ms' ? 'Nama Penerima *' : 'Recipient Name *'}
+                  </label>
                   <Input
                     required
                     value={recipientName}
                     onChange={(e) => setRecipientName(e.target.value)}
-                    placeholder="cth: SN Halimah binti Kassim"
+                    placeholder={language === 'ms' ? 'cth: SN Halimah binti Kassim' : 'e.g. SN Halimah / Dr. Robert'}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">No. Pekerja / No. Kad Pengenalan *</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {language === 'ms' ? 'No. Pekerja / No. Kad Pengenalan *' : 'Staff ID / IC No. *'}
+                  </label>
                   <Input
                     required
                     value={recipientStaffId}
                     onChange={(e) => setRecipientStaffId(e.target.value)}
-                    placeholder="cth: STF-40192 / 8801..."
+                    placeholder={language === 'ms' ? 'cth: STF-40192 / 8801...' : 'e.g. STF-40192 / IC No.'}
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Jawatan & Gred</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {language === 'ms' ? 'Jawatan & Gred' : 'Designation & Grade'}
+                </label>
                 <Input
                   value={recipientJawatan}
                   onChange={(e) => setRecipientJawatan(e.target.value)}
-                  placeholder="cth: Jururawat U29 / JTMP U29 / Pegawai Perubatan UD43"
+                  placeholder={language === 'ms' ? 'cth: Jururawat U29 / JTMP U29 / Pegawai Perubatan UD43' : 'e.g. Staff Nurse U29 / Medical Officer UD43'}
                 />
               </div>
             </div>
@@ -221,7 +241,7 @@ export const HandoverVerificationModal: React.FC<Props> = ({
               <div className="flex justify-between items-center">
                 <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                   <PenTool className="w-3.5 h-3.5 text-blue-600" />
-                  Tandatangan Digital Penerima
+                  {language === 'ms' ? 'Tandatangan Digital Penerima' : 'Recipient Digital Signature'}
                 </label>
                 <button
                   type="button"
@@ -229,7 +249,7 @@ export const HandoverVerificationModal: React.FC<Props> = ({
                   className="text-xs font-semibold text-rose-600 hover:text-rose-700 flex items-center gap-1"
                 >
                   <RotateCcw className="w-3 h-3" />
-                  Padam Semula
+                  {language === 'ms' ? 'Padam Semula' : 'Clear Signature'}
                 </button>
               </div>
               <div className="border-2 border-dashed border-slate-300 rounded-2xl p-1 bg-slate-50 relative">
@@ -248,7 +268,7 @@ export const HandoverVerificationModal: React.FC<Props> = ({
                 />
                 {!hasSignature && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-400 text-xs">
-                    Sila turunkan tandatangan di sini
+                    {language === 'ms' ? 'Sila turunkan tandatangan di sini' : 'Please sign in this box'}
                   </div>
                 )}
               </div>
@@ -257,7 +277,9 @@ export const HandoverVerificationModal: React.FC<Props> = ({
             {/* Rating PPK */}
             <div className="space-y-3 p-4 bg-amber-50/50 border border-amber-200/60 rounded-2xl">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-800">Penilaian Khidmat PPK</span>
+                <span className="text-xs font-bold text-slate-800">
+                  {language === 'ms' ? 'Penilaian Khidmat PPK' : 'Porter Service Rating'}
+                </span>
                 <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <button
@@ -304,7 +326,7 @@ export const HandoverVerificationModal: React.FC<Props> = ({
               className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold shadow-lg rounded-2xl flex items-center justify-center gap-2 text-sm"
             >
               <CheckCircle2 className="w-5 h-5" />
-              <span>Sahkan Penerimaan & Selesaikan Tugasan</span>
+              <span>{language === 'ms' ? 'Sahkan Penerimaan & Selesaikan Tugasan' : 'Confirm Handover & Complete Task'}</span>
             </Button>
           </form>
         </motion.div>

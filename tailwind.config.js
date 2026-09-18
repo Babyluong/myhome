@@ -118,10 +118,16 @@ export default {
         'scale-in': 'scaleIn 0.2s ease-out',
         'shake': 'shake 0.5s ease-in-out',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'pulse-subtle': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'shimmer': 'shimmer 1.8s ease-in-out infinite',
         'float': 'float 6s ease-in-out infinite',
         'gradient': 'gradient 8s ease infinite',
       },
       keyframes: {
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },

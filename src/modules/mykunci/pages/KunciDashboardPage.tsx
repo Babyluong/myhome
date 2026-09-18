@@ -6,7 +6,7 @@ import {
   Clock, 
   AlertTriangle, 
   CheckCircle,
-  Plus,
+  Plus, 
   ArrowRight,
   ShieldAlert,
   UserCheck,
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
+import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { 
   getKunciDaftar, 
   getKunciLogs, 
@@ -39,6 +40,8 @@ import {
 } from '@/components/ui'
 import { ScanKunciMovementModal } from '@/components/kunci/ScanKunciMovementModal'
 
+import { mockUsers } from '@/services/mockData'
+
 // Mock list of departments matching database seed values
 const MOCK_DEPARTMENTS = [
   { id: '7a3bd6c4-c8e6-491b-8441-0ee9bd73f880', department_name: 'Farmasi Logistik', department_code: 'PH-LOG' },
@@ -49,16 +52,11 @@ const MOCK_DEPARTMENTS = [
 ];
 
 // Mock list of users for borrowing dropdown
-const MOCK_BORROWERS = [
-  { id: 'user-1', full_name: 'Muhammad Farhan bin Razali', jawatan: 'Pegawai Farmasi U41' },
-  { id: 'user-2', full_name: 'Khairul Amin bin Zulkifli', jawatan: 'Penolong Pegawai Farmasi U32' },
-  { id: 'user-3', full_name: 'Sarah binti Ahmad', jawatan: 'Penjaga Stor Farmasi U29' },
-  { id: 'user-4', full_name: 'Dr. Jason Ling', jawatan: 'Pegawai Perubatan UD44' },
-  { id: 'user-5', full_name: 'Noraini binti Hassan', jawatan: 'Pembantu Tadbir N19' }
-];
+const MOCK_BORROWERS = mockUsers;
 
 export const KunciDashboardPage: React.FC = () => {
   const navigate = useNavigate()
+  const { language } = useLanguage()
   const loggedUser = useAuthStore((state) => state.user)
   const hospitalId = loggedUser?.hospital_id || 'hosp-1'
   const toast = useToast()
@@ -99,7 +97,10 @@ export const KunciDashboardPage: React.FC = () => {
       setLogs(logsRes.data || [])
     } catch (err) {
       console.error('Failed to load MyKunci dashboard data', err)
-      toast.error('Ralat Sistem', 'Gagal memuatkan data papan pemuka')
+      toast.error(
+        language === 'ms' ? 'Ralat Sistem' : 'System Error',
+        language === 'ms' ? 'Gagal memuatkan data papan pemuka' : 'Failed to load dashboard data'
+      )
     } finally {
       setLoading(false)
     }
@@ -183,13 +184,21 @@ export const KunciDashboardPage: React.FC = () => {
   const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedKeyId || !borrowerId) {
-      toast.error('Semakan Borang', 'Sila isi butiran wajib!')
+      toast.error(
+        language === 'ms' ? 'Semakan Borang' : 'Form Validation',
+        language === 'ms' ? 'Sila isi butiran wajib!' : 'Please fill in all mandatory fields!'
+      )
       return
     }
 
     // High security double-custody co-signing witness check
     if (selectedKeyDetails?.tahap_kawalan === 'high' && !witnessId) {
-      toast.error('Semakan Saksi', 'Kunci DDA memerlukan Saksi / Pegawai Kedua mengikut Arahan Sarawak KKM!')
+      toast.error(
+        language === 'ms' ? 'Semakan Saksi' : 'Witness Verification',
+        language === 'ms' 
+          ? 'Kunci DDA memerlukan Saksi / Pegawai Kedua mengikut Arahan Sarawak KKM!'
+          : 'High-security DDA keys require a mandatory Co-signing Witness / Second Officer in accordance with MOH Sarawak directives!'
+      )
       return
     }
 
@@ -220,7 +229,10 @@ export const KunciDashboardPage: React.FC = () => {
       const res = await checkoutKunci(checkoutPayload)
       if (res.error) throw new Error(res.error)
 
-      toast.success('Berjaya', 'Peminjaman kunci berjaya direkodkan')
+      toast.success(
+        language === 'ms' ? 'Berjaya' : 'Success',
+        language === 'ms' ? 'Peminjaman kunci berjaya direkodkan' : 'Key checkout loan recorded successfully'
+      )
       setCheckoutModalOpen(false)
       // Reset form fields
       setSelectedKeyId('')
@@ -232,7 +244,10 @@ export const KunciDashboardPage: React.FC = () => {
       
       loadData()
     } catch (err: any) {
-      toast.error('Ralat Peminjaman', err.message || 'Gagal menyimpan rekod pinjaman')
+      toast.error(
+        language === 'ms' ? 'Ralat Peminjaman' : 'Checkout Error',
+        err.message || (language === 'ms' ? 'Gagal menyimpan rekod pinjaman' : 'Failed to record checkout loan')
+      )
     }
   }
 
@@ -240,7 +255,10 @@ export const KunciDashboardPage: React.FC = () => {
     e.preventDefault()
     if (!activeLogToReturn) return
     if (!returnPhoto) {
-      toast.error('Semakan Foto', 'Sila snap atau muat naik foto kunci sebelum memulangkan!')
+      toast.error(
+        language === 'ms' ? 'Semakan Foto' : 'Photo Verification',
+        language === 'ms' ? 'Sila snap atau muat naik foto kunci sebelum memulangkan!' : 'Please snap or upload a photo of the physical key before returning!'
+      )
       return
     }
 
@@ -256,7 +274,10 @@ export const KunciDashboardPage: React.FC = () => {
       const res = await returnKunci(activeLogToReturn.id, returnPayload)
       if (res.error) throw new Error(res.error)
 
-      toast.success('Berjaya', 'Pemulangan kunci berjaya direkodkan')
+      toast.success(
+        language === 'ms' ? 'Berjaya' : 'Success',
+        language === 'ms' ? 'Pemulangan kunci berjaya direkodkan' : 'Key return checked in successfully'
+      )
       setReturnModalOpen(false)
       setActiveLogToReturn(null)
       setRemarks('')
@@ -265,14 +286,17 @@ export const KunciDashboardPage: React.FC = () => {
       
       loadData()
     } catch (err: any) {
-      toast.error('Ralat Pemulangan', err.message || 'Gagal menyimpan rekod pemulangan')
+      toast.error(
+        language === 'ms' ? 'Ralat Pemulangan' : 'Return Error',
+        err.message || (language === 'ms' ? 'Gagal menyimpan rekod pemulangan' : 'Failed to record key return')
+      )
     }
   }
 
   const formatDateTime = (isoString: string) => {
     if (!isoString) return '-'
     const date = new Date(isoString)
-    return date.toLocaleString('ms-MY', {
+    return date.toLocaleString(language === 'ms' ? 'ms-MY' : 'en-GB', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -288,15 +312,17 @@ export const KunciDashboardPage: React.FC = () => {
 
   return (
     <div className="p-6 md:p-8 w-full space-y-8 text-slate-800">
-      {/* Header Panel (Matches Suhu Design with amber accent stripe) */}
+      {/* Header Panel */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500" />
         <div>
           <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-            <span>Papan Pemuka MyKunci</span>
+            <span>{language === 'ms' ? 'Papan Pemuka MyKunci' : 'MyKunci Dashboard'}</span>
           </h1>
           <p className="text-sm text-slate-500 mt-0.5 font-medium">
-            Sistem Pemantauan Pergerakan Kunci Fizikal & Pematuhan Arahan JKNS Sarawak
+            {language === 'ms' 
+              ? 'Sistem Pemantauan Pergerakan Kunci Fizikal & Pematuhan Arahan JKNS Sarawak' 
+              : 'Physical Key Custody Monitoring & Security Audit Compliance (MOH Sarawak)'}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -305,14 +331,14 @@ export const KunciDashboardPage: React.FC = () => {
             className="border-amber-500 hover:bg-amber-50 text-amber-600 rounded-2xl border shadow-sm font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm"
           >
             <QrCode className="w-5 h-5" />
-            Imbas QR Kunci
+            {language === 'ms' ? 'Imbas QR Kunci' : 'Scan Key QR'}
           </Button>
           <Button 
             onClick={() => setCheckoutModalOpen(true)}
             className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-2xl shadow-md hover:shadow-lg font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm"
           >
             <Plus className="w-5 h-5" />
-            Rekod Pinjaman
+            {language === 'ms' ? 'Rekod Pinjaman' : 'Record Loan / Check-out'}
           </Button>
         </div>
       </div>
@@ -328,57 +354,75 @@ export const KunciDashboardPage: React.FC = () => {
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-bold text-rose-800">Amaran Kelewatan Kunci (Sangkut / Overdue) Dikesan</p>
-              <p className="text-xs text-rose-600 font-medium">Terdapat {stats.overdue} anak kunci belum dipulangkan melampaui had syif. Klik untuk semak log.</p>
+              <p className="text-sm font-bold text-rose-800">
+                {language === 'ms' ? 'Amaran Kelewatan Kunci (Sangkut / Overdue) Dikesan' : 'Key Overdue Security Alert Detected'}
+              </p>
+              <p className="text-xs text-rose-600 font-medium">
+                {language === 'ms' 
+                  ? `Terdapat ${stats.overdue} anak kunci belum dipulangkan melampaui had syif. Klik untuk semak log.`
+                  : `There are ${stats.overdue} keys not returned beyond the assigned shift limit. Click to review custody log.`}
+              </p>
             </div>
           </div>
           <span className="text-xs font-black text-rose-700 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-            Buka Log Rekod &rarr;
+            {language === 'ms' ? 'Buka Log Rekod →' : 'Open Custody Log →'}
           </span>
         </div>
       )}
 
-      {/* Hospital KPI Stats (Matches Suhu layout with identical border accents) */}
+      {/* Hospital KPI Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Jumlah Kunci Induk</span>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
+            {language === 'ms' ? 'Jumlah Kunci Induk' : 'Total Master Keys'}
+          </span>
           <p className="text-3xl font-black font-mono text-slate-800 mt-2">
             {loading ? '0' : stats.total}
           </p>
         </div>
         <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-emerald-500">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Tersedia Simpan</span>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
+            {language === 'ms' ? 'Tersedia Simpan' : 'Available in Storage'}
+          </span>
           <p className="text-3xl font-black font-mono text-emerald-600 mt-2">
             {loading ? '0' : stats.available}
           </p>
         </div>
         <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-amber-500">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Sedang Dipinjam</span>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
+            {language === 'ms' ? 'Sedang Dipinjam' : 'Currently Borrowed'}
+          </span>
           <p className="text-3xl font-black font-mono text-amber-600 mt-2">
             {loading ? '0' : stats.borrowed}
           </p>
         </div>
         <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-rose-500">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Amaran Overdue</span>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
+            {language === 'ms' ? 'Amaran Overdue' : 'Overdue Alerts'}
+          </span>
           <p className="text-3xl font-black font-mono text-rose-600 mt-2">
             {loading ? '0' : stats.overdue}
           </p>
         </div>
         <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-slate-400">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Rosak & Hilang</span>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
+            {language === 'ms' ? 'Rosak & Hilang' : 'Damaged & Lost'}
+          </span>
           <p className="text-3xl font-black font-mono text-slate-500 mt-2">
             {loading ? '0' : (stats.damaged + stats.lost)}
           </p>
         </div>
       </div>
 
-      {/* Hospital Departments Grid (Selector matching Suhu dashboard page) */}
+      {/* Hospital Departments Grid */}
       <div className="space-y-4">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">Hospital Departments</h2>
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          {language === 'ms' ? 'Jabatan Hospital' : 'Hospital Departments'}
+        </h2>
         
         {loading ? (
           <div className="bg-white border border-slate-100 rounded-3xl p-12 text-center shadow-lg text-slate-400 text-sm">
-            Memuatkan maklumat jabatan...
+            {language === 'ms' ? 'Memuatkan maklumat jabatan...' : 'Loading department information...'}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -419,7 +463,9 @@ export const KunciDashboardPage: React.FC = () => {
                       {dept.department_name}
                     </h3>
                     <p className="text-xs text-slate-400 font-medium">
-                      {stat.total === 0 ? 'Tiada anak kunci berdaftar' : `${stat.total} Kunci Induk Berdaftar`}
+                      {stat.total === 0 
+                        ? (language === 'ms' ? 'Tiada anak kunci berdaftar' : 'No registered master keys')
+                        : (language === 'ms' ? `${stat.total} Kunci Induk Berdaftar` : `${stat.total} Registered Master Keys`)}
                     </p>
                   </div>
 
@@ -450,7 +496,7 @@ export const KunciDashboardPage: React.FC = () => {
                     </div>
                     
                     <span className="text-xs font-black text-amber-500 flex items-center gap-1 transform group-hover:translate-x-1 transition-all">
-                      Buka &rarr;
+                      {language === 'ms' ? 'Buka →' : 'Open →'}
                     </span>
                   </div>
                 </div>
@@ -462,27 +508,37 @@ export const KunciDashboardPage: React.FC = () => {
 
       {/* Active Loans Section at Bottom */}
       <div className="space-y-4">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">Log Pinjaman Aktif Semasa</h2>
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          {language === 'ms' ? 'Log Pinjaman Aktif Semasa' : 'Active Key Loans & Custody Log'}
+        </h2>
         <Card className="rounded-2xl shadow-soft bg-white border border-slate-200">
           <CardContent className="p-0">
             {loading ? (
-              <div className="p-8 text-center text-slate-400 text-sm">Memuatkan data pinjaman...</div>
+              <div className="p-8 text-center text-slate-400 text-sm">
+                {language === 'ms' ? 'Memuatkan data pinjaman...' : 'Loading active loan records...'}
+              </div>
             ) : activeBorrows.length === 0 ? (
               <div className="p-12 text-center text-slate-400 text-sm flex flex-col items-center justify-center gap-2">
                 <CheckCircle className="w-8 h-8 text-slate-300" />
-                <span>Tiada kunci yang aktif dipinjam. Semua kunci tersimpan selamat.</span>
+                <span>
+                  {language === 'ms' 
+                    ? 'Tiada kunci yang aktif dipinjam. Semua kunci tersimpan selamat.' 
+                    : 'No active key loans. All master keys are securely accounted for.'}
+                </span>
               </div>
             ) : (
-              <div className="overflow-x-auto">
+            <>
+              {/* Desktop View: Full Table */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left text-sm text-slate-600">
                   <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
                     <tr>
-                      <th className="p-4">Kunci (Kod)</th>
-                      <th className="p-4">Jabatan</th>
-                      <th className="p-4">Peminjam</th>
-                      <th className="p-4">Jam Ambil</th>
-                      <th className="p-4">Jangka Pulang</th>
-                      <th className="p-4 text-right">Tindakan</th>
+                      <th className="p-4">{language === 'ms' ? 'Kunci (Kod)' : 'Key (Code)'}</th>
+                      <th className="p-4">{language === 'ms' ? 'Jabatan' : 'Department'}</th>
+                      <th className="p-4">{language === 'ms' ? 'Peminjam' : 'Borrower'}</th>
+                      <th className="p-4">{language === 'ms' ? 'Jam Ambil' : 'Checkout Time'}</th>
+                      <th className="p-4">{language === 'ms' ? 'Jangka Pulang' : 'Expected Return'}</th>
+                      <th className="p-4 text-right">{language === 'ms' ? 'Tindakan' : 'Action'}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -495,7 +551,7 @@ export const KunciDashboardPage: React.FC = () => {
                         <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
                           <td className="p-4">
                             <div>
-                              <div className="font-semibold text-slate-800">{log.kunci?.nama_kunci || 'Kunci'}</div>
+                              <div className="font-semibold text-slate-800">{log.kunci?.nama_kunci || (language === 'ms' ? 'Kunci' : 'Key')}</div>
                               <div className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
                                 <Badge className="text-[10px] px-1.5 py-0.5 border-slate-200 text-slate-600 bg-slate-100">
                                   {log.kunci?.kod_kunci}
@@ -513,7 +569,7 @@ export const KunciDashboardPage: React.FC = () => {
                           </td>
                           <td className="p-4">
                             <div className="font-medium text-slate-800">
-                              {log.peminjam?.full_name || MOCK_BORROWERS.find(b => b.id === log.peminjam_id)?.full_name || 'Kakitangan'}
+                              {log.peminjam?.full_name || MOCK_BORROWERS.find(b => b.id === log.peminjam_id)?.full_name || (language === 'ms' ? 'Kakitangan' : 'Staff')}
                             </div>
                             <div className="text-xs text-slate-400">
                               {log.peminjam?.jawatan || MOCK_BORROWERS.find(b => b.id === log.peminjam_id)?.jawatan || ''}
@@ -528,7 +584,7 @@ export const KunciDashboardPage: React.FC = () => {
                             </div>
                             {overdue && (
                               <Badge className="text-[9px] mt-1 border-transparent text-white bg-rose-500 animate-pulse uppercase font-extrabold tracking-wide">
-                                SANGKUT
+                                {language === 'ms' ? 'SANGKUT' : 'OVERDUE'}
                               </Badge>
                             )}
                           </td>
@@ -543,7 +599,7 @@ export const KunciDashboardPage: React.FC = () => {
                               }}
                               className="text-xs border-amber-500 text-amber-600 hover:bg-amber-50 px-3 py-1.5 rounded-lg border font-bold"
                             >
-                              Pulang Kunci
+                              {language === 'ms' ? 'Pulang Kunci' : 'Check-In Key'}
                             </Button>
                           </td>
                         </tr>
@@ -552,6 +608,96 @@ export const KunciDashboardPage: React.FC = () => {
                   </tbody>
                 </table>
               </div>
+
+              {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
+              <div className="md:hidden divide-y divide-slate-100">
+                {activeBorrows.map((log) => {
+                  const overdue = isOverdueItem(log.jangka_masa_pulang)
+                  const isHighSec = log.kunci?.tahap_kawalan === 'high'
+                  const deptName = MOCK_DEPARTMENTS.find(d => d.id === log.kunci?.department_id)?.department_name || '-'
+                  const borrowerName = log.peminjam?.full_name || MOCK_BORROWERS.find(b => b.id === log.peminjam_id)?.full_name || (language === 'ms' ? 'Kakitangan' : 'Staff')
+
+                  return (
+                    <div key={log.id} className="p-4 space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="font-mono font-bold text-slate-500 text-xs block">
+                            {log.kunci?.kod_kunci}
+                          </span>
+                          <h4 className="font-bold text-slate-900 text-sm">
+                            {log.kunci?.nama_kunci || (language === 'ms' ? 'Kunci' : 'Key')}
+                          </h4>
+                        </div>
+                        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                          {overdue ? (
+                            <Badge className="text-[9px] border-transparent text-white bg-rose-500 animate-pulse font-extrabold uppercase">
+                              {language === 'ms' ? 'SANGKUT' : 'OVERDUE'}
+                            </Badge>
+                          ) : (
+                            <Badge className="text-[9px] border-amber-200 text-amber-700 bg-amber-50 font-bold">
+                              {language === 'ms' ? 'AKTIF' : 'BORROWED'}
+                            </Badge>
+                          )}
+                          {isHighSec && (
+                            <Badge className="text-[9px] border-rose-200 text-rose-600 bg-rose-50 font-bold">
+                              DDA
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50/70 p-3 rounded-xl border border-slate-100">
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            {language === 'ms' ? 'Peminjam' : 'Borrower'}
+                          </span>
+                          <span className="font-semibold text-slate-800 truncate block">
+                            {borrowerName}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            {language === 'ms' ? 'Jabatan' : 'Department'}
+                          </span>
+                          <span className="font-medium text-slate-700 truncate block">
+                            {deptName}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            {language === 'ms' ? 'Jam Ambil' : 'Checkout Time'}
+                          </span>
+                          <span className="font-mono text-[11px] text-slate-600 block">
+                            {formatDateTime(log.tarikh_masa_ambil)}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            {language === 'ms' ? 'Jangka Pulang' : 'Expected Return'}
+                          </span>
+                          <span className={`font-mono text-[11px] font-bold block ${overdue ? 'text-rose-600' : 'text-slate-600'}`}>
+                            {formatDateTime(log.jangka_masa_pulang)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <Button 
+                        onClick={() => {
+                          const now = new Date()
+                          const localIso = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+                          setReturnDateTime(localIso)
+                          setActiveLogToReturn(log)
+                          setReturnModalOpen(true)
+                        }}
+                        className="w-full text-xs border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100 py-2 rounded-xl border font-bold"
+                      >
+                        {language === 'ms' ? 'Pulang Kunci' : 'Check-In Key'}
+                      </Button>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
             )}
           </CardContent>
         </Card>
@@ -561,12 +707,12 @@ export const KunciDashboardPage: React.FC = () => {
       <Modal
         isOpen={checkoutModalOpen}
         onClose={() => setCheckoutModalOpen(false)}
-        title="Daftar Rekod Pinjaman Kunci Baru"
+        title={language === 'ms' ? 'Daftar Rekod Pinjaman Kunci Baru' : 'Register Key Checkout Loan'}
       >
         <form onSubmit={handleCheckoutSubmit} className="space-y-4 pt-2">
           <div>
             <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-              Pilih Kunci Fizikal *
+              {language === 'ms' ? 'Pilih Kunci Fizikal *' : 'Select Physical Key *'}
             </label>
             <select
               value={selectedKeyId}
@@ -574,7 +720,7 @@ export const KunciDashboardPage: React.FC = () => {
               required
               className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
             >
-              <option value="">-- Sila Pilih Kunci --</option>
+              <option value="">{language === 'ms' ? '-- Sila Pilih Kunci --' : '-- Please Select Key --'}</option>
               {availableKeys.map((k) => (
                 <option key={k.id} value={k.id}>
                   [{k.kod_kunci}] - {k.nama_kunci} ({k.lokasi_fizikal}) {k.tahap_kawalan === 'high' ? '[!] DDA High-Sec' : ''}
@@ -586,19 +732,19 @@ export const KunciDashboardPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Nama Peminjam Kunci *
+                {language === 'ms' ? 'Nama Peminjam Kunci *' : 'Key Borrower Name *'}
               </label>
               <input
                 type="text"
                 readOnly
-                value={loggedUser?.full_name || 'Kakitangan'}
+                value={loggedUser?.full_name || (language === 'ms' ? 'Kakitangan' : 'Staff')}
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-100 text-slate-500 cursor-not-allowed focus:outline-none"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Tempoh Pinjaman *
+                {language === 'ms' ? 'Tempoh Pinjaman *' : 'Loan Duration *'}
               </label>
               <select
                 value={durationHours}
@@ -606,17 +752,17 @@ export const KunciDashboardPage: React.FC = () => {
                 required
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
               >
-                <option value="1">1 Jam (1 Hour)</option>
-                <option value="2">2 Jam (2 Hours)</option>
-                <option value="until_done">Sehingga Selesai (Until Done)</option>
-                <option value="other">Lain-lain (Others)</option>
+                <option value="1">{language === 'ms' ? '1 Jam (1 Hour)' : '1 Hour'}</option>
+                <option value="2">{language === 'ms' ? '2 Jam (2 Hours)' : '2 Hours'}</option>
+                <option value="until_done">{language === 'ms' ? 'Sehingga Selesai (Until Done)' : 'Until Shift Completion (Until Done)'}</option>
+                <option value="other">{language === 'ms' ? 'Lain-lain (Others)' : 'Custom Duration (Others)'}</option>
               </select>
               {durationHours === 'other' && (
                 <input
                   type="number"
                   min="1"
                   required
-                  placeholder="Masukkan bilangan jam..."
+                  placeholder={language === 'ms' ? 'Masukkan bilangan jam...' : 'Enter number of hours...'}
                   value={customHours}
                   onChange={(e) => setCustomHours(e.target.value)}
                   className="w-full mt-2 rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
@@ -630,7 +776,7 @@ export const KunciDashboardPage: React.FC = () => {
             <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl space-y-2">
               <label className="block text-xs font-bold text-rose-800 uppercase flex items-center gap-1.5">
                 <UserCheck className="w-4 h-4" />
-                Saksi / Pegawai Kedua (Co-Signer Mandatori) *
+                {language === 'ms' ? 'Saksi / Pegawai Kedua (Co-Signer Mandatori) *' : 'Co-signing Witness / Second Officer (Mandatory) *'}
               </label>
               <select
                 value={witnessId}
@@ -638,7 +784,7 @@ export const KunciDashboardPage: React.FC = () => {
                 required
                 className="w-full rounded-xl border border-rose-200 p-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all text-slate-800"
               >
-                <option value="">-- Sila Pilih Saksi Saksi Kedua --</option>
+                <option value="">{language === 'ms' ? '-- Sila Pilih Saksi Kedua --' : '-- Select Co-signing Witness --'}</option>
                 {MOCK_BORROWERS.map((b) => (
                   // Cannot co-sign for yourself
                   b.id !== borrowerId && (
@@ -649,18 +795,20 @@ export const KunciDashboardPage: React.FC = () => {
                 ))}
               </select>
               <p className="text-[10px] text-rose-600 leading-relaxed font-medium">
-                Peringatan: Polisi Sarawak Dangerous Drugs Act (DDA) menghendaki pengesahan saksi kedua bagi kunci kabinet dadah berbahaya.
+                {language === 'ms' 
+                  ? 'Peringatan: Polisi Sarawak Dangerous Drugs Act (DDA) menghendaki pengesahan saksi kedua bagi kunci kabinet dadah berbahaya.'
+                  : 'Notice: Dangerous Drugs Act (DDA) policies mandate dual-officer co-signing for all high-security controlled drug cabinet keys.'}
               </p>
             </div>
           )}
 
           <div>
             <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-              Tujuan Peminjaman Kunci
+              {language === 'ms' ? 'Tujuan Peminjaman Kunci' : 'Key Checkout Purpose'}
             </label>
             <input
               type="text"
-              placeholder="Cth: Ambil stok ubat DDA Wad Kanak-Kanak / Pendaftaran stok LPO..."
+              placeholder={language === 'ms' ? 'Cth: Ambil stok ubat DDA Wad Kanak-Kanak / Pendaftaran stok LPO...' : 'E.g.: Retrieve Paediatric Ward DDA stock / LPO stock inspection...'}
               value={purpose}
               onChange={(e) => setPurpose(e.target.value)}
               className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
@@ -673,13 +821,13 @@ export const KunciDashboardPage: React.FC = () => {
               onClick={() => setCheckoutModalOpen(false)}
               className="border-slate-200 text-slate-500 hover:bg-slate-50 px-4 py-2 border rounded-xl"
             >
-              Batal
+              {language === 'ms' ? 'Batal' : 'Cancel'}
             </Button>
             <Button
               type="submit"
               className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2 rounded-xl shadow-soft"
             >
-              Rekod Pinjaman
+              {language === 'ms' ? 'Rekod Pinjaman' : 'Record Checkout'}
             </Button>
           </div>
         </form>
@@ -689,23 +837,23 @@ export const KunciDashboardPage: React.FC = () => {
       <Modal
         isOpen={returnModalOpen}
         onClose={() => setReturnModalOpen(false)}
-        title="Rekod Pemulangan Kunci Fizikal"
+        title={language === 'ms' ? 'Rekod Pemulangan Kunci Fizikal' : 'Record Physical Key Return'}
         size="2xl"
       >
         <form onSubmit={handleReturnSubmit} className="space-y-4 pt-2">
           {activeLogToReturn && (
             <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 text-xs space-y-1 text-slate-600">
-              <div>Kunci: <strong className="text-slate-800">{activeLogToReturn.kunci?.nama_kunci} ({activeLogToReturn.kunci?.kod_kunci})</strong></div>
-              <div>Peminjam: <strong className="text-slate-800">{activeLogToReturn.peminjam?.full_name || MOCK_BORROWERS.find(b => b.id === activeLogToReturn.peminjam_id)?.full_name}</strong></div>
-              <div>Masa Pinjam: <strong className="text-slate-800">{formatDateTime(activeLogToReturn.tarikh_masa_ambil)}</strong></div>
-              <div>Masa Pulang (Rekod): <strong className="text-slate-800">{formatDateTime(new Date(returnDateTime).toISOString())}</strong></div>
+              <div>{language === 'ms' ? 'Kunci:' : 'Key:'} <strong className="text-slate-800">{activeLogToReturn.kunci?.nama_kunci} ({activeLogToReturn.kunci?.kod_kunci})</strong></div>
+              <div>{language === 'ms' ? 'Peminjam:' : 'Borrower:'} <strong className="text-slate-800">{activeLogToReturn.peminjam?.full_name || MOCK_BORROWERS.find(b => b.id === activeLogToReturn.peminjam_id)?.full_name}</strong></div>
+              <div>{language === 'ms' ? 'Masa Pinjam:' : 'Borrowed Time:'} <strong className="text-slate-800">{formatDateTime(activeLogToReturn.tarikh_masa_ambil)}</strong></div>
+              <div>{language === 'ms' ? 'Masa Pulang (Rekod):' : 'Return Time (Record):'} <strong className="text-slate-800">{formatDateTime(new Date(returnDateTime).toISOString())}</strong></div>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Keadaan Fizikal Anak Kunci *
+                {language === 'ms' ? 'Keadaan Fizikal Anak Kunci *' : 'Physical Key Condition *'}
               </label>
               <select
                 value={keyCondition}
@@ -713,14 +861,14 @@ export const KunciDashboardPage: React.FC = () => {
                 required
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
               >
-                <option value="good">Baik / Tiada Keretakan (Good)</option>
-                <option value="damaged">Rosak / Bengkok (Damaged)</option>
+                <option value="good">{language === 'ms' ? 'Baik / Tiada Keretakan (Good)' : 'Good / Intact (No Damage)'}</option>
+                <option value="damaged">{language === 'ms' ? 'Rosak / Bengkok (Damaged)' : 'Damaged / Bent / Broken'}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-                Keadaan Mangga / Padlock Pintu *
+                {language === 'ms' ? 'Keadaan Mangga / Padlock Pintu *' : 'Padlock & Door Lock Condition *'}
               </label>
               <select
                 value={lockCondition}
@@ -728,16 +876,16 @@ export const KunciDashboardPage: React.FC = () => {
                 required
                 className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
               >
-                <option value="good">Kukuh / Berfungsi Baik</option>
-                <option value="loose">Longgar / Longgatan Skru</option>
-                <option value="damaged">Rosak / Engsel Rosak</option>
+                <option value="good">{language === 'ms' ? 'Kukuh / Berfungsi Baik' : 'Secure / Fully Functional'}</option>
+                <option value="loose">{language === 'ms' ? 'Longgar / Longgatan Skru' : 'Loose / Wobbly Screws'}</option>
+                <option value="damaged">{language === 'ms' ? 'Rosak / Engsel Rosak' : 'Damaged / Broken Hasp'}</option>
               </select>
             </div>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-              Tarikh & Masa Pulang *
+              {language === 'ms' ? 'Tarikh & Masa Pulang *' : 'Return Date & Time *'}
             </label>
             <input
               type="datetime-local"
@@ -750,25 +898,25 @@ export const KunciDashboardPage: React.FC = () => {
 
           <div>
             <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
-              Catatan Pemulangan & Laporan Kejadian (Jika Ada)
+              {language === 'ms' ? 'Catatan Pemulangan & Laporan Kejadian (Jika Ada)' : 'Return Remarks & Incident Report (If Any)'}
             </label>
             <textarea
               rows={3}
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
-              placeholder="Cth: Kunci dipulangkan tepat pada masa. Mangga pintu berfungsi dengan baik..."
+              placeholder={language === 'ms' ? 'Cth: Kunci dipulangkan tepat pada masa. Mangga pintu berfungsi dengan baik...' : 'E.g.: Key returned on time. Padlock functioning smoothly with no issues...'}
               className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all resize-none"
             />
           </div>
 
           <div className="mt-4">
             <FileUpload
-              label="Snap / Muat Naik Foto Kunci (Wajib) *"
+              label={language === 'ms' ? 'Snap / Muat Naik Foto Kunci (Wajib) *' : 'Snap / Upload Key Photo (Mandatory) *'}
               accept="image/*"
               required
               value={returnPhoto}
               onChange={(file) => setReturnPhoto(file)}
-              helperText="Ambil gambar anak kunci fizikal yang dipulangkan untuk bukti simpanan"
+              helperText={language === 'ms' ? 'Ambil gambar anak kunci fizikal yang dipulangkan untuk bukti simpanan' : 'Take a photo of the returned physical key as audit proof of storage.'}
             />
           </div>
 
@@ -782,14 +930,14 @@ export const KunciDashboardPage: React.FC = () => {
               }}
               className="border-slate-200 text-slate-500 hover:bg-slate-50 px-4 py-2 border rounded-xl"
             >
-              Batal
+              {language === 'ms' ? 'Batal' : 'Cancel'}
             </Button>
             <Button
               type="submit"
               disabled={!returnPhoto}
               className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2 rounded-xl shadow-soft disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Selesaikan Pulangan
+              {language === 'ms' ? 'Selesaikan Pulangan' : 'Complete Return'}
             </Button>
           </div>
         </form>

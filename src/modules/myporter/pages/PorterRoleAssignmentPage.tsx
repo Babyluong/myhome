@@ -1,4 +1,4 @@
-﻿// src/modules/myporter/pages/PorterRoleAssignmentPage.tsx
+// src/modules/myporter/pages/PorterRoleAssignmentPage.tsx
 import React, { useEffect, useState } from 'react'
 import { Users, Shield, UserCheck, CheckCircle2 } from 'lucide-react'
 import { useToast } from '@/stores/toastStore'
@@ -19,7 +19,7 @@ export const PorterRoleAssignmentPage: React.FC = () => {
       if (pRes.data) setPorters(pRes.data)
       if (rRes.data) setRolesMap(rRes.data)
     } catch (err: any) {
-      toast.error('Ralat Memuat Peranan', err.message)
+      toast.error('Error Loading Roles', err.message)
     } finally {
       setLoading(false)
     }
@@ -34,10 +34,10 @@ export const PorterRoleAssignmentPage: React.FC = () => {
       const res = await assignPorterRole(userId, newRole)
       if (res.data) {
         setRolesMap(prev => ({ ...prev, [userId]: newRole }))
-        toast.success('Peranan Dikemaskini', 'Akses modul MyPorter telah dikemaskini.')
+        toast.success('Role Updated', 'MyPorter access permissions have been updated.')
       }
     } catch (err: any) {
-      toast.error('Ralat Mengemaskini Peranan', err.message)
+      toast.error('Error Updating Role', err.message)
     }
   }
 
@@ -46,15 +46,15 @@ export const PorterRoleAssignmentPage: React.FC = () => {
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-3">
           <Shield className="w-8 h-8 text-sky-400" />
-          <span>Tetapan Peranan & Kebenaran MyPorter</span>
+          <span>MyPorter Role & Access Permissions</span>
         </h1>
         <p className="text-xs text-slate-400 mt-1">
-          Uruskan kebenaran akses kakitangan sebagai Pemohon Wad, PPK Rider, Penerima, atau Penyelia Dispatch
+          Manage staff authorization roles as Ward Requester, Porter Rider, Receiver, or Dispatch Supervisor
         </p>
       </div>
 
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-        <h3 className="text-sm font-bold text-white uppercase tracking-wider">Senarai Petugas & Peranan Semasa</h3>
+        <h3 className="text-sm font-bold text-white uppercase tracking-wider">Staff List & Active Permissions</h3>
         <div className="divide-y divide-slate-800/80">
           {porters.map((p) => {
             const currentRole = rolesMap[p.user_id] || 'porter_driver'
@@ -78,10 +78,10 @@ export const PorterRoleAssignmentPage: React.FC = () => {
                     value={currentRole}
                     onChange={(e) => handleRoleChange(p.user_id, e.target.value)}
                   >
-                    <option value="porter_driver">PPK Dispatch (Driver Panel)</option>
-                    <option value="porter_supervisor">Penyelia PPK (Dispatch Manager)</option>
-                    <option value="ward_requester">Pemohon Wad (Requester)</option>
-                    <option value="ward_receiver">Penerima Wad (Receiver)</option>
+                    <option value="porter_driver">Porter Dispatch (Driver Panel)</option>
+                    <option value="porter_supervisor">Porter Supervisor (Dispatch Manager)</option>
+                    <option value="ward_requester">Ward Requester (Requester)</option>
+                    <option value="ward_receiver">Ward Receiver (Receiver)</option>
                   </select>
                 </div>
               </div>

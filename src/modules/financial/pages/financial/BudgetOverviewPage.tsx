@@ -80,7 +80,7 @@ export const BudgetOverviewPage: React.FC = () => {
   }, [fiscalYear])
 
   return (
-    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16">
+    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16 text-slate-900">
       {/* Premium Ambient Radial Lights */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-indigo-500/[0.04] to-blue-500/[0.02] rounded-full blur-[140px] pointer-events-none -z-10 animate-pulse-subtle" />
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-sky-500/[0.02] to-teal-500/[0.03] rounded-full blur-[120px] pointer-events-none -z-10" />
@@ -427,7 +427,7 @@ export const BudgetOverviewPage: React.FC = () => {
                         <td className="px-6 py-4 text-right font-black text-slate-900 tabular-nums">
                           {formatCurrency(budget.allocated_amount).replace('MYR', 'RM')}
                         </td>
-                        <td className="px-6 py-4 text-right font-bold text-slate-750 tabular-nums">
+                        <td className="px-6 py-4 text-right font-bold text-slate-700 tabular-nums">
                           {formatCurrency(budget.utilized_amount).replace('MYR', 'RM')}
                         </td>
                         <td className="px-6 py-4 text-right font-black text-emerald-600 tabular-nums">

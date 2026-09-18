@@ -213,17 +213,17 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
     e.preventDefault()
 
     if (!selectedProgramCode || !selectedObjekCode || !selectedKategoriCode) {
-      toast.error('Sila lengkapkan pilihan Program, Objek, dan Kategori bajet.')
+      toast.error('Please complete Program, Object, and Category budget selections.')
       return
     }
 
     if (items.some((it) => !it.item_description.trim() || it.quantity <= 0 || it.unit_price < 0)) {
-      toast.error('Sila pastikan semua item mempunyai perihal, kuantiti, dan harga unit yang sah.')
+      toast.error('Please ensure all items have valid descriptions, quantities, and unit prices.')
       return
     }
 
     if (totalAmount <= 0) {
-      toast.error('Jumlah pesanan mestilah lebih daripada RM 0.00.')
+      toast.error('Order total amount must be greater than RM 0.00.')
       return
     }
 
@@ -256,12 +256,12 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
       const { error } = await createPurchaseOrder(poPayload, formattedItems)
       if (error) throw error
 
-      toast.success('Pesanan Pembelian (PO) Berjaya Dicipta!')
+      toast.success('Purchase Order (PO) Successfully Created!')
       onSuccess()
       onClose()
     } catch (err: any) {
       console.error('Error submitting PO:', err)
-      toast.error('Gagal mencipta Pesanan Pembelian', err.message || 'Ralat sistem.')
+      toast.error('Failed to create Purchase Order', err.message || 'System error.')
     } finally {
       setIsSubmitting(false)
     }
@@ -285,13 +285,13 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
             </div>
             <div>
               <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                <span>Cipta Pesanan Pembelian (PO)</span>
+                <span>Create Purchase Order (PO)</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">
                   NEW ORDER
                 </span>
               </h2>
               <p className="text-xs text-slate-500">
-                Pilih kod bajet (Pengurusan / Pembangunan) & item katalog untuk pesanan tempatan
+                Select budget code (Operating / Development) & catalog items for local purchase order
               </p>
             </div>
           </div>
@@ -308,7 +308,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
           {/* 1. Budget Type Selector */}
           <div>
             <label className="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">
-              1. Jenis Bajet Utama
+              1. Primary Budget Type
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -322,8 +322,8 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
               >
                 <Building className={`w-5 h-5 ${budgetType === 'warrant' ? 'text-blue-600' : 'text-slate-400'}`} />
                 <div className="text-left">
-                  <p className="text-xs font-bold">Bajet Pengurusan</p>
-                  <p className="text-[10px] text-slate-500 font-mono">020200 & 022300 (Waran KKM)</p>
+                  <p className="text-xs font-bold">Operating Budget</p>
+                  <p className="text-[10px] text-slate-500 font-mono">020200 & 022300 (MOH Warrants)</p>
                 </div>
               </button>
 
@@ -338,8 +338,8 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
               >
                 <HardHat className={`w-5 h-5 ${budgetType === 'pembangunan' ? 'text-amber-600' : 'text-slate-400'}`} />
                 <div className="text-left">
-                  <p className="text-xs font-bold">Bajet Pembangunan</p>
-                  <p className="text-[10px] text-slate-500 font-mono">P42 (Leasing, PSH, LDP)</p>
+                  <p className="text-xs font-bold">Development Budget</p>
+                  <p className="text-[10px] text-slate-500 font-mono">P42 (Leasing, PSH, Training)</p>
                 </div>
               </button>
             </div>
@@ -349,7 +349,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                Program / Aktiviti
+                Program / Activity
               </label>
               <select
                 value={selectedProgramCode}
@@ -366,7 +366,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
 
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                Kod Objek
+                Object Code
               </label>
               <select
                 value={selectedObjekCode}
@@ -383,7 +383,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
 
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                Kategori Perbelanjaan
+                Expenditure Category
               </label>
               <select
                 value={selectedKategoriCode}
@@ -403,14 +403,14 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-500 mb-1.5">
-                Pembekal Dilantik
+                Appointed Supplier
               </label>
               <select
                 value={selectedSupplierId}
                 onChange={(e) => setSelectedSupplierId(e.target.value)}
                 className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-indigo-500 focus:outline-none shadow-xs"
               >
-                <option value="">-- Pilih Pembekal (Pilihan) --</option>
+                <option value="">-- Select Supplier (Optional) --</option>
                 {suppliers.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.company_name}
@@ -421,7 +421,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-slate-500 mb-1.5">
-                Tarikh Pesanan
+                Order Date
               </label>
               <input
                 type="date"
@@ -433,7 +433,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-slate-500 mb-1.5">
-                Jangkaan Tarikh Siap / Hantar
+                Expected Delivery Date
               </label>
               <input
                 type="date"
@@ -448,7 +448,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-xs font-black uppercase tracking-wider text-slate-500">
-                Senarai Item / Perkhidmatan ({items.length})
+                Order Items / Services List ({items.length})
               </label>
               <button
                 type="button"
@@ -456,7 +456,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
                 className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1.5 px-3 py-1 bg-indigo-50 rounded-lg border border-indigo-100"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Tambah Item</span>
+                <span>Add Item</span>
               </button>
             </div>
 
@@ -472,7 +472,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
                       onChange={(e) => handleItemChange(idx, 'perihal_id', e.target.value)}
                       className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 focus:border-indigo-500 focus:outline-none"
                     >
-                      <option value="">-- Pilih Dari Katalog Perihal (Pilihan) --</option>
+                      <option value="">-- Select From Catalog (Optional) --</option>
                       {catalogItems.map((cat) => (
                         <option key={cat.id} value={cat.id}>
                           {cat.perihal_name} (RM {Number(cat.unit_price).toFixed(2)})
@@ -482,7 +482,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
 
                     <input
                       type="text"
-                      placeholder="Keterangan Item / Perkhidmatan..."
+                      placeholder="Item / Service Description..."
                       value={item.item_description}
                       onChange={(e) => handleItemChange(idx, 'item_description', e.target.value)}
                       className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 focus:border-indigo-500 focus:outline-none"
@@ -491,7 +491,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
                   </div>
 
                   <div className="col-span-4 sm:col-span-2">
-                    <label className="block text-[10px] text-slate-500 mb-0.5">Kuantiti</label>
+                    <label className="block text-[10px] text-slate-500 mb-0.5">Quantity</label>
                     <input
                       type="number"
                       min="1"
@@ -503,7 +503,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
                   </div>
 
                   <div className="col-span-4 sm:col-span-2">
-                    <label className="block text-[10px] text-slate-500 mb-0.5">Harga/Unit (RM)</label>
+                    <label className="block text-[10px] text-slate-500 mb-0.5">Unit Price (RM)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -517,7 +517,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
 
                   <div className="col-span-4 sm:col-span-2 flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0">
                     <div className="text-right">
-                      <span className="block text-[10px] text-slate-400">Jumlah</span>
+                      <span className="block text-[10px] text-slate-400">Total</span>
                       <span className="text-xs font-bold font-mono text-indigo-600">
                         {formatCurrency(item.quantity * item.unit_price)}
                       </span>
@@ -541,11 +541,11 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center bg-slate-50 p-4 rounded-2xl border border-slate-200">
             <div>
               <label className="block text-xs font-bold text-slate-500 mb-1">
-                Catatan / Justifikasi Pesanan
+                Notes / Order Justification
               </label>
               <textarea
                 rows={2}
-                placeholder="cth: Bekalan keperluan wad & pembaikan kecemasan..."
+                placeholder="e.g. Ward supplies replenishment & emergency maintenance..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-indigo-500 focus:outline-none resize-none"
@@ -554,7 +554,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
 
             <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-right">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Jumlah Keseluruhan Pesanan
+                Grand Total Order Amount
               </p>
               <p className="text-2xl font-black text-indigo-600 font-mono mt-0.5">
                 {formatCurrency(totalAmount)}
@@ -570,14 +570,14 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
               onClick={onClose}
               className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold"
             >
-              Batal
+              Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
               className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 rounded-xl shadow-sm"
             >
-              {isSubmitting ? 'Memproses...' : 'Hantar Pesanan (PO)'}
+              {isSubmitting ? 'Submitting...' : 'Submit Order (PO)'}
             </Button>
           </div>
         </form>

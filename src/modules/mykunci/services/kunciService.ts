@@ -2,6 +2,8 @@
 // MyKunci integrated key management service with Supabase and localStorage fallback
 
 import { supabase, isSupabaseConfigured } from '@/services/supabase';
+import { mockUsers } from '@/services/mockData';
+import { recordAuditLog } from '@/services/auditLogService';
 import type { ApiResponse } from '@/types';
 import type {
   KunciDaftar,
@@ -14,10 +16,36 @@ import type {
   AuditFizikal
 } from '@/shared/types/mykunci';
 
+// Helper to resolve user details
+const resolveStaffUser = (userId?: string) => {
+  if (!userId) return undefined;
+  const found = mockUsers.find(
+    (u) =>
+      u.id === userId ||
+      u.ic_number === userId ||
+      u.email === userId ||
+      u.full_name.toLowerCase().includes(userId.toLowerCase())
+  );
+  if (found) return found as any;
+  return {
+    id: userId,
+    full_name: userId,
+    jawatan: 'Pegawai Bertugas',
+    email: '',
+    phone_number: '',
+    role_id: 'pharmacist',
+    department_id: '7a3bd6c4-c8e6-491b-8441-0ee9bd73f880',
+    hospital_id: 'hosp-1',
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  } as any;
+};
+
 // ============================================
 // LOCAL STORAGE MOCK DATA SYSTEM
 // ============================================
-const STORAGE_PREFIX = 'mykunci_mock_';
+const STORAGE_PREFIX = 'mykunci_mock_v3_';
 
 const getMockData = <T>(key: string, defaultValue: T): T => {
   const data = localStorage.getItem(STORAGE_PREFIX + key);
@@ -28,133 +56,60 @@ const setMockData = <T>(key: string, value: T): void => {
   localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
 };
 
-// Seed initial mock data if empty
+// Initial Keys Master Data matching database
+export const INITIAL_REAL_KUNCI: KunciDaftar[] = [
+  {
+    id: '2cc6f5a1-bc47-4c34-aa13-8d47e1aeddcd',
+    kod_kunci: 'PHAR-LOG-01',
+    nama_kunci: 'Stor Silinder Oksigen',
+    department_id: '7a3bd6c4-c8e6-491b-8441-0ee9bd73f880',
+    lokasi_fizikal: 'Farmasi Logistik',
+    jenis_kunci: 'room',
+    tahap_kawalan: 'normal',
+    status: 'available',
+    nombor_peti: 'Farmasi Logistik',
+    status_sampul: 'not_applicable',
+    penjaga_id: '88dc2fa7-e943-45ba-a889-8756c0265b48',
+    hospital_id: '85bb6adc-b868-428b-83f4-e5af2f5cf904',
+    created_at: '2026-07-09T07:58:17.816800Z',
+    updated_at: '2026-07-13T01:57:42.299442Z',
+  }
+];
+
+// Initial Movement Logs matching real database transactions
+export const INITIAL_REAL_LOGS: KunciLog[] = [
+  {
+    id: '7f85b47e-5718-47af-a5cf-26f03e84a888',
+    kunci_id: '2cc6f5a1-bc47-4c34-aa13-8d47e1aeddcd',
+    peminjam_id: '88dc2fa7-e943-45ba-a889-8756c0265b48',
+    pegawai_penyerah_id: '88dc2fa7-e943-45ba-a889-8756c0265b48',
+    pegawai_saksi_id: undefined,
+    tarikh_masa_ambil: '2026-07-09T08:06:21.046Z',
+    jangka_masa_pulang: '2026-07-10T08:06:21.046Z',
+    tarikh_masa_pulang: undefined,
+    pegawai_penerima_id: undefined,
+    keadaan_kunci: 'good',
+    keadaan_mangga: 'good',
+    tujuan: 'kira oksigen',
+    catatan_penggunaan: undefined,
+    duration_seconds: undefined,
+    is_overdue: false,
+    hospital_id: '85bb6adc-b868-428b-83f4-e5af2f5cf904',
+    created_at: '2026-07-09T08:06:35.251832Z',
+    updated_at: '2026-07-09T08:06:35.251832Z',
+  }
+];
+
+// Seed initial fallback data if empty
 const initMockData = () => {
   if (!localStorage.getItem(STORAGE_PREFIX + 'kunci_daftar')) {
-    const initialKunci: KunciDaftar[] = [
-      {
-        id: 'kunci-1',
-        kod_kunci: 'KUNCI-PH-LOG-01',
-        nama_kunci: 'Kunci Utama Stor Logistik Farmasi',
-        department_id: '7a3bd6c4-c8e6-491b-8441-0ee9bd73f880', // Pharmacy Logistics
-        lokasi_fizikal: 'Pintu Masuk Utama Stor Farmasi',
-        jenis_kunci: 'room',
-        tahap_kawalan: 'normal',
-        status: 'available',
-        nombor_peti: 'Peti Kunci Utama A-01',
-        status_sampul: 'not_applicable',
-        penjaga_id: 'user-1',
-        hospital_id: 'hosp-1',
-        created_at: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-      {
-        id: 'kunci-2',
-        kod_kunci: 'KUNCI-PH-DDA-01',
-        nama_kunci: 'Kunci Peti Dadah Kawalan / Narcotic DDA Cabinet',
-        department_id: '7a3bd6c4-c8e6-491b-8441-0ee9bd73f880', // Pharmacy Logistics
-        lokasi_fizikal: 'Peti Besi DDA, Bilik Penyimpanan Khas',
-        jenis_kunci: 'cabinet_dda',
-        tahap_kawalan: 'high', // High security - double custody DDA
-        status: 'borrowed',
-        nombor_peti: 'Peti Kunci Utama A-02',
-        status_sampul: 'not_applicable',
-        penjaga_id: 'user-1',
-        hospital_id: 'hosp-1',
-        created_at: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-      {
-        id: 'kunci-3',
-        kod_kunci: 'KUNCI-PH-CLIN-01',
-        nama_kunci: 'Kunci Bilik Satelit Farmasi Klinik Pakar',
-        department_id: '0c6c6f1b-d3b6-4779-91c3-536956858fca', // Specialist Clinic Satellite
-        lokasi_fizikal: 'Pintu Depan Satelit Farmasi',
-        jenis_kunci: 'room',
-        tahap_kawalan: 'normal',
-        status: 'available',
-        nombor_peti: 'Peti Kunci B-05',
-        status_sampul: 'not_applicable',
-        penjaga_id: 'user-2',
-        hospital_id: 'hosp-1',
-        created_at: new Date(Date.now() - 20 * 24 * 3600 * 1000).toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-      {
-        id: 'kunci-4',
-        kod_kunci: 'KUNCI-PH-DUP-LOG-01',
-        nama_kunci: 'Kunci Pendua Stor Logistik Farmasi (Kecemasan)',
-        department_id: '7a3bd6c4-c8e6-491b-8441-0ee9bd73f880',
-        lokasi_fizikal: 'Peti Keselamatan Pejabat Pentadbiran',
-        jenis_kunci: 'room',
-        tahap_kawalan: 'high',
-        status: 'available',
-        nombor_peti: 'Peti Kunci Kecemasan C-01',
-        status_sampul: 'sealed', // Emergency sealed envelope
-        penjaga_id: 'user-1',
-        hospital_id: 'hosp-1',
-        created_at: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-    ];
-
-    const initialLogs: KunciLog[] = [
-      {
-        id: 'log-1',
-        kunci_id: 'kunci-1',
-        peminjam_id: 'user-1',
-        pegawai_penyerah_id: 'user-1',
-        tarikh_masa_ambil: new Date(Date.now() - 5 * 3600 * 1000).toISOString(),
-        jangka_masa_pulang: new Date(Date.now() - 1 * 3600 * 1000).toISOString(),
-        tarikh_masa_pulang: new Date(Date.now() - 1.5 * 3600 * 1000).toISOString(),
-        pegawai_penerima_id: 'user-1',
-        keadaan_kunci: 'good',
-        keadaan_mangga: 'good',
-        tujuan: 'Pemeriksaan stok barang bulanan.',
-        catatan_penggunaan: 'Buka stor logistik untuk penerimaan barang LPO.',
-        duration_seconds: 3.5 * 3600,
-        is_overdue: false,
-        hospital_id: 'hosp-1',
-        created_at: new Date(Date.now() - 5 * 3600 * 1000).toISOString(),
-        updated_at: new Date(Date.now() - 1.5 * 3600 * 1000).toISOString(),
-      },
-      {
-        id: 'log-2',
-        kunci_id: 'kunci-2',
-        peminjam_id: 'user-2',
-        pegawai_penyerah_id: 'user-1',
-        pegawai_saksi_id: 'user-3', // High-security Narcotic co-signing witness
-        tarikh_masa_ambil: new Date(Date.now() - 12 * 3600 * 1000).toISOString(), // 12 hours ago (longer than standard shift)
-        jangka_masa_pulang: new Date(Date.now() - 4 * 3600 * 1000).toISOString(), // Should be returned 4 hours ago
-        is_overdue: true, // Marked as overdue / sangkut!
-        tujuan: 'Pemberian ubat DDA untuk pesakit Wad VIP.',
-        hospital_id: 'hosp-1',
-        created_at: new Date(Date.now() - 12 * 3600 * 1000).toISOString(),
-        updated_at: new Date(Date.now() - 12 * 3600 * 1000).toISOString(),
-      }
-    ];
-
-    const initialAudits: KunciAuditBulanan[] = [
-      {
-        id: 'audit-1',
-        kunci_id: 'kunci-4', // Duplicate key
-        tarikh_audit: new Date(Date.now() - 10 * 24 * 3600 * 1000).toISOString().split('T')[0],
-        auditor_id: 'user-1',
-        status_fizikal: 'present',
-        sampul_bermeterai_utuh: true,
-        catatan: 'Pemeriksaan fizikal bulanan. Sampul meterai utuh dengan kod siri KKM-4281.',
-        hospital_id: 'hosp-1',
-        created_at: new Date(Date.now() - 10 * 24 * 3600 * 1000).toISOString(),
-      }
-    ];
-
-    setMockData('kunci_daftar', initialKunci);
-    setMockData('kunci_log', initialLogs);
-    setMockData('kunci_audit_bulanan', initialAudits);
+    setMockData('kunci_daftar', INITIAL_REAL_KUNCI);
+    setMockData('kunci_log', INITIAL_REAL_LOGS);
+    setMockData('kunci_audit_bulanan', []);
   }
 };
 
-// Initialize mock data
+// Initialize fallback data
 initMockData();
 
 // ============================================
@@ -356,107 +311,123 @@ export const deleteKunci = async (id: string): Promise<ApiResponse<boolean>> => 
 };
 
 export const getKunciLogs = async (kunciId?: string): Promise<ApiResponse<KunciLog[]>> => {
-  if (!isSupabaseConfigured()) {
-    let logs = getMockData<KunciLog[]>('kunci_log', []);
-    const keys = getMockData<KunciDaftar[]>('kunci_daftar', []);
-    
-    // Enrich logs with keys mock relationships
-    logs = logs.map(log => {
-      const keyObj = keys.find(k => k.id === log.kunci_id);
-      return {
-        ...log,
-        kunci: keyObj
-      };
-    });
-
-    if (kunciId) {
-      logs = logs.filter((l) => l.kunci_id === kunciId);
-    }
-    
-    // Sort descending by checkout date
-    logs.sort((a, b) => new Date(b.tarikh_masa_ambil).getTime() - new Date(a.tarikh_masa_ambil).getTime());
-
-    return { data: logs, error: null };
-  }
-
-  try {
-    let query = supabase.from('kunci_log').select(`
-      *,
-      kunci:kunci_daftar(
+  if (isSupabaseConfigured()) {
+    try {
+      let query = supabase.from('kunci_log').select(`
         *,
-        department:departments(*)
-      ),
-      peminjam:users!peminjam_id(*),
-      pegawai_penyerah:users!pegawai_penyerah_id(*),
-      pegawai_saksi:users!pegawai_saksi_id(*),
-      pegawai_penerima:users!pegawai_penerima_id(*)
-    `);
+        kunci:kunci_daftar(
+          *,
+          department:departments(*)
+        ),
+        peminjam:users!peminjam_id(*),
+        pegawai_penyerah:users!pegawai_penyerah_id(*),
+        pegawai_saksi:users!pegawai_saksi_id(*),
+        pegawai_penerima:users!pegawai_penerima_id(*)
+      `);
 
-    if (kunciId) {
-      query = query.eq('kunci_id', kunciId);
+      if (kunciId) {
+        query = query.eq('kunci_id', kunciId);
+      }
+
+      const { data, error } = await query.order('tarikh_masa_ambil', { ascending: false });
+      if (!error && Array.isArray(data)) {
+        return { data: data as KunciLog[], error: null };
+      }
+    } catch (error: any) {
+      console.warn('Supabase fetch kunci_log error:', error);
     }
-
-    const { data, error } = await query.order('tarikh_masa_ambil', { ascending: false });
-    if (error) throw error;
-    return { data: data as KunciLog[], error: null };
-  } catch (error: any) {
-    console.error('getKunciLogs error:', error);
-    return { data: null, error: error?.message || 'Failed to fetch key logs' };
   }
+
+  // Local fallback ONLY if Supabase is offline
+  let localLogs = getMockData<KunciLog[]>('kunci_log', INITIAL_REAL_LOGS);
+  const localKeys = getMockData<KunciDaftar[]>('kunci_daftar', INITIAL_REAL_KUNCI);
+
+  localLogs = localLogs.map((log) => ({
+    ...log,
+    kunci: log.kunci || localKeys.find((k) => k.id === log.kunci_id) || INITIAL_REAL_KUNCI.find((k) => k.id === log.kunci_id),
+    peminjam: log.peminjam || resolveStaffUser(log.peminjam_id),
+    pegawai_penyerah: log.pegawai_penyerah || resolveStaffUser(log.pegawai_penyerah_id),
+    pegawai_saksi: log.pegawai_saksi || resolveStaffUser(log.pegawai_saksi_id),
+    pegawai_penerima: log.pegawai_penerima || resolveStaffUser(log.pegawai_penerima_id),
+  }));
+
+  if (kunciId) {
+    localLogs = localLogs.filter((l) => l.kunci_id === kunciId);
+  }
+
+  localLogs.sort((a, b) => new Date(b.tarikh_masa_ambil).getTime() - new Date(a.tarikh_masa_ambil).getTime());
+  return { data: localLogs, error: null };
 };
 
 export const checkoutKunci = async (
   log: Omit<KunciLog, 'id' | 'created_at' | 'updated_at'>
 ): Promise<ApiResponse<KunciLog>> => {
+  let createdLog: KunciLog;
+
   if (!isSupabaseConfigured()) {
     // 1. Save log
-    const logs = getMockData<KunciLog[]>('kunci_log', []);
-    const newLog: KunciLog = {
+    const logs = getMockData<KunciLog[]>('kunci_log', INITIAL_REAL_LOGS);
+    createdLog = {
       ...log,
       id: `log-${Date.now()}`,
       is_overdue: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    logs.push(newLog);
+    logs.unshift(createdLog);
     setMockData('kunci_log', logs);
 
     // 2. Update status of key in register to 'borrowed'
-    const keys = getMockData<KunciDaftar[]>('kunci_daftar', []);
+    const keys = getMockData<KunciDaftar[]>('kunci_daftar', INITIAL_REAL_KUNCI);
     const keyIndex = keys.findIndex((k) => k.id === log.kunci_id);
     if (keyIndex !== -1) {
       keys[keyIndex].status = 'borrowed';
       keys[keyIndex].updated_at = new Date().toISOString();
       setMockData('kunci_daftar', keys);
     }
+  } else {
+    try {
+      const { data: insertedLog, error: logError } = await supabase
+        .from('kunci_log')
+        .insert([log])
+        .select()
+        .single();
 
-    return { data: newLog, error: null };
+      if (logError) throw logError;
+      createdLog = insertedLog as KunciLog;
+
+      await supabase
+        .from('kunci_daftar')
+        .update({ status: 'borrowed' })
+        .eq('id', log.kunci_id);
+    } catch (error: any) {
+      console.error('checkoutKunci error:', error);
+      return { data: null, error: error?.message || 'Failed to record checkout transaction' };
+    }
   }
 
+  // Real-time synchronization: record audit log in System Logs
   try {
-    // We execute checkout inside a transaction if possible, or sequentially
-    // Step 1: Insert log
-    const { data: insertedLog, error: logError } = await supabase
-      .from('kunci_log')
-      .insert([log])
-      .select()
-      .single();
-
-    if (logError) throw logError;
-
-    // Step 2: Update key status to borrowed
-    const { error: keyError } = await supabase
-      .from('kunci_daftar')
-      .update({ status: 'borrowed' })
-      .eq('id', log.kunci_id);
-
-    if (keyError) throw keyError;
-
-    return { data: insertedLog as KunciLog, error: null };
-  } catch (error: any) {
-    console.error('checkoutKunci error:', error);
-    return { data: null, error: error?.message || 'Failed to record checkout transaction' };
+    const keyObj = INITIAL_REAL_KUNCI.find((k) => k.id === log.kunci_id);
+    const borrower = resolveStaffUser(log.peminjam_id);
+    recordAuditLog({
+      userId: log.peminjam_id,
+      action: 'CREATE',
+      module: 'mykunci',
+      entityType: 'kunci_log',
+      entityId: createdLog.id,
+      newValues: {
+        key_name: keyObj?.nama_kunci || 'Kunci Fizikal',
+        borrower: borrower?.full_name || log.peminjam_id,
+        purpose: log.tujuan,
+        description: `Pinjaman ${keyObj?.nama_kunci || 'kunci'} oleh ${borrower?.full_name || 'kakitangan'} untuk "${log.tujuan}".`,
+      },
+    });
+  } catch (auditErr) {
+    console.warn('Failed to record audit log for key checkout:', auditErr);
   }
+
+  return { data: createdLog, error: null };
 };
 
 export const returnKunci = async (
@@ -469,22 +440,24 @@ export const returnKunci = async (
     catatan_penggunaan?: string;
   }
 ): Promise<ApiResponse<KunciLog>> => {
+  let updatedLog: KunciLog;
+  let targetKunciId: string | undefined;
+
   if (!isSupabaseConfigured()) {
-    // 1. Update log
-    const logs = getMockData<KunciLog[]>('kunci_log', []);
+    const logs = getMockData<KunciLog[]>('kunci_log', INITIAL_REAL_LOGS);
     const logIndex = logs.findIndex((l) => l.id === logId);
     if (logIndex === -1) return { data: null, error: 'Checkout record not found' };
 
     const originalLog = logs[logIndex];
+    targetKunciId = originalLog.kunci_id;
     const takeTime = new Date(originalLog.tarikh_masa_ambil).getTime();
     const returnTime = new Date(returnData.tarikh_masa_pulang).getTime();
     const durationSeconds = Math.max(0, Math.floor((returnTime - takeTime) / 1000));
     
-    // Check if overdue
     const etaTime = new Date(originalLog.jangka_masa_pulang).getTime();
     const isOverdue = returnTime > etaTime;
 
-    const updatedLog: KunciLog = {
+    updatedLog = {
       ...originalLog,
       ...returnData,
       duration_seconds: durationSeconds,
@@ -494,67 +467,81 @@ export const returnKunci = async (
     logs[logIndex] = updatedLog;
     setMockData('kunci_log', logs);
 
-    // 2. Set key status back to 'available'
-    const keys = getMockData<KunciDaftar[]>('kunci_daftar', []);
+    // Set key status back to 'available'
+    const keys = getMockData<KunciDaftar[]>('kunci_daftar', INITIAL_REAL_KUNCI);
     const keyIndex = keys.findIndex((k) => k.id === originalLog.kunci_id);
     if (keyIndex !== -1) {
       keys[keyIndex].status = 'available';
-      // If the duplicate key envelope is checked/broken, it gets set
       keys[keyIndex].updated_at = new Date().toISOString();
       setMockData('kunci_daftar', keys);
     }
+  } else {
+    try {
+      const { data: originalLog, error: fetchError } = await supabase
+        .from('kunci_log')
+        .select('*')
+        .eq('id', logId)
+        .single();
 
-    return { data: updatedLog, error: null };
+      if (fetchError) throw fetchError;
+      targetKunciId = originalLog.kunci_id;
+
+      const takeTime = new Date(originalLog.tarikh_masa_ambil).getTime();
+      const returnTime = new Date(returnData.tarikh_masa_pulang).getTime();
+      const durationSeconds = Math.max(0, Math.floor((returnTime - takeTime) / 1000));
+      const etaTime = new Date(originalLog.jangka_masa_pulang).getTime();
+      const isOverdue = returnTime > etaTime;
+
+      const { data: resData, error: updateError } = await supabase
+        .from('kunci_log')
+        .update({
+          tarikh_masa_pulang: returnData.tarikh_masa_pulang,
+          pegawai_penerima_id: returnData.pegawai_penerima_id,
+          keadaan_kunci: returnData.keadaan_kunci,
+          keadaan_mangga: returnData.keadaan_mangga,
+          catatan_penggunaan: returnData.catatan_penggunaan,
+          duration_seconds: durationSeconds,
+          is_overdue: isOverdue
+        })
+        .eq('id', logId)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+      updatedLog = resData as KunciLog;
+
+      await supabase
+        .from('kunci_daftar')
+        .update({ status: 'available' })
+        .eq('id', originalLog.kunci_id);
+    } catch (error: any) {
+      console.error('returnKunci error:', error);
+      return { data: null, error: error?.message || 'Failed to record key return' };
+    }
   }
 
+  // Real-time synchronization: record audit log in System Logs
   try {
-    // Step 1: Get log details to calculate duration and find Kunci ID
-    const { data: originalLog, error: fetchError } = await supabase
-      .from('kunci_log')
-      .select('*')
-      .eq('id', logId)
-      .single();
-
-    if (fetchError) throw fetchError;
-
-    const takeTime = new Date(originalLog.tarikh_masa_ambil).getTime();
-    const returnTime = new Date(returnData.tarikh_masa_pulang).getTime();
-    const durationSeconds = Math.max(0, Math.floor((returnTime - takeTime) / 1000));
-
-    const etaTime = new Date(originalLog.jangka_masa_pulang).getTime();
-    const isOverdue = returnTime > etaTime;
-
-    // Step 2: Update log
-    const { data: updatedLog, error: updateError } = await supabase
-      .from('kunci_log')
-      .update({
-        tarikh_masa_pulang: returnData.tarikh_masa_pulang,
-        pegawai_penerima_id: returnData.pegawai_penerima_id,
-        keadaan_kunci: returnData.keadaan_kunci,
-        keadaan_mangga: returnData.keadaan_mangga,
-        catatan_penggunaan: returnData.catatan_penggunaan,
-        duration_seconds: durationSeconds,
-        is_overdue: isOverdue
-      })
-      .eq('id', logId)
-      .select()
-      .single();
-
-    if (updateError) throw updateError;
-
-    // Step 3: Set key status back to 'available'
-    const { error: keyError } = await supabase
-      .from('kunci_daftar')
-      .update({ status: 'available' })
-      .eq('id', originalLog.kunci_id);
-
-    if (keyError) throw keyError;
-
-    return { data: updatedLog as KunciLog, error: null };
-  } catch (error: any) {
-    console.error('returnKunci error:', error);
-    return { data: null, error: error?.message || 'Failed to record return transaction' };
+    const keyObj = INITIAL_REAL_KUNCI.find((k) => k.id === targetKunciId);
+    const receiver = resolveStaffUser(returnData.pegawai_penerima_id);
+    recordAuditLog({
+      userId: returnData.pegawai_penerima_id,
+      action: 'UPDATE',
+      module: 'mykunci',
+      entityType: 'kunci_log',
+      entityId: logId,
+      newValues: {
+        status: 'completed',
+        key_name: keyObj?.nama_kunci || 'Kunci Fizikal',
+        remarks: returnData.catatan_penggunaan || 'Kunci dipulangkan dalam keadaan baik',
+        description: `Pemulangan ${keyObj?.nama_kunci || 'kunci'} telah disahkan diterima oleh ${receiver?.full_name || 'pegawai penerima'}.`,
+      },
+    });
+  } catch (auditErr) {
+    console.warn('Failed to record audit log for key return:', auditErr);
   }
+
+  return { data: updatedLog, error: null };
 };
 
 export const getKunciAudits = async (kunciId?: string): Promise<ApiResponse<KunciAuditBulanan[]>> => {

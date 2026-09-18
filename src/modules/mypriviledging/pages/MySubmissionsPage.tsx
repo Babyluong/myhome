@@ -55,7 +55,7 @@ export const MySubmissionsPage: React.FC = () => {
   };
 
   const handleDeleteSubmission = (id: string) => {
-    if (window.confirm('Adakah anda pasti ingin memadam rekod prosedur ini?')) {
+    if (window.confirm('Are you sure you want to delete this procedure submission?')) {
       priviledgingService.deleteSubmission(id);
       loadData();
     }
@@ -79,10 +79,10 @@ export const MySubmissionsPage: React.FC = () => {
           </div>
           <div>
             <h2 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
-              Buku Log & Permohonan Prosedur Saya
+              My Clinical Procedures Logbook & Submissions
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Semak rekod prosedur yang telah disimpan sebagai draf, dihantar untuk semakan, atau diluluskan.
+              Review procedure records saved as drafts, submitted for clinical review, or certified.
             </p>
           </div>
         </div>
@@ -95,7 +95,7 @@ export const MySubmissionsPage: React.FC = () => {
           className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-xl shadow-xs flex items-center gap-1.5 self-start sm:self-auto transition-all active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          <span>Log Prosedur Baru</span>
+          <span>Log New Procedure</span>
         </button>
       </div>
 

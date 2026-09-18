@@ -441,66 +441,142 @@ export const InventoryOverviewPage: React.FC = () => {
             {/* Table Listing */}
             {!isLoading && !error && (
               <div className="border border-slate-100 rounded-2xl overflow-hidden">
-                <Table>
-                  <Table.Header>
-                    <Table.Row className="bg-slate-50/50">
-                      <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">{language === 'ms' ? 'KOD' : 'CODE'}</Table.Cell>
-                      <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">{language === 'ms' ? 'NAMA ITEM' : 'ITEM NAME'}</Table.Cell>
-                      <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right">{language === 'ms' ? 'BAKI SEMASA' : 'CURRENT BALANCE'}</Table.Cell>
-                      <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono">AMC</Table.Cell>
-                      <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono">MOS</Table.Cell>
-                      <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-center">STATUS</Table.Cell>
-                    </Table.Row>
-                  </Table.Header>
-                  <Table.Body className="divide-y divide-slate-100">
-                    {filteredItemsList.length === 0 ? (
-                      <Table.Row>
-                        <Table.Cell colSpan={6} className="text-center text-slate-400 py-12 text-sm font-medium">
-                          {language === 'ms' 
-                            ? 'Tiada item inventori ditemui sepadan dengan tapisan anda.'
-                            : 'No inventory items found matching your filters.'}
-                        </Table.Cell>
+                {/* Desktop View: Full Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <Table>
+                    <Table.Header>
+                      <Table.Row className="bg-slate-50/50">
+                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">{language === 'ms' ? 'KOD' : 'CODE'}</Table.Cell>
+                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">{language === 'ms' ? 'NAMA ITEM' : 'ITEM NAME'}</Table.Cell>
+                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right">{language === 'ms' ? 'BAKI SEMASA' : 'CURRENT BALANCE'}</Table.Cell>
+                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono">AMC</Table.Cell>
+                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono">MOS</Table.Cell>
+                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-center">STATUS</Table.Cell>
                       </Table.Row>
-                    ) : (
-                      filteredItemsList.map(item => {
-                        const amcVal = amcMap.get(item.item_id) || 0
-                        const mosVal = amcVal > 0 ? parseFloat((item.current_stock / amcVal).toFixed(1)) : null
-                        
-                        return (
-                          <Table.Row key={`${item.item_type}-${item.item_id}`} className="hover:bg-slate-50/30 transition-colors">
-                            <Table.Cell className="font-mono text-xs font-bold text-slate-500">{item.item_code}</Table.Cell>
-                            <Table.Cell className="py-3 text-sm font-black text-slate-800">
-                              <div className="flex flex-col">
-                                <span>{item.item_name}</span>
-                                <span className="text-[10px] text-slate-400 font-bold uppercase mt-0.5 tracking-wider">
-                                  {item.item_type} • {item.unit_of_measure}
-                                </span>
-                              </div>
-                            </Table.Cell>
-                            <Table.Cell className="text-right font-mono font-black text-sm text-slate-700">
-                              {item.current_stock}
-                            </Table.Cell>
-                            <Table.Cell className="text-right font-mono text-xs text-slate-500 font-bold">
-                              {amcVal > 0 ? `${amcVal}/${language === 'ms' ? 'bln' : 'mo'}` : `0/${language === 'ms' ? 'bln' : 'mo'}`}
-                            </Table.Cell>
-                            <Table.Cell className="text-right font-mono text-xs font-black">
+                    </Table.Header>
+                    <Table.Body className="divide-y divide-slate-100">
+                      {filteredItemsList.length === 0 ? (
+                        <Table.Row>
+                          <Table.Cell colSpan={6} className="text-center text-slate-400 py-12 text-sm font-medium">
+                            {language === 'ms' 
+                              ? 'Tiada item inventori ditemui sepadan dengan tapisan anda.'
+                              : 'No inventory items found matching your filters.'}
+                          </Table.Cell>
+                        </Table.Row>
+                      ) : (
+                        filteredItemsList.map(item => {
+                          const amcVal = amcMap.get(item.item_id) || 0
+                          const mosVal = amcVal > 0 ? parseFloat((item.current_stock / amcVal).toFixed(1)) : null
+                          
+                          return (
+                            <Table.Row key={`${item.item_type}-${item.item_id}`} className="hover:bg-slate-50/30 transition-colors">
+                              <Table.Cell className="font-mono text-xs font-bold text-slate-500">{item.item_code}</Table.Cell>
+                              <Table.Cell className="py-3 text-sm font-black text-slate-800">
+                                <div className="flex flex-col">
+                                  <span>{item.item_name}</span>
+                                  <span className="text-[10px] text-slate-400 font-bold uppercase mt-0.5 tracking-wider">
+                                    {item.item_type} • {item.unit_of_measure}
+                                  </span>
+                                </div>
+                              </Table.Cell>
+                              <Table.Cell className="text-right font-mono font-black text-sm text-slate-700">
+                                {item.current_stock}
+                              </Table.Cell>
+                              <Table.Cell className="text-right font-mono text-xs text-slate-500 font-bold">
+                                {amcVal > 0 ? `${amcVal}/${language === 'ms' ? 'bln' : 'mo'}` : `0/${language === 'ms' ? 'bln' : 'mo'}`}
+                              </Table.Cell>
+                              <Table.Cell className="text-right font-mono text-xs font-black">
+                                {mosVal !== null ? (
+                                  <span className={mosVal < 1.0 ? 'text-rose-600' : mosVal < 2.0 ? 'text-amber-600' : 'text-emerald-600'}>
+                                    {mosVal} {language === 'ms' ? 'bln' : 'mo'}
+                                  </span>
+                                ) : (
+                                  <span className="text-slate-300">—</span>
+                                )}
+                              </Table.Cell>
+                              <Table.Cell className="text-center">
+                                {renderStatusBadge(item.status)}
+                              </Table.Cell>
+                            </Table.Row>
+                          )
+                        })
+                      )}
+                    </Table.Body>
+                  </Table>
+                </div>
+
+                {/* Mobile View: Native App Responsive Cards (Zero Horizontal Scrolling) */}
+                <div className="md:hidden divide-y divide-slate-100 bg-white">
+                  {filteredItemsList.length === 0 ? (
+                    <div className="text-center text-slate-400 py-12 px-4 text-xs font-medium">
+                      {language === 'ms' 
+                        ? 'Tiada item inventori ditemui sepadan dengan tapisan anda.'
+                        : 'No inventory items found matching your filters.'}
+                    </div>
+                  ) : (
+                    filteredItemsList.map(item => {
+                      const amcVal = amcMap.get(item.item_id) || 0
+                      const mosVal = amcVal > 0 ? parseFloat((item.current_stock / amcVal).toFixed(1)) : null
+                      
+                      return (
+                        <div 
+                          key={`${item.item_type}-${item.item_id}`} 
+                          className="p-4 space-y-3 hover:bg-slate-50/50 transition-colors"
+                        >
+                          {/* Top Row: Code & Status */}
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-mono text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">
+                              {item.item_code}
+                            </span>
+                            {renderStatusBadge(item.status)}
+                          </div>
+
+                          {/* Item Name & Details */}
+                          <div>
+                            <h4 className="text-sm font-bold text-slate-900 leading-snug break-words">
+                              {item.item_name}
+                            </h4>
+                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mt-0.5">
+                              {item.item_type} • {item.unit_of_measure}
+                            </span>
+                          </div>
+
+                          {/* Metrics Grid Chip */}
+                          <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
+                            <div>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                                {language === 'ms' ? 'Baki Semasa' : 'Balance'}
+                              </span>
+                              <span className="font-mono font-black text-xs text-slate-800">
+                                {item.current_stock}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                                AMC
+                              </span>
+                              <span className="font-mono font-bold text-xs text-slate-600">
+                                {amcVal > 0 ? `${amcVal}` : '0'}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                                MOS
+                              </span>
                               {mosVal !== null ? (
-                                <span className={mosVal < 1.0 ? 'text-rose-600' : mosVal < 2.0 ? 'text-amber-600' : 'text-emerald-600'}>
+                                <span className={`font-mono font-bold text-xs ${mosVal < 1.0 ? 'text-rose-600' : mosVal < 2.0 ? 'text-amber-600' : 'text-emerald-600'}`}>
                                   {mosVal} {language === 'ms' ? 'bln' : 'mo'}
                                 </span>
                               ) : (
-                                <span className="text-slate-300">—</span>
+                                <span className="text-slate-300 text-xs">—</span>
                               )}
-                            </Table.Cell>
-                            <Table.Cell className="text-center">
-                              {renderStatusBadge(item.status)}
-                            </Table.Cell>
-                          </Table.Row>
-                        )
-                      })
-                    )}
-                  </Table.Body>
-                </Table>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })
+                  )}
+                </div>
               </div>
             )}
 

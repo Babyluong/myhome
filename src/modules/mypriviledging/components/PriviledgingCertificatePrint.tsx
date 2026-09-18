@@ -49,7 +49,7 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
             <button
               onClick={onBack}
               className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
-              title="Kembali"
+              title="Back"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -57,10 +57,10 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
           <div>
             <h2 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Award className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-              Sijil Perakuan Privileging & Penurunan Kuasa
+              Privileging Certificate & Clinical Authorization Letter
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Dokumen rasmi KKM untuk cetakan fizikal atau simpanan audit hospital
+              Official MOH document for physical printing or hospital audit archive
             </p>
           </div>
         </div>
@@ -72,7 +72,7 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
             className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs md:text-sm font-semibold rounded-xl shadow-xs transition-all flex items-center gap-2 active:scale-95"
           >
             <Printer className="w-4 h-4" />
-            <span>Cetak Sijil Rasmi (A4)</span>
+            <span>Print Official Certificate (A4)</span>
           </button>
         </div>
       </div>
@@ -105,13 +105,13 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
               />
             </div>
             <h1 className="text-base md:text-lg font-bold tracking-widest uppercase text-slate-950 font-sans">
-              KEMENTERIAN KESIHATAN MALAYSIA
+              MINISTRY OF HEALTH MALAYSIA
             </h1>
             <h2 className="text-sm md:text-base font-bold tracking-wider uppercase text-slate-800 font-sans mt-0.5">
-              HOSPITAL LAWAS, SARAWAK
+              LAWAS HOSPITAL, SARAWAK
             </h2>
             <p className="text-xs text-slate-600 font-sans mt-0.5 uppercase tracking-wide">
-              Jawatankuasa Credentialing & Privileging (JKCP) Hospital
+              Hospital Credentialing & Privileging Committee (JKCP)
             </p>
           </div>
 
@@ -119,15 +119,15 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
           <div className="text-center my-6 relative z-10">
             <div className="inline-block border-y-2 border-slate-800 py-2 px-6">
               <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider text-slate-900">
-                SIJIL PERAKUAN PRIVILEGING & SURAT PENURUNAN KUASA KLINIKAL
+                CLINICAL CREDENTIALING & PRIVILEGING AUTHORISATION CERTIFICATE
               </h3>
               <p className="text-[11px] font-sans font-semibold text-slate-600 tracking-wide mt-0.5 uppercase">
-                CLINICAL CREDENTIALING & PRIVILEGING AUTHORISATION CERTIFICATE
+                SIJIL PERAKUAN PRIVILEGING & SURAT PENURUNAN KUASA KLINIKAL
               </p>
             </div>
             <div className="flex justify-between items-center text-xs font-sans text-slate-600 mt-3 px-2">
-              <span><strong>No. Rujukan:</strong> {certificateData.certificateNo}</span>
-              <span><strong>Tarikh Dikeluarkan:</strong> {certificateData.issueDate}</span>
+              <span><strong>Ref. No.:</strong> {certificateData.certificateNo}</span>
+              <span><strong>Issue Date:</strong> {certificateData.issueDate}</span>
             </div>
           </div>
 
@@ -136,27 +136,27 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
             <table className="w-full text-xs border border-slate-400">
               <tbody>
                 <tr className="border-b border-slate-300">
-                  <td className="w-1/4 p-2 bg-slate-100 font-bold text-slate-800">Nama Penuh Pegawai:</td>
+                  <td className="w-1/4 p-2 bg-slate-100 font-bold text-slate-800">Officer Full Name:</td>
                   <td className="w-3/4 p-2 font-bold text-slate-950 uppercase">{staff.fullName}</td>
                 </tr>
                 <tr className="border-b border-slate-300">
-                  <td className="p-2 bg-slate-100 font-bold text-slate-800">No. Kad Pengenalan:</td>
+                  <td className="p-2 bg-slate-100 font-bold text-slate-800">National Identity Card No.:</td>
                   <td className="p-2 font-mono font-semibold">{staff.icNumber}</td>
                 </tr>
                 <tr className="border-b border-slate-300">
-                  <td className="p-2 bg-slate-100 font-bold text-slate-800">Jawatan & Gred:</td>
+                  <td className="p-2 bg-slate-100 font-bold text-slate-800">Position & Grade:</td>
                   <td className="p-2 font-semibold">{staff.position} ({staff.grade})</td>
                 </tr>
                 <tr className="border-b border-slate-300">
-                  <td className="p-2 bg-slate-100 font-bold text-slate-800">No. Pendaftaran Lembaga:</td>
-                  <td className="p-2 font-mono font-semibold">{staff.boardRegistrationNo} (LJM / LPPPM)</td>
+                  <td className="p-2 bg-slate-100 font-bold text-slate-800">Board Registration No.:</td>
+                  <td className="p-2 font-mono font-semibold">{staff.boardRegistrationNo} (Nursing / MA Board)</td>
                 </tr>
                 <tr className="border-b border-slate-300">
-                  <td className="p-2 bg-slate-100 font-bold text-slate-800">No. Perakuan Amalan (APC):</td>
-                  <td className="p-2 font-mono font-semibold">{staff.apcNumber} (Sahlaku Sehingga: {staff.apcExpiryDate})</td>
+                  <td className="p-2 bg-slate-100 font-bold text-slate-800">Annual Practicing Certificate (APC):</td>
+                  <td className="p-2 font-mono font-semibold">{staff.apcNumber} (Valid Until: {staff.apcExpiryDate})</td>
                 </tr>
                 <tr>
-                  <td className="p-2 bg-slate-100 font-bold text-slate-800">Jabatan / Penempatan:</td>
+                  <td className="p-2 bg-slate-100 font-bold text-slate-800">Department / Placement:</td>
                   <td className="p-2 font-semibold text-slate-900">{staff.department}</td>
                 </tr>
               </tbody>
@@ -166,7 +166,7 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
           {/* Certification Statement */}
           <div className="my-5 text-justify text-xs md:text-sm leading-relaxed relative z-10">
             <p>
-              Dengan ini diperakui bahawa pegawai di atas telah dinilai kompetensi klinikal, kemahiran praktikal, dan pematuhan prosedur melalui semakan Buku Log Klinikal serta <strong>DIBERIKAN PENURUNAN KUASA (CLINICALLY PRIVILEGED)</strong> untuk melaksanakan prosedur-prosedur klinikal berikut di Hospital Lawas selaras dengan <em>Garis Panduan Credentialing & Privileging Kementerian Kesihatan Malaysia</em>:
+              This is to certify that the above clinical officer has undergone comprehensive clinical competency assessment, procedural skills evaluation, and logbook verification, and is hereby <strong>CLINICALLY PRIVILEGED</strong> to perform the following clinical procedures at Lawas Hospital in accordance with <em>Ministry of Health Malaysia Credentialing & Privileging Guidelines</em>:
             </p>
           </div>
 
@@ -174,7 +174,7 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
           <div className="my-5 relative z-10 font-sans space-y-4">
             {approvedProcedures.length === 0 ? (
               <div className="p-4 border border-dashed border-slate-300 text-center text-xs text-slate-500">
-                Tiada prosedur yang diluluskan untuk dicetak lagi. Sila hantar log prosedur untuk semakan JKCP.
+                No approved procedures to display yet. Please submit procedural logbook for JKCP evaluation.
               </div>
             ) : (
               approvedProcedures.map((cat, cIdx) => (
@@ -182,16 +182,16 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
                   <div className="bg-slate-800 text-white font-bold text-xs px-3 py-1.5 flex items-center justify-between">
                     <span>{cat.categoryName}</span>
                     <span className="text-[10px] font-normal opacity-80">
-                      {cat.procedures.length} Prosedur Ditauliahkan
+                      {cat.procedures.length} Procedures Certified
                     </span>
                   </div>
                   <table className="w-full text-xs text-left">
                     <thead>
                       <tr className="bg-slate-100 border-b border-slate-300 text-[11px] font-bold text-slate-700">
-                        <th className="py-1.5 px-3 w-8 text-center">Bil</th>
-                        <th className="py-1.5 px-3">Nama Prosedur Klinikal</th>
-                        <th className="py-1.5 px-3 w-36">Tahap Privileging</th>
-                        <th className="py-1.5 px-3 w-28 text-center">Tempoh Sahlaku</th>
+                        <th className="py-1.5 px-3 w-8 text-center">No.</th>
+                        <th className="py-1.5 px-3">Clinical Procedure Name</th>
+                        <th className="py-1.5 px-3 w-40">Privileging Level</th>
+                        <th className="py-1.5 px-3 w-28 text-center">Validity Period</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200">
@@ -201,10 +201,10 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
                           <td className="py-1.5 px-3 font-semibold text-slate-900">{proc.name}</td>
                           <td className="py-1.5 px-3 font-medium text-emerald-800">
                             {proc.level === 'core'
-                              ? 'Prosedur Teras (Berdikari)'
+                              ? 'Core Procedure (Independent)'
                               : proc.level === 'specialized'
-                              ? 'Prosedur Khusus / Lanjutan'
-                              : 'Bersyarat (Pengawasan)'}
+                              ? 'Specialized / Advanced Procedure'
+                              : 'Conditional (Supervised)'}
                           </td>
                           <td className="py-1.5 px-3 text-center text-[11px] text-slate-700">
                             {proc.validUntil}
@@ -220,9 +220,9 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
 
           {/* Validity & Terms */}
           <div className="my-4 p-3 bg-slate-50 border border-slate-300 rounded-xs text-xs font-sans text-slate-700 relative z-10">
-            <p className="font-bold text-slate-900">Syarat & Tempoh Sahlaku Privileging:</p>
+            <p className="font-bold text-slate-900">Privileging Terms & Validity Duration:</p>
             <p className="mt-0.5">
-              Pentauliahan ini berkuatkuasa dari <strong>{certificateData.issueDate}</strong> sehingga <strong>{certificateData.expiryDate}</strong> (Kitaran 3 Tahun KKM). Pegawai bertanggungjawab memperbaharui permohonan 6 bulan sebelum tarikh luput berserta salinan buku log tahun semasa.
+              This credentialing authorization is effective from <strong>{certificateData.issueDate}</strong> until <strong>{certificateData.expiryDate}</strong> (MOH 3-Year Cycle). The clinical officer is responsible for submitting renewal application 6 months prior to expiry date accompanied by verified annual logbook records.
             </p>
           </div>
 
@@ -249,7 +249,7 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
                     <rect x="50" y="75" width="10" height="10" fill="black" />
                   </svg>
                 </div>
-                <p className="text-[10px] text-slate-500 font-mono mt-1">Imbas untuk Verifikasi Sah KKM</p>
+                <p className="text-[10px] text-slate-500 font-mono mt-1">Scan for MOH Digital Verification</p>
                 <p className="text-[9px] text-slate-400 font-mono">{certificateData.certificateNo}</p>
               </div>
 
@@ -257,7 +257,7 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
               <div className="text-center">
                 <div className="h-16 flex items-end justify-center pb-1">
                   <div className="font-serif italic text-sm text-slate-700 font-bold">
-                    [Tandatangan Digital JKCP]
+                    [JKCP Digital Signature]
                   </div>
                 </div>
                 <div className="border-t border-slate-700 pt-1 text-xs">
@@ -270,7 +270,7 @@ export const PriviledgingCertificatePrint: React.FC<PriviledgingCertificatePrint
               <div className="text-center">
                 <div className="h-16 flex items-end justify-center pb-1">
                   <div className="font-serif italic text-sm text-slate-700 font-bold">
-                    [Tandatangan Digital Pengarah]
+                    [Hospital Director Digital Signature]
                   </div>
                 </div>
                 <div className="border-t border-slate-700 pt-1 text-xs">

@@ -112,7 +112,7 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
   const groupedCatalog = useMemo(() => {
     const groups: Record<string, AdminPerihalItem[]> = {}
     filteredCatalog.forEach((item) => {
-      const groupName = item.meal_session ? item.meal_session.toUpperCase() : 'LAIN-LAIN / PERKHIDMATAN'
+      const groupName = item.meal_session ? item.meal_session.toUpperCase() : 'OTHER / SERVICES'
       if (!groups[groupName]) {
         groups[groupName] = []
       }
@@ -140,20 +140,20 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
   }
 
   const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`Adakah anda pasti ingin memadamkan "${name}" daripada katalog?`)) return
+    if (!window.confirm(`Are you sure you want to delete "${name}" from the catalog?`)) return
     try {
       const { error } = await deletePerihalItem(id)
       if (error) throw error
-      toast.success('Item berjaya dipadamkan daripada katalog')
+      toast.success('Item successfully removed from catalog')
       onRefresh?.()
     } catch (err: any) {
-      toast.error('Gagal memadam item', err.message || 'Ralat sistem')
+      toast.error('Failed to delete item', err.message || 'System error')
     }
   }
 
   // Export to CSV
   const handleExportCSV = () => {
-    const headers = ['Bil', 'Perihal Item', 'Keterangan', 'Program', 'Objek', 'Kategori', 'Sesi/Unit', 'Harga/Unit (RM)']
+    const headers = ['No.', 'Item Name', 'Description', 'Program', 'Object', 'Category', 'Session/Unit', 'Price/Unit (RM)']
     const rows = filteredCatalog.map((item, idx) => [
       idx + 1,
       `"${item.perihal_name.replace(/"/g, '""')}"`,
@@ -169,11 +169,11 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)
-    link.setAttribute('download', `Katalog_Perihal_Hospital_Lawas_${new Date().toISOString().slice(0, 10)}.csv`)
+    link.setAttribute('download', `Perihal_Catalog_Hospital_Lawas_${new Date().toISOString().slice(0, 10)}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-    toast.success('Katalog berjaya dieksport ke CSV!')
+    toast.success('Catalog successfully exported to CSV!')
   }
 
   return (
@@ -219,7 +219,7 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
           }`}
         >
           <Tag className="w-4 h-4" />
-          <span>Katalog Perihal ({catalogItems.length})</span>
+          <span>Perihal Catalog ({catalogItems.length})</span>
         </button>
 
         <button
@@ -231,7 +231,7 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
           }`}
         >
           <Building className="w-4 h-4" />
-          <span>Direktori Pembekal ({suppliers.length})</span>
+          <span>Suppliers Directory ({suppliers.length})</span>
         </button>
       </div>
 
@@ -261,10 +261,10 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                 }}
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none"
               >
-                <option value="all">All Program</option>
-                <option value="022300">022300 - Dietetik Dan Sajian</option>
-                <option value="020200">020200 - Pengurusan Hospital</option>
-                <option value="P42">P42 - Pembangunan</option>
+                <option value="all">All Programs</option>
+                <option value="022300">022300 - Dietetics & Food Services</option>
+                <option value="020200">020200 - Hospital Management</option>
+                <option value="P42">P42 - Development</option>
               </select>
             </div>
 
@@ -281,7 +281,7 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                 }}
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none"
               >
-                <option value="all">All Objek</option>
+                <option value="all">All Objects</option>
                 {availableObjeks.map((obj) => (
                   <option key={obj} value={obj}>
                     {obj}
@@ -293,14 +293,14 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
             {/* KATEGORI DROPDOWN */}
             <div className="space-y-1.5">
               <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider">
-                KATEGORI
+                CATEGORY
               </label>
               <select
                 value={selectedKategori}
                 onChange={(e) => setSelectedKategori(e.target.value)}
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none"
               >
-                <option value="all">All Kategori</option>
+                <option value="all">All Categories</option>
                 {availableKategoris.map((kat) => (
                   <option key={kat} value={kat}>
                     {kat}
@@ -427,14 +427,14 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                                 <button
                                   onClick={() => handleOpenEdit(item)}
                                   className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                  title="Kemaskini Item"
+                                  title="Edit Item"
                                 >
                                   <Edit2 className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => handleDelete(item.id, item.perihal_name)}
                                   className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                                  title="Padam Item"
+                                  title="Delete Item"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -448,7 +448,7 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                 })
               ) : (
                 <div className="p-12 text-center text-slate-400 text-xs">
-                  Tiada item perihal ditemui mengikut tapisan semasa.
+                  No perihal items found matching current filter.
                 </div>
               )}
             </div>
@@ -477,14 +477,14 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                   </div>
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  Aktif
+                  Active
                 </span>
               </div>
 
               <div className="space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-3">
                 {s.contact_person && (
                   <p className="flex items-center gap-2">
-                    <span className="text-slate-400">Pegawai:</span>
+                    <span className="text-slate-400">Contact Person:</span>
                     <strong className="text-slate-800">{s.contact_person}</strong>
                   </p>
                 )}
@@ -511,7 +511,7 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
               <div className="flex items-center gap-2 pt-2 border-t border-slate-100 text-[10px]">
                 <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded border border-emerald-200 flex items-center gap-1">
                   <FileCheck2 className="w-3 h-3" />
-                  <span>MOF DISAHKAN</span>
+                  <span>MOF VERIFIED</span>
                 </span>
                 <span className="px-2 py-0.5 bg-purple-50 text-purple-700 font-bold rounded border border-purple-200">
                   BUMIPUTERA

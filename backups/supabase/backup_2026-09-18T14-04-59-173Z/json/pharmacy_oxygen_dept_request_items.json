@@ -1,0 +1,551 @@
+[
+  {
+    "id": "683be6e1-f1b0-420a-b531-155a410e13bf",
+    "request_id": "0207f36c-5d5f-4852-8106-b49a7aa22d30",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 2,
+    "quantity_issued": 2,
+    "created_at": "2026-09-15T00:09:09.162085+00:00",
+    "usage_notes": "Serials (2): O2-P101-F-0094, O2-P101-F-0138 | [Saiz Khas: P101-F-BN]"
+  },
+  {
+    "id": "b948e383-8fb4-4882-bd11-3fd8c2063c54",
+    "request_id": "5b37383a-dab5-43f0-ac69-4e8ca775c80f",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 5,
+    "quantity_issued": 5,
+    "created_at": "2026-09-14T04:18:11.987553+00:00",
+    "usage_notes": "Serials (5): O2-P101-F-0017, O2-P101-F-0107, O2-P101-F-0148, O2-P101-F-0120, O2-P101-F-0023 | [Saiz Khas: P101-F-BN]"
+  },
+  {
+    "id": "d84fd093-55b7-4dbc-a2d5-0eefef832d58",
+    "request_id": "0207f36c-5d5f-4852-8106-b49a7aa22d30",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 4,
+    "quantity_issued": 4,
+    "created_at": "2026-09-15T00:09:09.162085+00:00",
+    "usage_notes": "Serials (4): SABOXY-1466029, SABOXY-1349187, SABOXY-192097, SABOXY-80642 | male ward"
+  },
+  {
+    "id": "9a0f6cef-17f5-4161-8cca-d04efd1a777e",
+    "request_id": "d17ebd72-4726-485e-9bbb-c6fb7a9b3021",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 4,
+    "quantity_issued": 0,
+    "created_at": "2026-09-01T01:43:18.374208+00:00",
+    "usage_notes": "male ward"
+  },
+  {
+    "id": "a3bac31b-9bd5-4992-b18e-7a32daa34a8b",
+    "request_id": "0207f36c-5d5f-4852-8106-b49a7aa22d30",
+    "cylinder_size_id": "2175d196-4e97-4bb9-bfaa-c335a25743d3",
+    "quantity": 2,
+    "quantity_issued": 2,
+    "created_at": "2026-09-15T00:09:09.162085+00:00",
+    "usage_notes": "Serials (2): O2-P101-F-0092, O2-P101-F-0149 | [Pin Index PI]"
+  },
+  {
+    "id": "fc04bf9d-8be4-4769-aa53-dc32bf403015",
+    "request_id": "c7ce6567-5f31-4548-b542-48bd727f8bd1",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 2,
+    "quantity_issued": 2,
+    "created_at": "2026-09-01T02:01:26.690739+00:00",
+    "usage_notes": ""
+  },
+  {
+    "id": "3ae66475-e8be-482f-afde-06a327742f5b",
+    "request_id": "09433d97-37f3-424b-af33-60e3b78fa91f",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 1,
+    "quantity_issued": 0,
+    "created_at": "2026-09-01T08:12:50.10915+00:00",
+    "usage_notes": "male ward"
+  },
+  {
+    "id": "6eda658e-eae2-4b45-aac3-62204d7e1e61",
+    "request_id": "674530ad-9e58-4136-89ec-5767629ce0b1",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 4,
+    "quantity_issued": 0,
+    "created_at": "2026-09-01T08:14:40.331438+00:00",
+    "usage_notes": "Male Ward Lawas Hospital"
+  },
+  {
+    "id": "58152333-f0d6-405e-9399-38a0cf93c67d",
+    "request_id": "6744dea7-467d-4132-b126-304541a5d029",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 5,
+    "quantity_issued": 5,
+    "created_at": "2026-09-01T02:27:41.409192+00:00",
+    "usage_notes": "Serials (5): O2-P101-F-0175, O2-P101-F-0164, O2-P101-F-0182, O2-P101-F-0133, O2-P101-F-0070 | [Bullnose BN]"
+  },
+  {
+    "id": "fb9297b1-01be-459d-8d23-7ce97edc8426",
+    "request_id": "983f1231-1814-427b-8d15-d8739e413fd5",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 4,
+    "quantity_issued": 4,
+    "created_at": "2026-09-15T23:19:08.808823+00:00",
+    "usage_notes": "Serials (4): SABOXY-192012, SABOXY-K13938088, SABOXY-072311, SABOXY-520365 | [Bullnose BN] MALE WARD"
+  },
+  {
+    "id": "9f50a0f3-11c2-4112-b3fe-b205b8bd83cf",
+    "request_id": "bde6e846-0c5c-4f3c-9000-a8afa841d3f8",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 4,
+    "quantity_issued": 4,
+    "created_at": "2026-09-01T08:29:17.882408+00:00",
+    "usage_notes": "Serials (4): O2-P101-F-0126, O2-P101-F-0117, O2-P101-F-0154, O2-P101-F-0053 | [Bullnose BN] Male Ward Lawas Hospital"
+  },
+  {
+    "id": "679184c0-1ef5-4e54-b874-cc91332e8bcb",
+    "request_id": "91777f35-f346-41ee-9ac4-dc6bf8697b6d",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 5,
+    "quantity_issued": 0,
+    "created_at": "2026-09-01T23:54:23.24302+00:00",
+    "usage_notes": "Kegunaan untuk FEMALE WARD"
+  },
+  {
+    "id": "03e79e68-7489-4f41-9be5-3954e4812d0c",
+    "request_id": "fc9d6de9-908f-4ccb-8305-4b88161f2b97",
+    "cylinder_size_id": "2175d196-4e97-4bb9-bfaa-c335a25743d3",
+    "quantity": 5,
+    "quantity_issued": 5,
+    "created_at": "2026-09-02T00:02:13.835734+00:00",
+    "usage_notes": "Serials (5): O2-P101-F-0080, O2-P101-F-0155, O2-P101-F-0186, O2-P101-F-0005, O2-P101-F-0016 | [Pin Index PI] KEGUNAAN FW"
+  },
+  {
+    "id": "88efa1e1-b173-48f0-ab5d-7f0bc9e1aa63",
+    "request_id": "01541b2e-aa3f-4ea4-9cda-718963a6919d",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 5,
+    "quantity_issued": 5,
+    "created_at": "2026-09-02T01:59:37.923891+00:00",
+    "usage_notes": "Serials (5): O2-P101-F-0169, O2-P101-F-0184, O2-P101-F-0087, O2-P101-F-0121, O2-P101-F-0199 | [Bullnose BN] FEMALE  WARD"
+  },
+  {
+    "id": "671d193e-6058-469f-8ccf-02cdc318e671",
+    "request_id": "7e93b344-5aa0-4fbc-80a1-908e389f05c1",
+    "cylinder_size_id": "f5a38d74-4d0d-49c4-af20-1dab5f5cb852",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-02T00:01:34.766545+00:00",
+    "usage_notes": "KEGUNAAN FW"
+  },
+  {
+    "id": "044fecaa-cb1d-48a1-807a-22311ecf640b",
+    "request_id": "2a20a1ed-8f9d-495b-b89f-f72d2df9a63d",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 4,
+    "quantity_issued": 4,
+    "created_at": "2026-09-02T01:13:35.413633+00:00",
+    "usage_notes": "Serials (4): O2-P101-F-0195, O2-P101-F-0105, O2-P101-F-0125, O2-P101-F-0145 | [Bullnose BN] Male Ward Lawas Hospital"
+  },
+  {
+    "id": "f4101dd2-0c15-4e4b-9bb7-e12ca2bc0869",
+    "request_id": "ae449c94-4f7b-4f53-9a88-00d6544fae4c",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 3,
+    "quantity_issued": 0,
+    "created_at": "2026-09-02T04:21:11.387076+00:00",
+    "usage_notes": ""
+  },
+  {
+    "id": "d03c0a46-c91c-4dc6-bc5b-ba628ae5c6f5",
+    "request_id": "d1c9f884-e75d-4f3b-9bce-541cae9547c5",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 5,
+    "quantity_issued": 5,
+    "created_at": "2026-09-02T05:03:18.103083+00:00",
+    "usage_notes": "Serials (5): O2-P101-F-0050, O2-P101-F-0174, O2-P101-F-0024, O2-P101-F-0084, O2-P101-F-0127 | [Bullnose BN]"
+  },
+  {
+    "id": "7147531b-274a-4026-93dd-a407b62b82b2",
+    "request_id": "d10c94bf-0753-45ba-901e-2c97c517e8a4",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 1,
+    "quantity_issued": 0,
+    "created_at": "2026-09-05T02:53:44.895381+00:00",
+    "usage_notes": ""
+  },
+  {
+    "id": "ad33234a-997f-435d-9e28-e59f257126b3",
+    "request_id": "e35d4951-af2e-4599-bd20-24851c8d8bee",
+    "cylinder_size_id": "2175d196-4e97-4bb9-bfaa-c335a25743d3",
+    "quantity": 4,
+    "quantity_issued": 4,
+    "created_at": "2026-09-02T08:17:41.46553+00:00",
+    "usage_notes": "[Pin Index PI] Male Ward Lawas Hospital"
+  },
+  {
+    "id": "eaae8455-f0d7-457b-b0ca-7eff1e1c371d",
+    "request_id": "d10c94bf-0753-45ba-901e-2c97c517e8a4",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 4,
+    "quantity_issued": 0,
+    "created_at": "2026-09-05T02:53:44.895381+00:00",
+    "usage_notes": "[Bullnose BN]"
+  },
+  {
+    "id": "7c471af1-b084-44d6-a97e-e6ff569a8b12",
+    "request_id": "eb5335ea-8d05-4aa7-856c-ff5619327568",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 7,
+    "quantity_issued": 7,
+    "created_at": "2026-09-04T00:57:19.700783+00:00",
+    "usage_notes": "Serials (7): O2-P101-F-0119, O2-P101-F-0149, O2-P101-F-0093, O2-P101-F-0139, O2-P101-F-0159, O2-P101-F-0141, O2-P101-F-0109 | [Bullnose BN] HDU weekly usage"
+  },
+  {
+    "id": "91db40a8-6946-44ba-9f83-4664fc8b50a7",
+    "request_id": "70c9a94e-a369-4439-b787-942b304b430d",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-17T23:45:22.860514+00:00",
+    "usage_notes": "Serials (1): O2-P101-F-0130 | [Bullnose BN]"
+  },
+  {
+    "id": "810b89de-94c4-467e-b72a-e2d9395bfb17",
+    "request_id": "041724f6-b79e-4f29-9d98-c1c12b3f7bde",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 8,
+    "quantity_issued": 8,
+    "created_at": "2026-09-04T01:27:39.460981+00:00",
+    "usage_notes": "Serials (8): O2-P101-F-0155, O2-P101-F-0110, O2-P101-F-0143, O2-P101-F-0099, O2-P101-F-0103, O2-P101-F-0189, O2-P101-F-0135, O2-P101-F-0111 | [Bullnose BN] Female ward"
+  },
+  {
+    "id": "f3b7b308-7bed-465a-bbe5-1fc16cb881a8",
+    "request_id": "bd5a6249-2edf-4b0c-972f-d97a6339e834",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-17T23:24:18.587538+00:00",
+    "usage_notes": "Serials (1): SABOXY-8124A | [Bullnose BN]"
+  },
+  {
+    "id": "d7cdd5ff-37c2-4df2-8242-a899f89fe36a",
+    "request_id": "c12cb329-0be1-41e2-a121-2e795cb49442",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 10,
+    "quantity_issued": 10,
+    "created_at": "2026-09-04T03:21:14.467265+00:00",
+    "usage_notes": "[Indent Luar - Hospital Beaufort]"
+  },
+  {
+    "id": "50f90410-c62d-4261-9f1e-fb70f1ace71f",
+    "request_id": "eba42c8c-8b31-4566-9c4d-cab76158592d",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 3,
+    "quantity_issued": 0,
+    "created_at": "2026-09-06T01:30:17.351868+00:00",
+    "usage_notes": "[Bullnose BN] MALE WARD"
+  },
+  {
+    "id": "16aa6c6b-c65c-4290-99c3-caa553037a7d",
+    "request_id": "8e22fb7d-581b-4bbb-a132-0cc30aa7f333",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 10,
+    "quantity_issued": 10,
+    "created_at": "2026-09-04T10:07:57.327896+00:00",
+    "usage_notes": "[Indent Luar - Hospital Beaufort] | [Saiz Khas: BN 7.3M3] | [Keadaan: Penuh] | Serials (10): SABOXY-193030, SABOXY-187092, SABOXY-13054038, SABOXY-19567, SABOXY-1458033, SABOXY-K13937140, SABOXY-K13937072, SABOXY-35942, SABOXY-521196, SABOXY-191143"
+  },
+  {
+    "id": "05890424-9e54-4afc-b210-5a8514976644",
+    "request_id": "50c9ef52-cde2-4d8d-b1d5-a2b7ef8e193c",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 7,
+    "quantity_issued": 0,
+    "created_at": "2026-09-07T00:26:04.455617+00:00",
+    "usage_notes": "[Bullnose BN] used"
+  },
+  {
+    "id": "35b40054-3352-4a98-bf4f-8406af97aae8",
+    "request_id": "41b57c18-75b6-43e8-b2e5-9dc9943713c0",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 3,
+    "quantity_issued": 3,
+    "created_at": "2026-09-07T01:23:46.775375+00:00",
+    "usage_notes": "Serials (3): SABOXY-13054038, SABOXY-19567, SABOXY-521196 | fw"
+  },
+  {
+    "id": "b209bab2-5d6c-407c-ae26-3e79945e1852",
+    "request_id": "46a076e7-bb3e-491b-9910-cd872f59019d",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 3,
+    "quantity_issued": 3,
+    "created_at": "2026-09-07T23:27:32.339553+00:00",
+    "usage_notes": "Serials (3): SABOXY-1469121, SABOXY-K13938039, SABOXY-206191"
+  },
+  {
+    "id": "3bd57276-dff0-4282-aff7-a1079d6dae8f",
+    "request_id": "204f5137-c9e9-44ba-b40a-cf5c5c919433",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 6,
+    "quantity_issued": 6,
+    "created_at": "2026-09-10T06:32:44.034702+00:00",
+    "usage_notes": "[Pin Index PI] Serials (6): O2-P101-F-0176, O2-P101-F-0134, O2-P101-F-0157, O2-P101-F-0084, O2-P101-F-0007, O2-P101-F-0037"
+  },
+  {
+    "id": "ecc17387-d97e-40d6-acfb-cffa14110358",
+    "request_id": "1567e55c-e3e8-4293-8381-6a23a1943c4c",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 6,
+    "quantity_issued": 6,
+    "created_at": "2026-09-10T00:51:37.74629+00:00",
+    "usage_notes": "Serials (6): O2-P101-F-0004, O2-P101-F-0104, O2-P101-F-0080, O2-P101-F-0173, O2-P101-F-0013, O2-P101-F-0016 | [Bullnose BN] [Saiz Khas: 1.4]"
+  },
+  {
+    "id": "99964c6e-346a-484e-bc82-42f8460cd62a",
+    "request_id": "24650797-a168-4cbb-927f-2d4887fd600f",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-06T23:19:10.762264+00:00",
+    "usage_notes": "Serials (1): SABOXY-35942 | MALE WARD"
+  },
+  {
+    "id": "214dbe21-aaa5-42ea-8652-1505cb9076df",
+    "request_id": "46a076e7-bb3e-491b-9910-cd872f59019d",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 6,
+    "quantity_issued": 6,
+    "created_at": "2026-09-07T23:27:32.339553+00:00",
+    "usage_notes": "Serials (6): SABOXY-1462003, SABOXY-191061, SABOXY-K13937120, SABOXY-K13938141, SABOXY-1912128, SABOXY-01130 | [Bullnose BN]"
+  },
+  {
+    "id": "7846f32f-5e0d-46cd-b1f6-dfb0ea3189f5",
+    "request_id": "e8413231-c282-4b85-ac15-05d07eea774e",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-07T23:29:08.36384+00:00",
+    "usage_notes": "Serials (1): SABOXY-011043 | [Bullnose BN]"
+  },
+  {
+    "id": "a98e7086-2b58-4d0d-b369-2c099a109286",
+    "request_id": "ab555672-1052-40a5-a6a7-7d7a2d35baf0",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-05T00:45:30.62707+00:00",
+    "usage_notes": "Serials (1): saboxy-1463051"
+  },
+  {
+    "id": "9910f2cb-3659-4dc1-81d9-353fb71a9396",
+    "request_id": "5412f109-e83e-4405-a706-d349d62fa4c2",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 2,
+    "quantity_issued": 2,
+    "created_at": "2026-09-08T23:36:09.153353+00:00",
+    "usage_notes": "Serials (2): SABOXY-1352018, SABOXY-521136 | [Bullnose BN] female ward"
+  },
+  {
+    "id": "618cc25c-5e63-450d-bf0e-21d72d154c76",
+    "request_id": "0d650ec4-5c92-4976-9a3b-04ecd5a2728d",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 5,
+    "quantity_issued": 5,
+    "created_at": "2026-09-09T04:38:53.173948+00:00",
+    "usage_notes": "[Pemulangan Luar - Hospital Beaufort] | [Saiz Khas: 7.3m³] | [Keadaan: Kosong] | Serials (5): SABOXY-K13937072, SABOXY-191143, SABOXY-193030, SABOXY-1458033, SABOXY-K13937140"
+  },
+  {
+    "id": "0aa5f007-9a7d-494e-b139-31f5fee79a23",
+    "request_id": "c7ec8cfe-71d7-4225-9ce1-e40a6c1ac4f1",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 5,
+    "quantity_issued": 5,
+    "created_at": "2026-09-07T06:20:22.129925+00:00",
+    "usage_notes": "[Indent Luar - Hospital Beaufort]"
+  },
+  {
+    "id": "aa852bda-675b-4b9b-bfbf-4a0e84a82e27",
+    "request_id": "c08215a4-b8bb-4b7c-a332-fb5fe8baded7",
+    "cylinder_size_id": "0b3d30f9-d4fc-4d94-b624-d993d1f8098d",
+    "quantity": 5,
+    "quantity_issued": 5,
+    "created_at": "2026-09-09T04:51:52.519294+00:00",
+    "usage_notes": "[Indent Luar - Hospital Beaufort] | [Saiz Khas: 6.2m³] | [Keadaan: Penuh] | Serials (5): SABOXY-2171704015, SABOXY-2171400032, SABOXY-2171400102, SABOXY-2171705060, SABOXY-2171713068"
+  },
+  {
+    "id": "40967ef2-7e60-4431-bbe1-cef1ade27865",
+    "request_id": "b61d08b0-78c3-4157-bc4a-90808af11692",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 3,
+    "quantity_issued": 3,
+    "created_at": "2026-09-07T23:41:08.70939+00:00",
+    "usage_notes": "Serials (3): SABOXY-K13938020, SABOXY-072161, SABOXY-K13938116 | female ward"
+  },
+  {
+    "id": "794f2390-8116-487a-a369-a283b7803e8a",
+    "request_id": "1567e55c-e3e8-4293-8381-6a23a1943c4c",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 2,
+    "quantity_issued": 2,
+    "created_at": "2026-09-10T00:51:37.74629+00:00",
+    "usage_notes": "Serials (2): SABOXY-1451163, SABOXY-014079"
+  },
+  {
+    "id": "fa142d5f-a971-45c7-bd7c-bd1c72177cc5",
+    "request_id": "072fdc27-952c-43ab-b618-63d9b242457f",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 2,
+    "quantity_issued": 2,
+    "created_at": "2026-09-10T01:23:33.403984+00:00",
+    "usage_notes": "Serials (2): 101-N1352018, 101-N521136 | Loan cylinder (8.0m³)"
+  },
+  {
+    "id": "f6752550-6ac9-4cd1-b495-e1dd44cabf17",
+    "request_id": "64847d01-089a-4d2c-9176-baceafee30e6",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 8,
+    "quantity_issued": 8,
+    "created_at": "2026-09-11T00:51:57.790898+00:00",
+    "usage_notes": "[Pin Index PI] Serials (8): O2-P101-F-0200, O2-P101-F-0057, O2-P101-F-0190, O2-P101-F-0100, O2-P101-F-0035, O2-P101-F-0022, O2-P101-F-0158, O2-P101-F-0064"
+  },
+  {
+    "id": "e2602f64-bd95-4d45-be0a-a2386cbaf862",
+    "request_id": "587a9b72-8ed9-40a0-b74b-1c91ee374386",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 2,
+    "quantity_issued": 2,
+    "created_at": "2026-09-11T01:03:22.336748+00:00",
+    "usage_notes": "Serials (2): O2-P101-F-0027, O2-P101-F-0056 | [Bullnose BN]"
+  },
+  {
+    "id": "fd6f3c67-a9a4-4f39-9564-018ddea5b0b5",
+    "request_id": "587a9b72-8ed9-40a0-b74b-1c91ee374386",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 2,
+    "quantity_issued": 2,
+    "created_at": "2026-09-11T00:59:15.882308+00:00",
+    "usage_notes": "Serials (2): SABOXY-256353, SABOXY-K13940020 | FEMALE WARD"
+  },
+  {
+    "id": "dde3d3cb-8e3f-4abd-93ae-6a5d1c7a7ceb",
+    "request_id": "5a1dabb1-337c-41b5-bd78-c6e911c76319",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-11T02:43:34.512626+00:00",
+    "usage_notes": "[Pin Index PI] Serials (1): O2-P101-F-0165"
+  },
+  {
+    "id": "80ae341d-8ece-4502-bb86-780721500f0d",
+    "request_id": "442fdf7b-18bf-44d5-9074-cf6d20e22abf",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 8,
+    "quantity_issued": 8,
+    "created_at": "2026-09-11T06:40:27.804173+00:00",
+    "usage_notes": "[Pin Index PI] Serials (8): O2-P101-F-0176, O2-P101-F-0028, O2-P101-F-0036, O2-P101-F-0169, O2-P101-F-0199, O2-P101-F-0197, O2-P101-F-0168, O2-P101-F-0159"
+  },
+  {
+    "id": "e7986064-fd80-4111-9f7a-bc292d250a48",
+    "request_id": "b771aaeb-1943-4bbe-bdeb-530efc21ceb5",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-14T23:47:32.529268+00:00",
+    "usage_notes": "Serials (1): saboxy-1458155"
+  },
+  {
+    "id": "9be0f95c-993b-4634-a8d1-de0c4ec8211a",
+    "request_id": "e2ed020b-860a-40cf-b960-c7c15155dcb2",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-15T02:39:37.899876+00:00",
+    "usage_notes": "Serials (1): O2-P101-F-0048 | [Saiz Khas: P101-F/1.4m3 (BULLNOSE)]"
+  },
+  {
+    "id": "bcc32839-37d2-470b-9bcc-8dc73fb44871",
+    "request_id": "e2ed020b-860a-40cf-b960-c7c15155dcb2",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 6,
+    "quantity_issued": 6,
+    "created_at": "2026-09-15T02:39:37.899876+00:00",
+    "usage_notes": "Serials (6): O2-P101-F-0136, O2-P101-F-0107, O2-P101-F-0187, O2-P101-F-0114, O2-P101-F-0117, O2-P101-F-0166 | [Pin Index PI]"
+  },
+  {
+    "id": "2c5f5e89-15ae-40dd-b3e3-f78b4dc4410e",
+    "request_id": "69003f0b-a40a-487a-b4d6-cd655908eb9d",
+    "cylinder_size_id": "f5a38d74-4d0d-49c4-af20-1dab5f5cb852",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-17T02:49:33.02134+00:00",
+    "usage_notes": "Serials (1): O2-P101-D-0002"
+  },
+  {
+    "id": "b357e0af-0cf8-48ff-8556-9aa236cb6fef",
+    "request_id": "a3aef66c-f08a-4b95-8ffb-a2da67ca6580",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 6,
+    "quantity_issued": 6,
+    "created_at": "2026-09-11T23:45:47.494473+00:00",
+    "usage_notes": "Serials (6): SABOXY-187071, SABOXY-193193, SABOXY-8448047, SABOXY-26537, SABOXY-57944, SABOXY-8454049 | [Bullnose BN]"
+  },
+  {
+    "id": "fb325dbf-12fd-4f74-8806-bbb38a3f70d7",
+    "request_id": "a3aef66c-f08a-4b95-8ffb-a2da67ca6580",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 7,
+    "quantity_issued": 7,
+    "created_at": "2026-09-11T23:45:47.494473+00:00",
+    "usage_notes": "Serials (7): O2-P101-F-0082, O2-P101-F-0108, O2-P101-F-0153, O2-P101-F-0096, O2-P101-F-0031, O2-P101-F-0162, O2-P101-F-0021 | [Bullnose BN]"
+  },
+  {
+    "id": "85c83637-4189-4b09-a8a6-4769493bcfc7",
+    "request_id": "bd5a6249-2edf-4b0c-972f-d97a6339e834",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-17T23:24:18.587538+00:00",
+    "usage_notes": "Serials (1): SABOXY-K13940061 | [Bullnose BN]"
+  },
+  {
+    "id": "6e114d6b-5112-46a7-ba54-d1e9661a8777",
+    "request_id": "1479b0c7-d87d-469e-88df-82ace96d5d11",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-14T00:51:49.491819+00:00",
+    "usage_notes": "Serials (1): O2-P101-F-0114 | [Saiz Khas: P101-F/1.4m3 BULLNOSE]"
+  },
+  {
+    "id": "b493540b-bb30-4f4d-ab42-b2bd502be169",
+    "request_id": "1479b0c7-d87d-469e-88df-82ace96d5d11",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 1,
+    "quantity_issued": 1,
+    "created_at": "2026-09-14T00:51:49.491819+00:00",
+    "usage_notes": "Serials (1): O2-P101-F-0139 | [Saiz Khas: P101-F/1.4m3 PIN INDEX]"
+  },
+  {
+    "id": "e8aeae15-b3ad-48ac-b2d6-5c43a480f5fd",
+    "request_id": "33706599-2ecc-44c5-8b22-f531dc332b7c",
+    "cylinder_size_id": "0b3d30f9-d4fc-4d94-b624-d993d1f8098d",
+    "quantity": 4,
+    "quantity_issued": 4,
+    "created_at": "2026-09-17T23:45:05.543472+00:00",
+    "usage_notes": "Serials (4): O2-P101-HS-0018, O2-P101-HS-0010, O2-P101-HS-0008, O2-P101-HS-0027 | [Bullnose BN]"
+  },
+  {
+    "id": "1d7367d2-a00e-4aa8-9425-91e0a82b9eb6",
+    "request_id": "58e53a9a-c855-495a-90fc-74fa46a3e8cb",
+    "cylinder_size_id": "1f04245e-de6a-4598-bab2-5b5a421e606a",
+    "quantity": 3,
+    "quantity_issued": 3,
+    "created_at": "2026-09-13T23:28:06.143232+00:00",
+    "usage_notes": "Serials (3): P101-F-0172, O2-P101-F-0163, O2-P101-F-0116 | [Bullnose BN]"
+  },
+  {
+    "id": "dd1ea554-a8bd-4ec6-b41c-741c9fb5bded",
+    "request_id": "58e53a9a-c855-495a-90fc-74fa46a3e8cb",
+    "cylinder_size_id": "332911a0-9e8c-4c0e-980a-9df3d0197dce",
+    "quantity": 3,
+    "quantity_issued": 3,
+    "created_at": "2026-09-13T23:29:50.730665+00:00",
+    "usage_notes": "Serials (3): saboxy-K13938160, SABOXY-522148, SABOXY-520021 | [Bullnose BN]"
+  }
+]

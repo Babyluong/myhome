@@ -1010,7 +1010,7 @@ export default function FinancialReportPage() {
             </div>
 
             {/* Interactive Tab Navigation */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-hide bg-slate-100/60 backdrop-blur-md rounded-2xl border border-slate-200/60 p-1.5 shadow-inner">
+            <div className="flex items-center gap-1.5 flex-wrap pb-1.5 bg-slate-100/60 backdrop-blur-md rounded-2xl border border-slate-200/60 p-1.5 shadow-inner">
               {TABS.map(tab => {
                 const Icon = tab.icon
                 const isActive = activeTab === tab.id
