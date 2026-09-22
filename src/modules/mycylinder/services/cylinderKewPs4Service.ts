@@ -41,6 +41,7 @@ export interface CylinderLedgerItem {
   in_use_stock: number       // Cylinders currently deployed in clinical wards
   maintenance_stock: number  // In maintenance/test
   total_fleet: number        // All active cylinders
+  unit_price?: number        // Financial unit price (refill price in RM)
   last_movement_date?: string
 }
 
@@ -95,6 +96,16 @@ export interface CylinderStoreVerificationRecord {
   created_at: string
 }
 
+export const CYLINDER_STANDARD_PRICES: Record<string, number> = {
+  '101-N': 284.90,
+  '101-F': 117.20,
+  'P101-D': 114.50,
+  'P101-E': 131.10,
+  'P101-F': 117.20,
+  'P101-HS': 138.60,
+  'Liquid Medical Oxygen (VIE Tank)': 3.60,
+}
+
 export const DEFAULT_CYLINDER_SIZES: CylinderLedgerItem[] = [
   {
     id: '332911a0-9e8c-4c0e-980a-9df3d0197dce',
@@ -116,6 +127,7 @@ export const DEFAULT_CYLINDER_SIZES: CylinderLedgerItem[] = [
     in_use_stock: 0,
     maintenance_stock: 0,
     total_fleet: 0,
+    unit_price: 284.90,
   },
   {
     id: '2175d196-4e97-4bb9-bfaa-c335a25743d3',
@@ -137,6 +149,7 @@ export const DEFAULT_CYLINDER_SIZES: CylinderLedgerItem[] = [
     in_use_stock: 0,
     maintenance_stock: 0,
     total_fleet: 0,
+    unit_price: 117.20,
   }
 ]
 
@@ -214,6 +227,7 @@ export async function getCylinderLedgerItems(
           in_use_stock: inUseCount,
           maintenance_stock: maintCount,
           total_fleet: matchedInv.length,
+          unit_price: CYLINDER_STANDARD_PRICES[code] || 117.20,
           last_movement_date: new Date().toISOString()
         }
       })
@@ -228,57 +242,72 @@ export async function getCylinderLedgerItems(
   }
 }
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 /**
  * Helper to resolve the canonical cylinder size UUID from any combo ID, size ID, or size code
  */
 async function resolveSizeInfo(sizeIdentifier: string): Promise<{ sizeId: string; itemCode: string; itemName: string }> {
   try {
-    // 1. Check if sizeIdentifier is directly in pharmacy_oxygen_cylinder_sizes
-    const { data: directSize } = await supabase
-      .from('pharmacy_oxygen_cylinder_sizes')
-      .select('id, code, capacity')
-      .eq('id', sizeIdentifier)
-      .maybeSingle()
-
-    if (directSize) {
+    if (!sizeIdentifier) {
       return {
-        sizeId: directSize.id,
-        itemCode: directSize.code,
-        itemName: `Medical Oxygen Cylinder ${directSize.capacity}m³ (${directSize.code})`
+        sizeId: '332911a0-9e8c-4c0e-980a-9df3d0197dce',
+        itemCode: '101-N',
+        itemName: 'Medical Oxygen Cylinder 8.0m³ (101-N)'
       }
     }
 
-    // 2. Check if sizeIdentifier is a combo id
-    const { data: combo } = await supabase
-      .from('pharmacy_oxygen_size_type_combos')
-      .select('id, size_id, display_name, size_info:pharmacy_oxygen_cylinder_sizes(id, code, capacity)')
-      .eq('id', sizeIdentifier)
-      .maybeSingle()
+    const trimmed = sizeIdentifier.trim()
+    const isUuid = UUID_REGEX.test(trimmed)
 
-    if (combo && combo.size_info) {
-      const s = Array.isArray(combo.size_info) ? combo.size_info[0] : combo.size_info
-      return {
-        sizeId: combo.size_id || s.id,
-        itemCode: s.code,
-        itemName: combo.display_name || `Medical Oxygen Cylinder (${s.code})`
+    if (isUuid) {
+      // 1. Check if sizeIdentifier is directly in pharmacy_oxygen_cylinder_sizes
+      const { data: directSize, error: directErr } = await supabase
+        .from('pharmacy_oxygen_cylinder_sizes')
+        .select('id, code, capacity')
+        .eq('id', trimmed)
+        .maybeSingle()
+
+      if (!directErr && directSize) {
+        return {
+          sizeId: directSize.id,
+          itemCode: directSize.code,
+          itemName: `Medical Oxygen Cylinder ${directSize.capacity}m³ (${directSize.code})`
+        }
+      }
+
+      // 2. Check if sizeIdentifier is a combo id
+      const { data: combo, error: comboErr } = await supabase
+        .from('pharmacy_oxygen_size_type_combos')
+        .select('id, size_id, display_name, size_info:pharmacy_oxygen_cylinder_sizes(id, code, capacity)')
+        .eq('id', trimmed)
+        .maybeSingle()
+
+      if (!comboErr && combo && combo.size_info) {
+        const s = Array.isArray(combo.size_info) ? combo.size_info[0] : combo.size_info
+        return {
+          sizeId: combo.size_id || s?.id || trimmed,
+          itemCode: s?.code || '101-N',
+          itemName: combo.display_name || `Medical Oxygen Cylinder (${s?.code || ''})`
+        }
       }
     }
 
-    // 3. Fallback matching legacy codes (e.g. 'size-004' -> 101-N, 'size-003' -> 101-F)
-    const codeFallback = sizeIdentifier === 'size-004' ? '101-N' :
-                         sizeIdentifier === 'size-003' ? '101-F' :
-                         sizeIdentifier === 'size-002' ? 'P101-E' :
-                         sizeIdentifier === 'size-001' ? 'P101-D' :
-                         sizeIdentifier.toUpperCase()
+    // 3. Fallback matching legacy codes (e.g. 'size-004' -> 101-N, 'size-003' -> 101-F) or symbol code
+    const codeFallback = trimmed === 'size-004' ? '101-N' :
+                         trimmed === 'size-003' ? '101-F' :
+                         trimmed === 'size-002' ? 'P101-E' :
+                         trimmed === 'size-001' ? 'P101-D' :
+                         trimmed.toUpperCase()
 
-    const { data: fallbackSize } = await supabase
+    const { data: fallbackSize, error: fallbackErr } = await supabase
       .from('pharmacy_oxygen_cylinder_sizes')
       .select('id, code, capacity')
       .ilike('code', `%${codeFallback}%`)
       .limit(1)
       .maybeSingle()
 
-    if (fallbackSize) {
+    if (!fallbackErr && fallbackSize) {
       return {
         sizeId: fallbackSize.id,
         itemCode: fallbackSize.code,
@@ -324,52 +353,135 @@ export async function getCylinderTransactions(
 
     const txList: CylinderTransactionRow[] = []
 
-    // 1. Fetch live incoming receipts (DOs) with actual cylinder items for this size & type
-    const { data: dbReceptions, error: recErr } = await supabase
-      .from('pharmacy_oxygen_reception_records')
-      .select(`
-        id,
-        delivery_order_no,
-        sales_order_no,
-        supplier_name,
-        reception_date,
-        created_at,
-        items:pharmacy_oxygen_reception_items(id, cylinder_size_id, cylinder_type_id)
-      `)
-      .eq('hospital_id', hospitalId)
-      .order('reception_date', { ascending: true })
+    // 1. Fetch live incoming receipts from both pharmacy_oxygen_receive_documents (physical scans)
+    // and pharmacy_oxygen_reception_records (financial DO records), merging them accurately
+    const [rcvDocsRes, receptionsRes] = await Promise.all([
+      supabase
+        .from('pharmacy_oxygen_receive_documents')
+        .select(`
+          id,
+          document_number,
+          delivery_order_no,
+          received_date,
+          created_at,
+          remarks,
+          supplier:suppliers(company_name),
+          creator:users(full_name),
+          items:pharmacy_oxygen_receive_document_items(
+            id,
+            cylinder:pharmacy_oxygen_cylinder_inventory(id, cylinder_size_id, cylinder_type_id, serial_number)
+          )
+        `)
+        .eq('hospital_id', hospitalId)
+        .order('received_date', { ascending: true }),
+      supabase
+        .from('pharmacy_oxygen_reception_records')
+        .select(`
+          id,
+          delivery_order_no,
+          sales_order_no,
+          supplier_name,
+          reception_date,
+          created_at,
+          items:pharmacy_oxygen_reception_items(id, cylinder_size_id, cylinder_type_id, quantity)
+        `)
+        .eq('hospital_id', hospitalId)
+        .order('reception_date', { ascending: true })
+    ])
 
-    if (!recErr && dbReceptions) {
-      dbReceptions.forEach((rec: any) => {
-        const matchingItems = (rec.items || []).filter((itm: any) => 
-          itm.cylinder_size_id === targetSizeId && (!targetTypeId || itm.cylinder_type_id === targetTypeId)
-        )
-        if (matchingItems.length > 0) {
-          const recDate = rec.reception_date || (rec.created_at ? rec.created_at.split('T')[0] : '2026-01-01')
-          const doNum = rec.delivery_order_no || 'DO-RECEPTION'
-          const supName = rec.supplier_name || 'Pembekal Oksigen'
+    const dbReceiveDocs = rcvDocsRes.data || []
+    const dbReceptions = receptionsRes.data || []
 
-          txList.push({
-            id: `rec-${rec.id}`,
-            index: 0,
-            size_id: targetSizeId,
-            item_code: itemCode,
-            item_name: itemName,
-            transaction_date: `${recDate}T10:00:00Z`,
-            transaction_type: 'receipt',
-            transaction_number: doNum,
-            source_destination: supName,
-            receiptQty: matchingItems.length,
-            issueQty: null,
-            runningBalance: 0,
-            serial_numbers: [],
-            officer_name: 'Pegawai Farmasi Penerima Stor',
-            remarks: `Penerimaan bekalan gas DO: ${doNum}${rec.sales_order_no ? ` (SO: ${rec.sales_order_no})` : ''}`,
-            created_at: `${recDate}T10:00:00Z`
-          })
-        }
+    const processedDoKeys = new Set<string>()
+
+    // First process physical receive documents which contain exact serial numbers
+    dbReceiveDocs.forEach((doc: any) => {
+      const matchingItems = (doc.items || []).filter((itm: any) => {
+        const c = itm.cylinder
+        return c && c.cylinder_size_id === targetSizeId && (!targetTypeId || c.cylinder_type_id === targetTypeId)
       })
-    }
+
+      if (matchingItems.length > 0) {
+        const recDate = doc.received_date ? (doc.received_date.includes('T') ? doc.received_date.split('T')[0] : doc.received_date) : (doc.created_at ? doc.created_at.split('T')[0] : '2026-01-01')
+        const doNum = doc.delivery_order_no || doc.document_number || 'DO-RECEPTION'
+        const supName = doc.supplier?.company_name || 'Pembekal Oksigen'
+        const serials = matchingItems.map((itm: any) => itm.cylinder?.serial_number).filter(Boolean)
+        const officer = doc.creator?.full_name || 'Pegawai Farmasi Penerima Stor'
+
+        // Check if there is a matching reception record for SO number
+        const matchingRec = dbReceptions.find((r: any) =>
+          r.delivery_order_no && r.delivery_order_no.trim().toUpperCase() === doNum.trim().toUpperCase()
+        )
+        const soStr = matchingRec?.sales_order_no ? ` (SO: ${matchingRec.sales_order_no})` : ''
+
+        txList.push({
+          id: `rcvdoc-${doc.id}`,
+          index: 0,
+          size_id: targetSizeId,
+          item_code: itemCode,
+          item_name: itemName,
+          transaction_date: `${recDate}T10:00:00Z`,
+          transaction_type: 'receipt',
+          transaction_number: doNum,
+          source_destination: supName,
+          receiptQty: matchingItems.length,
+          issueQty: null,
+          runningBalance: 0,
+          serial_numbers: serials,
+          officer_name: officer,
+          remarks: doc.remarks || `Penerimaan bekalan gas DO: ${doNum}${soStr}`,
+          created_at: `${recDate}T10:00:00Z`
+        })
+
+        if (doc.delivery_order_no) {
+          processedDoKeys.add(doc.delivery_order_no.trim().toUpperCase())
+        }
+        if (doc.document_number) {
+          processedDoKeys.add(doc.document_number.trim().toUpperCase())
+        }
+      }
+    })
+
+    // Next process any reception records not already captured by physical receive documents
+    dbReceptions.forEach((rec: any) => {
+      const doNum = rec.delivery_order_no || 'DO-RECEPTION'
+      const normDo = doNum.trim().toUpperCase()
+      if (processedDoKeys.has(normDo)) return
+
+      const matchingItems = (rec.items || []).filter((itm: any) => 
+        itm.cylinder_size_id === targetSizeId && (!targetTypeId || itm.cylinder_type_id === targetTypeId)
+      )
+
+      const totalQty = matchingItems.reduce((acc: number, itm: any) => {
+        return acc + (Number(itm.quantity) || 1)
+      }, 0)
+
+      if (totalQty > 0) {
+        const recDate = rec.reception_date || (rec.created_at ? rec.created_at.split('T')[0] : '2026-01-01')
+        const supName = rec.supplier_name || 'Pembekal Oksigen'
+
+        txList.push({
+          id: `rec-${rec.id}`,
+          index: 0,
+          size_id: targetSizeId,
+          item_code: itemCode,
+          item_name: itemName,
+          transaction_date: `${recDate}T10:00:00Z`,
+          transaction_type: 'receipt',
+          transaction_number: doNum,
+          source_destination: supName,
+          receiptQty: totalQty,
+          issueQty: null,
+          runningBalance: 0,
+          serial_numbers: [],
+          officer_name: 'Pegawai Farmasi Penerima Stor',
+          remarks: `Penerimaan bekalan gas DO: ${doNum}${rec.sales_order_no ? ` (SO: ${rec.sales_order_no})` : ''}`,
+          created_at: `${recDate}T10:00:00Z`
+        })
+
+        processedDoKeys.add(normDo)
+      }
+    })
 
     // 2. Fetch movements to accurately separate cylinder types for ward dispatches
     const { data: dbMovements } = await supabase
@@ -402,8 +514,10 @@ export async function getCylinderTransactions(
         manual_requester_name,
         is_external_facility,
         external_facility_name,
+        indent_direction,
+        remarks,
         department:departments(department_name),
-        items:pharmacy_oxygen_dept_request_items(id, cylinder_size_id, quantity, quantity_issued)
+        items:pharmacy_oxygen_dept_request_items(id, cylinder_size_id, quantity, quantity_issued, usage_notes)
       `)
       .eq('hospital_id', hospitalId)
       .in('status', ['completed', 'issued', 'approved'])
@@ -411,46 +525,120 @@ export async function getCylinderTransactions(
 
     if (!reqErr && dbRequests) {
       dbRequests.forEach((req: any) => {
-        let qtyIssued = 0
+        let qty = 0
         const reqMovements = movementsByReq.get(req.id)
         if (reqMovements && reqMovements.length > 0 && targetTypeId) {
-          qtyIssued = reqMovements.filter(m => m.sizeId === targetSizeId && m.typeId === targetTypeId).length
+          qty = reqMovements.filter(m => m.sizeId === targetSizeId && m.typeId === targetTypeId).length
         } else {
           const matchingItems = (req.items || []).filter((itm: any) => itm.cylinder_size_id === targetSizeId)
-          qtyIssued = matchingItems.reduce((acc: number, curr: any) => {
+          qty = matchingItems.reduce((acc: number, curr: any) => {
             return acc + (curr.quantity_issued || curr.quantity || 0)
           }, 0)
         }
 
-        if (qtyIssued > 0) {
+        if (qty > 0) {
           const isExt = req.is_external_facility || req.manual_requester_name?.includes('[EXTERNAL]');
           const extName = req.external_facility_name || (req.manual_requester_name?.includes('[EXTERNAL]') ? req.manual_requester_name.replace('[EXTERNAL]', '').split('(')[0].trim() : '');
-          const wardName = isExt && extName
-            ? `${extName} (Indent Luar)`
-            : (req.department?.department_name || 'Unit / Wad Klinikal');
-          const txNum = req.request_id || 'INDEN-WAD';
-          const remarks = isExt && extName
-            ? `Pindahan / bekalan silinder ke fasiliti luar (${extName})`
-            : `Pengeluaran silinder oksigen ke ${wardName}`;
+          const reqNameLower = (req.manual_requester_name || '').toLowerCase();
+          const remarksLower = (req.remarks || '').toLowerCase();
+          const matchingItems = (req.items || []).filter((itm: any) => itm.cylinder_size_id === targetSizeId);
 
-          txList.push({
-            id: `iss-${req.id}`,
-            index: 0,
-            size_id: targetSizeId,
-            item_code: itemCode,
-            item_name: itemName,
-            transaction_date: req.created_at,
-            transaction_type: 'issue',
-            transaction_number: txNum,
-            source_destination: wardName,
-            receiptQty: null,
-            issueQty: qtyIssued,
-            runningBalance: 0,
-            serial_numbers: [],
-            officer_name: req.manual_requester_name || 'Pegawai Stor Farmasi',
-            remarks: remarks,
-            created_at: req.created_at
-          })
+          // Check if this is an inter-facility INBOUND receipt (receiving cylinders from another facility)
+          const isInbound = req.indent_direction === 'inbound' || reqNameLower.includes('inbound') || reqNameLower.includes('terima');
+
+          // Check if this is an OUTBOUND RETURN of empty cylinders (returning empty cylinders does not consume full oxygen gas stock)
+          // IMPORTANT: Requires EXPLICIT evidence of empty cylinders — "kosong" must appear in usage_notes or remarks.
+          // DO NOT use absence of "penuh" as a signal — normal ward issuances never contain "penuh" and would be wrongly classified.
+          const hasExplicitKosongEvidence =
+            matchingItems.some((itm: any) => itm.usage_notes?.toLowerCase().includes('kosong')) ||
+            matchingItems.some((itm: any) => itm.usage_notes?.toLowerCase().includes('pemulangan luar')) ||
+            remarksLower.includes('kosong') ||
+            remarksLower.includes('pemulangan silinder') ||
+            (remarksLower.includes('pemulangan') && isExt);
+
+          const isOutboundReturn =
+            hasExplicitKosongEvidence &&
+            (
+              reqNameLower.includes('return') ||
+              reqNameLower.includes('outbound return') ||
+              reqNameLower.includes('pulang') ||
+              remarksLower.includes('pemulangan') ||
+              req.indent_direction === 'outbound'
+            );
+
+          if (isOutboundReturn) {
+            // Outbound return of EMPTY cylinders: Recorded as container return documentation without deducting from full oxygen gas stock balance
+            const destName = extName ? `${extName} (Pemulangan Silinder Kosong)` : 'Pemulangan Silinder Kosong';
+            const remarksText = req.remarks || `Pemulangan ${qty} silinder kosong ke ${extName || 'Fasiliti Luar'}`;
+            txList.push({
+              id: `ret-ext-${req.id}`,
+              index: 0,
+              size_id: targetSizeId,
+              item_code: itemCode,
+              item_name: itemName,
+              transaction_date: req.created_at,
+              transaction_type: 'return',
+              transaction_number: req.request_id || 'RET-EXT',
+              source_destination: destName,
+              receiptQty: null,
+              issueQty: null, // Empty cylinders do NOT deduct from full oxygen gas stock
+              runningBalance: 0,
+              serial_numbers: [],
+              officer_name: req.manual_requester_name || 'Pegawai Stor Farmasi',
+              remarks: remarksText,
+              created_at: req.created_at
+            });
+          } else if (isInbound) {
+            // Inbound receipt of cylinders from another facility: Adds to stock
+            const sourceName = extName ? `${extName} (Penerimaan Antara Fasiliti)` : 'Penerimaan Antara Fasiliti';
+            const remarksText = req.remarks || `Penerimaan ${qty} silinder daripada ${extName || 'Fasiliti Luar'}`;
+            txList.push({
+              id: `rcv-ext-${req.id}`,
+              index: 0,
+              size_id: targetSizeId,
+              item_code: itemCode,
+              item_name: itemName,
+              transaction_date: req.created_at,
+              transaction_type: 'receipt',
+              transaction_number: req.request_id || 'INDEN-MASUK',
+              source_destination: sourceName,
+              receiptQty: qty,
+              issueQty: null,
+              runningBalance: 0,
+              serial_numbers: [],
+              officer_name: req.manual_requester_name || 'Pegawai Stor Farmasi',
+              remarks: remarksText,
+              created_at: req.created_at
+            });
+          } else {
+            // Genuine issuance of full cylinders to hospital wards or external facility
+            const wardName = isExt && extName
+              ? `${extName} (Indent Luar)`
+              : (req.department?.department_name || 'Unit / Wad Klinikal');
+            const txNum = req.request_id || 'INDEN-WAD';
+            const remarks = req.remarks || (isExt && extName
+              ? `Bekalan silinder gas ke ${extName}`
+              : `Pengeluaran silinder oksigen ke ${wardName}`);
+
+            txList.push({
+              id: `iss-${req.id}`,
+              index: 0,
+              size_id: targetSizeId,
+              item_code: itemCode,
+              item_name: itemName,
+              transaction_date: req.created_at,
+              transaction_type: 'issue',
+              transaction_number: txNum,
+              source_destination: wardName,
+              receiptQty: null,
+              issueQty: qty,
+              runningBalance: 0,
+              serial_numbers: [],
+              officer_name: req.manual_requester_name || 'Pegawai Stor Farmasi',
+              remarks: remarks,
+              created_at: req.created_at
+            });
+          }
         }
       })
     }
@@ -492,11 +680,11 @@ export async function getCylinderTransactions(
             transaction_number: doc.document_number,
             source_destination: supName,
             receiptQty: null,
-            issueQty: matchingCyls.length,
+            issueQty: null, // Empty cylinders returned to supplier do NOT deduct from full oxygen gas stock
             runningBalance: 0,
             serial_numbers: [],
             officer_name: 'Pegawai Stor Farmasi',
-            remarks: `Pemulangan silinder kosong kepada ${supName}`,
+            remarks: doc.remarks || `Pemulangan ${matchingCyls.length} silinder kosong kepada ${supName}`,
             created_at: retDate
           })
         }
@@ -556,8 +744,11 @@ export async function getCylinderTransactions(
     // If no manual Bring Forward exists, compute official opening Bring Forward
     const hasManualBf = txList.some(t => t.transaction_type === 'bring_forward')
     if (!hasManualBf) {
-      const totalReceipts = txList.reduce((sum, t) => sum + (t.receiptQty || 0), 0)
-      const totalIssues = txList.reduce((sum, t) => sum + (t.issueQty || 0), 0)
+      const OVERRIDE_TYPES = ['check_found', 'store_verification', 'return']
+      const totalReceipts = txList.reduce((sum, t) => 
+        OVERRIDE_TYPES.includes(t.transaction_type) ? sum : sum + (t.receiptQty || 0), 0)
+      const totalIssues = txList.reduce((sum, t) => 
+        OVERRIDE_TYPES.includes(t.transaction_type) ? sum : sum + (t.issueQty || 0), 0)
       const netMovement = totalReceipts - totalIssues
       const initialOpeningBalance = Math.max(0, actualAvailableInStore - netMovement)
 
@@ -1195,12 +1386,18 @@ export async function getCylinderDepartmentBreakdown(
       .eq('hospital_id', hospitalId)
       .in('status', ['completed', 'issued'])
 
+    let targetSizeId: string | undefined = undefined
+    if (sizeId && sizeId !== 'all') {
+      const resolved = await resolveSizeInfo(sizeId)
+      targetSizeId = resolved.sizeId
+    }
+
     const breakdown: CylinderDeptBreakdown[] = (depts || []).map((dept: any) => {
       let filteredInv = (invRows || []).filter((i: any) => i.department_id === dept.id)
       let filteredReqs = (reqRows || []).filter((r: any) => r.department_id === dept.id)
 
-      if (sizeId) {
-        filteredInv = filteredInv.filter((i: any) => i.cylinder_size_id === sizeId)
+      if (targetSizeId) {
+        filteredInv = filteredInv.filter((i: any) => i.cylinder_size_id === targetSizeId)
       }
 
       let totalIssued = 0
@@ -1211,7 +1408,7 @@ export async function getCylinderDepartmentBreakdown(
           lastReqDate = r.created_at
         }
         (r.items || []).forEach((itm: any) => {
-          if (!sizeId || itm.cylinder_size_id === sizeId) {
+          if (!targetSizeId || itm.cylinder_size_id === targetSizeId) {
             totalIssued += (itm.quantity_issued || itm.quantity || 0)
           }
         })

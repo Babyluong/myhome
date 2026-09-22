@@ -127,7 +127,7 @@ export const CylinderSubMenu: React.FC = () => {
       <div>
         <button 
           onClick={() => navigate(ROUTES.HUB)}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors mb-4 cursor-pointer"
+          className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-4 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{language === 'ms' ? 'Kembali ke Hub Utama' : 'Back to Main Hub'}</span>
@@ -138,12 +138,12 @@ export const CylinderSubMenu: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-teal-50 text-teal-700 px-2 py-0.5 rounded border border-teal-200">
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded border border-teal-500/30">
                 Medical Oxygen Hub
               </span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mt-0.5">MyCylinder</h1>
-            <p className="text-slate-500 text-xs md:text-sm">
+            <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight mt-0.5">MyCylinder</h1>
+            <p className="text-slate-400 text-xs md:text-sm mt-0.5">
               {language === 'ms' ? 'Pusat Pengurusan Oksigen & Silinder Gas Perubatan' : 'Medical Oxygen & Cylinder Management Ecosystem'}
             </p>
           </div>

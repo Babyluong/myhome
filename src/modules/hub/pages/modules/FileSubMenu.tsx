@@ -14,18 +14,18 @@ export const FileSubMenu: React.FC = () => {
       <div className="mb-8">
         <button 
           onClick={() => navigate(ROUTES.HUB)}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors mb-4"
+          className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{language === 'ms' ? 'Kembali ke Hub Utama' : 'Back to Main Hub'}</span>
         </button>
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-orange-100 text-orange-600 rounded-xl">
+          <div className="p-3 bg-orange-500/20 text-orange-400 border border-orange-500/30 rounded-xl">
             <Files className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">MyFile</h1>
-            <p className="text-slate-500">{language === 'ms' ? 'Pengurusan Fail & Dokumen' : 'Document & File Management'}</p>
+            <h1 className="text-3xl font-bold text-white tracking-tight">MyFile</h1>
+            <p className="text-slate-400 mt-1">{language === 'ms' ? 'Pengurusan Fail & Dokumen' : 'Document & File Management'}</p>
           </div>
         </div>
       </div>

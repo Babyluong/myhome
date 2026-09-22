@@ -18,7 +18,11 @@ import {
   Calendar,
   AlertCircle,
   Download,
-  Activity
+  Activity,
+  Camera,
+  Eye,
+  X,
+  Image as ImageIcon
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { Badge, Spinner, SlideOver } from '@/components/ui'
@@ -46,7 +50,9 @@ import {
   getReadings,
   deleteAutoPlottedReadings,
   updateReadingValues,
-  getDefaultThresholds
+  getDefaultThresholds,
+  uploadEquipmentPhoto,
+  deleteEquipmentPhoto
 } from '@/modules/mysuhu/services/suhuService'
 import { getDepartmentsByHospital } from '@/services/departmentService'
 import { downloadPdfReport } from '@/modules/mysuhu/services/suhuReportService'
@@ -123,6 +129,12 @@ export const DepartmentSuhuPage: React.FC = () => {
   })
   const [autoPlotPassword, setAutoPlotPassword] = useState('')
   const [autoPlotPasswordError, setAutoPlotPasswordError] = useState(false)
+
+  // Equipment Photo Attachment States
+  const [registerPhotoFile, setRegisterPhotoFile] = useState<File | null>(null)
+  const [registerPhotoPreview, setRegisterPhotoPreview] = useState<string | null>(null)
+  const [previewPhotoUrl, setPreviewPhotoUrl] = useState<string | null>(null)
+  const [uploadingUnitId, setUploadingUnitId] = useState<string | null>(null)
 
   const loadData = async () => {
     if (!departmentId) return
@@ -340,11 +352,18 @@ export const DepartmentSuhuPage: React.FC = () => {
 
       if (res.error) throw new Error(res.error)
 
+      // Upload photo if selected
+      if (res.data?.id && registerPhotoFile) {
+        await uploadEquipmentPhoto(registerPhotoFile, res.data.id)
+      }
+
       setSuccessMsg(`Unit ${unitName} successfully registered!`)
       setTimeout(() => setSuccessMsg(''), 4000)
 
       setUnitName('')
       setUnitNota('')
+      setRegisterPhotoFile(null)
+      setRegisterPhotoPreview(null)
       setIsRegisterOpen(false)
       await loadData()
     } catch (err) {
@@ -352,6 +371,51 @@ export const DepartmentSuhuPage: React.FC = () => {
       alert(err instanceof Error ? err.message : 'Failed to register unit')
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleUploadPhotoForUnit = async (unitId: string, file: File) => {
+    setUploadingUnitId(unitId)
+    try {
+      const res = await uploadEquipmentPhoto(file, unitId)
+      if (res.error) throw new Error(res.error)
+      setSuccessMsg('Foto peralatan berjaya dikemaskini!')
+      setTimeout(() => setSuccessMsg(''), 4000)
+      await loadData()
+      if (activeDetailUnit && activeDetailUnit.id === unitId) {
+        setActiveDetailUnit(prev => prev ? { ...prev, photo_url: res.data } : null)
+      }
+      if (loggingUnit && loggingUnit.id === unitId) {
+        setLoggingUnit(prev => prev ? { ...prev, photo_url: res.data } : null)
+      }
+    } catch (err: any) {
+      console.error('Failed to upload equipment photo:', err)
+      alert(err?.message || 'Gagal memuat naik foto peralatan')
+    } finally {
+      setUploadingUnitId(null)
+    }
+  }
+
+  const handleDeletePhotoForUnit = async (unitId: string) => {
+    if (!confirm('Adakah anda pasti ingin memadam foto unit ini?')) return
+    setUploadingUnitId(unitId)
+    try {
+      const res = await deleteEquipmentPhoto(unitId)
+      if (res.error) throw new Error(res.error)
+      setSuccessMsg('Foto peralatan berjaya dipadam.')
+      setTimeout(() => setSuccessMsg(''), 4000)
+      await loadData()
+      if (activeDetailUnit && activeDetailUnit.id === unitId) {
+        setActiveDetailUnit(prev => prev ? { ...prev, photo_url: null } : null)
+      }
+      if (loggingUnit && loggingUnit.id === unitId) {
+        setLoggingUnit(prev => prev ? { ...prev, photo_url: null } : null)
+      }
+    } catch (err: any) {
+      console.error('Failed to delete equipment photo:', err)
+      alert(err?.message || 'Gagal memadam foto peralatan')
+    } finally {
+      setUploadingUnitId(null)
     }
   }
 
@@ -1033,71 +1097,171 @@ export const DepartmentSuhuPage: React.FC = () => {
                           
                           fetchDetailReadings(unit.id, currentMonthStr);
                         }}
-                        className={`bg-white border rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group relative overflow-hidden cursor-pointer ${cardBorder}`}
+                        className={`bg-white border rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group relative overflow-hidden cursor-pointer ${cardBorder}`}
                       >
-                        {/* Upper Section */}
-                        <div>
-                          <div className="flex justify-between items-start gap-2 mb-2">
-                            <span className="text-[10px] text-slate-400 font-bold font-mono group-hover:text-[#00a68a] transition-colors">
-                              {unit.unit_id}
-                            </span>
-                            <Badge className={`${badgeClass} text-[8px] font-black px-2 py-0.5 border rounded-lg flex-shrink-0`}>
-                              {statusBadgeText}
-                            </Badge>
-                          </div>
-                          
-                          <h4 className="text-sm font-extrabold text-slate-800 group-hover:text-[#00a68a] transition-colors mb-1">
-                            {unit.nama_unit}
-                          </h4>
+                        {/* TOP HERO PHOTO SECTION - FILLS ENTIRE CARD TOP EDGE-TO-EDGE */}
+                        <div 
+                          onClick={(e) => e.stopPropagation()} 
+                          className="relative w-full h-52 sm:h-56 bg-slate-100 overflow-hidden flex-shrink-0"
+                        >
+                          {uploadingUnitId === unit.id ? (
+                            <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-slate-100">
+                              <Spinner size="md" />
+                              <span className="text-xs font-bold text-slate-500">Menyimpan Foto...</span>
+                            </div>
+                          ) : unit.photo_url ? (
+                            <div className="relative w-full h-full group/photo">
+                              <img 
+                                src={unit.photo_url} 
+                                alt={unit.nama_unit} 
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105 cursor-pointer"
+                                onClick={() => setPreviewPhotoUrl(unit.photo_url!)}
+                                title="Klik untuk lihat foto penuh"
+                              />
+                              {/* Contrast Gradient Overlay */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-slate-950/30 pointer-events-none" />
+
+                              {/* Floating Top Badges */}
+                              <div className="absolute top-3.5 left-3.5 right-3.5 flex justify-between items-center pointer-events-none">
+                                <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg border border-white/20 shadow-sm">
+                                  {unit.unit_id}
+                                </span>
+                                <Badge className={`${badgeClass} text-[9px] font-black px-2.5 py-1 border rounded-lg shadow-sm`}>
+                                  {statusBadgeText}
+                                </Badge>
+                              </div>
+
+                              {/* Action Buttons Overlay */}
+                              <div className="absolute bottom-3 right-3 flex items-center gap-2 opacity-95 group-hover/photo:opacity-100 transition-opacity">
+                                <button
+                                  type="button"
+                                  onClick={() => setPreviewPhotoUrl(unit.photo_url!)}
+                                  className="p-2 bg-black/60 hover:bg-black/80 backdrop-blur-md text-white rounded-xl shadow transition-colors"
+                                  title="Lihat Foto Penuh"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <label 
+                                  className="p-2 bg-[#00a68a]/90 hover:bg-[#00a68a] text-white rounded-xl shadow cursor-pointer transition-colors" 
+                                  title="Tukar Foto"
+                                >
+                                  <Camera className="w-4 h-4" />
+                                  <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    capture="environment"
+                                    className="hidden" 
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) handleUploadPhotoForUnit(unit.id, file);
+                                    }}
+                                  />
+                                </label>
+                              </div>
+                            </div>
+                          ) : (
+                            /* No Photo Attached State - Full Width Prominent Dropzone */
+                            <label 
+                              className="w-full h-full border-b-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50/80 hover:bg-emerald-50/40 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all text-slate-400 hover:text-[#00a68a] p-4 text-center group/btn relative"
+                              title="Klik untuk muat naik atau tangkap foto freezer/bilik ini"
+                            >
+                              {/* Floating Top Badges */}
+                              <div className="absolute top-3.5 left-3.5 right-3.5 flex justify-between items-center pointer-events-none">
+                                <span className="bg-slate-200/80 text-slate-600 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md">
+                                  {unit.unit_id}
+                                </span>
+                                <Badge className={`${badgeClass} text-[8px] font-black px-2 py-0.5 border rounded-lg`}>
+                                  {statusBadgeText}
+                                </Badge>
+                              </div>
+
+                              <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center group-hover/btn:border-[#00a68a] transition-colors mt-4">
+                                <Camera className="w-6 h-6 text-slate-400 group-hover/btn:text-[#00a68a] transition-colors" />
+                              </div>
+                              <div>
+                                <span className="text-xs font-extrabold text-slate-700 block">Lampirkan Foto</span>
+                                <span className="text-[10px] text-slate-400 font-medium">Tangkap atau muat naik foto peti / bilik</span>
+                              </div>
+                              <input 
+                                type="file" 
+                                accept="image/*" 
+                                capture="environment"
+                                className="hidden" 
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleUploadPhotoForUnit(unit.id, file);
+                                }}
+                              />
+                            </label>
+                          )}
                         </div>
 
-                        {/* Temperature Reading Display */}
-                        <div className="my-3">
-                          <div className="flex items-baseline gap-0.5">
-                            <span className="text-3xl font-black font-mono tracking-tight text-slate-800 tabular-nums">
-                              {isNoReading || latestTemp === undefined ? '—' : `${latestTemp.toFixed(1)}`}
-                            </span>
-                            {!isNoReading && latestTemp !== undefined && (
-                              <span className="text-slate-400 text-xs font-bold">°C</span>
-                            )}
+                        {/* BOTTOM CARD CONTENT SECTION (PADDED) */}
+                        <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
+                          {/* Equipment Name & Location */}
+                          <div className="mb-3">
+                            <h4 className="text-base font-extrabold text-slate-800 group-hover:text-[#00a68a] transition-colors line-clamp-1">
+                              {unit.nama_unit}
+                            </h4>
+                            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-semibold mt-0.5">
+                              <span className="uppercase font-mono bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-bold text-[10px]">{unit.jenis_unit}</span>
+                              {unit.lokasi?.nama_lokasi && (
+                                <>
+                                  <span>•</span>
+                                  <span className="truncate">{unit.lokasi.nama_lokasi}</span>
+                                </>
+                              )}
+                            </div>
                           </div>
-                          <div className="text-[10px] text-slate-400 font-bold mt-1">
-                            Limits: {unit.active_threshold?.min_suhu}°C to {unit.active_threshold?.max_suhu}°C
-                          </div>
-                        </div>
 
-                        {/* Footer & Quick Actions */}
-                        <div className="border-t border-slate-100 pt-3 flex items-center justify-between text-[10px] text-slate-400">
-                          <div className="flex items-center gap-1 font-semibold">
-                            <Clock className="w-3.5 h-3.5 text-slate-300" />
-                            <span>
-                              {timestamp 
-                                ? new Date(timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
-                                : 'No Log'}
-                            </span>
+                          {/* Temperature Reading Display */}
+                          <div className="mb-4">
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-3xl font-black font-mono tracking-tight text-slate-800 tabular-nums">
+                                {isNoReading || latestTemp === undefined ? '—' : `${latestTemp.toFixed(1)}`}
+                              </span>
+                              {!isNoReading && latestTemp !== undefined && (
+                                <span className="text-slate-400 text-sm font-bold">°C</span>
+                              )}
+                            </div>
+                            <div className="text-[11px] text-slate-400 font-bold mt-1">
+                              Limits: <span className="font-mono text-slate-600">{unit.active_threshold?.min_suhu}°C to {unit.active_threshold?.max_suhu}°C</span>
+                            </div>
                           </div>
-                          
-                          <div className="flex gap-2">
-                            {unit.status === 'active' && (
+
+                          {/* Footer & Quick Actions */}
+                          <div className="border-t border-slate-100 pt-3 flex items-center justify-between text-[11px] text-slate-400 mt-auto">
+                            <div className="flex items-center gap-1.5 font-semibold">
+                              <Clock className="w-3.5 h-3.5 text-slate-300" />
+                              <span>
+                                {timestamp 
+                                  ? new Date(timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+                                  : 'No Log'}
+                              </span>
+                            </div>
+                            
+                            <div className="flex gap-2">
+                              {unit.status === 'active' && (
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setLoggingUnit(unit);
+                                  }}
+                                  className="px-3 py-1.5 bg-slate-900 hover:bg-[#00a68a] text-white font-bold rounded-xl text-xs transition-all shadow-sm"
+                                >
+                                  Log Temp
+                                </button>
+                              )}
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setLoggingUnit(unit);
+                                  navigate(`/suhu/unit/${unit.id}`);
                                 }}
-                                className="px-2.5 py-1 bg-slate-900 hover:bg-[#00a68a] text-white font-bold rounded-lg text-[9px] transition-all shadow-sm"
+                                className="px-2.5 py-1.5 border border-slate-200 text-slate-600 hover:text-slate-800 hover:border-slate-300 font-bold rounded-xl text-xs transition-all"
                               >
-                                Log Temp
+                                Detail &rarr;
                               </button>
-                            )}
-                            <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/suhu/unit/${unit.id}`);
-                              }}
-                              className="px-2 py-1 border border-slate-200 text-slate-600 hover:text-slate-800 hover:border-slate-300 font-bold rounded-lg text-[9px] transition-all"
-                            >
-                              Detail &rarr;
-                            </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1219,6 +1383,74 @@ export const DepartmentSuhuPage: React.FC = () => {
                 onChange={(e) => setUnitNota(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-xs text-slate-700 h-20 resize-none focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
               />
+            </div>
+
+            {/* Equipment / Room Photo Attachment */}
+            <div>
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5 flex items-center justify-between">
+                <span>Equipment / Room Photo (Optional)</span>
+                {registerPhotoPreview && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRegisterPhotoFile(null)
+                      setRegisterPhotoPreview(null)
+                    }}
+                    className="text-rose-500 hover:text-rose-700 text-[10px] font-bold"
+                  >
+                    Remove Photo
+                  </button>
+                )}
+              </label>
+
+              {registerPhotoPreview ? (
+                <div className="relative w-full h-36 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+                  <img 
+                    src={registerPhotoPreview} 
+                    alt="Preview" 
+                    className="w-full h-full object-cover"
+                  />
+                  <label 
+                    className="absolute bottom-2 right-2 px-2.5 py-1 bg-white/90 hover:bg-white text-slate-700 text-[10px] font-bold rounded-lg shadow cursor-pointer transition-colors"
+                  >
+                    Change Photo
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      capture="environment"
+                      className="hidden" 
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          setRegisterPhotoFile(file)
+                          setRegisterPhotoPreview(URL.createObjectURL(file))
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+              ) : (
+                <label 
+                  className="w-full h-28 border-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50/70 hover:bg-emerald-50/30 rounded-2xl flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all text-slate-400 hover:text-[#00a68a]"
+                >
+                  <Camera className="w-6 h-6 text-slate-300" />
+                  <span className="text-xs font-bold">Snap or Upload Equipment Photo</span>
+                  <span className="text-[10px] text-slate-400">Attach photo so users easily recognize this freezer/room</span>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    capture="environment"
+                    className="hidden" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        setRegisterPhotoFile(file)
+                        setRegisterPhotoPreview(URL.createObjectURL(file))
+                      }
+                    }}
+                  />
+                </label>
+              )}
             </div>
 
             <div className="pt-2 flex gap-3">
@@ -1477,6 +1709,64 @@ export const DepartmentSuhuPage: React.FC = () => {
             </div>
           ) : (
             <form onSubmit={handleQuickLogPreSubmit} className="space-y-5">
+              {/* Equipment Photo & Identification Verification */}
+              <div className="p-3.5 bg-gradient-to-r from-slate-50 to-slate-100/70 border border-slate-200/80 rounded-2xl flex items-center gap-3 shadow-sm">
+                {loggingUnit?.photo_url ? (
+                  <div className="relative group/logimg flex-shrink-0">
+                    <img 
+                      src={loggingUnit.photo_url} 
+                      alt={loggingUnit.nama_unit} 
+                      className="w-16 h-16 rounded-xl object-cover border border-slate-200 shadow-sm cursor-pointer hover:opacity-95 transition-opacity"
+                      onClick={() => setPreviewPhotoUrl(loggingUnit.photo_url!)}
+                      title="Click to view full photo"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setPreviewPhotoUrl(loggingUnit.photo_url!)}
+                      className="absolute inset-0 flex items-center justify-center bg-slate-900/40 opacity-0 group-hover/logimg:opacity-100 rounded-xl transition-opacity text-white"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <label 
+                    className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#00a68a] bg-white flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 text-slate-400 hover:text-[#00a68a] transition-all"
+                    title="Attach photo for this freezer or room"
+                  >
+                    <Camera className="w-5 h-5 text-slate-300" />
+                    <span className="text-[8px] font-bold text-center leading-tight">Add Photo</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      capture="environment"
+                      className="hidden" 
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file && loggingUnit) handleUploadPhotoForUnit(loggingUnit.id, file)
+                      }}
+                    />
+                  </label>
+                )}
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className="text-[10px] font-mono font-bold text-slate-400">
+                      {loggingUnit?.unit_id}
+                    </span>
+                    <span className="text-[9px] px-1.5 py-0.2 bg-emerald-50 text-emerald-700 font-bold rounded-md border border-emerald-100 uppercase">
+                      {loggingUnit?.jenis_unit}
+                    </span>
+                  </div>
+                  <h4 className="text-sm font-extrabold text-slate-800 truncate">
+                    {loggingUnit?.nama_unit}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 font-medium truncate flex items-center gap-1 mt-0.5">
+                    <MapPin className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                    <span>{loggingUnit?.lokasi?.nama_lokasi}</span>
+                  </p>
+                </div>
+              </div>
+
               <div className="p-4 bg-slate-50 rounded-2xl flex justify-between items-center text-xs font-bold text-slate-500">
                 <span>Required Range</span>
                 <span className="font-mono text-slate-700">
@@ -1689,15 +1979,78 @@ export const DepartmentSuhuPage: React.FC = () => {
                 {/* 3. Unit Identity Header Bar (Phase 3) */}
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
                   <div className="flex items-start gap-3.5">
-                    <div className={cn(
-                      "w-10 h-10 rounded-xl flex items-center justify-center shadow-inner",
-                      activeDetailUnit.status_pemantauan === 'breach' ? 'bg-rose-100 text-rose-600' :
-                      activeDetailUnit.status_pemantauan === 'warning' ? 'bg-amber-100 text-amber-600' :
-                      activeDetailUnit.status_pemantauan === 'no_reading' ? 'bg-slate-100 text-slate-400' :
-                      'bg-emerald-100 text-emerald-600'
-                    )}>
-                      <Thermometer className="w-5 h-5" />
-                    </div>
+                    {/* Equipment Photo or Icon */}
+                    {activeDetailUnit.photo_url ? (
+                      <div className="relative group/detailphoto w-16 h-16 rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0 bg-slate-50">
+                        <img 
+                          src={activeDetailUnit.photo_url} 
+                          alt={activeDetailUnit.nama_unit} 
+                          className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                          onClick={() => setPreviewPhotoUrl(activeDetailUnit.photo_url!)}
+                          title="Click to view full photo"
+                        />
+                        <div className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover/detailphoto:opacity-100 transition-opacity flex items-center justify-center gap-1 p-1">
+                          <button
+                            type="button"
+                            onClick={() => setPreviewPhotoUrl(activeDetailUnit.photo_url!)}
+                            className="p-1 bg-white/90 text-slate-700 rounded-md"
+                            title="View Full"
+                          >
+                            <Eye className="w-3 h-3" />
+                          </button>
+                          <label className="p-1 bg-white/90 text-[#00a68a] rounded-md cursor-pointer" title="Change Photo">
+                            <Camera className="w-3 h-3" />
+                            <input 
+                              type="file" 
+                              accept="image/*" 
+                              capture="environment"
+                              className="hidden" 
+                              onChange={(e) => {
+                                const file = e.target.files?.[0]
+                                if (file) handleUploadPhotoForUnit(activeDetailUnit.id, file)
+                              }}
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => handleDeletePhotoForUnit(activeDetailUnit.id)}
+                            className="p-1 bg-white/90 text-rose-600 rounded-md"
+                            title="Remove Photo"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className={cn(
+                          "w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner",
+                          activeDetailUnit.status_pemantauan === 'breach' ? 'bg-rose-100 text-rose-600' :
+                          activeDetailUnit.status_pemantauan === 'warning' ? 'bg-amber-100 text-amber-600' :
+                          activeDetailUnit.status_pemantauan === 'no_reading' ? 'bg-slate-100 text-slate-400' :
+                          'bg-emerald-100 text-emerald-600'
+                        )}>
+                          <Thermometer className="w-6 h-6" />
+                        </div>
+                        <label 
+                          className="h-12 px-2.5 rounded-xl border border-dashed border-slate-300 hover:border-[#00a68a] bg-slate-50 hover:bg-emerald-50/40 flex items-center gap-1.5 cursor-pointer text-slate-500 hover:text-[#00a68a] transition-colors"
+                          title="Attach photo of this freezer or room"
+                        >
+                          <Camera className="w-4 h-4" />
+                          <span className="text-[10px] font-bold">Attach Photo</span>
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            capture="environment"
+                            className="hidden" 
+                            onChange={(e) => {
+                              const file = e.target.files?.[0]
+                              if (file) handleUploadPhotoForUnit(activeDetailUnit.id, file)
+                            }}
+                          />
+                        </label>
+                      </div>
+                    )}
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-base font-semibold text-slate-800 tracking-tight">
@@ -2362,6 +2715,40 @@ export const DepartmentSuhuPage: React.FC = () => {
           })()}
         </div>
       </SlideOver>
+
+      {/* 5. Photo Lightbox Modal */}
+      {previewPhotoUrl && (
+        <div 
+          className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setPreviewPhotoUrl(null)}
+        >
+          <div 
+            className="relative max-w-2xl w-full bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-700"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center px-5 py-3 border-b border-slate-800 text-white">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-[#00a68a]" />
+                <span className="text-xs font-bold tracking-wide text-slate-200">Foto Peralatan / Bilik</span>
+              </div>
+              <button
+                onClick={() => setPreviewPhotoUrl(null)}
+                className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex items-center justify-center p-4 max-h-[75vh] bg-slate-950/50">
+              <img 
+                src={previewPhotoUrl} 
+                alt="Equipment Photo Full" 
+                className="max-h-[70vh] max-w-full object-contain rounded-xl shadow-lg"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

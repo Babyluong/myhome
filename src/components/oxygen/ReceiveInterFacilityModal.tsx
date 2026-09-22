@@ -254,6 +254,8 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
           size_info:pharmacy_oxygen_cylinder_sizes(code)
         `)
         .ilike('serial_number', `%${query}%`)
+        .neq('status', 'deactivated')
+        .eq('is_active', true)
         .limit(30);
 
       if (hospitalId) {
@@ -428,7 +430,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-sm overflow-y-auto animate-fadeIn"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-sm overflow-y-auto animate-fadeIn"
       onClick={onClose}
     >
       <div 
@@ -1161,7 +1163,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
         {/* Modal: Bulk Paste Serials */}
         {bulkPasteTargetItemIndex !== null && (
           <div 
-            className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn"
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn"
             onClick={() => setBulkPasteTargetItemIndex(null)}
           >
             <div 

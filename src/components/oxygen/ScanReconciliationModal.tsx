@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import jsQR from 'jsqr';
 import { 
   X, 
@@ -468,8 +469,8 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
 
   if (!isRendered) return null;
 
-  return (
-    <div className={`fixed inset-0 z-50 overflow-hidden flex justify-end transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}>
+  const modalContent = (
+    <div className={`fixed inset-0 z-[100] overflow-hidden flex justify-end transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}>
       {/* Backdrop overlay */}
       <div 
         onClick={onClose}
@@ -480,7 +481,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
       <div className={`relative w-full max-w-3xl bg-slate-50 border-l border-slate-200/80 shadow-2xl flex flex-col h-full transform transition-transform duration-300 cubic-bezier(0.16, 1, 0.3, 1) ${isAnimating ? 'translate-x-0' : 'translate-x-full'}`}>
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-teal-850 to-emerald-900 border-b border-teal-950 text-white shadow-lg shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-teal-900 to-emerald-900 border-b border-teal-950 text-white shadow-lg shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center">
               <QrCode className="w-5 h-5 text-teal-300" />
@@ -992,4 +993,6 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : modalContent;
 };

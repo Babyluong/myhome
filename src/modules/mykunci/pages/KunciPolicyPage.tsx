@@ -73,11 +73,11 @@ Designation: _____________________
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
           <ScrollText className="w-7 h-7 text-amber-500" />
           {language === 'ms' ? 'Rujukan Polisi Pengurusan Kunci KKM' : 'MOH Physical Key Management & Security Policy'}
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-400 mt-1">
           {language === 'ms' 
             ? 'Ringkasan garis panduan keselamatan fizikal anak kunci jabatan KKM dan Jabatan Kesihatan Negeri Sarawak'
             : 'Operational physical security directives, key custodian responsibilities, and emergency loss protocols'}

@@ -105,6 +105,27 @@ export function searchDrugs(
   })
 }
 
+function extractSubstanceTokens(name: string): string[] {
+  const cleaned = name
+    .toLowerCase()
+    .replace(/\(.*?\)/g, ' ')
+    .replace(/\b\d+(\.\d+)?\s*(mg|mcg|g|ml|iu|%|vial|ampoule|tablet|capsule)\b/g, ' ')
+    .replace(/[^\w\s-]/g, ' ')
+  
+  const ignore = [
+    'tablet', 'injection', 'infusion', 'capsule', 'syrup', 'suspension', 'cream',
+    'ointment', 'solution', 'sodium', 'potassium', 'calcium', 'hydrochloride',
+    'powder', 'acetate', 'citrate', 'sulfate', 'sulphate', 'disodium', 'coated',
+    'extended', 'release', 'film-coated', 'soluble', 'dispersible', 'oral',
+    'ophthalmic', 'otic', 'rectal', 'topical', 'intravenous', 'intramuscular'
+  ]
+
+  return cleaned
+    .split(/\s+/)
+    .map(t => t.trim())
+    .filter(t => t.length >= 4 && !ignore.includes(t))
+}
+
 /**
  * Check drug-drug interactions between a list of drugs
  */
@@ -122,14 +143,42 @@ export function checkDrugInteractions(drugIds: string[]): {
       const drugA = selected[i]
       const drugB = selected[j]
 
+      const tokensB = extractSubstanceTokens(drugB.genericName).concat(
+        (drugB.brandNames || []).flatMap(b => extractSubstanceTokens(b))
+      )
+      const tokensA = extractSubstanceTokens(drugA.genericName).concat(
+        (drugA.brandNames || []).flatMap(b => extractSubstanceTokens(b))
+      )
+
       // Check if drugA lists interactions with drugB
       for (const inter of drugA.interactions) {
-        if (
+        const isFukkmGeneral = inter.interactingDrug.includes('FUKKM') || inter.interactingDrug.includes('CYP450')
+        const targetSearch = (isFukkmGeneral ? inter.effect : `${inter.interactingDrug} ${inter.effect}`).toLowerCase()
+
+        const hasMatch =
           inter.interactingDrug.toLowerCase().includes(drugB.genericName.toLowerCase()) ||
           drugB.genericName.toLowerCase().includes(inter.interactingDrug.toLowerCase()) ||
-          drugB.brandNames.some(b => inter.interactingDrug.toLowerCase().includes(b.toLowerCase()))
-        ) {
+          (tokensB.length > 0 && tokensB.some(tok => targetSearch.includes(tok)))
+
+        if (hasMatch) {
           results.push({ drugA, drugB, interaction: inter })
+        }
+      }
+
+      // Check if drugB lists interactions with drugA
+      for (const inter of drugB.interactions) {
+        const isFukkmGeneral = inter.interactingDrug.includes('FUKKM') || inter.interactingDrug.includes('CYP450')
+        const targetSearch = (isFukkmGeneral ? inter.effect : `${inter.interactingDrug} ${inter.effect}`).toLowerCase()
+
+        const hasMatch =
+          inter.interactingDrug.toLowerCase().includes(drugA.genericName.toLowerCase()) ||
+          drugA.genericName.toLowerCase().includes(inter.interactingDrug.toLowerCase()) ||
+          (tokensA.length > 0 && tokensA.some(tok => targetSearch.includes(tok)))
+
+        if (hasMatch) {
+          if (!results.some(r => (r.drugA.id === drugB.id && r.drugB.id === drugA.id) || (r.drugA.id === drugA.id && r.drugB.id === drugB.id))) {
+            results.push({ drugA: drugB, drugB: drugA, interaction: inter })
+          }
         }
       }
     }

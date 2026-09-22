@@ -181,8 +181,8 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
       {/* Top Header matching Screenshot 2 */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">Perihal Catalog</h1>
-          <p className="text-sm font-semibold text-slate-500 mt-0.5">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">Perihal Catalog</h1>
+          <p className="text-sm font-semibold text-slate-400 mt-0.5">
             Manage standard price items and perihal codes
           </p>
         </div>

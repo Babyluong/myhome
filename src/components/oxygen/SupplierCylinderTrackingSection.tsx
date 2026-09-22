@@ -63,9 +63,9 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
   // Search & Filters
   const [searchTerm, setSearchTerm] = useState('');
   const [supplierFilter, setSupplierFilter] = useState('all');
-  const [agingFilter, setAgingFilter] = useState<'all' | 'normal' | 'warning' | 'overdue'>('all');
-  const [hospitalStatusFilter, setHospitalStatusFilter] = useState('all');
   const [sizeFilter, setSizeFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [agingFilter, setAgingFilter] = useState<'all' | 'normal' | 'warning' | 'overdue'>('all');
   const [copiedSerial, setCopiedSerial] = useState<string | null>(null);
 
   // Pagination
@@ -95,6 +95,13 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
   useEffect(() => {
     loadTrackingData();
   }, [hospitalId]);
+
+  // Mode switcher handler with filter reset
+  const handleModeChange = (mode: 'at_supplier' | 'in_hospital') => {
+    setDetectionMode(mode);
+    setStatusFilter('all');
+    setCurrentPage(1);
+  };
 
   // Copy-to-clipboard handler
   const handleCopySerial = (serial: string, e: React.MouseEvent) => {
@@ -168,14 +175,25 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
       if (agingFilter === 'warning' && (cyl.days_elapsed <= 7 || cyl.days_elapsed > 14)) return false;
       if (agingFilter === 'overdue' && cyl.days_elapsed <= 14) return false;
 
-      // 6. Hospital status filter (for in_hospital mode)
-      if (detectionMode === 'in_hospital' && hospitalStatusFilter !== 'all') {
-        if (cyl.current_status !== hospitalStatusFilter) return false;
+      // 6. Status Filter (adapts seamlessly to detectionMode)
+      if (statusFilter !== 'all') {
+        if (detectionMode === 'at_supplier') {
+          if (statusFilter === 'returned_to_supplier' && cyl.current_status !== 'returned_to_supplier') return false;
+          if (statusFilter === 'overdue' && !cyl.is_overdue) return false;
+          if (statusFilter === 'normal' && cyl.is_overdue) return false;
+        } else {
+          // in_hospital
+          if (statusFilter === 'overdue') {
+            if (!cyl.is_overdue) return false;
+          } else {
+            if (cyl.current_status !== statusFilter) return false;
+          }
+        }
       }
 
       return true;
     });
-  }, [summaryData, detectionMode, searchTerm, supplierFilter, sizeFilter, agingFilter, hospitalStatusFilter]);
+  }, [summaryData, detectionMode, searchTerm, supplierFilter, sizeFilter, agingFilter, statusFilter]);
 
   // Pagination slice
   const totalPages = Math.ceil(filteredCylinders.length / pageSize) || 1;
@@ -187,7 +205,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [detectionMode, searchTerm, supplierFilter, sizeFilter, agingFilter, hospitalStatusFilter]);
+  }, [detectionMode, searchTerm, supplierFilter, sizeFilter, agingFilter, statusFilter]);
 
   // Export to CSV
   const handleExportCsv = () => {
@@ -289,7 +307,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
           <div className="inline-flex flex-wrap sm:flex-nowrap items-center bg-slate-100/90 p-1.5 rounded-xl border border-slate-200/80 gap-1 w-full sm:w-auto">
             {/* Mode 1: Cylinders at Supplier (Pending Receive) */}
             <button
-              onClick={() => setDetectionMode('at_supplier')}
+              onClick={() => handleModeChange('at_supplier')}
               className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                 detectionMode === 'at_supplier'
                   ? 'bg-white text-rose-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
@@ -307,7 +325,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
 
             {/* Mode 2: Cylinders in Hospital (Pending Return to Supplier) */}
             <button
-              onClick={() => setDetectionMode('in_hospital')}
+              onClick={() => handleModeChange('in_hospital')}
               className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                 detectionMode === 'in_hospital'
                   ? 'bg-white text-blue-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
@@ -410,7 +428,15 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
         {/* Live Operational Metrics Chip Row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-100">
           {/* KPI 1 */}
-          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3">
+          <div 
+            onClick={() => setStatusFilter('all')}
+            title={language === 'ms' ? 'Klik untuk papar semua status' : 'Click to view all statuses'}
+            className={`border rounded-xl p-3 cursor-pointer transition-all ${
+              statusFilter === 'all'
+                ? 'bg-white border-teal-500/80 shadow-xs ring-1 ring-teal-500/20'
+                : 'bg-slate-50/80 border-slate-200/70 hover:border-slate-300'
+            }`}
+          >
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               {detectionMode === 'at_supplier'
                 ? (language === 'ms' ? 'Silinder Di Pembekal' : 'Total at Supplier')
@@ -426,14 +452,27 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
           </div>
 
           {/* KPI 2 */}
-          <div className={`rounded-xl p-3 border ${
+          <div 
+            onClick={() => {
+              if (detectionMode === 'at_supplier') {
+                setStatusFilter(prev => prev === 'overdue' ? 'all' : 'overdue');
+              } else {
+                setStatusFilter(prev => prev === 'empty' ? 'all' : 'empty');
+              }
+            }}
+            title={language === 'ms' ? 'Klik untuk tapis status ini' : 'Click to toggle this status filter'}
+            className={`rounded-xl p-3 border cursor-pointer transition-all hover:shadow-xs ${
             detectionMode === 'at_supplier'
-              ? (summaryData?.atSupplierOverdueCount || 0) > 0
-                ? 'bg-rose-50/60 border-rose-200/80 text-rose-900'
-                : 'bg-slate-50/80 border-slate-200/70 text-slate-900'
-              : (summaryData?.inHospitalEmptyCount || 0) > 0
-                ? 'bg-amber-50/60 border-amber-200/80 text-amber-900'
-                : 'bg-slate-50/80 border-slate-200/70 text-slate-900'
+              ? statusFilter === 'overdue'
+                ? 'bg-rose-100/70 border-rose-400 ring-2 ring-rose-400/20 text-rose-950 font-bold shadow-xs'
+                : (summaryData?.atSupplierOverdueCount || 0) > 0
+                  ? 'bg-rose-50/60 border-rose-200/80 text-rose-900 hover:border-rose-300'
+                  : 'bg-slate-50/80 border-slate-200/70 text-slate-900 hover:border-slate-300'
+              : statusFilter === 'empty'
+                ? 'bg-amber-100/70 border-amber-400 ring-2 ring-amber-400/20 text-amber-950 font-bold shadow-xs'
+                : (summaryData?.inHospitalEmptyCount || 0) > 0
+                  ? 'bg-amber-50/60 border-amber-200/80 text-amber-900 hover:border-amber-300'
+                  : 'bg-slate-50/80 border-slate-200/70 text-slate-900 hover:border-slate-300'
           }`}>
             <span className="text-[10px] font-bold uppercase tracking-wider block opacity-70">
               {detectionMode === 'at_supplier'
@@ -540,6 +579,43 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
             ))}
           </select>
 
+          {/* Status Filter (universal for both at_supplier and in_hospital) */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer"
+          >
+            <option value="all">{language === 'ms' ? 'Semua Status' : 'All Status'}</option>
+            {detectionMode === 'at_supplier' ? (
+              <>
+                <option value="returned_to_supplier">
+                  {language === 'ms' ? 'Di Pembekal (Isian Semula)' : 'With Supplier (Refill)'}
+                </option>
+                <option value="overdue">
+                  {language === 'ms' ? 'Melebihi Tempoh (>14 Hari)' : 'Overdue (>14 Days)'}
+                </option>
+                <option value="normal">
+                  {language === 'ms' ? 'Dalam SLA (≤14 Hari)' : 'Within SLA (≤14 Days)'}
+                </option>
+              </>
+            ) : (
+              <>
+                <option value="empty">
+                  {language === 'ms' ? 'Kosong (Sedia Pulang)' : 'Empty (Ready to Return)'}
+                </option>
+                <option value="available">
+                  {language === 'ms' ? 'Tersedia Penuh (Stor)' : 'Available Full (Store)'}
+                </option>
+                <option value="issued">
+                  {language === 'ms' ? 'Sedang Digunakan (Wad)' : 'In Use (Ward)'}
+                </option>
+                <option value="overdue">
+                  {language === 'ms' ? 'Melebihi Tempoh (>30 Hari)' : 'Overdue (>30 Days)'}
+                </option>
+              </>
+            )}
+          </select>
+
           {/* Aging Filter */}
           <select
             value={agingFilter}
@@ -551,20 +627,6 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
             <option value="warning">{language === 'ms' ? '8 – 14 Hari (Perhatian)' : '8 – 14 Days (Warning)'}</option>
             <option value="overdue">{language === 'ms' ? '> 14 Hari (Lewat)' : '> 14 Days (Overdue)'}</option>
           </select>
-
-          {/* Hospital Status Filter (only for in_hospital) */}
-          {detectionMode === 'in_hospital' && (
-            <select
-              value={hospitalStatusFilter}
-              onChange={(e) => setHospitalStatusFilter(e.target.value)}
-              className="px-3 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer"
-            >
-              <option value="all">{language === 'ms' ? 'Semua Status Premis' : 'All Premise Status'}</option>
-              <option value="empty">{language === 'ms' ? 'Kosong (Sedia Pulang)' : 'Empty (Ready to Return)'}</option>
-              <option value="available">{language === 'ms' ? 'Tersedia Penuh (Stor)' : 'Available Full (Store)'}</option>
-              <option value="issued">{language === 'ms' ? 'Digunakan (Wad)' : 'In Use (Ward)'}</option>
-            </select>
-          )}
         </div>
 
         <div className="flex items-center justify-between md:justify-end gap-3 text-xs text-slate-500 font-medium px-1">
@@ -574,14 +636,14 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
             {language === 'ms' ? 'silinder' : 'cylinders'}
           </span>
 
-          {(searchTerm || supplierFilter !== 'all' || sizeFilter !== 'all' || agingFilter !== 'all' || hospitalStatusFilter !== 'all') && (
+          {(searchTerm || supplierFilter !== 'all' || sizeFilter !== 'all' || statusFilter !== 'all' || agingFilter !== 'all') && (
             <button
               onClick={() => {
                 setSearchTerm('');
                 setSupplierFilter('all');
                 setSizeFilter('all');
+                setStatusFilter('all');
                 setAgingFilter('all');
-                setHospitalStatusFilter('all');
               }}
               className="text-teal-600 hover:text-teal-700 font-bold text-xs flex items-center gap-1 cursor-pointer"
             >

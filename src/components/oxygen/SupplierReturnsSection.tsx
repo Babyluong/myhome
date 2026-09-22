@@ -22,7 +22,8 @@ import {
   Building2,
   Layers,
   RotateCcw,
-  ShieldCheck
+  ShieldCheck,
+  QrCode
 } from 'lucide-react';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 import type { OxygenReturnDocumentWithRelations, OxygenRequestDocumentWithRelations, OxygenReceiveDocumentWithRelations } from '@/types/pharmacy';
@@ -51,6 +52,7 @@ interface SupplierReturnsSectionProps {
   onCreateRequestClick?: () => void;
   onCreateReceiveClick?: () => void;
   onScanClick: () => void;
+  onOpenEmptyListModal?: () => void;
   onPrintClick: (docId: string) => void;
   onPrintRequestClick?: (docId: string) => void;
   onPrintReceiveClick?: (docId: string) => void;
@@ -70,6 +72,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
   onCreateRequestClick = () => {},
   onCreateReceiveClick = () => {},
   onScanClick,
+  onOpenEmptyListModal,
   onPrintClick,
   onPrintRequestClick = () => {},
   onPrintReceiveClick = () => {},
@@ -124,13 +127,20 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       return { totalDocs, totalCylinders, completedCount, suppliersCount: uniqueSuppliers.length, latestDate };
     } else if (subTab === 'requests') {
       const totalDocs = requestDocuments.length;
-      const totalCylinders = requestDocuments.reduce((sum, d) => sum + (d.items?.reduce((s, i) => s + (i.quantity || 0), 0) || 0), 0);
+      const totalCylinders = requestDocuments.reduce((sum, d) => sum + (d.items?.filter(i => {
+        const c = (i.size_code || '').toUpperCase();
+        return !c.includes('VIE') && !c.includes('LIQUID');
+      }).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 0), 0);
+      const totalVieM3 = requestDocuments.reduce((sum, d) => sum + (d.items?.filter(i => {
+        const c = (i.size_code || '').toUpperCase();
+        return c.includes('VIE') || c.includes('LIQUID');
+      }).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 0), 0);
       const completedCount = requestDocuments.filter(d => d.status === 'completed').length;
       const uniqueSuppliers = Array.from(new Set(requestDocuments.map(d => d.supplier?.company_name).filter(Boolean)));
       const latestDate = requestDocuments[0]?.requested_date
         ? new Date(requestDocuments[0].requested_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
         : '-';
-      return { totalDocs, totalCylinders, completedCount, suppliersCount: uniqueSuppliers.length, latestDate };
+      return { totalDocs, totalCylinders, totalVieM3, completedCount, suppliersCount: uniqueSuppliers.length, latestDate };
     } else {
       const totalDocs = receiveDocuments.length;
       const totalCylinders = receiveDocuments.reduce((sum, d) => sum + (d.items?.length || 0), 0);
@@ -229,6 +239,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
   const [editSupplierId, setEditSupplierId] = useState('');
   const [editStatus, setEditStatus] = useState<'draft' | 'completed' | 'cancelled'>('completed');
   const [editRemarks, setEditRemarks] = useState('');
+  const [editDeliveryOrderNo, setEditDeliveryOrderNo] = useState('');
   const [editReason, setEditReason] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [emptyCylinders, setEmptyCylinders] = useState<any[]>([]);
@@ -247,6 +258,27 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
   // Dropdown state
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
+
+  // Live store empty count state
+  const [storeEmptyCount, setStoreEmptyCount] = useState<number>(0);
+
+  const fetchStoreEmptyCount = async () => {
+    try {
+      if (!activeHospitalId) return;
+      const res = await getEmptyCylindersInStore(activeHospitalId);
+      if (res.data) {
+        setStoreEmptyCount(res.data.length);
+      }
+    } catch (err) {
+      console.error("Error fetching empty cylinders in store count:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (activeHospitalId) {
+      void fetchStoreEmptyCount();
+    }
+  }, [activeHospitalId, documents]);
 
   useEffect(() => {
     const handleOutsideClick = () => {
@@ -348,17 +380,19 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           .eq('hospital_id', hospitalId)
           .eq('supplier_tagged', true)
           .neq('status', 'returned_to_supplier')
+          .neq('status', 'deactivated')
+          .eq('is_active', true)
           .order('serial_number', { ascending: true });
-        supCyls = data || [];
+        supCyls = (data || []).filter(c => c.status !== 'deactivated' && c.is_active !== false);
       } else {
         const { mockOxygenCylinders } = await import('@/services/pharmacy/mockData');
         supCyls = mockOxygenCylinders.filter(
-          c => c.supplier_tagged === true && (c.status as string) !== 'returned_to_supplier'
+          c => c.supplier_tagged === true && (c.status as string) !== 'returned_to_supplier' && (c.status as string) !== 'deactivated'
         );
       }
 
       // Add any supplier cylinders currently selected in this document
-      const currentSupplierCyls = currentCyls.filter((c: any) => c.supplier_tagged);
+      const currentSupplierCyls = currentCyls.filter((c: any) => c.supplier_tagged && c.status !== 'deactivated' && c.is_active !== false);
       const combinedSupplier = [...supCyls];
       currentSupplierCyls.forEach((c: any) => {
         if (!combinedSupplier.some(sc => sc.id === c.id)) {
@@ -417,6 +451,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     setEditSupplierId(doc.supplier_id || '');
     setEditStatus(doc.status || 'completed');
     setEditRemarks(doc.remarks || '');
+    setEditDeliveryOrderNo(doc.delivery_order_no || '');
     setEditReason('');
 
     if (type === 'returns') {
@@ -490,8 +525,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       if (newVal.returned_date && oldVal.returned_date && newVal.returned_date !== oldVal.returned_date) {
         changes.push(`Date updated from ${new Date(oldVal.returned_date).toLocaleDateString()} to ${new Date(newVal.returned_date).toLocaleDateString()}`);
       }
+      if (newVal.received_date && oldVal.received_date && newVal.received_date !== oldVal.received_date) {
+        changes.push(`Received date updated from ${new Date(oldVal.received_date).toLocaleDateString()} to ${new Date(newVal.received_date).toLocaleDateString()}`);
+      }
       if (newVal.requested_date && oldVal.requested_date && newVal.requested_date !== oldVal.requested_date) {
         changes.push(`Requested date updated from ${new Date(oldVal.requested_date).toLocaleDateString()} to ${new Date(newVal.requested_date).toLocaleDateString()}`);
+      }
+      if (newVal.delivery_order_no !== undefined && oldVal.delivery_order_no !== newVal.delivery_order_no) {
+        changes.push(`DO Number updated from "${oldVal.delivery_order_no || '-'}" to "${newVal.delivery_order_no || '-'}"`);
       }
       if (newVal.supplier_id && oldVal.supplier_id && newVal.supplier_id !== oldVal.supplier_id) {
         changes.push(`Supplier updated`);
@@ -559,10 +600,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           {
             receivedDate: new Date(editDate).toISOString(),
             supplierId: editSupplierId,
+            deliveryOrderNo: editDeliveryOrderNo,
             status: editStatus,
             remarks: editRemarks,
           },
-          user?.id || ''
+          user?.id || '',
+          editReason
         );
       }
 
@@ -626,10 +669,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         <div className={`flex flex-col lg:flex-row lg:items-center justify-between gap-4 ${subTab === 'tracking' ? '' : 'pb-4 border-b border-slate-100'}`}>
           {/* Executive Segmented Workflow Selector */}
           {!hideSubTabBar && (
-            <div className="inline-flex flex-wrap sm:flex-nowrap items-center bg-slate-100/90 p-1.5 rounded-xl border border-slate-200/80 gap-1 w-full sm:w-auto">
+            <div className="inline-flex flex-wrap sm:flex-nowrap items-center bg-slate-100/80 p-1 rounded-xl border border-slate-200/70 gap-1 w-full sm:w-auto">
               <button
                 onClick={() => setSubTab('returns')}
-                className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                   subTab === 'returns'
                     ? 'bg-white text-rose-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
@@ -646,7 +689,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
               <button
                 onClick={() => setSubTab('requests')}
-                className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                   subTab === 'requests'
                     ? 'bg-white text-blue-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
@@ -663,7 +706,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
               <button
                 onClick={() => setSubTab('received')}
-                className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                   subTab === 'received'
                     ? 'bg-white text-emerald-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
@@ -680,7 +723,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
               <button
                 onClick={() => setSubTab('tracking')}
-                className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                   subTab === 'tracking'
                     ? 'bg-white text-indigo-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
@@ -698,29 +741,32 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           )}
 
           {/* Contextual Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 ml-auto">
+          <div className="flex items-center gap-2 shrink-0 ml-auto">
             {subTab === 'returns' && (
               <>
+                {/* Secondary Quick Utility: Quick Barcode / Camera Scan */}
                 <button
                   onClick={onScanClick}
                   disabled={isViewOnly}
-                  title={isViewOnly ? 'View-only for Office Admin' : undefined}
-                  className={`px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs hover:border-slate-300 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                  title={isViewOnly ? 'View-only for Office Admin' : language === 'ms' ? 'Buka Pengimbas Silinder Pantas' : 'Open Quick Cylinder Scanner'}
+                  className={`px-3 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 font-semibold text-xs shadow-2xs hover:border-slate-300 active:scale-95 transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer ${
                     isViewOnly ? 'opacity-60 grayscale cursor-not-allowed' : ''
                   }`}
                 >
-                  <Plus className="w-3.5 h-3.5 text-blue-600" />
-                  <span>{language === 'ms' ? 'Imbas Silinder Kosong' : 'Scan Empty Cylinder'}</span>
+                  <QrCode className="w-3.5 h-3.5 text-blue-600" />
+                  <span>{language === 'ms' ? 'Imbas Pantas' : 'Quick Scan'}</span>
                 </button>
+
+                {/* Primary Action Button: Unified Create Return Document */}
                 <button
                   onClick={onCreateClick}
                   disabled={isViewOnly}
                   title={isViewOnly ? 'View-only for Office Admin' : undefined}
-                  className={`px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bold text-xs shadow-sm shadow-rose-500/25 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold text-xs shadow-sm shadow-rose-500/25 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                     isViewOnly ? 'opacity-60 grayscale cursor-not-allowed' : ''
                   }`}
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-4 h-4" />
                   <span>{language === 'ms' ? 'Cipta Dokumen Pulang' : 'Create Return Document'}</span>
                 </button>
               </>
@@ -803,7 +849,30 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         </div>
 
         {/* Live Operational Metrics Chip Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-100">
+        <div className={`grid grid-cols-2 ${subTab === 'returns' ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-3 pt-4 border-t border-slate-100`}>
+          {subTab === 'returns' && (
+            <div 
+              onClick={onOpenEmptyListModal || onScanClick}
+              className="bg-amber-50/70 hover:bg-amber-50 border border-amber-200/80 rounded-xl p-3 cursor-pointer transition-all hover:border-amber-300 group"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 block">
+                  {language === 'ms' ? 'Kosong Di Stor' : 'Empty in Store'}
+                </span>
+                <span className="text-[10px] text-indigo-600 font-bold group-hover:underline flex items-center gap-0.5">
+                  {language === 'ms' ? 'Lihat Senarai' : 'View Manifest'} &rarr;
+                </span>
+              </div>
+              <div className="text-lg font-extrabold text-amber-900 font-mono mt-0.5">
+                {storeEmptyCount}
+                <span className="text-xs font-sans font-normal text-amber-700 ml-1">cyl</span>
+              </div>
+              <span className="text-[10px] text-amber-700/80 font-medium">
+                {language === 'ms' ? 'Sedia untuk pemulangan' : 'Ready for return dispatch'}
+              </span>
+            </div>
+          )}
+
           <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               {language === 'ms' ? 'Jumlah Dokumen' : 'Total Documents'}
@@ -821,7 +890,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               {subTab === 'returns' 
                 ? (language === 'ms' ? 'Silinder Dipulangkan' : 'Cylinders Returned')
                 : subTab === 'requests'
-                ? (language === 'ms' ? 'Silinder Dipesan' : 'Cylinders Requested')
+                ? (language === 'ms' ? 'Kuantiti Dipesan' : 'Quantities Requested')
                 : (language === 'ms' ? 'Silinder Diterima' : 'Cylinders Received')}
             </span>
             <div className="text-lg font-extrabold text-slate-900 font-mono mt-0.5">
@@ -829,7 +898,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               <span className="text-xs font-sans font-normal text-slate-500 ml-1">cyl</span>
             </div>
             <span className="text-[10px] text-slate-500 font-medium">
-              {language === 'ms' ? 'Rentang keseluruhan' : 'Across all records'}
+              {subTab === 'requests' && (kpiStats.totalVieM3 || 0) > 0
+                ? `+ ${(kpiStats.totalVieM3 || 0).toLocaleString()} m³ VIE Tank`
+                : (language === 'ms' ? 'Rentang keseluruhan' : 'Across all records')}
             </span>
           </div>
 
@@ -1289,7 +1360,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                 </div>
               ) : (
                 filteredRequestDocuments.map((doc) => {
-                  const totalQty = doc.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+                  const cylQty = doc.items?.filter(i => {
+                    const c = (i.size_code || '').toUpperCase();
+                    return !c.includes('VIE') && !c.includes('LIQUID');
+                  }).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 0;
+                  const vieQty = doc.items?.filter(i => {
+                    const c = (i.size_code || '').toUpperCase();
+                    return c.includes('VIE') || c.includes('LIQUID');
+                  }).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 0;
                   const isCopied = copiedId === doc.id;
                   return (
                     <div key={doc.id} className="p-4 space-y-3 hover:bg-slate-50/60 transition-colors">
@@ -1399,10 +1477,22 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           </span>
                         </div>
                         <div className="col-span-2">
-                          <span className="text-[10px] text-slate-400 font-bold block">CYLINDERS REQUESTED</span>
-                          <span className="inline-flex items-center gap-1 font-mono font-bold text-slate-900 text-xs mt-0.5">
-                            {totalQty} <span className="font-sans font-normal text-slate-500">cylinders</span>
-                          </span>
+                          <span className="text-[10px] text-slate-400 font-bold block">QUANTITIES REQUESTED</span>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                            {cylQty > 0 && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 font-mono font-bold text-slate-900 text-xs">
+                                {cylQty} <span className="font-sans font-normal text-slate-500 text-[10px]">cyl</span>
+                              </span>
+                            )}
+                            {vieQty > 0 && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200/60 font-mono font-bold text-blue-700 text-xs">
+                                {vieQty.toLocaleString()} <span className="font-sans font-semibold text-blue-500 text-[10px]">m³ VIE</span>
+                              </span>
+                            )}
+                            {cylQty === 0 && vieQty === 0 && (
+                              <span className="font-mono text-slate-400 text-xs">0</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1419,7 +1509,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                     <th className="py-3.5 px-6">Request Document #</th>
                     <th className="py-3.5 px-6">Date</th>
                     <th className="py-3.5 px-6">Supplier</th>
-                    <th className="py-3.5 px-6 text-center">Cylinders Requested</th>
+                    <th className="py-3.5 px-6 text-center">Quantities / Items Requested</th>
                     <th className="py-3.5 px-6 text-center">Status</th>
                     <th className="py-3.5 px-6 text-right">Actions</th>
                   </tr>
@@ -1447,7 +1537,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                     </tr>
                   ) : (
                     filteredRequestDocuments.map((doc) => {
-                      const totalQty = doc.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+                      const cylQty = doc.items?.filter(i => {
+                        const c = (i.size_code || '').toUpperCase();
+                        return !c.includes('VIE') && !c.includes('LIQUID');
+                      }).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 0;
+                      const vieQty = doc.items?.filter(i => {
+                        const c = (i.size_code || '').toUpperCase();
+                        return c.includes('VIE') || c.includes('LIQUID');
+                      }).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 0;
                       const isCopied = copiedId === doc.id;
                       return (
                         <tr
@@ -1492,10 +1589,23 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             </div>
                           </td>
                           <td className="py-3.5 px-6 text-center">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-mono font-bold text-xs">
-                              {totalQty}
-                              <span className="text-[10px] text-slate-400 font-sans font-normal">cyl</span>
-                            </span>
+                            <div className="inline-flex flex-wrap items-center justify-center gap-1.5">
+                              {cylQty > 0 && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-mono font-bold text-xs">
+                                  {cylQty}
+                                  <span className="text-[10px] text-slate-400 font-sans font-normal">cyl</span>
+                                </span>
+                              )}
+                              {vieQty > 0 && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60 font-mono font-bold text-xs">
+                                  {vieQty.toLocaleString()}
+                                  <span className="text-[10px] text-blue-500 font-sans font-bold">m³</span>
+                                </span>
+                              )}
+                              {cylQty === 0 && vieQty === 0 && (
+                                <span className="text-slate-400 font-mono text-xs">0</span>
+                              )}
+                            </div>
                           </td>
                           <td className="py-3.5 px-6 text-center">
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
@@ -2001,12 +2111,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       {/* Edit Document Side Drawer */}
       <div 
         onClick={() => setIsEditOpen(false)}
-        className={`fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ${
           isEditOpen && selectedDoc ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       />
       <div 
-        className={`fixed inset-y-0 right-0 z-50 w-full max-w-4xl bg-white shadow-2xl flex flex-col transform transition-transform duration-300 ease-out border-l border-slate-200 ${
+        className={`fixed inset-y-0 right-0 z-[100] w-full max-w-4xl bg-white shadow-2xl flex flex-col transform transition-transform duration-300 ease-out border-l border-slate-200 ${
           isEditOpen && selectedDoc ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -2065,23 +2175,40 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-bold text-slate-450 uppercase tracking-wider mb-1.5">
-                  Supplier
-                </label>
-                <select
-                  required
-                  value={editSupplierId}
-                  onChange={(e) => setEditSupplierId(e.target.value)}
-                  className="w-full bg-slate-50/50 border border-slate-200 hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-slate-800 transition-all duration-200 outline-none"
-                >
-                  <option value="">Select Supplier</option>
-                  {suppliers.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.company_name}
-                    </option>
-                  ))}
-                </select>
+              <div className={docType === 'received' ? "grid grid-cols-1 sm:grid-cols-2 gap-4" : ""}>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-450 uppercase tracking-wider mb-1.5">
+                    Supplier
+                  </label>
+                  <select
+                    required
+                    value={editSupplierId}
+                    onChange={(e) => setEditSupplierId(e.target.value)}
+                    className="w-full bg-slate-50/50 border border-slate-200 hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-slate-800 transition-all duration-200 outline-none"
+                  >
+                    <option value="">Select Supplier</option>
+                    {suppliers.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.company_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {docType === 'received' && (
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-450 uppercase tracking-wider mb-1.5">
+                      {language === 'ms' ? 'No. Surat Hantaran (DO #)' : 'Delivery Order No. (DO #)'}
+                    </label>
+                    <input
+                      type="text"
+                      placeholder={language === 'ms' ? 'cth: DO-2026-98102' : 'e.g. DO-2026-98102'}
+                      value={editDeliveryOrderNo}
+                      onChange={(e) => setEditDeliveryOrderNo(e.target.value)}
+                      className="w-full bg-slate-50/50 border border-slate-200 hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm font-mono text-slate-800 transition-all duration-200 outline-none"
+                    />
+                  </div>
+                )}
               </div>
 
               <div>
@@ -2322,7 +2449,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
       {/* Delete Document Modal */}
       {isDeleteOpen && selectedDoc && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
           <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between border-b border-slate-100 p-5">
               <div className="flex items-center gap-3">
@@ -2388,7 +2515,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
       {/* History Modal */}
       {isHistoryOpen && selectedDoc && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
           <div className="w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between border-b border-slate-100 p-5">
               <div className="flex items-center gap-3">

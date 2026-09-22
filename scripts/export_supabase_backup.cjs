@@ -211,7 +211,17 @@ const tables = [
   'facility_drug_inventory',
   'store_sub_locations',
   'store_locations',
-  'facility_nondrug_inventory'
+  'facility_nondrug_inventory',
+  'hospital_forecast_justifications',
+  'staff_leave_types',
+  'staff_leave_quotas',
+  'staff_leave_applications',
+  'staff_movements',
+  'staff_reminders',
+  'staff_deadlines',
+  'staff_org_chart',
+  'pharmacy_oxygen_receive_documents',
+  'pharmacy_oxygen_receive_document_items'
 ];
 
 async function fetchTableData(tableName) {

@@ -1241,7 +1241,7 @@ export const Sidebar: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-slate-950/75 backdrop-blur-md z-[50] lg:hidden"
+            className="fixed inset-0 bg-slate-950/75 backdrop-blur-md z-[24] lg:hidden"
           />
         )}
       </AnimatePresence>
@@ -1255,7 +1255,7 @@ export const Sidebar: React.FC = () => {
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className={cn(
           'fixed left-0 bg-slate-950/98 backdrop-blur-2xl border-r border-slate-800/80',
-          'flex flex-col z-[60] shadow-2xl shadow-slate-950/60',
+          'flex flex-col z-[25] shadow-2xl shadow-slate-950/60',
           'top-16 sm:top-20 lg:top-24 h-[calc(100vh-64px)] sm:h-[calc(100vh-80px)] lg:h-[calc(100vh-96px)]',
           'w-[270px] max-w-[85vw] lg:translate-x-0 lg:w-[280px]'
         )}

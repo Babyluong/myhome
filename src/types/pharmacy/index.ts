@@ -557,6 +557,9 @@ export interface OxygenCylinder extends BaseEntity {
   cylinder_size_id?: string
   cylinder_type_id?: string
   qr_code?: string
+  qr_code_value?: string | null
+  qr_tagged_at?: string | null
+  qr_tagged_by?: string | null
   supplier_tagged?: boolean
   supplier_tag_source?: string
 }
@@ -626,7 +629,13 @@ export interface OxygenReceptionRecord extends BaseEntity {
   supplier_name?: string | null
   created_by?: string
   ids?: string[]
+  /** True when this reception is for Bulk VIE Liquid Oxygen (m³-unit sizes).
+   *  Derived at fetch time from joined reception items; never stored as a DB column.
+   *  Prevents VIE Tank receptions from being grouped with cylinder receptions
+   *  in the Monthly Consolidated view. */
+  is_vie_tank?: boolean
 }
+
 
 export interface OxygenReceptionItem extends BaseEntity {
   reception_id: string

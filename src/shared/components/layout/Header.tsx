@@ -174,7 +174,7 @@ export const Header: React.FC = () => {
   }, [user?.role])
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800/80 text-white z-[70] shadow-2xl shadow-slate-950/40">
+    <header className="fixed top-0 left-0 right-0 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800/80 text-white z-30 shadow-2xl shadow-slate-950/40">
       <div className="h-16 sm:h-20 lg:h-24 px-3 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Left Side - Branding */}
         <div className="flex items-center gap-2.5 sm:gap-4 lg:gap-6 min-w-0">

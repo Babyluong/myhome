@@ -51,7 +51,8 @@ import {
   LayoutGrid,
   Truck,
   FileCheck,
-  PackageCheck
+  PackageCheck,
+  RotateCcw
 } from 'lucide-react'
 import { ROUTES } from '@/shared/constants/routes'
 import { useAuthStore } from '@/stores/authStore'
@@ -65,6 +66,7 @@ import { StoreUsageBalanceTable } from '@/components/oxygen/StoreUsageBalanceTab
 import { SupplierReturnsSection } from '@/components/oxygen/SupplierReturnsSection'
 import { CreateReturnDocumentModal } from '@/components/oxygen/CreateReturnDocumentModal'
 import { ScanEmptyCylinderModal } from '@/components/oxygen/ScanEmptyCylinderModal'
+import { EmptyCylinderListModal } from '@/components/oxygen/EmptyCylinderListModal'
 import { ScanReconciliationModal } from '@/components/oxygen/ScanReconciliationModal'
 import { AuditReconciliationSummaryModal, AuditChangeItem } from '@/components/oxygen/AuditReconciliationSummaryModal'
 import { ReturnDocumentPrintView } from '@/components/oxygen/ReturnDocumentPrintView'
@@ -82,6 +84,7 @@ import { DispatchRequestDetailModal } from '@/components/oxygen/DispatchRequestD
 import { CylinderDispatchPrintView } from '@/components/oxygen/CylinderDispatchPrintView'
 import { DeleteDispatchConfirmModal } from '@/components/oxygen/DeleteDispatchConfirmModal'
 import { DeleteCylinderModal } from '@/components/oxygen/DeleteCylinderModal'
+import { CylinderQrTag } from '../../components/CylinderQrTag'
 import {
   getCylinderDispatchRequests,
   getCylinderDispatchKPI,
@@ -119,6 +122,7 @@ import {
   getReceiveDocuments,
   assignCylinderQrTag,
   deactivateCylinderQrTag,
+  reactivateCylinder,
   getOxygenCylinderTypes,
   generateNewCylindersWithQr,
   addSupplierTaggedLoanCylinders,
@@ -199,6 +203,8 @@ export const OxygenDashboardPage: React.FC = () => {
   const [printDocId, setPrintDocId] = useState<string | null>(null)
   const [printRequestId, setPrintRequestId] = useState<string | null>(null)
   const [printReceiveDocId, setPrintReceiveDocId] = useState<string | null>(null)
+  const [isEmptyListModalOpen, setIsEmptyListModalOpen] = useState(false)
+  const [emptyListCylinders, setEmptyListCylinders] = useState<OxygenCylinderWithRelations[]>([])
 
   // Filters for Cylinder Registry
   const [searchTerm, setSearchTerm] = useState('')
@@ -443,7 +449,11 @@ export const OxygenDashboardPage: React.FC = () => {
         : baseMonth
 
       const recVote = rec.vote_code || '080702'
-      const monthKey = `${baseMonth}_${recVote}`
+      // VIE Tank receptions MUST be kept in a separate monthly group from cylinder receptions.
+      // Use the is_vie_tank flag (derived at fetch time from reception items) as a discriminator
+      // so they are never merged together regardless of vote code or date.
+      const supplyType = rec.is_vie_tank ? 'vie' : 'cyl'
+      const monthKey = `${baseMonth}_${recVote}_${supplyType}`
       const monthLabel = monthDateLabel
 
       const recIds = rec.ids && rec.ids.length > 0 ? rec.ids : [rec.id]
@@ -469,6 +479,7 @@ export const OxygenDashboardPage: React.FC = () => {
           monthLabel,
           entryCount: 1,
           records: [rec],
+          is_vie_tank: rec.is_vie_tank ?? false,
           created_at: rec.created_at || ''
         }
       } else {
@@ -508,6 +519,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
     return Object.values(monthMap).sort((a, b) => b.monthKey.localeCompare(a.monthKey))
   }
+
 
   // Modals visibility
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
@@ -1064,7 +1076,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
       // Only fetch tagged cylinders if we are on the paths that need them
       if (needsFullList) {
-        const taggedRes = await getOxygenCylinders(hospitalId, { qr_tagged: true }, 1, 5000)
+        const taggedRes = await getOxygenCylinders(hospitalId, { qr_tagged: true, include_deactivated: true }, 1, 5000)
         if (taggedRes.data) {
           setTaggedCylindersList(taggedRes.data.data || [])
         }
@@ -1284,6 +1296,8 @@ export const OxygenDashboardPage: React.FC = () => {
         return <Badge variant="warning">Maintenance</Badge>
       case 'disposed':
         return <Badge variant="error">Disposed</Badge>
+      case 'deactivated':
+        return <Badge variant="error">{language === 'ms' ? 'Dinyahaktifkan' : 'Deactivated'}</Badge>
       default:
         return <Badge variant="secondary">{status}</Badge>
     }
@@ -1888,7 +1902,7 @@ export const OxygenDashboardPage: React.FC = () => {
         const sizeObj = sizesList?.find(s => s.code === sizeCode || s.code === sizeCode.replace(/^P/, '') || `P${s.code}` === sizeCode)
         if (!sizeObj) continue
 
-        const isPerM3 = sizeCode.toLowerCase().includes('liquid') || sizeCode.toLowerCase().includes('vie') || sizeObj.unit === 'm3'
+        const isPerM3 = sizeCode.toLowerCase().includes('liquid') || sizeCode.toLowerCase().includes('vie')
         const basePrice = getActivePrice(sizeCode, selectedReceiveSupplier)
         const loanRate = getActiveLoanRate(sizeCode, selectedReceiveSupplier)
 
@@ -2154,19 +2168,39 @@ export const OxygenDashboardPage: React.FC = () => {
 
 
   const handleDeactivateQrTag = async (id: string) => {
-    if (!confirm('Are you sure you want to deactivate and remove this QR tag? This cylinder will need to be re-tagged before it can be scanned.')) return
+    if (!confirm(language === 'ms' 
+      ? 'Adakah anda pasti mahu menyahaktifkan silinder ini? Silinder yang dinyahaktifkan akan dikelabukan dan tidak akan muncul dalam mana-mana modul operasi MyCylinder.' 
+      : 'Are you sure you want to deactivate this cylinder? Deactivated cylinders will be grayed out and will not appear in active MyCylinder modules.')) return
     try {
       const res = await deactivateCylinderQrTag(id)
       if (res.data) {
         await loadData()
         setGeneratedLabels(prev => prev.filter(c => c.id !== id))
-        alert('QR Tag successfully deactivated.')
+        alert(language === 'ms' ? 'Silinder berjaya dinyahaktifkan.' : 'Cylinder successfully deactivated.')
       } else {
-        alert(res.error || 'Failed to deactivate QR tag.')
+        alert(res.error || (language === 'ms' ? 'Gagal menyahaktifkan silinder.' : 'Failed to deactivate cylinder.'))
       }
     } catch (err) {
       console.error(err)
-      alert('Error deactivating QR tag.')
+      alert(language === 'ms' ? 'Ralat menyahaktifkan silinder.' : 'Error deactivating cylinder.')
+    }
+  }
+
+  const handleReactivateCylinder = async (id: string) => {
+    if (!confirm(language === 'ms' 
+      ? 'Adakah anda ingin mengaktifkan semula silinder ini kembali ke stor?' 
+      : 'Do you want to reactivate this cylinder back into active store inventory?')) return
+    try {
+      const res = await reactivateCylinder(id, 'empty')
+      if (res.data) {
+        await loadData()
+        alert(language === 'ms' ? 'Silinder berjaya diaktifkan semula.' : 'Cylinder successfully reactivated.')
+      } else {
+        alert(res.error || (language === 'ms' ? 'Gagal mengaktifkan semula silinder.' : 'Failed to reactivate cylinder.'))
+      }
+    } catch (err) {
+      console.error(err)
+      alert(language === 'ms' ? 'Ralat mengaktifkan semula silinder.' : 'Error reactivating cylinder.')
     }
   }
 
@@ -2325,15 +2359,15 @@ export const OxygenDashboardPage: React.FC = () => {
                 })}
               </div>
 
-              {/* Administrative Protected Action */}
-              <div className="flex items-center gap-2.5 self-end sm:self-auto">
+              {/* Administrative Protected Action - Sleek & Discreet */}
+              <div className="flex items-center gap-2 self-end sm:self-auto">
                 <button
                   onClick={handleOpenClearModal}
-                  className="px-3.5 py-2.5 bg-rose-50/80 hover:bg-rose-100 text-rose-700 border border-rose-200/80 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs hover:shadow-xs active:scale-95 shrink-0 cursor-pointer"
-                  title="Protected action: Clear stock data with admin password verification"
+                  className="px-3 py-2 bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200/80 hover:border-rose-200/80 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs hover:shadow-xs active:scale-95 shrink-0 cursor-pointer"
+                  title={language === 'ms' ? 'Pilihan Pentadbir: Kosongkan data stok (Memerlukan kata laluan)' : 'Admin: Clear stock data (Password protected)'}
                 >
-                  <Lock className="w-3.5 h-3.5 text-rose-600" />
-                  <span>{language === 'ms' ? 'Kosongkan Data (Imbasan Baru)' : 'Clear Stock Data'}</span>
+                  <Lock className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="text-[11px] font-medium">{language === 'ms' ? 'Pilihan Pentadbir' : 'Admin Reset'}</span>
                 </button>
               </div>
             </div>
@@ -2369,39 +2403,43 @@ export const OxygenDashboardPage: React.FC = () => {
               />
             )}
  
-            {cylinderActiveTab === 'supplier_returns' && (
-               <SupplierReturnsSection
-                 hospitalId={hospitalId || ''}
-                 documents={returnDocs}
-                 requestDocuments={requestDocs}
-                 receiveDocuments={receiveDocs}
-                 onCreateClick={() => setIsReturnModalOpen(true)}
-                 onCreateRequestClick={() => setIsRequestModalOpen(true)}
-                 onCreateReceiveClick={() => setIsReceiveDocModalOpen(true)}
-                 onScanClick={() => setIsScanOpen(true)}
-                 onPrintClick={(docId) => setPrintDocId(docId)}
-                 onPrintRequestClick={(docId) => setPrintRequestId(docId)}
-                 onPrintReceiveClick={(docId) => setPrintReceiveDocId(docId)}
-                 isViewOnly={false}
-                 subTab={supplierReturnsSubTab}
-                 onSubTabChange={setSupplierReturnsSubTab}
-                 hideSubTabBar={false}
-                 onSuccess={async () => {
-                   if (!hospitalId) return
-                   const [aggRes, docsRes, reqsRes, recDocsRes] = await Promise.all([
-                     getCylinderInventoryByType(hospitalId),
-                     getReturnDocuments(hospitalId),
-                     getRequestDocuments(hospitalId),
-                     getReceiveDocuments(hospitalId),
-                   ])
-                   if (aggRes.data) setCylinderAggregates(aggRes.data)
-                   if (docsRes.data) setReturnDocs(docsRes.data)
-                   if (reqsRes.data) setRequestDocs(reqsRes.data)
-                   if (recDocsRes.data) setReceiveDocs(recDocsRes.data)
-                 }}
-               />
-             )}
-          </div>
+             {cylinderActiveTab === 'supplier_returns' && (
+                <SupplierReturnsSection
+                  hospitalId={hospitalId || ''}
+                  documents={returnDocs}
+                  requestDocuments={requestDocs}
+                  receiveDocuments={receiveDocs}
+                  onCreateClick={() => setIsReturnModalOpen(true)}
+                  onCreateRequestClick={() => setIsRequestModalOpen(true)}
+                  onCreateReceiveClick={() => setIsReceiveDocModalOpen(true)}
+                  onScanClick={() => setIsScanOpen(true)}
+                  onOpenEmptyListModal={() => {
+                    setEmptyListCylinders([])
+                    setIsEmptyListModalOpen(true)
+                  }}
+                  onPrintClick={(docId) => setPrintDocId(docId)}
+                  onPrintRequestClick={(docId) => setPrintRequestId(docId)}
+                  onPrintReceiveClick={(docId) => setPrintReceiveDocId(docId)}
+                  isViewOnly={false}
+                  subTab={supplierReturnsSubTab}
+                  onSubTabChange={setSupplierReturnsSubTab}
+                  hideSubTabBar={false}
+                  onSuccess={async () => {
+                    if (!hospitalId) return
+                    const [aggRes, docsRes, reqsRes, recDocsRes] = await Promise.all([
+                      getCylinderInventoryByType(hospitalId),
+                      getReturnDocuments(hospitalId),
+                      getRequestDocuments(hospitalId),
+                      getReceiveDocuments(hospitalId),
+                    ])
+                    if (aggRes.data) setCylinderAggregates(aggRes.data)
+                    if (docsRes.data) setReturnDocs(docsRes.data)
+                    if (reqsRes.data) setRequestDocs(reqsRes.data)
+                    if (recDocsRes.data) setReceiveDocs(recDocsRes.data)
+                  }}
+                />
+              )}
+           </div>
 
           {/* Scan Empty Cylinder Modal */}
           <ScanEmptyCylinderModal
@@ -2411,6 +2449,17 @@ export const OxygenDashboardPage: React.FC = () => {
             onClose={() => {
               setIsScanOpen(false)
               setSelectedDepleteCombo(null)
+            }}
+            onOpenReturnModal={() => {
+              setIsScanOpen(false)
+              setSelectedDepleteCombo(null)
+              setIsReturnModalOpen(true)
+            }}
+            onCreateEmptyList={(scannedCyls) => {
+              setIsScanOpen(false)
+              setSelectedDepleteCombo(null)
+              setEmptyListCylinders(scannedCyls)
+              setIsEmptyListModalOpen(true)
             }}
             sessionScannedCylinders={sessionScannedCylinders}
             setSessionScannedCylinders={setSessionScannedCylinders}
@@ -2429,12 +2478,33 @@ export const OxygenDashboardPage: React.FC = () => {
             }}
           />
 
+          {/* Dedicated Separate Document: Empty Cylinder List Modal */}
+          <EmptyCylinderListModal
+            hospitalId={hospitalId || ''}
+            isOpen={isEmptyListModalOpen}
+            initialCylinders={emptyListCylinders.length > 0 ? emptyListCylinders : undefined}
+            onClose={() => {
+              setIsEmptyListModalOpen(false)
+              setEmptyListCylinders([])
+            }}
+            onOpenReturnModal={(selectedCyls) => {
+              setIsEmptyListModalOpen(false)
+              setEmptyListCylinders([])
+              setSessionScannedCylinders(selectedCyls)
+              setIsReturnModalOpen(true)
+            }}
+          />
+
 
           {/* Return Document Modals */}
           <CreateReturnDocumentModal
             hospitalId={hospitalId || ''}
             isOpen={isReturnModalOpen}
             onClose={() => setIsReturnModalOpen(false)}
+            onOpenScanner={() => {
+              setIsReturnModalOpen(false)
+              setIsScanOpen(true)
+            }}
             sessionScannedCylinders={sessionScannedCylinders}
             setSessionScannedCylinders={setSessionScannedCylinders}
             onSuccess={async () => {
@@ -2720,35 +2790,27 @@ export const OxygenDashboardPage: React.FC = () => {
     if (currentPath === '/pharmacy/oxygen/qr') {
       const seenLoanSizes = new Set<string>()
       const uniqueTaggedCylindersList = taggedCylindersList.filter(c => {
-        if (c.supplier_tagged) {
+        if (c.supplier_tagged || c.status === 'deactivated' || c.is_active === false) {
           return true
         }
         const serial = (c.serial_number || '').toUpperCase()
-        const isLoan = c.is_loan || 
-                       (c.size_info?.is_loan) || 
-                       serial.startsWith('101-N') || 
-                       serial.startsWith('101-F') ||
-                       serial.startsWith('101N') ||
-                       serial.startsWith('101F')
+        const isGenericLoanTag = serial === '101-N' || serial === '101-F' || serial === 'O2-101-N' || serial === 'O2-101-F'
 
-        if (isLoan) {
-          const sizeCode = c.size_info?.code || (serial.includes('101-N') || serial.includes('101N') ? '101-N' : '101-F')
+        if (isGenericLoanTag) {
+          const sizeCode = serial.includes('101-N') ? '101-N' : '101-F'
           if (seenLoanSizes.has(sizeCode)) {
             return false
           }
           seenLoanSizes.add(sizeCode)
-          
-          c.serial_number = sizeCode
-          c.qr_code_value = `O2-${sizeCode}`
-          if (c.size_info) {
-            c.size_info.capacity = sizeCode === '101-N' ? '8.0' : '1.4'
-          }
+          return true
         }
         return true
       })
 
       const taggedCylinders = uniqueTaggedCylindersList.filter(c => {
-        const matchesSearch = c.serial_number.toLowerCase().includes(qrSearchTerm.toLowerCase()) || 
+        const isDeactivated = c.status === 'deactivated' || c.is_active === false
+
+        const matchesSearch = (c.serial_number || '').toLowerCase().includes(qrSearchTerm.toLowerCase()) || 
           (c.qr_code_value && c.qr_code_value.toLowerCase().includes(qrSearchTerm.toLowerCase()))
         
         let matchesSize = true
@@ -2761,7 +2823,9 @@ export const OxygenDashboardPage: React.FC = () => {
           matchesType = c.type_info?.code === qrTypeFilter || (c.type_info?.type_name || '').includes(qrTypeFilter) || (c.type_info?.name || '').includes(qrTypeFilter)
         }
 
-        return c.qr_code_value && matchesSearch && matchesSize && matchesType
+        const hasTagOrDeactivated = Boolean(c.qr_code_value || isDeactivated)
+
+        return hasTagOrDeactivated && matchesSearch && matchesSize && matchesType
       })
 
       const paginatedTaggedCylinders = taggedCylinders.slice(
@@ -2770,23 +2834,30 @@ export const OxygenDashboardPage: React.FC = () => {
       )
 
       const handlePrintIndividual = (stickerId: string) => {
+        const cleanId = stickerId.startsWith('sticker-') ? stickerId : `sticker-${stickerId}`;
         const styleEl = document.createElement('style');
         styleEl.innerHTML = `
           @media print {
             body * {
               visibility: hidden !important;
             }
-            #sticker-${stickerId}, #sticker-${stickerId} * {
+            #${cleanId}, #${cleanId} * {
               visibility: visible !important;
             }
-            #sticker-${stickerId} {
+            #${cleanId} {
               position: absolute !important;
               left: 50% !important;
               top: 50% !important;
-              transform: translate(-50%, -50%) scale(1.5) !important;
-              border: none !important;
+              transform: translate(-50%, -50%) !important;
+              width: 140mm !important;
+              max-width: 140mm !important;
+              height: auto !important;
+              margin: 0 !important;
+              padding: 5px !important;
               box-shadow: none !important;
-              background: white !important;
+              background-color: #ffffff !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
             }
             .no-print-sticker-btn {
               display: none !important;
@@ -2813,11 +2884,21 @@ export const OxygenDashboardPage: React.FC = () => {
                 left: 0 !important;
                 top: 0 !important;
                 width: 100% !important;
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 20px !important;
-                padding: 20px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 12mm !important;
+                padding: 12mm !important;
                 background: white !important;
+              }
+              #printable-batch-stickers .cylinder-qr-tag-container {
+                width: 140mm !important;
+                max-width: 140mm !important;
+                height: auto !important;
+                background-color: #ffffff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
               }
               .no-print-sticker-btn {
                 display: none !important;
@@ -3168,59 +3249,18 @@ export const OxygenDashboardPage: React.FC = () => {
                     </div>
 
                     {/* Stickers Grid */}
-                    <div id="printable-batch-stickers" className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2 hide-scrollbar">
+                    <div id="printable-batch-stickers" className="flex flex-col gap-4 max-h-[520px] overflow-y-auto pr-2 hide-scrollbar">
                       {generatedLabels.map((label) => (
                         <div 
                           key={label.id}
-                          id={`sticker-${label.id}`} 
-                          className="p-5 border border-slate-100 bg-slate-50/50 rounded-2xl flex flex-col items-center relative overflow-hidden group shadow-sm hover:shadow-md hover:bg-white hover:border-[#00a68a]/30 transition-all duration-300"
+                          className="p-3 bg-slate-50/70 border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md hover:bg-white transition-all flex justify-center items-center"
                         >
-                          <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity no-print-sticker-btn">
-                            <button
-                              onClick={() => handlePrintIndividual(label.id)}
-                              title={language === 'ms' ? 'Cetak Label' : 'Print Individual Label'}
-                              className="p-1.5 bg-white border border-slate-200 hover:border-[#00a68a] text-slate-600 hover:text-[#00a68a] rounded-lg shadow-sm transition-all"
-                            >
-                              <Printer className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-
-                          <div className="w-28 h-28 border-2 border-slate-200 bg-white rounded-xl p-1.5 flex items-center justify-center relative overflow-hidden group-hover:border-[#00a68a]/40 transition-colors">
-                            {/* Scanning indicator */}
-                            <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-[#00a68a] to-transparent animate-bounce opacity-40" />
-                            
-                            <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
-                              <rect width="100" height="100" fill="white" />
-                              <rect x="10" y="10" width="22" height="22" fill="black" />
-                              <rect x="13" y="13" width="16" height="16" fill="white" />
-                              <rect x="16" y="16" width="10" height="10" fill="black" />
-
-                              <rect x="68" y="10" width="22" height="22" fill="black" />
-                              <rect x="71" y="13" width="16" height="16" fill="white" />
-                              <rect x="74" y="16" width="10" height="10" fill="black" />
-
-                              <rect x="10" y="68" width="22" height="22" fill="black" />
-                              <rect x="13" y="71" width="16" height="16" fill="white" />
-                              <rect x="16" y="74" width="10" height="10" fill="black" />
-
-                              {/* QR pattern simulation */}
-                              <rect x="42" y="15" width="8" height="8" fill="black" />
-                              <rect x="52" y="25" width="6" height="6" fill="black" />
-                              <rect x="45" y="42" width="15" height="15" fill="black" />
-                              <rect x="72" y="48" width="8" height="8" fill="black" />
-                              <rect x="18" y="45" width="6" height="6" fill="black" />
-                              <rect x="68" y="68" width="12" height="12" fill="black" />
-                              <rect x="44" y="68" width="6" height="6" fill="black" />
-                              <rect x="68" y="44" width="6" height="6" fill="black" />
-                            </svg>
-                          </div>
-
-                          <div className="mt-3 text-center w-full">
-                            <p className="text-xs font-mono font-black text-slate-800 tracking-wider select-all">{label.serial_number}</p>
-                            <p className="text-[9px] text-slate-500 font-extrabold mt-0.5">{label.type_info?.type_name}</p>
-                            <p className="text-[7px] font-mono text-slate-400 mt-1 truncate max-w-full px-2 py-0.5 bg-slate-100 rounded select-all">{label.qr_code_value}</p>
-                            <span className="text-[7px] font-black uppercase text-[#00a68a] tracking-widest mt-1.5 block">KKM MEDICAL OXYGEN</span>
-                          </div>
+                          <CylinderQrTag
+                            cylinder={label}
+                            id={`sticker-${label.id}`}
+                            onPrint={handlePrintIndividual}
+                            showPrintButton={true}
+                          />
                         </div>
                       ))}
                     </div>
@@ -3325,40 +3365,81 @@ export const OxygenDashboardPage: React.FC = () => {
                           </td>
                         </tr>
                       ) : (
-                        paginatedTaggedCylinders.map(cyl => (
-                          <tr key={cyl.id} className="hover:bg-slate-50/50 transition-colors">
-                            <td className="px-6 py-4 font-mono font-bold text-gray-900">{cyl.serial_number}</td>
-                            <td className="px-6 py-4 text-gray-600 font-medium">{cyl.type_info?.type_name || 'Standard Cylinder'}</td>
-                            <td className="px-6 py-4 font-mono text-gray-500 font-semibold select-all">{cyl.qr_code_value}</td>
-                            <td className="px-6 py-4 text-gray-600 font-semibold">
-                              {cyl.qr_tagged_at || cyl.created_at ? new Date(cyl.qr_tagged_at || cyl.created_at).toLocaleString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : '-'}
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                <button
-                                  onClick={() => {
-                                    setGeneratedLabels([cyl])
-                                    setQrActiveTab('generate')
-                                    setSelectedTypeId(cyl.type_id || '')
-                                  }}
-                                  className="px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200 transition-all flex items-center gap-1 active:scale-95"
-                                  title={language === 'ms' ? 'Cetak Semula' : 'Reprint Tag'}
-                                >
-                                  <Printer className="w-3 h-3 text-slate-500" />
-                                  {language === 'ms' ? 'Cetak' : 'Reprint'}
-                                </button>
-                                <button
-                                  onClick={() => handleDeactivateQrTag(cyl.id)}
-                                  className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold border border-rose-100 transition-all flex items-center gap-1 active:scale-95"
-                                  title={language === 'ms' ? 'Nyahaktifkan' : 'Deactivate QR Tag'}
-                                >
-                                  <Trash2 className="w-3 h-3 text-rose-500" />
-                                  {language === 'ms' ? 'Nyahaktif' : 'Deactivate'}
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
+                        paginatedTaggedCylinders.map(cyl => {
+                          const isDeactivated = cyl.status === 'deactivated' || cyl.is_active === false
+
+                          return (
+                            <tr 
+                              key={cyl.id} 
+                              className={isDeactivated 
+                                ? "bg-slate-100/70 opacity-60 hover:bg-slate-100/90 transition-colors select-none text-slate-400" 
+                                : "hover:bg-slate-50/50 transition-colors"
+                              }
+                            >
+                              <td className="px-6 py-4 font-mono font-bold">
+                                <div className="flex items-center gap-2">
+                                  <span className={isDeactivated ? "line-through text-slate-400" : "text-gray-900"}>
+                                    {cyl.serial_number}
+                                  </span>
+                                  {isDeactivated && (
+                                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-200 text-slate-600 border border-slate-300 flex items-center gap-1">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                      {language === 'ms' ? 'Dinyahaktif' : 'Deactivated'}
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className={`px-6 py-4 font-medium ${isDeactivated ? 'text-slate-400' : 'text-gray-600'}`}>
+                                {cyl.type_info?.type_name || 'Standard Cylinder'}
+                              </td>
+                              <td className={`px-6 py-4 font-mono font-semibold select-all ${isDeactivated ? 'text-slate-400 italic' : 'text-gray-500'}`}>
+                                {isDeactivated 
+                                  ? (cyl.qr_code_value ? <span className="line-through">{cyl.qr_code_value}</span> : (language === 'ms' ? '(Dinyahaktif)' : '(Deactivated)'))
+                                  : (cyl.qr_code_value || '-')}
+                              </td>
+                              <td className={`px-6 py-4 font-semibold ${isDeactivated ? 'text-slate-400' : 'text-gray-600'}`}>
+                                {cyl.qr_tagged_at || cyl.created_at ? new Date(cyl.qr_tagged_at || cyl.created_at).toLocaleString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : '-'}
+                              </td>
+                              <td className="px-6 py-4 text-right">
+                                <div className="flex items-center justify-end gap-2">
+                                  {isDeactivated ? (
+                                    <button
+                                      onClick={() => handleReactivateCylinder(cyl.id)}
+                                      className="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold border border-emerald-200 transition-all flex items-center gap-1 active:scale-95 shadow-sm"
+                                      title={language === 'ms' ? 'Aktifkan Semula Silinder' : 'Reactivate Cylinder'}
+                                    >
+                                      <RotateCcw className="w-3 h-3 text-emerald-600" />
+                                      {language === 'ms' ? 'Aktifkan Semula' : 'Reactivate'}
+                                    </button>
+                                  ) : (
+                                    <>
+                                      <button
+                                        onClick={() => {
+                                          setGeneratedLabels([cyl])
+                                          setQrActiveTab('generate')
+                                          setSelectedTypeId(cyl.type_id || '')
+                                        }}
+                                        className="px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200 transition-all flex items-center gap-1 active:scale-95"
+                                        title={language === 'ms' ? 'Cetak Semula' : 'Reprint Tag'}
+                                      >
+                                        <Printer className="w-3 h-3 text-slate-500" />
+                                        {language === 'ms' ? 'Cetak' : 'Reprint'}
+                                      </button>
+                                      <button
+                                        onClick={() => handleDeactivateQrTag(cyl.id)}
+                                        className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold border border-rose-100 transition-all flex items-center gap-1 active:scale-95"
+                                        title={language === 'ms' ? 'Nyahaktifkan' : 'Deactivate QR Tag'}
+                                      >
+                                        <Trash2 className="w-3 h-3 text-rose-500" />
+                                        {language === 'ms' ? 'Nyahaktif' : 'Deactivate'}
+                                      </button>
+                                    </>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )
+                        })
                       )}
                     </tbody>
                   </table>
@@ -3371,62 +3452,105 @@ export const OxygenDashboardPage: React.FC = () => {
                       {language === 'ms' ? 'Tiada kod QR dijumpai.' : 'No active QR codes found matching criteria.'}
                     </div>
                   ) : (
-                    paginatedTaggedCylinders.map(cyl => (
-                      <div key={cyl.id} className="p-4 space-y-3 hover:bg-slate-50/50 transition-colors">
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                              {language === 'ms' ? 'No. Siri Silinder' : 'Cylinder Serial'}
-                            </span>
-                            <span className="font-mono font-bold text-slate-900 text-sm">
-                              {cyl.serial_number}
+                    paginatedTaggedCylinders.map(cyl => {
+                      const isDeactivated = cyl.status === 'deactivated' || cyl.is_active === false
+
+                      return (
+                        <div 
+                          key={cyl.id} 
+                          className={`p-4 space-y-3 transition-colors ${
+                            isDeactivated 
+                              ? 'bg-slate-100/70 opacity-60 border-l-4 border-slate-300 select-none' 
+                              : 'hover:bg-slate-50/50'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                {language === 'ms' ? 'No. Siri Silinder' : 'Cylinder Serial'}
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className={`font-mono font-bold text-sm ${isDeactivated ? 'line-through text-slate-500' : 'text-slate-900'}`}>
+                                  {cyl.serial_number}
+                                </span>
+                                {isDeactivated && (
+                                  <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-slate-200 text-slate-600 border border-slate-300">
+                                    {language === 'ms' ? 'Dinyahaktif' : 'Deactivated'}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border text-right ${
+                              isDeactivated 
+                                ? 'bg-slate-200/60 text-slate-500 border-slate-300' 
+                                : 'bg-slate-100 text-slate-700 border-slate-200'
+                            }`}>
+                              {cyl.type_info?.type_name || 'Standard Cylinder'}
                             </span>
                           </div>
-                          <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[11px] font-bold border border-slate-200 text-right">
-                            {cyl.type_info?.type_name || 'Standard Cylinder'}
-                          </span>
-                        </div>
 
-                        <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 space-y-1">
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
-                            {language === 'ms' ? 'Nilai Tag QR' : 'Active QR Tag Value'}
-                          </span>
-                          <span className="font-mono text-xs text-teal-700 font-bold select-all break-all block">
-                            {cyl.qr_code_value}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between gap-2 pt-1">
-                          <div className="text-[11px] text-slate-500">
-                            <span className="text-slate-400 font-semibold">{language === 'ms' ? 'Didaftar: ' : 'Tagged: '}</span>
-                            <span className="font-semibold text-slate-700">
-                              {cyl.qr_tagged_at || cyl.created_at ? new Date(cyl.qr_tagged_at || cyl.created_at).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
+                          <div className={`border rounded-xl p-2.5 space-y-1 ${
+                            isDeactivated 
+                              ? 'bg-slate-200/40 border-slate-300/80' 
+                              : 'bg-slate-50 border-slate-200/80'
+                          }`}>
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              {language === 'ms' ? 'Nilai Tag QR' : 'Active QR Tag Value'}
+                            </span>
+                            <span className={`font-mono text-xs font-bold select-all break-all block ${
+                              isDeactivated ? 'text-slate-400 italic' : 'text-teal-700'
+                            }`}>
+                              {isDeactivated 
+                                ? (cyl.qr_code_value ? <span className="line-through">{cyl.qr_code_value}</span> : (language === 'ms' ? '(Dinyahaktif)' : '(Deactivated)'))
+                                : (cyl.qr_code_value || '-')}
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-1.5 flex-shrink-0">
-                            <button
-                              onClick={() => {
-                                setGeneratedLabels([cyl])
-                                setQrActiveTab('generate')
-                                setSelectedTypeId(cyl.type_id || '')
-                              }}
-                              className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200 transition-all flex items-center gap-1 active:scale-95"
-                            >
-                              <Printer className="w-3 h-3 text-slate-500" />
-                              {language === 'ms' ? 'Cetak' : 'Reprint'}
-                            </button>
-                            <button
-                              onClick={() => handleDeactivateQrTag(cyl.id)}
-                              className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold border border-rose-200 transition-all flex items-center gap-1 active:scale-95"
-                            >
-                              <Trash2 className="w-3 h-3 text-rose-500" />
-                              {language === 'ms' ? 'Nyahaktif' : 'Deactivate'}
-                            </button>
+                          <div className="flex items-center justify-between gap-2 pt-1">
+                            <div className="text-[11px] text-slate-500">
+                              <span className="text-slate-400 font-semibold">{language === 'ms' ? 'Didaftar: ' : 'Tagged: '}</span>
+                              <span className={`font-semibold ${isDeactivated ? 'text-slate-400' : 'text-slate-700'}`}>
+                                {cyl.qr_tagged_at || cyl.created_at ? new Date(cyl.qr_tagged_at || cyl.created_at).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                              {isDeactivated ? (
+                                <button
+                                  onClick={() => handleReactivateCylinder(cyl.id)}
+                                  className="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold border border-emerald-200 transition-all flex items-center gap-1 active:scale-95 shadow-sm"
+                                  title={language === 'ms' ? 'Aktifkan Semula Silinder' : 'Reactivate Cylinder'}
+                                >
+                                  <RotateCcw className="w-3 h-3 text-emerald-600" />
+                                  {language === 'ms' ? 'Aktifkan' : 'Reactivate'}
+                                </button>
+                              ) : (
+                                <>
+                                  <button
+                                    onClick={() => {
+                                      setGeneratedLabels([cyl])
+                                      setQrActiveTab('generate')
+                                      setSelectedTypeId(cyl.type_id || '')
+                                    }}
+                                    className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200 transition-all flex items-center gap-1 active:scale-95"
+                                  >
+                                    <Printer className="w-3 h-3 text-slate-500" />
+                                    {language === 'ms' ? 'Cetak' : 'Reprint'}
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeactivateQrTag(cyl.id)}
+                                    className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold border border-rose-200 transition-all flex items-center gap-1 active:scale-95"
+                                  >
+                                    <Trash2 className="w-3 h-3 text-rose-500" />
+                                    {language === 'ms' ? 'Nyahaktif' : 'Deactivate'}
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))
+                      )
+                    })
                   )}
                 </div>
 
@@ -5335,8 +5459,19 @@ export const OxygenDashboardPage: React.FC = () => {
                                   <Layers className="w-2.5 h-2.5" />
                                   {mRec.entryCount} {mRec.entryCount === 1 ? (language === 'ms' ? 'Entri' : 'Delivery') : (language === 'ms' ? 'Entri Digabung' : 'Combined Deliveries')}
                                 </span>
+                                {/* Supply-type badge: VIE Tank vs Cylinder — clearly shown so staff know what type is consolidated */}
+                                {mRec.is_vie_tank ? (
+                                  <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200/80">
+                                    💧 {language === 'ms' ? 'Tangki VIE (Cecair)' : 'VIE Bulk Liquid'}
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-50 text-slate-600 border border-slate-200/80">
+                                    🔵 {language === 'ms' ? 'Silinder' : 'Cylinder'}
+                                  </span>
+                                )}
                               </div>
                             </td>
+
                             <td className="px-6 py-4">
                               <div className="flex flex-col gap-1 max-w-[280px]">
                                 <span className="font-mono font-bold text-teal-700 text-xs truncate" title={mRec.delivery_order_no}>
@@ -5416,10 +5551,22 @@ export const OxygenDashboardPage: React.FC = () => {
                     const paginatedMonthly = monthlyList.slice((monthlyCurrentPage - 1) * itemsPerPage, monthlyCurrentPage * itemsPerPage)
                     return paginatedMonthly.map((mRec) => (
                       <div key={mRec.id} className="bg-white border border-teal-200/80 rounded-2xl p-4 space-y-3 shadow-xs">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-slate-900 font-extrabold text-sm capitalize">
-                            {mRec.monthLabel}
-                          </span>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex flex-col gap-1">
+                            <span className="text-slate-900 font-extrabold text-sm capitalize">
+                              {mRec.monthLabel}
+                            </span>
+                            {/* Supply-type badge */}
+                            {mRec.is_vie_tank ? (
+                              <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200/80">
+                                💧 {language === 'ms' ? 'Tangki VIE (Cecair)' : 'VIE Bulk Liquid'}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-50 text-slate-600 border border-slate-200/80">
+                                🔵 {language === 'ms' ? 'Silinder' : 'Cylinder'}
+                              </span>
+                            )}
+                          </div>
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold bg-teal-50 text-teal-700 border border-teal-200">
                             <Layers className="w-2.5 h-2.5" />
                             {mRec.entryCount} {mRec.entryCount === 1 ? (language === 'ms' ? 'Entri' : 'Delivery') : (language === 'ms' ? 'Entri Digabung' : 'Combined')}
@@ -7416,7 +7563,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       >
                         {monthlyList.map(m => (
                           <option key={m.monthKey} value={m.monthKey}>
-                            {m.monthLabel.toUpperCase()} [Vot {m.vote_code || '080702'}] — ({m.entryCount} {m.entryCount === 1 ? 'Entri' : 'Entri Digabung'} / {fmt(m.total_amount)})
+                            {m.monthLabel.toUpperCase()} [{m.is_vie_tank ? '💧 VIE' : '🔵 Silinder'}] [Vot {m.vote_code || '080702'}] — ({m.entryCount} {m.entryCount === 1 ? 'Entri' : 'Entri Digabung'} / {fmt(m.total_amount)})
                           </option>
                         ))}
                       </select>

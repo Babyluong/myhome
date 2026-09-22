@@ -237,13 +237,16 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
               department:departments(*)
             `)
             .eq('hospital_id', hospitalId)
-            .neq('status', 'condemned');
+            .neq('status', 'condemned')
+            .neq('status', 'deactivated')
+            .eq('is_active', true);
 
           if (!err && data) {
             setAllHospitalCylinders(data);
 
             // Filter in-stock / store available cylinders
             const inStock = data.filter((c: any) => {
+              if (c.status === 'deactivated' || c.is_active === false) return false;
               const st = (c.status || '').toLowerCase();
               const loc = (c.current_location || '').toLowerCase();
               return st === 'available' || st === 'in_stock' || st === 'full' || loc.includes('store') || loc.includes('farmasi');
@@ -482,6 +485,8 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
             department:departments(*)
           `)
           .eq('hospital_id', hospitalId)
+          .neq('status', 'deactivated')
+          .eq('is_active', true)
           .or(`serial_number.ilike.%${cleaned}%,qr_code.ilike.%${cleaned}%,serial_number.ilike.%${cleanStripped}%`);
 
         if (dbCyls && dbCyls.length > 0) {
@@ -499,6 +504,13 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
     }
 
     if (hospitalMatch) {
+      if (hospitalMatch.status === 'deactivated' || hospitalMatch.is_active === false) {
+        playBeep('error');
+        setError(`Silinder "${hospitalMatch.serial_number}" telah dinyahaktifkan dan tidak boleh dikeluarkan.`);
+        setPendingActionCylinder(null);
+        return;
+      }
+
       const status = (hospitalMatch.status || '').toLowerCase();
       const loc = hospitalMatch.department?.department_name || hospitalMatch.current_location || 'General Ward';
 
@@ -826,7 +838,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-[100] flex justify-end bg-slate-950/60 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
     >
       <style>{`

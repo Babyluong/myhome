@@ -11,6 +11,7 @@ import type {
   UnitPemantauanWithRelations,
   BacaanSuhuWithRelations,
 } from '@/types/mysuhu';
+import { compressEquipmentImage } from '@/modules/mysuhu/utils/imageCompressor';
 
 // Helper to get default thresholds based on unit type
 export function getDefaultThresholds(jenisUnit?: string): { min_suhu: number; max_suhu: number } {
@@ -658,6 +659,110 @@ export async function updateUnitPemantauan(id: string, updates: Partial<UnitPema
     return { data: {} as UnitPemantauan, error: error.message || 'Failed to update unit' };
   }
 }
+
+/**
+ * Upload and attach equipment / room photo
+ */
+export async function uploadEquipmentPhoto(
+  file: File,
+  unitId: string
+): Promise<ApiResponse<string>> {
+  try {
+    const { compressedFile, dataUrl } = await compressEquipmentImage(file, 1200, 0.82);
+    let finalPhotoUrl = dataUrl;
+
+    if (isSupabaseConfigured()) {
+      const fileExt = compressedFile.name.split('.').pop() || 'jpg';
+      const filePath = `units/${unitId}-${Date.now()}.${fileExt}`;
+
+      const { data: uploadData, error: uploadErr } = await supabase.storage
+        .from('suhu-equipment')
+        .upload(filePath, compressedFile, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+
+      if (!uploadErr && uploadData) {
+        const { data: publicUrlData } = supabase.storage
+          .from('suhu-equipment')
+          .getPublicUrl(filePath);
+        if (publicUrlData?.publicUrl) {
+          finalPhotoUrl = publicUrlData.publicUrl;
+        }
+      } else {
+        console.warn('Storage upload note:', uploadErr?.message || 'Using data URL fallback');
+      }
+
+      // Persist photo_url in database
+      const { error: updateErr } = await supabase
+        .from('unit_pemantauan')
+        .update({
+          photo_url: finalPhotoUrl,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', unitId);
+
+      if (updateErr) {
+        console.error('Failed to update photo_url in database:', updateErr);
+      }
+    }
+
+    // Always keep mock / local state in sync
+    const units = getMockData<UnitPemantauan[]>('unit_pemantauan', []);
+    const idx = units.findIndex((u) => u.id === unitId);
+    if (idx !== -1) {
+      units[idx] = {
+        ...units[idx],
+        photo_url: finalPhotoUrl,
+        updated_at: new Date().toISOString(),
+      };
+      setMockData('unit_pemantauan', units);
+    }
+
+    return { data: finalPhotoUrl, error: null };
+  } catch (error: any) {
+    console.error('Error uploading equipment photo:', error);
+    return { data: '', error: error.message || 'Failed to upload equipment photo' };
+  }
+}
+
+/**
+ * Remove equipment / room photo
+ */
+export async function deleteEquipmentPhoto(
+  unitId: string
+): Promise<ApiResponse<boolean>> {
+  try {
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase
+        .from('unit_pemantauan')
+        .update({
+          photo_url: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', unitId);
+
+      if (error) throw error;
+    }
+
+    const units = getMockData<UnitPemantauan[]>('unit_pemantauan', []);
+    const idx = units.findIndex((u) => u.id === unitId);
+    if (idx !== -1) {
+      units[idx] = {
+        ...units[idx],
+        photo_url: null,
+        updated_at: new Date().toISOString(),
+      };
+      setMockData('unit_pemantauan', units);
+    }
+
+    return { data: true, error: null };
+  } catch (error: any) {
+    console.error('Error deleting equipment photo:', error);
+    return { data: false, error: error.message || 'Failed to delete equipment photo' };
+  }
+}
+
 
 /**
  * Configure temperature threshold values (closes old threshold, inserts new)

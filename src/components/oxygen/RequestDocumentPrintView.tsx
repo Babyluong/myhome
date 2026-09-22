@@ -56,7 +56,39 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
     const docCreatedTime = new Date(doc.created_at).toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/:/g, '-');
 
     const logoUrl = window.location.origin + '/512px-Jata_MalaysiaV2.svg.png';
-    const totalQty = doc.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+    const totalCylQty = doc.items?.filter(i => {
+      const c = (i.size_code || '').toUpperCase();
+      return !c.includes('VIE') && !c.includes('LIQUID');
+    }).reduce((sum, item) => sum + (Number(item.quantity) || 0), 0) || 0;
+
+    const totalVieM3 = doc.items?.filter(i => {
+      const c = (i.size_code || '').toUpperCase();
+      return c.includes('VIE') || c.includes('LIQUID');
+    }).reduce((sum, item) => sum + (Number(item.quantity) || 0), 0) || 0;
+
+    let totalQtyDisplay = '';
+    if (totalCylQty > 0 && totalVieM3 > 0) {
+      totalQtyDisplay = `${totalCylQty} Silinder + ${totalVieM3.toLocaleString()} M³`;
+    } else if (totalVieM3 > 0) {
+      totalQtyDisplay = `${totalVieM3.toLocaleString()} M³`;
+    } else {
+      totalQtyDisplay = `${totalCylQty} Silinder`;
+    }
+
+    const hasVie = doc.items?.some(i => {
+      const c = (i.size_code || '').toUpperCase();
+      return c.includes('VIE') || c.includes('LIQUID');
+    });
+    const hasCyl = doc.items?.some(i => {
+      const c = (i.size_code || '').toUpperCase();
+      return !c.includes('VIE') && !c.includes('LIQUID');
+    });
+    const documentSubTitle = hasVie && hasCyl
+      ? '(SILINDER SEWAAN & BEKALAN GAS CECAIR VIE TANK)'
+      : hasVie
+      ? '(BEKALAN GAS OKSIGEN CECAIR / BULK VIE TANK)'
+      : '(SILINDER SEWAAN / LOAN CYLINDER)';
+
     const todayDateStr = new Date(doc.created_at).toLocaleDateString('en-MY');
     const todayTimeStr = new Date(doc.created_at).toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
 
@@ -67,8 +99,14 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
     if (doc.items && doc.items.length > 0) {
       doc.items.forEach((item, index) => {
         let sizeDesc = '';
+        let displayCode = item.size_code === 'P101-F' ? '101-F' : item.size_code;
         const cleanCode = (item.size_code || '').toUpperCase().trim();
-        if (cleanCode.includes('HS') || cleanCode.includes('6.4')) {
+        const isVie = cleanCode.includes('VIE') || cleanCode.includes('LIQUID');
+
+        if (isVie) {
+          sizeDesc = 'Gas Oksigen Cecair Perubatan (VIE Tank)';
+          displayCode = 'VIE TANK';
+        } else if (cleanCode.includes('HS') || cleanCode.includes('6.4')) {
           sizeDesc = 'Silinder Gas Oksigen HS (6.4m³)';
         } else if (cleanCode.includes('101-F-BN') || cleanCode.includes('P101-F-BN') || (cleanCode.includes('-F') && cleanCode.includes('BN'))) {
           sizeDesc = 'Silinder Gas Oksigen BN (1.4m³)';
@@ -84,13 +122,13 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
           sizeDesc = `Silinder Oksigen ${item.size_code}`;
         }
 
-        const displayCode = item.size_code === 'P101-F' ? '101-F' : item.size_code;
+        const qtyItemDisplay = isVie ? `${Number(item.quantity).toLocaleString()} M³` : `${item.quantity}`;
         rowsHtml += `
           <tr style="border-bottom: 1px solid #ccc; text-align: center; height: 28px;">
             <td style="border-right: 1.5px solid #000; padding: 4px; font-size: 9px;">${index + 1}</td>
             <td style="border-right: 1.5px solid #000; padding: 4px; font-weight: 700; font-family: monospace; font-size: 10px;">${displayCode}</td>
             <td style="border-right: 1.5px solid #000; padding: 6px 10px; text-align: left; font-size: 9.5px; font-weight: 600;">${sizeDesc}</td>
-            <td style="border-right: 1.5px solid #000; padding: 4px; font-weight: 800; font-size: 11px; font-variant-numeric: tabular-nums;">${item.quantity}</td>
+            <td style="border-right: 1.5px solid #000; padding: 4px; font-weight: 800; font-size: 11px; font-variant-numeric: tabular-nums;">${qtyItemDisplay}</td>
             <td style="padding: 6px 10px; text-align: left; font-style: italic; font-size: 9px; color: #334155; font-weight: 500;">${item.usage_notes || '-'}</td>
           </tr>
         `;
@@ -197,7 +235,7 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
                   BORANG PESANAN / PERMINTAAN BEKALAN SILINDER GAS PERUBATAN
                 </h1>
                 <h2 style="font-size: 10px; font-weight: 700; margin: 4px 0 0 0; text-transform: uppercase; color: #334155; letter-spacing: 0.5px;">
-                  (SILINDER SEWAAN / LOAN CYLINDER)
+                  ${documentSubTitle}
                 </h2>
               </div>
 
@@ -238,7 +276,7 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
                 ${rowsHtml}
                 <tr style="font-weight: 900; text-transform: uppercase; font-size: 10px; border-top: 1.5px solid #000; border-bottom: 1.5px solid #000; height: 28px; background-color: #f8fafc;">
                   <td class="border-r" style="padding: 4px 10px; text-align: right; border-right: 1.5px solid #000;" colspan="3">JUMLAH BESAR</td>
-                  <td class="border-r font-mono" style="padding: 4px; text-align: center; border-right: 1.5px solid #000; font-size: 11px; font-weight: 900; font-variant-numeric: tabular-nums;">${totalQty}</td>
+                  <td class="border-r font-mono" style="padding: 4px; text-align: center; border-right: 1.5px solid #000; font-size: 11px; font-weight: 900; font-variant-numeric: tabular-nums;">${totalQtyDisplay}</td>
                   <td style="padding: 4px; text-align: center;">-</td>
                 </tr>
               </tbody>
@@ -338,7 +376,15 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
                     BORANG PESANAN / PERMINTAAN BEKALAN SILINDER GAS PERUBATAN
                   </h1>
                   <h2 className="text-[10px] font-bold uppercase tracking-wide text-slate-700 mt-1">
-                    (SILINDER SEWAAN / LOAN CYLINDER)
+                    {(() => {
+                      const hasV = doc?.items?.some(i => (i.size_code || '').toUpperCase().includes('VIE') || (i.size_code || '').toUpperCase().includes('LIQUID'));
+                      const hasC = doc?.items?.some(i => !(i.size_code || '').toUpperCase().includes('VIE') && !(i.size_code || '').toUpperCase().includes('LIQUID'));
+                      return hasV && hasC
+                        ? '(SILINDER SEWAAN & BEKALAN GAS CECAIR VIE TANK)'
+                        : hasV
+                        ? '(BEKALAN GAS OKSIGEN CECAIR / BULK VIE TANK)'
+                        : '(SILINDER SEWAAN / LOAN CYLINDER)';
+                    })()}
                   </h2>
                 </div>
 
@@ -388,8 +434,14 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
                       if (doc.items && doc.items.length > 0) {
                         doc.items.forEach((item, index) => {
                           let sizeDesc = '';
+                          let displayCode = item.size_code === 'P101-F' ? '101-F' : item.size_code;
                           const cleanCode = (item.size_code || '').toUpperCase().trim();
-                          if (cleanCode.includes('HS') || cleanCode.includes('6.4')) {
+                          const isVie = cleanCode.includes('VIE') || cleanCode.includes('LIQUID');
+
+                          if (isVie) {
+                            sizeDesc = 'Gas Oksigen Cecair Perubatan (VIE Tank)';
+                            displayCode = 'VIE TANK';
+                          } else if (cleanCode.includes('HS') || cleanCode.includes('6.4')) {
                             sizeDesc = 'Silinder Gas Oksigen HS (6.4m³)';
                           } else if (cleanCode.includes('101-F-BN') || cleanCode.includes('P101-F-BN') || (cleanCode.includes('-F') && cleanCode.includes('BN'))) {
                             sizeDesc = 'Silinder Gas Oksigen BN (1.4m³)';
@@ -405,13 +457,13 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
                             sizeDesc = `Silinder Oksigen ${item.size_code}`;
                           }
 
-                          const displayCode = item.size_code === 'P101-F' ? '101-F' : item.size_code;
+                          const qtyItemDisplay = isVie ? `${Number(item.quantity).toLocaleString()} M³` : item.quantity;
                           rows.push(
                             <tr key={item.id} className="border-b border-slate-200 text-center h-[28px]">
                               <td className="border-r-[1.5px] border-black py-1 px-1">{index + 1}</td>
                               <td className="border-r-[1.5px] border-black py-1 px-1 font-mono font-bold text-slate-800">{displayCode}</td>
                               <td className="border-r-[1.5px] border-black py-1 px-2 text-left text-slate-800 font-semibold">{sizeDesc}</td>
-                              <td className="border-r-[1.5px] border-black py-1 px-1 text-[11px] font-black font-mono text-slate-900">{item.quantity}</td>
+                              <td className="border-r-[1.5px] border-black py-1 px-1 text-[11px] font-black font-mono text-slate-900">{qtyItemDisplay}</td>
                               <td className="py-1 px-2 text-left text-[9px] font-medium italic text-slate-700">{item.usage_notes || '-'}</td>
                             </tr>
                           );
@@ -443,7 +495,20 @@ export const RequestDocumentPrintView: React.FC<RequestDocumentPrintViewProps> =
                         JUMLAH BESAR
                       </td>
                       <td className="border-r-[1.5px] border-black py-1 px-1 text-center font-black font-mono text-[11px] text-slate-900">
-                        {doc.items?.reduce((sum, item) => sum + item.quantity, 0) || 0}
+                        {(() => {
+                          const cQty = doc.items?.filter(i => {
+                            const c = (i.size_code || '').toUpperCase();
+                            return !c.includes('VIE') && !c.includes('LIQUID');
+                          }).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 0;
+                          const vM3 = doc.items?.filter(i => {
+                            const c = (i.size_code || '').toUpperCase();
+                            return c.includes('VIE') || c.includes('LIQUID');
+                          }).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 0;
+
+                          if (cQty > 0 && vM3 > 0) return `${cQty} Silinder + ${vM3.toLocaleString()} M³`;
+                          if (vM3 > 0) return `${vM3.toLocaleString()} M³`;
+                          return `${cQty} Silinder`;
+                        })()}
                       </td>
                       <td className="py-1 px-2 text-center text-slate-700">
                         -

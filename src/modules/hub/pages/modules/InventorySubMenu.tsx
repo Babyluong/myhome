@@ -14,18 +14,18 @@ export const InventorySubMenu: React.FC = () => {
       <div className="mb-8">
         <button 
           onClick={() => navigate(ROUTES.HUB)}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors mb-4"
+          className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{language === 'ms' ? 'Kembali ke Hub Utama' : 'Back to Main Hub'}</span>
         </button>
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-blue-100 text-blue-600 rounded-xl">
+          <div className="p-3 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-xl">
             <Package className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">MyInventory</h1>
-            <p className="text-slate-500">{language === 'ms' ? 'Pengurusan Inventori' : 'Inventory Management'}</p>
+            <h1 className="text-3xl font-bold text-white tracking-tight">MyInventory</h1>
+            <p className="text-slate-400 mt-1">{language === 'ms' ? 'Pengurusan Inventori' : 'Inventory Management'}</p>
           </div>
         </div>
       </div>

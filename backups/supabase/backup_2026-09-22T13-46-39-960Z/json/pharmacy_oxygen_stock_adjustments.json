@@ -1,0 +1,90 @@
+[
+  {
+    "id": "79348e80-30b5-4365-b37a-a174f61535ae",
+    "hospital_id": "85bb6adc-b868-428b-83f4-e5af2f5cf904",
+    "cylinder_id": "6da0bb2d-81c3-4e22-bd39-5769cb1c5fbb",
+    "adjusted_by": "88dc2fa7-e943-45ba-a889-8756c0265b48",
+    "old_status": "issued",
+    "new_status": "available",
+    "reason": "stock_reconciliation",
+    "remarks": "Stock reconciliation audit: verified and updated to Store (available)",
+    "created_at": "2026-09-19T04:37:36.838449+00:00"
+  },
+  {
+    "id": "fd4449b1-f3d6-4c3b-9372-6dc0f9725fba",
+    "hospital_id": "85bb6adc-b868-428b-83f4-e5af2f5cf904",
+    "cylinder_id": "2eeb88b8-aa3a-49a3-8de0-aaf4befe5fff",
+    "adjusted_by": "88dc2fa7-e943-45ba-a889-8756c0265b48",
+    "old_status": "issued",
+    "new_status": "available",
+    "reason": "stock_reconciliation",
+    "remarks": "Stock reconciliation audit: verified and updated to Store (available)",
+    "created_at": "2026-09-19T04:37:36.838449+00:00"
+  },
+  {
+    "id": "5a7307df-04fc-4f1d-a792-47297b29410d",
+    "hospital_id": "85bb6adc-b868-428b-83f4-e5af2f5cf904",
+    "cylinder_id": "bb2a69b0-3d98-4951-9662-718996c65034",
+    "adjusted_by": "88dc2fa7-e943-45ba-a889-8756c0265b48",
+    "old_status": "issued",
+    "new_status": "available",
+    "reason": "stock_reconciliation",
+    "remarks": "Stock reconciliation audit: verified and updated to Store (available)",
+    "created_at": "2026-09-19T04:37:36.838449+00:00"
+  },
+  {
+    "id": "e84df238-09cb-4816-8681-03cdb601447b",
+    "hospital_id": "85bb6adc-b868-428b-83f4-e5af2f5cf904",
+    "cylinder_id": "cbf79cec-6c26-4f22-ba6f-7ed31638cb1e",
+    "adjusted_by": "88dc2fa7-e943-45ba-a889-8756c0265b48",
+    "old_status": "issued",
+    "new_status": "available",
+    "reason": "stock_reconciliation",
+    "remarks": "Stock reconciliation audit: verified and updated to Store (available)",
+    "created_at": "2026-09-19T04:37:36.838449+00:00"
+  },
+  {
+    "id": "c36170a7-986b-4953-9fea-d76a570821f2",
+    "hospital_id": "85bb6adc-b868-428b-83f4-e5af2f5cf904",
+    "cylinder_id": "cbc50f69-f3af-4c55-93fc-e3dcc16699ae",
+    "adjusted_by": "88dc2fa7-e943-45ba-a889-8756c0265b48",
+    "old_status": "issued",
+    "new_status": "available",
+    "reason": "stock_reconciliation",
+    "remarks": "Stock reconciliation audit: verified and updated to Store (available)",
+    "created_at": "2026-09-19T04:37:36.838449+00:00"
+  },
+  {
+    "id": "280689a9-2101-4901-8aa8-09387f88ccb5",
+    "hospital_id": "85bb6adc-b868-428b-83f4-e5af2f5cf904",
+    "cylinder_id": "e5b3d55d-b9f2-4bd3-855f-81b07de85f93",
+    "adjusted_by": "88dc2fa7-e943-45ba-a889-8756c0265b48",
+    "old_status": "issued",
+    "new_status": "available",
+    "reason": "stock_reconciliation",
+    "remarks": "Stock reconciliation audit: verified and updated to Store (available)",
+    "created_at": "2026-09-19T04:37:36.838449+00:00"
+  },
+  {
+    "id": "74a6ca08-b617-481e-804f-18d9ac03be60",
+    "hospital_id": "85bb6adc-b868-428b-83f4-e5af2f5cf904",
+    "cylinder_id": "dfa969bf-46e5-4f3a-9400-c889e8a07d8e",
+    "adjusted_by": "88dc2fa7-e943-45ba-a889-8756c0265b48",
+    "old_status": "issued",
+    "new_status": "available",
+    "reason": "stock_reconciliation",
+    "remarks": "Stock reconciliation audit: verified and updated to Store (available)",
+    "created_at": "2026-09-19T04:37:36.838449+00:00"
+  },
+  {
+    "id": "5b2fea45-1a1c-489b-b633-cbe075f6f778",
+    "hospital_id": "85bb6adc-b868-428b-83f4-e5af2f5cf904",
+    "cylinder_id": "39ead16d-ee81-444e-8558-11f07f80111a",
+    "adjusted_by": "88dc2fa7-e943-45ba-a889-8756c0265b48",
+    "old_status": "issued",
+    "new_status": "available",
+    "reason": "stock_reconciliation",
+    "remarks": "Stock reconciliation audit: verified and updated to Store (available)",
+    "created_at": "2026-09-19T04:37:36.838449+00:00"
+  }
+]

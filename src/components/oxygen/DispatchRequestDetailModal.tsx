@@ -560,10 +560,12 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
               size_info:pharmacy_oxygen_cylinder_sizes(id, code),
               type_info:pharmacy_oxygen_cylinder_types(id, name, code)
             `)
+            .neq('status', 'deactivated')
+            .eq('is_active', true)
             .or('status.in.(available,full,in_stock),current_location.ilike.%store%,current_location.ilike.%farmasi%');
 
           if (!err && data) {
-            setAllAvailableCylinders(data);
+            setAllAvailableCylinders(data.filter((c: any) => c.status !== 'deactivated' && c.is_active !== false));
           }
 
           // Initialize issue quantity data
@@ -932,11 +934,14 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
               size_info:pharmacy_oxygen_cylinder_sizes(id, code, capacity, unit),
               type_info:pharmacy_oxygen_cylinder_types(id, name, code)
             `)
+            .neq('status', 'deactivated')
+            .eq('is_active', true)
             .or(orConditions)
             .limit(20);
 
           if (dbCyls && dbCyls.length > 0) {
             const candidate = dbCyls.find((c) => {
+              if (c.status === 'deactivated' || c.is_active === false) return false;
               const sNorm = normalizeCode(c.serial_number);
               const qNorm = normalizeCode(c.qr_code);
               const sStrip = stripO2(c.serial_number);
@@ -1204,7 +1209,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-5xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/90 flex flex-col h-[95vh] sm:h-auto sm:max-h-[90vh] overflow-hidden">
         
         {/* Modal Header */}

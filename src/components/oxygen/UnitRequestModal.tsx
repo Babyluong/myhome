@@ -278,7 +278,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex justify-end bg-slate-950/45 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-[100] flex justify-end bg-slate-950/45 backdrop-blur-sm transition-opacity"
       onClick={onClose}
     >
       <style>{`

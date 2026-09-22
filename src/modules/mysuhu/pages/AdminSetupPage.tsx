@@ -9,21 +9,28 @@ import {
   Plus, 
   Edit2, 
   Save, 
-  Power,
-  Info,
-  CheckCircle,
-  AlertTriangle
+  Power, 
+  Info, 
+  CheckCircle, 
+  AlertTriangle,
+  Camera,
+  Eye,
+  X,
+  Trash2,
+  Image as ImageIcon
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { Badge, Spinner } from '@/components/ui'
 import { 
   getLokasi, 
   createLokasi, 
-  updateLokasi,
+  updateLokasi, 
   getUnitPemantauan, 
   createUnitPemantauan, 
-  updateUnitPemantauan,
-  updateThresholdConfig 
+  updateUnitPemantauan, 
+  updateThresholdConfig,
+  uploadEquipmentPhoto,
+  deleteEquipmentPhoto 
 } from '@/modules/mysuhu/services/suhuService'
 import type { Lokasi, UnitPemantauanWithRelations } from '@/types/mysuhu'
 import { ROUTES } from '@/lib/constants'
@@ -60,6 +67,12 @@ export const AdminSetupPage: React.FC = () => {
   const [selectedUnit, setSelectedUnit] = useState<UnitPemantauanWithRelations | null>(null)
   const [editMinTemp, setEditMinTemp] = useState('')
   const [editMaxTemp, setEditMaxTemp] = useState('')
+
+  // Photo States
+  const [registerPhotoFile, setRegisterPhotoFile] = useState<File | null>(null)
+  const [registerPhotoPreview, setRegisterPhotoPreview] = useState<string | null>(null)
+  const [previewPhotoUrl, setPreviewPhotoUrl] = useState<string | null>(null)
+  const [uploadingUnitId, setUploadingUnitId] = useState<string | null>(null)
 
   const loadData = async () => {
     setLoading(true)
@@ -193,15 +206,52 @@ export const AdminSetupPage: React.FC = () => {
       )
 
       if (res.error) throw new Error(res.error)
+
+      if (res.data?.id && registerPhotoFile) {
+        await uploadEquipmentPhoto(registerPhotoFile, res.data.id)
+      }
       
       triggerNotification(`Unit ${unitName} successfully registered!`)
       setUnitName('')
       setUnitNota('')
+      setRegisterPhotoFile(null)
+      setRegisterPhotoPreview(null)
       await loadData()
     } catch (e) {
       console.error('Failed to register unit', e)
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleUploadPhotoForUnit = async (unitId: string, file: File) => {
+    setUploadingUnitId(unitId)
+    try {
+      const res = await uploadEquipmentPhoto(file, unitId)
+      if (res.error) throw new Error(res.error)
+      triggerNotification('Foto peralatan berjaya dimuat naik!')
+      await loadData()
+    } catch (err: any) {
+      console.error('Failed to upload equipment photo:', err)
+      alert(err?.message || 'Gagal memuat naik foto')
+    } finally {
+      setUploadingUnitId(null)
+    }
+  }
+
+  const handleDeletePhotoForUnit = async (unitId: string) => {
+    if (!confirm('Adakah anda pasti ingin memadam foto unit ini?')) return
+    setUploadingUnitId(unitId)
+    try {
+      const res = await deleteEquipmentPhoto(unitId)
+      if (res.error) throw new Error(res.error)
+      triggerNotification('Foto peralatan berjaya dipadam.')
+      await loadData()
+    } catch (err: any) {
+      console.error('Failed to delete photo:', err)
+      alert(err?.message || 'Gagal memadam foto')
+    } finally {
+      setUploadingUnitId(null)
     }
   }
 
@@ -411,6 +461,73 @@ export const AdminSetupPage: React.FC = () => {
                   />
                 </div>
 
+                {/* Photo Upload for Equipment */}
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5 flex items-center justify-between">
+                    <span>Equipment / Room Photo (Optional)</span>
+                    {registerPhotoPreview && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setRegisterPhotoFile(null)
+                          setRegisterPhotoPreview(null)
+                        }}
+                        className="text-rose-500 hover:text-rose-700 text-[10px] font-bold"
+                      >
+                        Remove Photo
+                      </button>
+                    )}
+                  </label>
+
+                  {registerPhotoPreview ? (
+                    <div className="relative w-full h-32 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+                      <img 
+                        src={registerPhotoPreview} 
+                        alt="Preview" 
+                        className="w-full h-full object-cover"
+                      />
+                      <label 
+                        className="absolute bottom-2 right-2 px-2.5 py-1 bg-white/90 hover:bg-white text-slate-700 text-[10px] font-bold rounded-lg shadow cursor-pointer transition-colors"
+                      >
+                        Change
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          capture="environment"
+                          className="hidden" 
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file) {
+                              setRegisterPhotoFile(file)
+                              setRegisterPhotoPreview(URL.createObjectURL(file))
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  ) : (
+                    <label 
+                      className="w-full h-24 border-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50/70 hover:bg-emerald-50/30 rounded-2xl flex flex-col items-center justify-center gap-1 cursor-pointer transition-all text-slate-400 hover:text-[#00a68a]"
+                    >
+                      <Camera className="w-5 h-5 text-slate-300" />
+                      <span className="text-[11px] font-bold">Attach Photo of Freezer/Room</span>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        capture="environment"
+                        className="hidden" 
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            setRegisterPhotoFile(file)
+                            setRegisterPhotoPreview(URL.createObjectURL(file))
+                          }
+                        }}
+                      />
+                    </label>
+                  )}
+                </div>
+
                 <button 
                   type="submit"
                   disabled={submitting}
@@ -433,6 +550,7 @@ export const AdminSetupPage: React.FC = () => {
               <table className="w-full text-left text-xs text-slate-700">
                 <thead className="bg-slate-50 text-[10px] text-slate-400 font-bold uppercase border-b border-slate-100">
                   <tr>
+                    <th className="px-4 py-3">Photo</th>
                     <th className="px-4 py-3">Equipment ID</th>
                     <th className="px-4 py-3">Unit Name</th>
                     <th className="px-4 py-3">Location</th>
@@ -444,6 +562,56 @@ export const AdminSetupPage: React.FC = () => {
                 <tbody className="divide-y divide-slate-100">
                   {units.map(u => (
                     <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-4 py-3">
+                        {uploadingUnitId === u.id ? (
+                          <div className="w-10 h-10 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center">
+                            <Spinner size="sm" />
+                          </div>
+                        ) : u.photo_url ? (
+                          <div className="relative group/tblimg w-10 h-10 rounded-lg overflow-hidden border border-slate-200 shadow-sm flex-shrink-0">
+                            <img 
+                              src={u.photo_url} 
+                              alt={u.nama_unit} 
+                              className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                              onClick={() => setPreviewPhotoUrl(u.photo_url!)}
+                              title="View Full"
+                            />
+                            <label 
+                              className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover/tblimg:opacity-100 transition-opacity flex items-center justify-center text-white cursor-pointer"
+                              title="Change Photo"
+                            >
+                              <Camera className="w-3.5 h-3.5" />
+                              <input 
+                                type="file" 
+                                accept="image/*" 
+                                capture="environment"
+                                className="hidden" 
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0]
+                                  if (file) handleUploadPhotoForUnit(u.id, file)
+                                }}
+                              />
+                            </label>
+                          </div>
+                        ) : (
+                          <label 
+                            className="w-10 h-10 rounded-lg border border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50 hover:bg-emerald-50/40 flex items-center justify-center cursor-pointer text-slate-300 hover:text-[#00a68a] transition-colors"
+                            title="Attach Photo"
+                          >
+                            <Camera className="w-4 h-4" />
+                            <input 
+                              type="file" 
+                              accept="image/*" 
+                              capture="environment"
+                              className="hidden" 
+                              onChange={(e) => {
+                                const file = e.target.files?.[0]
+                                if (file) handleUploadPhotoForUnit(u.id, file)
+                              }}
+                            />
+                          </label>
+                        )}
+                      </td>
                       <td className="px-4 py-3 font-mono font-bold text-slate-500">{u.unit_id}</td>
                       <td className="px-4 py-3 font-extrabold text-slate-850">{u.nama_unit}</td>
                       <td className="px-4 py-3">
@@ -650,6 +818,40 @@ export const AdminSetupPage: React.FC = () => {
               >
                 {submitting ? 'Saving...' : 'Save Settings'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Photo Lightbox Modal */}
+      {previewPhotoUrl && (
+        <div 
+          className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setPreviewPhotoUrl(null)}
+        >
+          <div 
+            className="relative max-w-2xl w-full bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-700"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center px-5 py-3 border-b border-slate-800 text-white">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-[#00a68a]" />
+                <span className="text-xs font-bold tracking-wide text-slate-200">Foto Peralatan / Bilik</span>
+              </div>
+              <button
+                onClick={() => setPreviewPhotoUrl(null)}
+                className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex items-center justify-center p-4 max-h-[75vh] bg-slate-950/50">
+              <img 
+                src={previewPhotoUrl} 
+                alt="Equipment Photo Full" 
+                className="max-h-[70vh] max-w-full object-contain rounded-xl shadow-lg"
+              />
             </div>
           </div>
         </div>

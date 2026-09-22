@@ -27,6 +27,7 @@ export interface UnitPemantauan {
   jenis_unit: JenisUnit;
   nota: string | null;
   status: UnitStatus;
+  photo_url?: string | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;

@@ -181,11 +181,11 @@ const TransporterVehicleRegistryPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <Truck className="w-8 h-8 text-indigo-600" />
+          <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+            <Truck className="w-8 h-8 text-indigo-400" />
             {isEn ? 'Fleet Vehicle Registry & Management' : 'Daftar & Pengurusan Kenderaan (Fleet Registry)'}
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-slate-400 text-sm mt-1">
             {isEn 
               ? 'Register ICU ambulances, general transit vehicles, and departmental vehicles. Monitor road tax and maintenance status.' 
               : 'Daftar ambulans ICU, ambulans am, dan kereta jabatan hospital. Pantau status penyelenggaraan serta cukai jalan.'}

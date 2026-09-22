@@ -2420,8 +2420,16 @@ export const FORMULARI_DATABASE: DrugEntry[] = ALL_BASE_FORMULARI_DRUGS.map(drug
   let updatedDrug: DrugEntry = { ...drug }
 
   // Check if drug is parenteral before attaching dilution protocols
-  const isParenteral = (drug.dosageForms && drug.dosageForms.some(f => /inject|infus|ampoul|vial|powder for recon|parenteral|iv|im/i.test(f))) ||
-    /injection|infusion|solution for injection|ampoule|vial/i.test(drug.genericName)
+  const isDefinitelyNonParenteral = Boolean(
+    drug.dosageForms &&
+    drug.dosageForms.some(f => /tablet|capsule|syrup|oral|cream|ointment|gel|lotion|shampoo|suppository|pessary|enema|nasal spray|inhaler|mouthwash|gargle|eye drops|ear drops/i.test(f)) &&
+    !drug.dosageForms.some(f => /inject|infus|ampoul|vial|powder for recon|parenteral/i.test(f))
+  )
+
+  const isParenteral = !isDefinitelyNonParenteral && (
+    (drug.dosageForms && drug.dosageForms.some(f => /inject|infus|ampoul|vial|powder for recon|parenteral|iv|im/i.test(f))) ||
+    /\b(injection|infusion|solution for injection|ampoule|vial)\b/i.test(drug.genericName)
+  )
 
   if (isParenteral) {
     const kkmProtocol = getKkmDilutionProtocol(drug.genericName) ||

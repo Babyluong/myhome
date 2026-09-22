@@ -46,6 +46,7 @@ export async function getOxygenCylinders(
     location_id?: string
     assigned_ward_id?: string
     qr_tagged?: boolean
+    include_deactivated?: boolean
   },
   page: number = 1,
   pageSize: number = 100
@@ -68,6 +69,8 @@ export async function getOxygenCylinders(
 
         if (filter?.status) {
           q = q.eq('status', filter.status)
+        } else if (!filter?.include_deactivated) {
+          q = q.neq('status', 'deactivated').eq('is_active', true)
         }
 
         if (filter?.type_id) {
@@ -76,9 +79,13 @@ export async function getOxygenCylinders(
 
         if (filter?.qr_tagged !== undefined) {
           if (filter.qr_tagged) {
-            q = q.not('qr_code', 'is', null)
+            if (filter.include_deactivated) {
+              q = q.or('qr_code.not.is.null,qr_code_value.not.is.null,status.eq.deactivated,is_active.eq.false')
+            } else {
+              q = q.or('qr_code.not.is.null,qr_code_value.not.is.null')
+            }
           } else {
-            q = q.is('qr_code', null)
+            q = q.is('qr_code', null).is('qr_code_value', null)
           }
         }
         return q
@@ -231,11 +238,13 @@ export async function getOxygenCylinderById(
   try {
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
-        .from('pharmacy_oxygen_cylinders')
+        .from('pharmacy_oxygen_cylinder_inventory')
         .select(
           `
           *,
-          type_info:pharmacy_oxygen_cylinder_types(*)
+          size_info:pharmacy_oxygen_cylinder_sizes(*),
+          type_info:pharmacy_oxygen_cylinder_types(*),
+          department:departments(*)
         `
         )
         .eq('id', cylinderId)
@@ -248,7 +257,31 @@ export async function getOxygenCylinderById(
         throw error
       }
 
-      return { data: data as unknown as OxygenCylinderWithRelations, error: null }
+      const sizeInfo = Array.isArray(data.size_info) ? data.size_info[0] : data.size_info
+      const capStr = sizeInfo?.capacity && parseFloat(sizeInfo.capacity) > 0 ? String(sizeInfo.capacity) : ''
+      const isLoan = data.is_loan || (sizeInfo && (sizeInfo.is_loan || sizeInfo.code?.startsWith('101-')))
+
+      const formatted = {
+        ...data,
+        size_info: sizeInfo,
+        qr_code_value: data.qr_code_value || data.qr_code,
+        type_info: {
+          ...data.type_info,
+          type_name: sizeInfo 
+            ? isLoan
+              ? `Loan ${sizeInfo.code} (${capStr}M³)`
+              : `Standard ${sizeInfo.code} ${data.type_info?.code || ''} (${capStr}M³)`.replace(/\s+/g, ' ')
+            : data.type_info?.name || (isLoan ? 'Loan Cylinder' : 'Standard Cylinder')
+        },
+        current_location: {
+          location_name: data.current_location || 'Central Store'
+        },
+        assigned_ward: data.department ? {
+          department_name: data.department.department_name || data.department.name
+        } : null
+      }
+
+      return { data: formatted as unknown as OxygenCylinderWithRelations, error: null }
     }
 
     const cylinder = mockOxygenCylinders.find(c => c.id === cylinderId)
@@ -345,14 +378,20 @@ export async function updateOxygenCylinderStatus(
 ): Promise<ApiResponse<OxygenCylinder>> {
   try {
     if (isSupabaseConfigured()) {
+      const updateData: Record<string, any> = {
+        status,
+        updated_at: new Date().toISOString(),
+      }
+      if (locationId) {
+        updateData.current_location = locationId
+      }
+      if (assignedWardId) {
+        updateData.department_id = assignedWardId
+      }
+
       const { data, error } = await supabase
-        .from('pharmacy_oxygen_cylinders')
-        .update({
-          status,
-          current_location_id: locationId,
-          assigned_ward_id: assignedWardId,
-          updated_at: new Date().toISOString(),
-        })
+        .from('pharmacy_oxygen_cylinder_inventory')
+        .update(updateData)
         .eq('id', cylinderId)
         .select('*')
         .single()
@@ -518,6 +557,8 @@ export async function getOxygenSummary(hospitalId: string): Promise<ApiResponse<
         .from('pharmacy_oxygen_cylinder_inventory')
         .select('status, size_info:pharmacy_oxygen_cylinder_sizes(code), type_info:pharmacy_oxygen_cylinder_types(code)')
         .eq('hospital_id', hospitalId)
+        .neq('status', 'deactivated')
+        .eq('is_active', true)
 
       if (error) throw error
 
@@ -579,15 +620,16 @@ export async function getCylindersRequiringMaintenance(
 ): Promise<ApiResponse<OxygenCylinderWithRelations[]>> {
   try {
     if (isSupabaseConfigured()) {
-      const today = new Date()
-      const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
-      const cutoff = thirtyDaysFromNow.toISOString().split('T')[0]
-
       const { data, error } = await supabase
-        .from('pharmacy_oxygen_cylinders')
-        .select('*')
+        .from('pharmacy_oxygen_cylinder_inventory')
+        .select(`
+          *,
+          size_info:pharmacy_oxygen_cylinder_sizes(*),
+          type_info:pharmacy_oxygen_cylinder_types(*),
+          department:departments(*)
+        `)
         .eq('hospital_id', hospitalId)
-        .lte('next_maintenance_date', cutoff)
+        .eq('status', 'maintenance')
 
       if (error) throw error
 
@@ -1161,19 +1203,32 @@ export async function getOxygenReceptionsList(
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
         .from('pharmacy_oxygen_reception_records')
-        .select('*')
+        .select('*, items:pharmacy_oxygen_reception_items(unit_price, quantity, size_info:pharmacy_oxygen_cylinder_sizes(code, unit))')
         .eq('hospital_id', hospitalId)
         .order('reception_date', { ascending: false })
         .order('created_at', { ascending: false })
 
       if (error) throw error
 
+      // Helper: determine if a reception row contains any VIE/Bulk-Liquid items
+      const rowIsVie = (row: any): boolean => {
+        if (!Array.isArray(row.items) || row.items.length === 0) return false
+        return row.items.some((itm: any) => {
+          const code = (itm.size_info?.code || '').toLowerCase()
+          const unit = (itm.size_info?.unit || '').toLowerCase()
+          return code.includes('vie') || code.includes('liquid') || unit === 'm3'
+        })
+      }
+
       const grouped: Record<string, any> = {}
       ;(data || []).forEach((row: any) => {
         const isPending = row.status === 'pending' || row.status === 'pending_delivery' || !row.delivery_order_no || String(row.delivery_order_no).toUpperCase().startsWith('PENDING')
         const date = row.reception_date
         const vCode = String(row.vote_code || '080702').trim()
-        const groupKey = isPending ? `pending_${row.id}` : `${date}_${vCode}`
+        const isVie = rowIsVie(row)
+        // Include supply type discriminator so VIE and cylinder records on the same date are NEVER merged
+        const supplyType = isVie ? 'vie' : 'cyl'
+        const groupKey = isPending ? `pending_${row.id}` : `${date}_${vCode}_${supplyType}`
         const refill = Number(row.refill_amount)
         const loan = Number(row.loan_amount)
         const total = Number(row.total_amount || (refill + loan))
@@ -1187,12 +1242,15 @@ export async function getOxygenReceptionsList(
             total_amount: total,
             delivery_order_nos: [row.delivery_order_no || 'PENDING'],
             sales_order_nos: row.sales_order_no ? [row.sales_order_no] : [],
+            is_vie_tank: isVie,
           }
         } else {
           grouped[groupKey].ids.push(row.id)
           grouped[groupKey].refill_amount += refill
           grouped[groupKey].loan_amount += loan
           grouped[groupKey].total_amount += total
+          // Preserve VIE flag — if any row in the group is VIE, the whole group is VIE
+          if (isVie) grouped[groupKey].is_vie_tank = true
           if (row.delivery_order_no && !grouped[groupKey].delivery_order_nos.includes(row.delivery_order_no)) {
             grouped[groupKey].delivery_order_nos.push(row.delivery_order_no)
           }
@@ -1618,12 +1676,14 @@ export async function getCylindersByDepartment(
         `)
         .eq('hospital_id', hospitalId)
         .not('department_id', 'is', null)
+        .neq('status', 'deactivated')
+        .eq('is_active', true)
 
       if (invError) throw invError
 
       const deptMap: { [key: string]: any[] } = {}
       ;(inventory || []).forEach((c: any) => {
-        if (c.status === 'written_off' || c.status === 'disposed' || c.status === 'archived' || c.status === 'cleared') {
+        if (c.status === 'written_off' || c.status === 'disposed' || c.status === 'archived' || c.status === 'cleared' || c.status === 'deactivated' || c.is_active === false) {
           return
         }
         if (!deptMap[c.department_id]) {
@@ -1794,8 +1854,10 @@ export async function getStoreUsageBalance(
       // 4. Fetch current inventory in hospital across all states
       const { data: currentInventory } = await supabase
         .from('pharmacy_oxygen_cylinder_inventory')
-        .select('cylinder_size_id, cylinder_type_id, status, current_location')
+        .select('cylinder_size_id, cylinder_type_id, status, current_location, is_active')
         .eq('hospital_id', hospitalId)
+        .neq('status', 'deactivated')
+        .eq('is_active', true)
 
       const results = (combos || []).map((combo: any) => {
         // Multi-location physical asset breakdown
@@ -1804,7 +1866,9 @@ export async function getStoreUsageBalance(
                       c.cylinder_type_id === combo.type_id &&
                       c.status !== 'archived' &&
                       c.status !== 'cleared' &&
-                      c.status !== 'disposed'
+                      c.status !== 'disposed' &&
+                      c.status !== 'deactivated' &&
+                      c.is_active !== false
         )
 
         let store_available = 0
@@ -2055,17 +2119,19 @@ export async function getEmptyCylindersInStore(
         .from('pharmacy_oxygen_cylinder_inventory')
         .select(`
           *,
+          size_info:pharmacy_oxygen_cylinder_sizes(*),
+          type_info:pharmacy_oxygen_cylinder_types(*),
           department:departments(*)
         `)
         .eq('hospital_id', hospitalId)
-        .or('status.eq.issued,status.eq.empty,status.eq.available,supplier_tagged.eq.true')
+        .eq('status', 'empty')
+        .eq('is_active', true)
+        .neq('status', 'deactivated')
         .order('serial_number', { ascending: true })
 
       if (error) throw error
 
-      const filteredData = (data || []).filter((row: any) => row.status !== 'returned_to_supplier')
-
-      // Fetch combos to manually map display_name
+      // Fetch combos to map display_name
       const { data: combos } = await supabase
         .from('pharmacy_oxygen_size_type_combos')
         .select('size_id, type_id, display_name')
@@ -2075,15 +2141,19 @@ export async function getEmptyCylindersInStore(
         comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
       })
 
-      const rows = filteredData.map((row: any) => {
-        const displayName = comboMap.get(`${row.cylinder_size_id}_${row.cylinder_type_id}`) || 'Standard Cylinder'
+      const rows = (data || []).map((row: any) => {
+        const displayName = comboMap.get(`${row.cylinder_size_id}_${row.cylinder_type_id}`) || row.size_info?.code || '101-F'
         return {
           ...row,
+          size_code: row.size_info?.code || displayName,
           type_info: {
-            type_name: displayName
+            ...row.type_info,
+            type_name: displayName,
+            name: row.type_info?.name || displayName,
+            code: row.type_info?.code || (row.type_info?.name?.toLowerCase().includes('pin') ? 'PI' : 'BN'),
           },
           current_location: {
-            location_name: row.current_location || 'Department'
+            location_name: typeof row.current_location === 'string' ? row.current_location : (row.current_location?.location_name || 'Pharmacy Store')
           },
           assigned_ward: row.department ? {
             department_name: row.department.department_name || row.department.name
@@ -2112,8 +2182,7 @@ export async function createReturnDocument(
   returnDate: string,
   cylinderIds: string[],
   remarks: string,
-  createdBy: string,
-  manualLoans?: { serial_number: string; qr_code?: string }[]
+  createdBy: string
 ): Promise<ApiResponse<OxygenReturnDocument>> {
   try {
     if (isSupabaseConfigured()) {
@@ -2144,68 +2213,6 @@ export async function createReturnDocument(
 
       const docId = doc.id
       const finalCylinderIds = [...cylinderIds]
-
-      // Handle manual loans if provided
-      if (manualLoans && manualLoans.length > 0) {
-        // Fetch default size ids and type ids
-        const { data: sizes } = await supabase.from('pharmacy_oxygen_cylinder_sizes').select('id, code');
-        const { data: types } = await supabase.from('pharmacy_oxygen_cylinder_types').select('id, code');
-
-        const sizeF_Id = sizes?.find((s: any) => s.code === '101-F')?.id || sizes?.[0]?.id;
-        const sizeN_Id = sizes?.find((s: any) => s.code === '101-N')?.id || sizes?.[0]?.id;
-        const typeBN_Id = types?.find((t: any) => t.code === 'BN')?.id || types?.[0]?.id;
-        const typePI_Id = types?.find((t: any) => t.code === 'PI')?.id || types?.[0]?.id;
-
-        for (const loan of manualLoans) {
-          // Check if this manual cylinder already exists
-          const { data: existingCyl } = await supabase
-            .from('pharmacy_oxygen_cylinder_inventory')
-            .select('id')
-            .eq('hospital_id', hospitalId)
-            .eq('serial_number', loan.serial_number)
-            .maybeSingle()
-
-          let cylId = existingCyl?.id
-
-          if (!cylId) {
-            // Determine size id based on serial_number
-            let selectedSizeId = sizeN_Id;
-            let selectedTypeId = typeBN_Id;
-            if (loan.serial_number.includes('101-F') || loan.serial_number.includes('101F')) {
-              selectedSizeId = sizeF_Id;
-              selectedTypeId = typePI_Id;
-            }
-
-            // Upsert / Insert new loan cylinder
-            const { data: newCyl, error: insertErr } = await supabase
-              .from('pharmacy_oxygen_cylinder_inventory')
-              .insert({
-                hospital_id: hospitalId,
-                serial_number: loan.serial_number,
-                qr_code: loan.qr_code || loan.serial_number,
-                cylinder_size_id: selectedSizeId,
-                cylinder_type_id: selectedTypeId,
-                status: 'returned_to_supplier',
-                current_location: 'Supplier',
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-              })
-              .select('id')
-              .single()
-
-            if (!insertErr && newCyl) {
-              cylId = newCyl.id
-            } else if (insertErr) {
-              console.error('Error inserting manual loan cylinder:', insertErr);
-              throw insertErr;
-            }
-          }
-
-          if (cylId) {
-            finalCylinderIds.push(cylId)
-          }
-        }
-      }
 
       // 2. Fetch cylinders to get their current locations before updating
       const { data: cylinders, error: fetchError } = await supabase
@@ -2474,9 +2481,8 @@ export async function assignCylinderQrTag(
 ): Promise<ApiResponse<OxygenCylinder>> {
   try {
     if (isSupabaseConfigured()) {
-      // Try updating the pharmacy_oxygen_cylinders table
       const { data, error } = await supabase
-        .from('pharmacy_oxygen_cylinders')
+        .from('pharmacy_oxygen_cylinder_inventory')
         .update({
           qr_code_value: qrValue,
           qr_tagged_at: new Date().toISOString(),
@@ -2487,23 +2493,7 @@ export async function assignCylinderQrTag(
         .select('*')
         .single()
 
-      if (error) {
-        // Fallback to update pharmacy_oxygen_cylinder_inventory if that's the primary table
-        const { data: dataInv, error: errorInv } = await supabase
-          .from('pharmacy_oxygen_cylinder_inventory')
-          .update({
-            qr_code_value: qrValue,
-            qr_tagged_at: new Date().toISOString(),
-            qr_tagged_by: userId,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', cylinderId)
-          .select('*')
-          .single()
-
-        if (errorInv) throw errorInv
-        return { data: dataInv as OxygenCylinder, error: null }
-      }
+      if (error) throw error
 
       return { data: data as OxygenCylinder, error: null }
     }
@@ -2527,7 +2517,7 @@ export async function assignCylinderQrTag(
 }
 
 /**
- * Deactivates or clears an active QR tag from an oxygen cylinder
+ * Deactivates an oxygen cylinder: marks status as 'deactivated', is_active as false, and clears active QR tag
  */
 export async function deactivateCylinderQrTag(
   cylinderId: string
@@ -2535,8 +2525,10 @@ export async function deactivateCylinderQrTag(
   try {
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
-        .from('pharmacy_oxygen_cylinders')
+        .from('pharmacy_oxygen_cylinder_inventory')
         .update({
+          status: 'deactivated',
+          is_active: false,
           qr_code_value: null,
           qr_tagged_at: null,
           qr_tagged_by: null,
@@ -2546,22 +2538,7 @@ export async function deactivateCylinderQrTag(
         .select('*')
         .single()
 
-      if (error) {
-        const { data: dataInv, error: errorInv } = await supabase
-          .from('pharmacy_oxygen_cylinder_inventory')
-          .update({
-            qr_code_value: null,
-            qr_tagged_at: null,
-            qr_tagged_by: null,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', cylinderId)
-          .select('*')
-          .single()
-
-        if (errorInv) throw errorInv
-        return { data: dataInv as OxygenCylinder, error: null }
-      }
+      if (error) throw error
 
       return { data: data as OxygenCylinder, error: null }
     }
@@ -2570,16 +2547,69 @@ export async function deactivateCylinderQrTag(
     const cylinder = mockOxygenCylinders.find((c) => c.id === cylinderId)
     if (!cylinder) return { data: null, error: 'Cylinder not found' }
 
+    cylinder.status = 'deactivated' as any
+    cylinder.is_active = false as any
     cylinder.qr_code_value = null
     cylinder.qr_tagged_at = null
     cylinder.qr_tagged_by = null
 
     return { data: cylinder, error: null }
   } catch (error) {
-    console.error('Error deactivating QR tag:', error)
+    console.error('Error deactivating cylinder:', error)
     return {
       data: null,
-      error: error instanceof Error ? error.message : 'Failed to deactivate QR tag'
+      error: error instanceof Error ? error.message : 'Failed to deactivate cylinder'
+    }
+  }
+}
+
+/**
+ * Reactivates a deactivated cylinder back to active empty store status
+ */
+export async function reactivateCylinder(
+  cylinderId: string,
+  targetStatus: 'available' | 'empty' = 'empty'
+): Promise<ApiResponse<OxygenCylinder>> {
+  try {
+    if (isSupabaseConfigured()) {
+      // 1. Fetch current cylinder to get its serial or stored QR
+      const { data: currentCyl } = await supabase
+        .from('pharmacy_oxygen_cylinder_inventory')
+        .select('serial_number, qr_code, qr_code_value')
+        .eq('id', cylinderId)
+        .single()
+
+      const restoredQr = currentCyl?.qr_code_value || currentCyl?.qr_code || currentCyl?.serial_number || null
+
+      const { data, error } = await supabase
+        .from('pharmacy_oxygen_cylinder_inventory')
+        .update({
+          status: targetStatus,
+          is_active: true,
+          qr_code_value: restoredQr,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', cylinderId)
+        .select('*')
+        .single()
+
+      if (error) throw error
+
+      return { data: data as OxygenCylinder, error: null }
+    }
+
+    const cylinder = mockOxygenCylinders.find((c) => c.id === cylinderId)
+    if (!cylinder) return { data: null, error: 'Cylinder not found' }
+
+    cylinder.status = targetStatus as any
+    cylinder.is_active = true as any
+
+    return { data: cylinder, error: null }
+  } catch (error) {
+    console.error('Error reactivating cylinder:', error)
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : 'Failed to reactivate cylinder'
     }
   }
 }
@@ -2966,10 +2996,35 @@ export async function addSupplierTaggedLoanCylinders(
  */
 export async function getCylinderByQrOrSerial(
   hospitalId: string,
-  code: string
+  code: string,
+  expectedSizeCode?: string
 ): Promise<ApiResponse<OxygenCylinderWithRelations>> {
   try {
     if (isSupabaseConfigured()) {
+      // Helper to strictly check if cylinder matches expected size (e.g. 1.4m3 F size vs N size vs E size)
+      const matchesExpectedSize = (c: any): boolean => {
+        if (!expectedSizeCode) return true;
+        const target = expectedSizeCode.toUpperCase().trim();
+        const cCode = (c.size_info?.code || c.size_code || '').toUpperCase().trim();
+        const cCap = Number(c.size_info?.capacity || 0);
+
+        if (target === 'P101-F' || target === '101-F' || target === '1.4' || target === '1.4M3' || target === '1.4M³') {
+          return cCode === 'P101-F' || cCode === '101-F' || cCap === 1.4;
+        }
+        if (target === 'P101-E' || target === '101-E' || target === '0.7' || target === '0.7M3' || target === '0.7M³') {
+          return cCode === 'P101-E' || cCode === '101-E' || cCap === 0.7;
+        }
+        if (target === '101-N' || target === 'P101-N' || target === '8.0' || target === '8M3' || target === '8.0M³') {
+          return cCode === '101-N' || cCode === 'P101-N' || cCap === 8.0;
+        }
+        if (target === 'P101-D' || target === '101-D' || target === '0.5' || target === '0.5M3' || target === '0.5M³') {
+          return cCode === 'P101-D' || cCode === '101-D' || cCap === 0.5;
+        }
+        if (target === 'P101-HS' || target === '101-HS' || target === '6.4' || target === '6.4M3' || target === '6.4M³') {
+          return cCode === 'P101-HS' || cCode === '101-HS' || cCap === 6.4;
+        }
+        return cCode === target;
+      };
       // Always trim the code first to avoid whitespace causing silent failures
       let cleanCode = code.trim();
       if (cleanCode.startsWith('http://') || cleanCode.startsWith('https://')) {
@@ -3005,6 +3060,8 @@ export async function getCylinderByQrOrSerial(
               type_info:pharmacy_oxygen_cylinder_types(*),
               department:departments(*)
             `)
+            .neq('status', 'deactivated')
+            .eq('is_active', true)
             .or(`qr_code.ilike.${cleanSearch},serial_number.ilike.${cleanSearch}`);
 
           if (targetHospitalId) {
@@ -3142,6 +3199,8 @@ export async function getCylinderByQrOrSerial(
               type_info:pharmacy_oxygen_cylinder_types(*),
               department:departments(*)
             `)
+            .neq('status', 'deactivated')
+            .eq('is_active', true)
             .or(orPatterns.join(','))
             .limit(20)
 
@@ -3154,6 +3213,7 @@ export async function getCylinderByQrOrSerial(
           if (!wildcardErr && wildcardData && wildcardData.length > 0) {
             // Strict filter: ensure candidate serial or QR ends with exact -numSuffix
             const validCandidates = wildcardData.filter((c: any) => {
+              if (c.status === 'deactivated' || c.is_active === false) return false
               const sn = (c.serial_number || '').toUpperCase()
               const qr = (c.qr_code || '').toUpperCase()
               return sn.endsWith(`-${numSuffix}`) || qr.endsWith(`-${numSuffix}`)
@@ -3202,15 +3262,42 @@ export async function getCylinderByQrOrSerial(
             department:departments(*)
           `)
           .eq('hospital_id', hospitalId)
+          .neq('status', 'deactivated')
+          .eq('is_active', true)
           .or(`serial_number.ilike.%${cleanCode}%,qr_code.ilike.%${cleanCode}%`)
-          .limit(5)
+          .limit(20)
 
         if (containsData && containsData.length > 0) {
-          data = containsData[0]
+          const nonDeactivated = containsData.filter((c: any) => c.status !== 'deactivated' && c.is_active !== false)
+          if (expectedSizeCode) {
+            const sizeMatches = nonDeactivated.filter(matchesExpectedSize)
+            if (sizeMatches.length > 0) {
+              data = sizeMatches[0]
+            }
+          } else {
+            data = nonDeactivated[0]
+          }
         }
       }
 
       if (!data) return { data: null, error: 'Cylinder not found' }
+
+      if (data.status === 'deactivated' || data.is_active === false) {
+        return {
+          data: null,
+          error: `Silinder "${data.serial_number}" telah dinyahaktifkan dan tidak boleh dikeluarkan / Cylinder has been deactivated.`
+        }
+      }
+
+      // If an expectedSizeCode was explicitly requested, ensure the matched cylinder conforms to it
+      if (expectedSizeCode && !matchesExpectedSize(data)) {
+        const actualCode = data.size_info?.code || (data as any).size_code || 'Unknown'
+        const actualCap = data.size_info?.capacity ? `${Number(data.size_info.capacity)} M³` : ''
+        return {
+          data: null,
+          error: `Cylinder "${data.serial_number}" is size ${actualCode}${actualCap ? ` (${actualCap})` : ''}, but active filter is set to ${expectedSizeCode}.`
+        }
+      }
 
       // Fetch combos to manually map display_name
       const { data: combos } = await supabase
@@ -4900,18 +4987,27 @@ export async function updateReceiveDocument(
     remarks?: string
     status?: 'draft' | 'completed' | 'cancelled'
   },
-  userId?: string
+  userId?: string,
+  reason?: string
 ): Promise<ApiResponse<OxygenReceiveDocument>> {
   try {
     if (!isSupabaseConfigured()) {
       return { data: null, error: 'Database not connected' }
     }
 
+    const { data: oldDoc } = await supabase
+      .from('pharmacy_oxygen_receive_documents')
+      .select('*')
+      .eq('id', documentId)
+      .single()
+
     const { data, error } = await supabase
       .from('pharmacy_oxygen_receive_documents')
       .update({
         ...(updates.supplierId && { supplier_id: updates.supplierId }),
-        ...(updates.deliveryOrderNo !== undefined && { delivery_order_no: updates.deliveryOrderNo }),
+        ...(updates.deliveryOrderNo !== undefined && { 
+          delivery_order_no: updates.deliveryOrderNo ? updates.deliveryOrderNo.trim() : null 
+        }),
         ...(updates.receivedDate && { received_date: updates.receivedDate }),
         ...(updates.remarks !== undefined && { remarks: updates.remarks }),
         ...(updates.status && { status: updates.status }),
@@ -4922,6 +5018,27 @@ export async function updateReceiveDocument(
       .single()
 
     if (error) throw error
+
+    if (reason && userId) {
+      const { error: logErr } = await supabase.from('audit_logs').insert({
+        user_id: userId,
+        action: 'EDIT_RECEIVE_DOCUMENT',
+        module: 'OXYGEN_INVENTORY',
+        entity_type: 'receive_document',
+        entity_id: documentId,
+        old_values: oldDoc,
+        new_values: {
+          supplier_id: updates.supplierId,
+          delivery_order_no: updates.deliveryOrderNo ? updates.deliveryOrderNo.trim() : null,
+          received_date: updates.receivedDate,
+          status: updates.status,
+          remarks: updates.remarks,
+          edit_reason: reason,
+        },
+        created_at: new Date().toISOString(),
+      })
+      if (logErr) console.error('Error writing audit log for edit receive doc:', logErr)
+    }
 
     return { data: data as OxygenReceiveDocument, error: null }
   } catch (error) {
@@ -4946,6 +5063,12 @@ export async function deleteReceiveDocument(
       return { data: null, error: 'Database not connected' }
     }
 
+    const { data: oldDoc } = await supabase
+      .from('pharmacy_oxygen_receive_documents')
+      .select('*')
+      .eq('id', documentId)
+      .single()
+
     // Delete items cascade automatically, but let's delete doc
     const { error } = await supabase
       .from('pharmacy_oxygen_receive_documents')
@@ -4953,6 +5076,20 @@ export async function deleteReceiveDocument(
       .eq('id', documentId)
 
     if (error) throw error
+
+    if (userId) {
+      const { error: logErr } = await supabase.from('audit_logs').insert({
+        user_id: userId,
+        action: 'DELETE_RECEIVE_DOCUMENT',
+        module: 'OXYGEN_INVENTORY',
+        entity_type: 'receive_document',
+        entity_id: documentId,
+        old_values: oldDoc,
+        new_values: { delete_reason: reason },
+        created_at: new Date().toISOString(),
+      })
+      if (logErr) console.error('Error writing audit log for delete receive doc:', logErr)
+    }
 
     return { data: { success: true }, error: null }
   } catch (error) {
@@ -5152,6 +5289,8 @@ export async function getSupplierCylinderReconciliationData(
         department:departments(id, department_name)
       `)
       .eq('hospital_id', hospitalId)
+      .neq('status', 'deactivated')
+      .eq('is_active', true)
 
     if (cylErr) throw cylErr
 
@@ -5265,6 +5404,7 @@ export async function getSupplierCylinderReconciliationData(
     const trackedList: SupplierTrackedCylinder[] = []
 
     for (const cyl of (cylinders || [])) {
+      if (cyl.status === 'deactivated' || cyl.is_active === false) continue
       const isReturnedStatus = cyl.status === 'returned_to_supplier' || (cyl.current_location || '').toLowerCase() === 'supplier'
       const retInfo = latestReturnMap.get(cyl.id)
       const rcvInfo = latestReceiveMap.get(cyl.id)

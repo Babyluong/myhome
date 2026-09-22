@@ -124,11 +124,11 @@ export const KunciAuditPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
             <Shield className="w-7 h-7 text-amber-500" />
             {language === 'ms' ? 'Audit Keselamatan & Verifikasi Bulanan' : 'Monthly Security Audit & Key Verification'}
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-400 mt-1">
             {language === 'ms' 
               ? 'Rekod pemeriksaan berkala kedudukan kunci fizikal dan integriti sampul meterai kunci pendua'
               : 'Periodic inspection records of physical master keys and duplicate key sealed envelope integrity'}

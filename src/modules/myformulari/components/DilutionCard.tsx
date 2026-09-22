@@ -168,9 +168,15 @@ Peringatan: ${kkmMonograph.comments.join('; ')}`
               )}
             </div>
 
-            <h3 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
-              {kkmMonograph.rawTitle}
-            </h3>
+            <div className="space-y-0.5">
+              <span className="text-xs font-semibold text-teal-800 flex items-center gap-1.5">
+                <span>Protokol Pelarutan &amp; Rekonstitusi IV:</span>
+                <strong className="text-teal-950 font-black">{drugName}</strong>
+              </span>
+              <h3 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+                {kkmMonograph.rawTitle}
+              </h3>
+            </div>
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 font-medium">
               <span>Jenama Berdaftar KKM: <strong className="text-slate-800 font-bold">{kkmMonograph.brandText}</strong></span>
@@ -408,20 +414,124 @@ Peringatan: ${kkmMonograph.comments.join('; ')}`
     )
   }
 
-  // Fallback for custom specialist protocols
+  // Fallback for custom specialist protocols (when no KKM monograph is matched, but drug has dilution or reconstitution)
   return (
-    <div className="p-6 bg-white border border-slate-200 rounded-3xl space-y-4 text-xs">
-      <div className="flex items-center gap-2 text-teal-800 font-bold">
-        <Activity className="w-4 h-4 text-teal-600" />
-        <span>Protokol Pelarutan Klinikal: {drugName}</span>
-      </div>
-      {dilution?.standardDilution && (
-        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-          <p><strong>Laluan:</strong> {dilution.standardDilution.route}</p>
-          <p><strong>Pelarut:</strong> {dilution.compatibleDiluents.join(', ')}</p>
-          <p><strong>Tempoh:</strong> {dilution.standardDilution.infusionDuration}</p>
+    <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden text-slate-900">
+      <div className="h-2 w-full bg-gradient-to-r from-teal-500 via-cyan-500 to-indigo-600" />
+      
+      <div className="p-6 sm:p-7 border-b border-slate-100 bg-gradient-to-b from-slate-50/70 to-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-black uppercase tracking-wider bg-teal-100/90 text-teal-900 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-teal-700" />
+              <span>Protokol Pelarutan Hospital / Produk</span>
+            </span>
+            {reconstitution?.isApplicable && (
+              <span className="text-[10px] font-bold text-amber-900 bg-amber-50 border border-amber-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                <Syringe className="w-3 h-3 text-amber-600" />
+                <span>Rekonstitusi Diperlukan</span>
+              </span>
+            )}
+          </div>
+          <h3 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+            {drugName}
+          </h3>
+          <p className="text-xs text-slate-500 font-medium">
+            Sumber: <strong className="text-slate-800">{dilution?.sourceGuideline || 'Risalah Sisipan Produk (Product Insert) / FUKKM'}</strong>
+          </p>
         </div>
-      )}
+      </div>
+
+      <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50/50 border-b border-slate-100">
+        {/* Reconstitution */}
+        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+          <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+            <Syringe className="w-3.5 h-3.5 text-teal-600" />
+            <span>1. Rekonstitusi</span>
+          </div>
+          <p className="text-xs font-extrabold text-slate-900 leading-snug">
+            {reconstitution?.isApplicable
+              ? `${reconstitution.preferredSolvent || 'WFI'} (${reconstitution.solventVolume || 'Ikut label'})`
+              : 'Tidak memerlukan rekonstitusi'}
+          </p>
+        </div>
+
+        {/* Diluents */}
+        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+          <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600" />
+            <span>2. Pelarut Serasi</span>
+          </div>
+          <p className="text-xs font-black text-teal-900 leading-snug">
+            {dilution?.compatibleDiluents?.join(', ') || 'Sedia guna / Mengikut sisipan'}
+          </p>
+        </div>
+
+        {/* Standard Volume */}
+        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+          <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+            <Layers className="w-3.5 h-3.5 text-indigo-600" />
+            <span>3. Had Isipadu &amp; Dos</span>
+          </div>
+          <p className="text-xs font-extrabold text-slate-900 leading-snug">
+            {dilution?.standardDilution?.volume || dilution?.standardDilution?.finalConcentration || 'No further dilution required'}
+          </p>
+        </div>
+
+        {/* Route & Duration */}
+        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+          <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+            <Clock className="w-3.5 h-3.5 text-amber-600" />
+            <span>4. Laluan &amp; Tempoh</span>
+          </div>
+          <p className="text-xs font-black text-slate-900 leading-snug">
+            {dilution?.standardDilution?.route || 'IV'} {dilution?.standardDilution?.infusionDuration ? `• ${dilution.standardDilution.infusionDuration}` : ''}
+          </p>
+        </div>
+      </div>
+
+      <div className="p-6 sm:p-7 space-y-5">
+        {reconstitution?.stepByStepInstructions && reconstitution.stepByStepInstructions.length > 0 && (
+          <div className="p-4.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <span className="text-xs font-extrabold text-slate-800 uppercase tracking-wider block">
+              Arahan Rekonstitusi:
+            </span>
+            <ul className="space-y-1 pl-5 list-disc text-xs text-slate-700 font-medium">
+              {reconstitution.stepByStepInstructions.map((step, i) => (
+                <li key={i}>{step}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {dilution?.clinicalRemarks && dilution.clinicalRemarks.length > 0 && (
+          <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-950 space-y-1.5">
+            <div className="flex items-center gap-2 font-bold text-amber-900 uppercase tracking-wide">
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
+              <span>Peringatan Klinikal:</span>
+            </div>
+            <ul className="space-y-1 pl-5 list-disc font-medium">
+              {dilution.clinicalRemarks.map((rem, i) => (
+                <li key={i}>{rem}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {dilution?.monitoringParameters && dilution.monitoringParameters.length > 0 && (
+          <div className="p-4 rounded-2xl bg-cyan-50/60 border border-cyan-200 text-xs text-cyan-950 space-y-1.5">
+            <div className="flex items-center gap-2 font-bold text-cyan-900 uppercase tracking-wide">
+              <Activity className="w-4 h-4 text-cyan-700" />
+              <span>Parameter Pemantauan Klinikal:</span>
+            </div>
+            <ul className="space-y-1 pl-5 list-disc font-medium">
+              {dilution.monitoringParameters.map((param, i) => (
+                <li key={i}>{param}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

@@ -219,8 +219,14 @@ export const DrugDetailPage: React.FC = () => {
     )
   }
 
-  const kkmDilutionMono = drug ? (getKkmDilutionProtocol(drug.genericName) || (drug.brandNames?.length ? getKkmDilutionProtocol(drug.brandNames[0]) : undefined)) : undefined
-  const hasDilutionTab = Boolean(kkmDilutionMono || drug?.dilution?.isApplicable || drug?.reconstitution?.isApplicable)
+  const isDefinitelyNonParenteral = Boolean(
+    drug?.dosageForms &&
+    drug.dosageForms.some(f => /tablet|capsule|syrup|oral|cream|ointment|gel|lotion|shampoo|suppository|pessary|enema|nasal spray|inhaler|mouthwash|gargle|eye drops|ear drops/i.test(f)) &&
+    !drug.dosageForms.some(f => /inject|infus|ampoul|vial|powder for recon|parenteral/i.test(f))
+  )
+
+  const kkmDilutionMono = drug && !isDefinitelyNonParenteral ? (getKkmDilutionProtocol(drug.genericName) || (drug.brandNames?.length ? getKkmDilutionProtocol(drug.brandNames[0]) : undefined)) : undefined
+  const hasDilutionTab = !isDefinitelyNonParenteral && Boolean(kkmDilutionMono || drug?.dilution?.isApplicable || drug?.reconstitution?.isApplicable)
 
   const tabs = [
     { id: 'overview', label: 'Summary & Indications', icon: BookOpen },
@@ -1278,7 +1284,7 @@ export const DrugDetailPage: React.FC = () => {
 
           {/* Drug-Drug Interactions */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 flex-wrap gap-3">
               <div>
                 <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                   Key Drug Interactions ({drug.interactions.length}):
@@ -1287,30 +1293,91 @@ export const DrugDetailPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setIsInteractionModalOpen(true)}
-                className="px-3 py-1.5 bg-violet-50 text-violet-700 hover:bg-violet-100 font-bold rounded-xl text-xs flex items-center gap-1 transition-all"
+                className="px-3.5 py-2 bg-violet-50 hover:bg-violet-100 text-violet-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all cursor-pointer border border-violet-200/60 shadow-2xs"
               >
                 <span>+ Open Interaction Checker</span>
               </button>
             </div>
 
-            <div className="space-y-3">
-              {drug.interactions.map((inter, idx) => (
-                <div key={idx} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <strong className="text-sm text-slate-900">Interaction with: {inter.interactingDrug}</strong>
-                    <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full ${
-                      inter.severity === 'CRITICAL' ? 'bg-rose-600 text-white' : inter.severity === 'MAJOR' ? 'bg-amber-600 text-white' : 'bg-slate-600 text-white'
-                    }`}>
-                      {inter.severity}
-                    </span>
-                  </div>
-                  <p className="text-slate-700"><strong>Effect: </strong>{inter.effect}</p>
-                  <p className="text-violet-900 bg-violet-50 p-2.5 rounded-xl border border-violet-100">
-                    <strong>Management Action: </strong>{inter.management}
-                  </p>
+            {drug.interactions.length === 0 ? (
+              <div className="p-6 bg-slate-50/80 rounded-2xl border border-slate-200/80 flex flex-col items-center text-center space-y-2">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center">
+                  <CheckCircle2 className="w-5 h-5" />
                 </div>
-              ))}
-            </div>
+                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  Tiada Rekod Interaksi Ubat Spesifik (MOH FUKKM)
+                </h4>
+                <p className="text-xs text-slate-500 max-w-md leading-relaxed font-medium">
+                  Tiada amaran interaksi farmakodinamik atau farmakokinetik utama didokumenkan dalam monograf rasmi Kementerian Kesihatan Malaysia untuk ubat ini.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {drug.interactions.map((inter, idx) => {
+                  const isFukkmGeneral = inter.interactingDrug.includes('FUKKM') || inter.interactingDrug.includes('CYP450')
+                  const isCrit = inter.severity === 'CRITICAL'
+                  const isMaj = inter.severity === 'MAJOR'
+
+                  if (isFukkmGeneral) {
+                    return (
+                      <div key={idx} className="p-4 sm:p-5 bg-gradient-to-br from-amber-50/60 to-orange-50/30 rounded-2xl border border-amber-200/80 space-y-3 text-xs">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                              <AlertTriangle className="w-3.5 h-3.5" />
+                            </div>
+                            <strong className="text-sm font-bold text-slate-900">
+                              Panduan Interaksi Bahan & Ubat Bersama (MOH FUKKM)
+                            </strong>
+                          </div>
+                          <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-600 text-white uppercase tracking-wider">
+                            FUKKM Monograph
+                          </span>
+                        </div>
+
+                        <div className="bg-white/90 p-3.5 rounded-xl border border-amber-200/70 text-slate-800 leading-relaxed font-medium space-y-1">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 block">
+                            Bahan, Ubat & Kesan Klinikal yang Dinyatakan:
+                          </span>
+                          <p className="text-xs text-slate-700 whitespace-pre-line leading-relaxed">
+                            {inter.effect}
+                          </p>
+                        </div>
+
+                        <p className="text-violet-900 bg-violet-50/90 p-3 rounded-xl border border-violet-200/60 font-medium text-xs leading-relaxed flex items-start gap-2">
+                          <Info className="w-4 h-4 text-violet-600 shrink-0 mt-0.5" />
+                          <span>
+                            <strong className="font-bold text-violet-950">Tindakan Klinikal / Prescribing Advice: </strong>
+                            {inter.management}
+                          </span>
+                        </p>
+                      </div>
+                    )
+                  }
+
+                  return (
+                    <div key={idx} className="p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5 text-xs">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <strong className="text-sm font-bold text-slate-900">
+                          Interaction with: {inter.interactingDrug}
+                        </strong>
+                        <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                          isCrit ? 'bg-rose-600 text-white' : isMaj ? 'bg-amber-600 text-white' : 'bg-slate-600 text-white'
+                        }`}>
+                          {inter.severity}
+                        </span>
+                      </div>
+                      <p className="text-slate-700 leading-relaxed font-medium">
+                        <strong className="text-slate-900">Effect: </strong>{inter.effect}
+                      </p>
+                      <p className="text-violet-900 bg-violet-50 p-2.5 rounded-xl border border-violet-100 font-medium leading-relaxed">
+                        <strong className="text-violet-950 font-bold">Management Action: </strong>{inter.management}
+                      </p>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}

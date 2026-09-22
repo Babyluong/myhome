@@ -13,7 +13,12 @@ import {
   FileText,
   AlertCircle,
   Edit2,
-  Activity
+  Activity,
+  Camera,
+  Eye,
+  X,
+  Trash2,
+  Image as ImageIcon
 } from 'lucide-react'
 import { 
   LineChart, 
@@ -35,7 +40,9 @@ import {
   logTemperature, 
   annotateReading,
   calculateReadingStatus,
-  getDefaultThresholds
+  getDefaultThresholds,
+  uploadEquipmentPhoto,
+  deleteEquipmentPhoto
 } from '@/modules/mysuhu/services/suhuService'
 import { downloadPdfReport } from '@/modules/mysuhu/services/suhuReportService'
 import type { UnitPemantauanWithRelations, BacaanSuhuWithRelations } from '@/types/mysuhu'
@@ -70,6 +77,40 @@ export const UnitDetailPage: React.FC = () => {
   const [showCorrectModal, setShowCorrectModal] = useState(false)
   const [correctReadingId, setCorrectReadingId] = useState<string | null>(null)
   const [correctNote, setCorrectNote] = useState('')
+
+  // Photo Attachment States
+  const [previewPhotoUrl, setPreviewPhotoUrl] = useState<string | null>(null)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
+
+  const handleUploadPhoto = async (file: File) => {
+    if (!unitId) return
+    setUploadingPhoto(true)
+    try {
+      const res = await uploadEquipmentPhoto(file, unitId)
+      if (res.error) throw new Error(res.error)
+      setUnit(prev => prev ? { ...prev, photo_url: res.data } : null)
+    } catch (err: any) {
+      console.error('Failed to upload equipment photo:', err)
+      alert(err?.message || 'Gagal memuat naik foto peralatan')
+    } finally {
+      setUploadingPhoto(false)
+    }
+  }
+
+  const handleDeletePhoto = async () => {
+    if (!unitId || !confirm('Adakah anda pasti ingin memadam foto unit ini?')) return
+    setUploadingPhoto(true)
+    try {
+      const res = await deleteEquipmentPhoto(unitId)
+      if (res.error) throw new Error(res.error)
+      setUnit(prev => prev ? { ...prev, photo_url: null } : null)
+    } catch (err: any) {
+      console.error('Failed to delete photo:', err)
+      alert(err?.message || 'Gagal memadam foto')
+    } finally {
+      setUploadingPhoto(false)
+    }
+  }
 
   const loadData = async () => {
     if (!unitId) return
@@ -256,25 +297,95 @@ export const UnitDetailPage: React.FC = () => {
       {/* Header and Back Link */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-[#00a68a] to-emerald-500" />
-        <div>
-          <button 
-            onClick={() => navigate(unit?.lokasi?.department_id ? `/suhu/department/${unit.lokasi.department_id}` : ROUTES.HUB_SUHU_DASHBOARD)}
-            className="flex items-center gap-1.5 text-slate-400 hover:text-slate-650 transition-colors mb-2 text-xs font-bold"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Department Dashboard</span>
-          </button>
-          
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Badge variant="gray" className="bg-slate-100 text-slate-600 border-transparent font-mono text-[9px] px-2 py-0.5 rounded-md">
-              {unit.unit_id}
-            </Badge>
-            <h1 className="text-xl font-black text-slate-800">{unit.nama_unit}</h1>
+        
+        <div className="flex items-start gap-4">
+          {/* Equipment Photo */}
+          {uploadingPhoto ? (
+            <div className="w-20 h-20 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 flex-shrink-0 mt-1">
+              <Spinner size="sm" />
+              <span className="text-[8px] font-bold text-slate-400">Saving...</span>
+            </div>
+          ) : unit.photo_url ? (
+            <div className="relative group/unitphoto w-20 h-20 rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0 bg-slate-50 mt-1">
+              <img 
+                src={unit.photo_url} 
+                alt={unit.nama_unit} 
+                className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                onClick={() => setPreviewPhotoUrl(unit.photo_url!)}
+                title="Click to view full photo"
+              />
+              <div className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover/unitphoto:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
+                <button
+                  type="button"
+                  onClick={() => setPreviewPhotoUrl(unit.photo_url!)}
+                  className="p-1.5 bg-white/90 text-slate-700 rounded-lg shadow"
+                  title="View Full Photo"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                </button>
+                <label className="p-1.5 bg-white/90 text-[#00a68a] rounded-lg shadow cursor-pointer" title="Change Photo">
+                  <Camera className="w-3.5 h-3.5" />
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    capture="environment"
+                    className="hidden" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) handleUploadPhoto(file)
+                    }}
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={handleDeletePhoto}
+                  className="p-1.5 bg-white/90 text-rose-600 rounded-lg shadow"
+                  title="Remove Photo"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <label 
+              className="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50 hover:bg-emerald-50/40 flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 text-slate-400 hover:text-[#00a68a] transition-colors mt-1 p-1 text-center"
+              title="Attach photo of this freezer or room"
+            >
+              <Camera className="w-5 h-5 text-slate-300" />
+              <span className="text-[8px] font-bold">Attach Photo</span>
+              <input 
+                type="file" 
+                accept="image/*" 
+                capture="environment"
+                className="hidden" 
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) handleUploadPhoto(file)
+                }}
+              />
+            </label>
+          )}
+
+          <div>
+            <button 
+              onClick={() => navigate(unit?.lokasi?.department_id ? `/suhu/department/${unit.lokasi.department_id}` : ROUTES.HUB_SUHU_DASHBOARD)}
+              className="flex items-center gap-1.5 text-slate-400 hover:text-slate-650 transition-colors mb-1.5 text-xs font-bold"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Department Dashboard</span>
+            </button>
+            
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Badge variant="gray" className="bg-slate-100 text-slate-600 border-transparent font-mono text-[9px] px-2 py-0.5 rounded-md">
+                {unit.unit_id}
+              </Badge>
+              <h1 className="text-xl font-black text-slate-800">{unit.nama_unit}</h1>
+            </div>
+            <p className="text-xs text-slate-400 mt-1 font-semibold">
+              Location: <span className="text-slate-605 font-bold">{unit.lokasi?.nama_lokasi}</span> &bull; 
+              Equipment Type: <span className="text-slate-605 font-bold">{unit.jenis_unit.toUpperCase()}</span>
+            </p>
           </div>
-          <p className="text-xs text-slate-400 mt-1 font-semibold">
-            Location: <span className="text-slate-605 font-bold">{unit.lokasi?.nama_lokasi}</span> &bull; 
-            Equipment Type: <span className="text-slate-605 font-bold">{unit.jenis_unit.toUpperCase()}</span>
-          </p>
         </div>
 
         <div className="flex gap-2">
@@ -782,6 +893,40 @@ export const UnitDetailPage: React.FC = () => {
               >
                 {submitting ? 'Saving...' : 'Save Annotation'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Photo Lightbox Modal */}
+      {previewPhotoUrl && (
+        <div 
+          className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setPreviewPhotoUrl(null)}
+        >
+          <div 
+            className="relative max-w-2xl w-full bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-700"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center px-5 py-3 border-b border-slate-800 text-white">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-[#00a68a]" />
+                <span className="text-xs font-bold tracking-wide text-slate-200">Foto Peralatan / Bilik</span>
+              </div>
+              <button
+                onClick={() => setPreviewPhotoUrl(null)}
+                className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex items-center justify-center p-4 max-h-[75vh] bg-slate-950/50">
+              <img 
+                src={previewPhotoUrl} 
+                alt="Equipment Photo Full" 
+                className="max-h-[70vh] max-w-full object-contain rounded-xl shadow-lg"
+              />
             </div>
           </div>
         </div>

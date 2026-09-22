@@ -28,6 +28,7 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
   const [qtyBN101N, setQtyBN101N] = useState<number>(0);
   const [qtyPI101FWard, setQtyPI101FWard] = useState<number>(0);
   const [qtyPI101FAmbulance, setQtyPI101FAmbulance] = useState<number>(0);
+  const [qtyVieTankM3, setQtyVieTankM3] = useState<string | number>('');
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,6 +72,7 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
     setQtyBN101N(0);
     setQtyPI101FWard(0);
     setQtyPI101FAmbulance(0);
+    setQtyVieTankM3('');
     setError(null);
   };
 
@@ -81,8 +83,10 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
       return;
     }
 
-    if (qtyBN101N <= 0 && qtyPI101FWard <= 0 && qtyPI101FAmbulance <= 0) {
-      setError('Sila masukkan kuantiti sekurang-kurangnya untuk satu jenis silinder.');
+    const numVieTank = typeof qtyVieTankM3 === 'number' ? qtyVieTankM3 : parseFloat(qtyVieTankM3) || 0;
+
+    if (qtyBN101N <= 0 && qtyPI101FWard <= 0 && qtyPI101FAmbulance <= 0 && numVieTank <= 0) {
+      setError('Sila masukkan kuantiti sekurang-kurangnya untuk satu jenis silinder atau tangki VIE.');
       return;
     }
 
@@ -110,6 +114,13 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
           size_code: '101-F',
           quantity: qtyPI101FAmbulance,
           usage_notes: 'Ambulance usage (short Cylinder)'
+        });
+      }
+      if (numVieTank > 0) {
+        items.push({
+          size_code: 'Liquid Medical Oxygen (VIE Tank)',
+          quantity: numVieTank,
+          usage_notes: 'Bekalan Gas Oksigen Cecair Pukal (Bulk VIE Tank)'
         });
       }
 
@@ -141,7 +152,7 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md overflow-y-auto">
       <div className="relative w-full max-w-xl bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col max-h-[90vh]">
         
         {/* Modal Header */}
@@ -200,20 +211,20 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
           <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl flex items-start gap-3">
             <Info className="w-4.5 h-4.5 text-blue-600 shrink-0 mt-0.5" />
             <span className="text-[11px] text-blue-800 font-semibold leading-relaxed">
-              Borang permintaan sewaan gas perubatan ini hanya dibenarkan bagi peranti silinder sewaan berskala **BN (8.0m³)** dan **PI (1.4m³)** sahaja mengikut pekeliling perolehan KKM.
+              Borang permintaan bekalan gas perubatan ini mematuhi pekeliling perolehan KKM bagi peranti silinder sewaan skala <strong>BN (8.0m³)</strong>, <strong>PI (1.4m³)</strong>, dan isian cecair pukal <strong>Liquid Medical Oxygen (VIE Tank dlm unit M³)</strong>.
             </span>
           </div>
 
-          {/* Cylinder Items Request */}
+          {/* Cylinder & VIE Items Request */}
           <div className="space-y-4">
-            <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider border-b pb-1">Cylinder Request Quantities</h4>
+            <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider border-b pb-1">Request Quantities (Cylinders & VIE Tank)</h4>
 
             {/* Cylinder 1: BN 101-N */}
             <div className="p-4 border border-slate-100 rounded-2xl bg-slate-50/20 space-y-3">
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-xs font-bold text-slate-800">Loan Oxygen BN (8.0m³)</div>
-                  <div className="text-[10px] text-slate-400 font-semibold mt-0.5">Code: 101-N â€¢ Ward / Store General Refill</div>
+                  <div className="text-[10px] text-slate-400 font-semibold mt-0.5">Code: 101-N • Ward / Store General Refill</div>
                 </div>
                 <div className="w-24">
                   <input
@@ -233,7 +244,7 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-xs font-bold text-slate-800">Loan Oxygen PI (1.4m³) (ward usage) (long Cylinder)</div>
-                  <div className="text-[10px] text-slate-400 font-semibold mt-0.5">Code: 101-F â€¢ Ward Usage (Long Cylinder)</div>
+                  <div className="text-[10px] text-slate-400 font-semibold mt-0.5">Code: 101-F • Ward Usage (Long Cylinder)</div>
                 </div>
                 <div className="w-24">
                   <input
@@ -253,7 +264,7 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-xs font-bold text-slate-800">Loan Oxygen PI (1.4m³) (Ambulance usage) (short Cylinder)</div>
-                  <div className="text-[10px] text-slate-400 font-semibold mt-0.5">Code: 101-F â€¢ Ambulance Usage (Short Cylinder)</div>
+                  <div className="text-[10px] text-slate-400 font-semibold mt-0.5">Code: 101-F • Ambulance Usage (Short Cylinder)</div>
                 </div>
                 <div className="w-24">
                   <input
@@ -264,6 +275,42 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
                     placeholder="0"
                     className="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-center font-bold text-xs"
                   />
+                </div>
+              </div>
+            </div>
+
+            {/* Item 4: Liquid Medical Oxygen (VIE Tank) in M3 */}
+            <div className="p-4 border border-blue-200/80 rounded-2xl bg-gradient-to-r from-blue-50/40 via-sky-50/30 to-indigo-50/20 space-y-3 shadow-xs">
+              <div className="flex justify-between items-center gap-2">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-900">Liquid Medical Oxygen (VIE Tank)</span>
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-100 text-blue-700 border border-blue-200 uppercase tracking-wider">
+                      Isipadu M³
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                    Code: VIE-TANK • Permintaan Isian Tangki Cecair Pukal (Unit M³)
+                  </div>
+                </div>
+                <div className="w-32 relative flex items-center shrink-0">
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    value={qtyVieTankM3}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || (!isNaN(Number(val)) && Number(val) >= 0)) {
+                        setQtyVieTankM3(val);
+                      }
+                    }}
+                    placeholder="0"
+                    className="w-full pl-3 pr-8 py-1.5 rounded-xl border border-blue-300 text-center font-bold text-xs bg-white text-slate-900 shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  />
+                  <span className="absolute right-2.5 text-[11px] font-extrabold text-blue-600 pointer-events-none select-none">
+                    M³
+                  </span>
                 </div>
               </div>
             </div>

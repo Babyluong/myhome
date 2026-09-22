@@ -233,13 +233,24 @@ export const BreachLogPage: React.FC = () => {
                     <tr key={b.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-4 py-3 font-bold text-slate-400">{i + 1}</td>
                       <td className="px-4 py-3 text-slate-800">
-                        <span 
-                          onClick={() => navigate(`/suhu/unit/${b.unit_id}`)}
-                          className="hover:underline hover:text-[#00a68a] cursor-pointer font-extrabold block"
-                        >
-                          {b.unit?.nama_unit}
-                        </span>
-                        <span className="text-[9px] font-mono text-slate-400">{b.unit?.unit_id}</span>
+                        <div className="flex items-center gap-2.5">
+                          {b.unit?.photo_url && (
+                            <img 
+                              src={b.unit.photo_url} 
+                              alt={b.unit.nama_unit} 
+                              className="w-9 h-9 rounded-xl object-cover border border-slate-200 flex-shrink-0 shadow-sm"
+                            />
+                          )}
+                          <div>
+                            <span 
+                              onClick={() => navigate(`/suhu/unit/${b.unit_id}`)}
+                              className="hover:underline hover:text-[#00a68a] cursor-pointer font-extrabold block"
+                            >
+                              {b.unit?.nama_unit}
+                            </span>
+                            <span className="text-[9px] font-mono text-slate-400">{b.unit?.unit_id}</span>
+                          </div>
+                        </div>
                       </td>
                       <td className="px-4 py-3 font-medium">
                         <div className="text-slate-700">{b.unit?.lokasi?.nama_lokasi}</div>
@@ -290,14 +301,23 @@ export const BreachLogPage: React.FC = () => {
               {filteredBreaches.map((b) => (
                 <div key={b.id} className="p-4 space-y-2.5 hover:bg-slate-50/50 transition">
                   <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <span 
-                        onClick={() => navigate(`/suhu/unit/${b.unit_id}`)}
-                        className="font-extrabold text-slate-800 text-sm hover:underline hover:text-[#00a68a] cursor-pointer block"
-                      >
-                        {b.unit?.nama_unit}
-                      </span>
-                      <span className="text-[10px] font-mono text-slate-400">{b.unit?.unit_id}</span>
+                    <div className="flex items-center gap-2.5">
+                      {b.unit?.photo_url && (
+                        <img 
+                          src={b.unit.photo_url} 
+                          alt={b.unit.nama_unit} 
+                          className="w-10 h-10 rounded-xl object-cover border border-slate-200 flex-shrink-0 shadow-sm"
+                        />
+                      )}
+                      <div>
+                        <span 
+                          onClick={() => navigate(`/suhu/unit/${b.unit_id}`)}
+                          className="font-extrabold text-slate-800 text-sm hover:underline hover:text-[#00a68a] cursor-pointer block"
+                        >
+                          {b.unit?.nama_unit}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-400">{b.unit?.unit_id}</span>
+                      </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className="px-2.5 py-1 bg-rose-50 border border-rose-200 text-rose-700 font-mono font-black text-xs rounded-lg">

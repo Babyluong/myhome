@@ -1219,7 +1219,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "isReconstitutionRequired": true,
     "suggestedMinimumDilutions": "IV bolus: No further dilution required\nIV infusion: Further dilute to a maximum concentration of 50 mg/ml",
     "diluentText": "NS, D5",
-    "administrationText": "to decrease risk of phlebitis.",
+    "administrationText": "IV bolus: Administer slowly over 3 – 4 minutes.\nIV intermittent infusion: Dilute with NS or D5 and infuse over 30 – 60 minutes (extending infusion over 60 minutes is recommended for peripheral lines to decrease risk of phlebitis).",
     "stabilityRows": [
       {
         "phase": "After Dilution",
@@ -1229,7 +1229,8 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 24 hours",
     "comments": [
-      "Extending infusion over 60 minutes has been used for peripheral"
+      "Extending infusion over 60 minutes is recommended for peripheral administration to decrease risk of phlebitis.",
+      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
     ],
     "references": [
       "1. Karnataka Antibiotics & Pharmaceuticals Ltd. Cloxabiotic Injection",
@@ -1816,35 +1817,33 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "rawTitle": "FACTOR VIII (HUMAN BLOOD COAGULATION FACTOR VIII)",
     "genericName": "Human Coagulation Factor VIII",
     "brandNames": [
-      "Fanhdi 250 IU powder and solvent for solution for injection Fanhdi 500 IU powder and solvent for solution for injection Fanhdi 1000 IU powder and solvent for solution for injection MYVATE 250 IU powder and solvent for solution for injection MYVATE 500 IU powder and solvent for solution for injection MYVATE 1000 IU powder and solvent for solution for injection MYVATE 1500 IU powder and solvent for solution for injection Beriate 250 IU Powder and solvent for solution for injection or infusion Beriate 500 IU Powder and solvent for solution for injection or infusion Beriate 1000 IU Powder and solvent for solution for injection or infusion"
+      "Fanhdi",
+      "MYVATE",
+      "Beriate"
     ],
     "sourceGuideline": "KKM Dilution Guide for Fluid Restricted Critically Ill Adults (First Edition April 2024 / Update Dec 2025)",
-    "brandText": "Fanhdi 250 IU powder and solvent for solution for injection Fanhdi 500 IU powder and solvent for solution for injection Fanhdi 1000 IU powder and solvent for solution for injection MYVATE 250 IU powder and solvent for solution for injection MYVATE 500 IU powder and solvent for solution for injection MYVATE 1000 IU powder and solvent for solution for injection MYVATE 1500 IU powder and solvent for solution for injection Beriate 250 IU Powder and solvent for solution for injection or infusion Beriate 500 IU Powder and solvent for solution for injection or infusion Beriate 1000 IU Powder and solvent for solution for injection or infusion",
-    "reconstitutionText": "24 hours 8 – 12 hours",
+    "brandText": "Fanhdi, MYVATE, Beriate",
+    "reconstitutionText": "Reconstitute each vial with the supplied diluent (Sterile WFI) using aseptic technique. Swirl gently until dissolved; do not shake.",
     "isReconstitutionRequired": true,
     "suggestedMinimumDilutions": "No further dilution required",
     "diluentText": "Not applicable",
-    "administrationText": "of Factor VIII concentrate may result in vasomotor reaction.",
+    "administrationText": "IV bolus / infusion: Administer slowly via IV push at a rate not exceeding 2 – 3 mL/min. Rapid administration of Factor VIII concentrate may result in vasomotor reaction.",
     "stabilityRows": [
       {
-        "phase": "After Dilution",
+        "phase": "After Reconstitution",
         "fridge": "-",
-        "roomTemp": "After"
+        "roomTemp": "8 – 12 hours (Beriate / MYVATE), 24 hours (Fanhdi)"
       }
     ],
-    "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter",
+    "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Reconstitution: 8 – 12 hours (Beriate/MYVATE) or up to 24 hours (Fanhdi)",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan.",
+      "Kadar suntikan IV tidak melebihi 2 – 3 mL seminit bagi mengelakkan tindak balas vasomotor."
     ],
     "references": [
-      "1. Bioworld Technologies Sdn Bhd. Factor VIII (MYVATE) 250 IU, 500 IU,",
-      "1000 IU, 1500 IU Powder and Solvent for Solution for Injection Product",
-      "Leaflet. Revised 2 May 2018.",
-      "2. DKSH (M) Sdn Bhd. Factor VIII (Beriate) 250 IU, 500 IU, 1000 IU",
-      "Powder and Solvent for Solution for Injection or Infusion Product",
-      "Leaflet. Revised 23 Aug 2019.",
-      "3. Grifols Biologicals Inc. Factor VIII (Fandhi) 250 IU, 500 IU, 1000 IU",
-      "Product Leaflet. Revised 17 Dec 2007."
+      "1. Bioworld Technologies Sdn Bhd. Factor VIII (MYVATE) 250 IU, 500 IU, 1000 IU, 1500 IU Powder and Solvent for Solution for Injection Product Leaflet. Revised 2 May 2018.",
+      "2. DKSH (M) Sdn Bhd. Factor VIII (Beriate) 250 IU, 500 IU, 1000 IU Powder and Solvent for Solution for Injection or Infusion Product Leaflet. Revised 23 Aug 2019.",
+      "3. Grifols Biologicals Inc. Factor VIII (Fandhi) 250 IU, 500 IU, 1000 IU Product Leaflet. Revised 17 Dec 2007."
     ]
   },
   {
@@ -1853,63 +1852,37 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "rawTitle": "FACTOR VIII/VWF (HUMAN BLOOD COAGULATION FACTOR VIII AND VON WILLEBRAND FACTOR COMPLEX)",
     "genericName": "Factor VIII / VWF Complex",
     "brandNames": [
-      "AlphanateⓇ250 IU FVIII",
-      "5 mL single dose vial AlphanateⓇ500 IU FVIII",
-      "5 mL single dose vial AlphanateⓇ1000 IU FVIII",
-      "10 mL single dose vial Alphanate1500 IU FVIII",
-      "10 mL single dose vial Wilate 500",
-      "500 IU VWF",
-      "500 IU FVIII",
-      "Powder and Solvent for Solution for Injection Wilate 1000",
-      "1000 IU VWF",
-      "1000 IU FVIII",
-      "powder and solvent for solution for injection Octanate 50 IU",
-      "ml",
-      "250 IU powder and solvent for solution for injection Octanate 50 IU",
-      "ml",
-      "500 IU powder and solvent for solution for injection Octanate 100 IU",
-      "ml",
-      "1000 IU powder and solvent for solution for injection Immunate 50 IU",
-      "ml",
-      "250 IU FVIII",
-      "190 IU VWF powder and solvent for solution for injection Immunate 100 IU",
-      "ml",
-      "500 IU FVIII",
-      "375 IU VWF powder and solvent for solution for injection Immunate 100 IU",
-      "ml",
-      "1000 IU FVIII",
-      "750 IU VWF powder and solvent for solution for injection Haemate P Powder and solvent for solution for injection or infusion"
+      "Alphanate",
+      "Wilate",
+      "Octanate",
+      "Immunate",
+      "Haemate P"
     ],
     "sourceGuideline": "KKM Dilution Guide for Fluid Restricted Critically Ill Adults (First Edition April 2024 / Update Dec 2025)",
-    "brandText": "AlphanateⓇ250 IU FVIII/5 mL single dose vial AlphanateⓇ500 IU FVIII/5 mL single dose vial AlphanateⓇ1000 IU FVIII/10 mL single dose vial Alphanate1500 IU FVIII/10 mL single dose vial Wilate 500, 500 IU VWF/500 IU FVIII, Powder and Solvent for Solution for Injection Wilate 1000, 1000 IU VWF/1000 IU FVIII, powder and solvent for solution for injection Octanate 50 IU/ml, 250 IU powder and solvent for solution for injection Octanate 50 IU/ml, 500 IU powder and solvent for solution for injection Octanate 100 IU/ml, 1000 IU powder and solvent for solution for injection Immunate 50 IU/ml, 250 IU FVIII / 190 IU VWF powder and solvent for solution for injection Immunate 100 IU/ml, 500 IU FVIII / 375 IU VWF powder and solvent for solution for injection Immunate 100 IU/ml, 1000 IU FVIII / 750 IU VWF powder and solvent for solution for injection Haemate P Powder and solvent for solution for injection or infusion",
+    "brandText": "Alphanate, Wilate, Octanate, Immunate, Haemate P",
     "reconstitutionText": "Reconstitute each vial with the provided prefilled syringe with diluent (sterile WFI)",
     "isReconstitutionRequired": true,
     "suggestedMinimumDilutions": "No further dilution required",
     "diluentText": "Not applicable",
-    "administrationText": "of Factor VIII/VWF concentrate may result in vasomotor reaction.",
+    "administrationText": "IV bolus / infusion: Administer slowly at a rate not exceeding 2 – 3 mL/min (or per manufacturer's instructions). Rapid administration of Factor VIII/VWF concentrate may result in vasomotor reaction.",
     "stabilityRows": [
       {
-        "phase": "After Dilution",
+        "phase": "After Reconstitution",
         "fridge": "-",
-        "roomTemp": "After Reconstution - 8 hours"
+        "roomTemp": "8 hours"
       }
     ],
-    "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Reconstution - 8 hours",
+    "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Reconstitution - 8 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan.",
+      "Kadar pemberian tidak boleh melebihi 2 – 3 mL/min bagi mengelakkan tindak balas vasomotor."
     ],
     "references": [
-      "1. DKSH (M) Sdn. Bhd. Haemate P 250IU FVIII/ 600IU VWF, 500 IU FVIII /1200",
-      "IU VWF, 1000 IU FVIII /2400 IU VWF Powder and Solvent for Solution for",
-      "Injection. Revised 30 Aug 2019.",
-      "2. Grifols Biologicals Inc. Factor VIII/VWF (AlphanateⓇ) 250 IU, 500 IU, 1000 IU,",
-      "1500 IU Product Leaflet. Revised Oct 2013.",
-      "3. Pharmaniaga. Factor VIII/VWF (OCTANATE) 50 IU/ml, 250 IU Powder and",
-      "Solvent for Solution for Injection. Revised May 2015.",
-      "4. Pharmaniaga. Factor VIII/VWF (Wilate) 500, 500 IU VWF/500 IU FVIII, Powder",
-      "and Solvent for Solution for Injection Product Leaflet. Revised 3 Aug 2020.",
-      "5. Takeda (M) Sdn Bhd. Factor VIII/VWF (IMMUNATE) 50 IU/ml, 100 IU/ml",
-      "Product Leaflet. Revised 16 Jun 2020."
+      "1. DKSH (M) Sdn. Bhd. Haemate P 250IU FVIII/ 600IU VWF, 500 IU FVIII /1200 IU VWF, 1000 IU FVIII /2400 IU VWF Powder and Solvent for Solution for Injection. Revised 30 Aug 2019.",
+      "2. Grifols Biologicals Inc. Factor VIII/VWF (AlphanateⓇ) 250 IU, 500 IU, 1000 IU, 1500 IU Product Leaflet. Revised Oct 2013.",
+      "3. Pharmaniaga. Factor VIII/VWF (OCTANATE) 50 IU/ml, 250 IU Powder and Solvent for Solution for Injection. Revised May 2015.",
+      "4. Pharmaniaga. Factor VIII/VWF (Wilate) 500, 500 IU VWF/500 IU FVIII, Powder and Solvent for Solution for Injection Product Leaflet. Revised 3 Aug 2020.",
+      "5. Takeda (M) Sdn Bhd. Factor VIII/VWF (IMMUNATE) 50 IU/ml, 100 IU/ml Product Leaflet. Revised 16 Jun 2020."
     ]
   },
   {
@@ -1918,35 +1891,33 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "rawTitle": "FACTOR IX (HUMAN COAGULATION FACTOR IX)",
     "genericName": "Human Coagulation Factor IX",
     "brandNames": [
-      "AlphaNineSD500 IU FVIII powder and solvent for solution for injection AlphaNineSD1000 IU FVIII powder and solvent for solution for injection AlphaNineSD1500 IU FVIII powder and solvent for solution for injection OCTANINE F 500 IU powder and solvent for solution for injection OCTANINE F 1000 IU powder and solvent for solution for injection Immunine 600 IU powder and solvent for solution for injection"
+      "AlphaNine SD",
+      "OCTANINE F",
+      "Immunine"
     ],
     "sourceGuideline": "KKM Dilution Guide for Fluid Restricted Critically Ill Adults (First Edition April 2024 / Update Dec 2025)",
-    "brandText": "AlphaNineSD500 IU FVIII powder and solvent for solution for injection AlphaNineSD1000 IU FVIII powder and solvent for solution for injection AlphaNineSD1500 IU FVIII powder and solvent for solution for injection OCTANINE F 500 IU powder and solvent for solution for injection OCTANINE F 1000 IU powder and solvent for solution for injection Immunine 600 IU powder and solvent for solution for injection",
-    "reconstitutionText": "- Use immediately",
-    "isReconstitutionRequired": false,
+    "brandText": "AlphaNine SD, OCTANINE F, Immunine",
+    "reconstitutionText": "Reconstitute with supplied Sterile Water for Injection (WFI). Swirl gently until dissolved; do not shake.",
+    "isReconstitutionRequired": true,
     "suggestedMinimumDilutions": "No further dilution required",
     "diluentText": "Not applicable",
-    "administrationText": "of Factor IX concentrate may result in vasomotor reaction.",
+    "administrationText": "IV bolus / infusion: Administer slowly at a rate not exceeding 2 – 3 mL/min. Rapid administration of Factor IX concentrate may result in vasomotor reaction.",
     "stabilityRows": [
       {
-        "phase": "After Dilution",
+        "phase": "After Reconstitution",
         "fridge": "-",
-        "roomTemp": "After"
+        "roomTemp": "3 hours"
       }
     ],
-    "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter",
+    "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Reconstitution - 3 hours",
     "comments": [
-      "Use immediately and within three hours after reconstitution to avoid",
-      "potential ill effect of any inadvertent bacterial contamination occurring",
-      "after reconstitution."
+      "Use immediately and within three hours after reconstitution to avoid potential ill effect of any inadvertent bacterial contamination occurring after reconstitution.",
+      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
     ],
     "references": [
-      "1. Grifols Biologicals Inc. Factor IX (AlphaNineⓇSD) 500 IU, 1000 IU, 1500",
-      "IU Product Leaflet. Revised Dec 2017.",
-      "2. Pharmaniaga. Factor XI (OCTANINE F) 500 IU, 1000 IU Product Leaflet.",
-      "Revised 15 May 2019.",
-      "3. Takeda (M) Sdn Bhd. Factor IX (Immunine) 600 IU Product Leaflet",
-      "(Revised Feb 2020)."
+      "1. Grifols Biologicals Inc. Factor IX (AlphaNineⓇSD) 500 IU, 1000 IU, 1500 IU Product Leaflet. Revised Dec 2017.",
+      "2. Pharmaniaga. Factor XI (OCTANINE F) 500 IU, 1000 IU Product Leaflet. Revised 15 May 2019.",
+      "3. Takeda (M) Sdn Bhd. Factor IX (Immunine) 600 IU Product Leaflet (Revised Feb 2020)."
     ]
   },
   {
@@ -2349,14 +2320,12 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "rawTitle": "GRANISETRON 1 MG/ML",
     "genericName": "Granisetron Hydrochloride",
     "brandNames": [
-      "Kytron 1 mg",
-      "1 ml & 3 mg",
-      "3 ml Granisetron Kabi 1 mg",
-      "1 ml Granil 3 mg",
-      "3 ml"
+      "Kytron",
+      "Granisetron Kabi",
+      "Granil"
     ],
     "sourceGuideline": "KKM Dilution Guide for Fluid Restricted Critically Ill Adults (First Edition April 2024 / Update Dec 2025)",
-    "brandText": "Kytron 1 mg/1 ml & 3 mg/3 ml Granisetron Kabi 1 mg/1 ml Granil 3 mg/3 ml",
+    "brandText": "Kytron, Granisetron Kabi, Granil",
     "reconstitutionText": "Not required",
     "isReconstitutionRequired": false,
     "suggestedMinimumDilutions": "IV bolus: No further dilution required\nIV infusion: Dilute required dose in 20 ml",
@@ -2827,7 +2796,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "isReconstitutionRequired": false,
     "suggestedMinimumDilutions": "Maximum concentration of 0.5 mg/ml",
     "diluentText": "D5, NS",
-    "administrationText": "sets and syringes, should be used if available.\n Due to oversaturation of active ingredient, crystallization may occur in undiluted form.",
+    "administrationText": "IV continuous infusion: Initial dose 2 – 10 mg/hour. Titrate according to haemodynamic response (up to 20 mg/hour).\nNon-PVC administration sets and glass or PE/PP syringes/containers should be used if available to prevent drug sorption.\nDue to oversaturation of active ingredient, crystallization may occur in undiluted form.",
     "stabilityRows": [
       {
         "phase": "After Dilution",
@@ -2837,9 +2806,9 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Avoid use of PVC infusion containers, administration sets and in-line",
-      "filters if possible.",
-      "Rigid plastics, i.e. polyethylene, polytetrafluoroethylene or polypropylene"
+      "Avoid use of PVC infusion containers, administration sets and in-line filters if possible.",
+      "Rigid plastics, i.e. polyethylene (PE), polytetrafluoroethylene (PTFE) or polypropylene (PP) sets and syringes should be used if available.",
+      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
     ],
     "references": [
       "1. Isosorbide Dinitrate 0.05% w/v Solution for Injection or Infusion. Torbay",
@@ -3030,8 +2999,8 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "rawTitle": "LIGNOCAINE HCL 20 MG/ML (PRESERVATIVE FREE)",
     "genericName": "Lignocaine Hydrochloride (Preservative Free)",
     "brandNames": [
-      "INJECSOL LIG2 2% w",
-      "v"
+      "INJECSOL LIG2",
+      "Xylocaine"
     ],
     "sourceGuideline": "KKM Dilution Guide for Fluid Restricted Critically Ill Adults (First Edition April 2024 / Update Dec 2025)",
     "brandText": "INJECSOL LIG2 2% w/v",
@@ -3135,10 +3104,11 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "genericName": "Mannitol 10% / 20%",
     "brandNames": [
       "Infusol M10",
-      "M20"
+      "Infusol M20",
+      "Mannitol Baxter"
     ],
     "sourceGuideline": "KKM Dilution Guide for Fluid Restricted Critically Ill Adults (First Edition April 2024 / Update Dec 2025)",
-    "brandText": "Infusol M10 / M20",
+    "brandText": "Infusol M10, Infusol M20, Mannitol Baxter",
     "reconstitutionText": "Not required",
     "isReconstitutionRequired": false,
     "suggestedMinimumDilutions": "No further dilution required",
@@ -3369,10 +3339,11 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "rawTitle": "MIDAZOLAM 5 MG/ML & 15 MG/3 ML",
     "genericName": "Midazolam Hydrochloride",
     "brandNames": [
-      "Domi"
+      "Domi Injection",
+      "Dormicum"
     ],
     "sourceGuideline": "KKM Dilution Guide for Fluid Restricted Critically Ill Adults (First Edition April 2024 / Update Dec 2025)",
-    "brandText": "Domi",
+    "brandText": "Domi Injection, Dormicum",
     "reconstitutionText": "Not required",
     "isReconstitutionRequired": false,
     "suggestedMinimumDilutions": "No further dilution required",
@@ -4673,7 +4644,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "isReconstitutionRequired": false,
     "suggestedMinimumDilutions": "Maximum concentration 1 mg/ml",
     "diluentText": "D5",
-    "administrationText": ".",
+    "administrationText": "IV continuous infusion: Initial rate 0.3 – 0.5 mcg/kg/min, titrate upwards every 5 minutes to desired blood pressure response (usual range 0.5 – 3 mcg/kg/min; maximum rate 10 mcg/kg/min for not more than 10 minutes).\nAdminister via dedicated infusion pump only. Protect infusion container and tubing from light with opaque foil.",
     "stabilityRows": [
       {
         "phase": "After Dilution",
@@ -4683,7 +4654,9 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 24 hours",
     "comments": [
-      "Product should always be protected from light, even during"
+      "Product should always be protected from light, even during administration (wrap bag and tubing in aluminum foil).",
+      "Monitor for thiocyanate / cyanide toxicity during prolonged infusion (> 72 hours) or renal failure.",
+      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
     ],
     "references": [
       "1. Graham-Clarke E. Minimum Infusion Volumes [Internet]. 4.4 ed. Vol. 4.",
@@ -4744,45 +4717,25 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "rawTitle": "STREPTOKINASE 1,500,000 IU",
     "genericName": "Streptokinase",
     "brandNames": [
-      "Streptokinase Karma 1",
-      "500",
-      "000 Streptase Streptokinase Biofactor"
+      "Streptase",
+      "Streptokinase Karma",
+      "Streptokinase Biofactor"
     ],
     "sourceGuideline": "KKM Dilution Guide for Fluid Restricted Critically Ill Adults (First Edition April 2024 / Update Dec 2025)",
-    "brandText": "Streptokinase Karma 1,500,000 Streptase Streptokinase Biofactor",
+    "brandText": "Streptase, Streptokinase Karma 1,500,000 IU, Streptokinase Biofactor",
     "reconstitutionText": "Reconstitute with 5 ml NS or WFI",
     "isReconstitutionRequired": true,
     "suggestedMinimumDilutions": "Maximum concentration of 30,000 IU/ml (1,500,000 IU in 50 ml)",
     "diluentText": "D5, NS",
-    "administrationText": "Myocardial infarction: 1.5 MU over 1 hour\nPulmonary embolism, deep vein thrombosis: 250,000 IU over 30 minutes,\nthen 100,000 IU/hour for 24 hours (72 hours for DVT)",
+    "administrationText": "Myocardial infarction: 1.5 MU over 1 hour\nPulmonary embolism, deep vein thrombosis: 250,000 IU over 30 minutes, then 100,000 IU/hour for 24 hours (72 hours for DVT)",
     "stabilityRows": [
       {
         "phase": "After Dilution",
         "fridge": "-",
-        "roomTemp": ""
-      },
-      {
-        "phase": "After Dilution",
-        "fridge": "-",
-        "roomTemp": "12 hours (Biofactor)"
-      },
-      {
-        "phase": "After Dilution",
-        "fridge": "-",
-        "roomTemp": "24 hours (Streptokinase"
-      },
-      {
-        "phase": "After Dilution",
-        "fridge": "-",
-        "roomTemp": "Karma & Streptase)"
-      },
-      {
-        "phase": "After Dilution",
-        "fridge": "-",
-        "roomTemp": "-"
+        "roomTemp": "12 hours (Biofactor), 24 hours (Karma / Streptase)"
       }
     ],
-    "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution\n12 hours (Biofactor)\n24 hours (Streptokinase\nKarma & Streptase)\n-",
+    "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution: 12 hours (Biofactor) / 24 hours (Karma & Streptase)",
     "comments": [
       "Solution should be swirled gently to facilitate quick reconstitution, avoid",
       "shaking to avoid foaming.",
@@ -4978,7 +4931,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "isReconstitutionRequired": false,
     "suggestedMinimumDilutions": "No further dilution required",
     "diluentText": "Not applicable",
-    "administrationText": "IM",
+    "administrationText": "Deep IM injection: Administer by deep intramuscular injection, preferably in the anterolateral aspect of the thigh or deltoid muscle. Do NOT administer intravenously (IV contraindicated).",
     "stabilityRows": [
       {
         "phase": "After Dilution",
@@ -4988,7 +4941,9 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Should not be administered intravenously."
+      "Should not be administered intravenously (IV contraindicated).",
+      "Give concurrent active immunisation (tetanus vaccine) at a separate anatomical injection site using a separate syringe.",
+      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
     ],
     "references": [
       "Kementerian Kesihatan Malaysia (KKM) Dilution Guide for Fluid Restricted Critically Ill Adults."
@@ -5299,7 +5254,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "isReconstitutionRequired": true,
     "suggestedMinimumDilutions": "Peripheral: Maximum concentration of 5 mg/ml\nCentral: Maximum concentration of 10 mg/ml",
     "diluentText": "D5, NS",
-    "administrationText": "of vancomycin. If infusion-related events occur, slow the infusion rate to over 1.5 – 2 hours and increase the dilution volume.",
+    "administrationText": "IV intermittent infusion:\n• Doses ≤ 1 g: Infuse over at least 60 minutes (rate ≤ 10 mg/min).\n• Doses > 1 g (e.g. 1.5 g – 2 g): Infuse over at least 90 – 120 minutes.\n• If infusion-related events ('Red Man Syndrome') occur, slow the infusion rate to over 1.5 – 2 hours and increase the dilution volume.",
     "stabilityRows": [
       {
         "phase": "After Dilution",
@@ -5309,7 +5264,9 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution 96 hours 24 hours",
     "comments": [
-      "Infusion-related events are related to both concentration and rate of"
+      "Infusion-related events (Red Man Syndrome, hypotension, flushing) are related to both concentration and rate of administration of vancomycin.",
+      "Monitor serum trough concentration (target 15 – 20 mcg/mL in severe infections) and renal function regularly.",
+      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
     ],
     "references": [
       "1. Gland Pharma Ltd. Vivocin Product Leaflet. Revised 5 Sept 2019.",
@@ -5474,61 +5431,123 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
   }
 ];
 
-function extractCoreGeneric(name: string): string {
+const COMMON_STOP_WORDS = new Set([
+  'sodium', 'potassium', 'calcium', 'chloride', 'acetate', 'sulfate', 'sulphate',
+  'hydrochloride', 'hcl', 'phosphate', 'tartrate', 'besylate', 'succinate',
+  'maleate', 'citrate', 'gluconate', 'fumarate', 'nitrate', 'bromide', 'iodide',
+  'lactate', 'mesylate', 'trihydrate', 'disodium', 'dipotassium', 'dihydrate',
+  'injection', 'infusion', 'solution', 'powder', 'sterile', 'water', 'for',
+  'concentrate', 'concentrated', 'suspension', 'emulsion', 'oral', 'tablet',
+  'capsule', 'ampoule', 'vial', 'complex', 'human', 'recombinant', 'rdna',
+  'wfi', 'drops', 'syrup', 'mixture', 'cream', 'ointment', 'gel', 'eye', 'ear',
+  'with', 'and', 'acid'
+])
+
+function normalizeDrugName(name: string): string {
   if (!name) return ''
   return name.toLowerCase()
-    .replace(/\b(iii|iv|ii|viii|vii|vi|ix|x|v)\b/gi, '')
-    .replace(/\(.*?\)/g, '')
-    .replace(/\b\d+(\.\d+)?\s*(mg|g|mcg|iu|mu|%|w\/v|ml)(\/\d+\s*ml)?\b/gi, '')
-    .replace(/\b(solution|injection|for|infusion|powder|concentrate|concentrated|sterile|suspension|emulsion|oral|tablet|capsule|ampoule|vial|complex)\b/gi, '')
+    .replace(/[()]/g, ' ')
+    .replace(/\b\d+(\.\d+)?\s*(mg|g|mcg|iu|mu|%|w\/v|ml)(\/\d+\s*ml)?\b/gi, ' ')
     .replace(/[^a-z0-9\s]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
 }
 
+function getDistinctiveTokens(name: string): string[] {
+  const norm = normalizeDrugName(name)
+  return norm.split(' ').filter(w => w.length >= 3 && !COMMON_STOP_WORDS.has(w))
+}
+
+function getFactorDesignation(text: string): string | null {
+  const m = text.match(/factor\s*(viii\/vwf|viii|ix|viia|vii|xiii|ii|x)\b/i)
+  if (m) return m[1].toLowerCase()
+  if (/factor\s*8/i.test(text)) return 'viii'
+  if (/factor\s*9/i.test(text)) return 'ix'
+  if (/factor\s*7a/i.test(text)) return 'viia'
+  if (/factor\s*7/i.test(text)) return 'vii'
+  return null
+}
+
 /**
- * Helper to look up an authentic KKM dilution protocol for any drug name or code
+ * Helper to look up an authentic KKM dilution protocol for any drug name or code.
+ * Ensures strict pharmaceutical specificity and eliminates false cross-matching.
  */
 export function getKkmDilutionProtocol(drugName: string): KkmDilutionMonograph | undefined {
   if (!drugName) return undefined
   const q = drugName.toLowerCase().trim()
-  
-  // 1. Direct exact generic or title match
-  let match = KKM_DILUTION_MASTER_DATABASE.find(
-    entry => entry.genericName.toLowerCase() === q || entry.rawTitle.toLowerCase() === q
-  )
-  if (match) return match
+  const qNorm = normalizeDrugName(drugName)
+  const qTokens = getDistinctiveTokens(drugName)
 
-  // 2. Core generic matching (e.g. 'iron hydroxide sucrose' -> 'Iron Sucrose')
-  const core = extractCoreGeneric(drugName)
-  if (core) {
-    match = KKM_DILUTION_MASTER_DATABASE.find(entry => {
-      const entryCore = extractCoreGeneric(entry.genericName)
-      const entryRawCore = extractCoreGeneric(entry.rawTitle)
-      return entryCore === core || entryRawCore === core
-    })
-    if (match) return match
+  if (qTokens.length === 0) return undefined
 
-    const coreWords = core.split(' ').filter(w => w.length > 2)
-    if (coreWords.length >= 2) {
-      match = KKM_DILUTION_MASTER_DATABASE.find(entry => {
-        const entryCore = extractCoreGeneric(entry.genericName)
-        return coreWords.every(w => entryCore.includes(w))
-      })
-      if (match) return match
-    } else if (coreWords.length === 1) {
-      match = KKM_DILUTION_MASTER_DATABASE.find(entry => {
-        const entryCore = extractCoreGeneric(entry.genericName)
-        return entryCore.split(' ').includes(coreWords[0])
-      })
-      if (match) return match
+  // 1. Direct exact genericName or rawTitle match
+  for (const entry of KKM_DILUTION_MASTER_DATABASE) {
+    if (entry.genericName.toLowerCase() === q || entry.rawTitle.toLowerCase() === q) {
+      return entry
     }
   }
 
-  // 3. Brand name lookup
-  match = KKM_DILUTION_MASTER_DATABASE.find(entry => 
-    entry.brandNames.some(b => b.toLowerCase() === q || q.includes(b.toLowerCase()))
-  )
+  // 2. Normalized string exact match
+  for (const entry of KKM_DILUTION_MASTER_DATABASE) {
+    const entryNormGen = normalizeDrugName(entry.genericName)
+    const entryNormTitle = normalizeDrugName(entry.rawTitle)
+    if (qNorm === entryNormGen || qNorm === entryNormTitle) {
+      return entry
+    }
+  }
 
-  return match
+  // Factor differentiation check (never cross-match different coagulation factors)
+  const qFactor = getFactorDesignation(drugName)
+
+  // Vaccine / toxoid safety check (vaccines are never IV dilution monographs)
+  const isVaccineOrToxoid = /vaccine|toxoid/i.test(drugName)
+
+  // 3. Distinctive active ingredient token match
+  for (const entry of KKM_DILUTION_MASTER_DATABASE) {
+    // Factor check
+    if (qFactor !== null) {
+      const entryFactor = getFactorDesignation(entry.rawTitle) || getFactorDesignation(entry.genericName)
+      if (qFactor !== entryFactor) continue
+    } else {
+      const entryFactor = getFactorDesignation(entry.rawTitle) || getFactorDesignation(entry.genericName)
+      if (entryFactor !== null) continue
+    }
+
+    // Vaccine / Toxoid exclusion
+    if (isVaccineOrToxoid && /immunoglobulin/i.test(entry.genericName)) {
+      continue
+    }
+
+    const entryTokens = getDistinctiveTokens(entry.genericName)
+    const entryTitleTokens = getDistinctiveTokens(entry.rawTitle)
+    const allEntryTokens = new Set([...entryTokens, ...entryTitleTokens])
+
+    // Query tokens must all match the entry's distinctive tokens
+    const allMatch = qTokens.length > 0 && qTokens.every(t => allEntryTokens.has(t))
+    if (allMatch) {
+      const entrySignificantTokens = entryTokens.filter(t => t !== 'sodium' && t !== 'factor')
+      if (entrySignificantTokens.length > qTokens.length + 1) {
+        continue
+      }
+      return entry
+    }
+  }
+
+  // 4. Brand name lookup (strict whole-word matching, no junk tokens)
+  for (const entry of KKM_DILUTION_MASTER_DATABASE) {
+    for (const b of entry.brandNames) {
+      const bTrim = b.trim().toLowerCase()
+      if (bTrim.length < 3 || /^(ml|mg|vial|ampoule|iu|v|500|3 ml|m20|ns|d5)$/i.test(bTrim)) {
+        continue
+      }
+      if (q === bTrim) return entry
+      const escaped = bTrim.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const regex = new RegExp(`\\b${escaped}\\b`, 'i')
+      if (regex.test(q)) {
+        return entry
+      }
+    }
+  }
+
+  return undefined
 }

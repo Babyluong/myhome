@@ -217,11 +217,11 @@ export const KunciLogPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
             <FileText className="w-7 h-7 text-amber-500" />
             {language === 'ms' ? 'Log Pergerakan Kunci (Buku Daftar Keluar/Masuk)' : 'Key Custody & Movement Audit Log'}
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-400 mt-1">
             {language === 'ms' 
               ? 'Jejak audit lengkap bagi semua anak kunci fizikal mengikut syif tugasan'
               : 'Complete audit trail of physical master key checkouts, returns, and officer handovers'}

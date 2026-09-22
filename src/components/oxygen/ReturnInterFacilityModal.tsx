@@ -178,6 +178,8 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
         `)
         .eq('hospital_id', hospitalId)
         .neq('status', 'condemned')
+        .neq('status', 'deactivated')
+        .eq('is_active', true)
         .limit(500);
 
       if (data) {
@@ -327,6 +329,8 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
           size_info:pharmacy_oxygen_cylinder_sizes(code)
         `)
         .ilike('serial_number', `%${query}%`)
+        .neq('status', 'deactivated')
+        .eq('is_active', true)
         .limit(30);
 
       if (hospitalId) {
@@ -436,6 +440,8 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
             size_info:pharmacy_oxygen_cylinder_sizes(code)
           `)
           .ilike('serial_number', `%${trimmed}%`)
+          .neq('status', 'deactivated')
+          .eq('is_active', true)
           .limit(8);
 
         if (hospitalId) {
@@ -537,7 +543,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/70 backdrop-blur-md overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-slate-950/70 backdrop-blur-md overflow-y-auto animate-fade-in"
       onClick={onClose}
     >
       <div 
@@ -1167,7 +1173,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
       {/* BULK PASTE DIALOG */}
       {bulkPasteTargetItemIndex !== null && (
         <div 
-          className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs"
+          className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs"
           onClick={() => setBulkPasteTargetItemIndex(null)}
         >
           <div 

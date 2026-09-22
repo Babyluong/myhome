@@ -20,6 +20,9 @@ import {
   ArrowDownRight,
   Activity,
   BarChart3,
+  BarChart2,
+  Layers,
+  Filter,
   PieChart as PieChartIcon,
   CheckCircle2,
   AlertTriangle,
@@ -28,7 +31,13 @@ import {
   Boxes,
   Search,
   SlidersHorizontal,
-  Info
+  Info,
+  Truck,
+  Clock,
+  Send,
+  PackageCheck,
+  PackageOpen,
+  ShieldAlert
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -43,7 +52,7 @@ import autoTable from 'jspdf-autotable'
 import { generateCylinderReport, CylinderReportData, WarrantEntry, DeliveryEntry, CylinderDetailEntry } from '../../services/cylinderReportService'
 
 // ─── Color Palette ──────────────────────────────────────────────────────────
-const CHART_COLORS = ['#00a68a', '#475569', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#cbd5e1']
+const CHART_COLORS = ['#00a68a', '#2563eb', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4', '#10b981', '#f97316', '#64748b', '#cbd5e1']
 const PIE_COLORS = ['#00a68a', '#64748b', '#05bca0', '#475569', '#8b9bb4', '#3b82f6', '#cbd5e1', '#e2e8f0']
 
 const STATUS_COLORS: Record<string, string> = {
@@ -56,22 +65,62 @@ const STATUS_COLORS: Record<string, string> = {
 const getStatusColor = (status: string) => STATUS_COLORS[status] || '#64748b'
 
 const CYLINDER_TYPE_COLORS: Record<string, string> = {
-  'P101-F': '#00a68a',
-  '101-N': '#3b82f6',
-  '101-F': '#8b5cf6',
-  'P101-D': '#f59e0b',
-  'P101-HS': '#ec4899',
-  'P101-AG': '#06b6d4',
-  'P101-E': '#10b981',
+  '101-N': '#2563eb', // Royal Blue
+  'P101-F': '#00a68a', // Teal / Emerald
+  '101-F': '#8b5cf6', // Violet
+  'P101-HS': '#ec4899', // Pink / Rose
+  'P101-D': '#f59e0b', // Amber
+  'P101-E': '#10b981', // Emerald Green
+  'P101-AG': '#06b6d4', // Cyan
   'Liquid Medical Oxygen (VIE Tank)': '#64748b',
-  'Size D': '#00a68a',
-  'Size F': '#3b82f6',
-  'Size G': '#f59e0b',
+  'Size D': '#f59e0b',
+  'Size E': '#10b981',
+  'Size F': '#00a68a',
+  'Size G': '#f97316',
   'Size K': '#8b5cf6',
+  'Size N': '#2563eb',
+  'Size HS': '#ec4899',
 }
 
-const getCylinderColor = (type: string, idx: number) => {
-  return CYLINDER_TYPE_COLORS[type] || CHART_COLORS[idx % CHART_COLORS.length]
+const getCylinderColor = (type: string, idx: number = 0) => {
+  if (CYLINDER_TYPE_COLORS[type]) return CYLINDER_TYPE_COLORS[type]
+  const upper = (type || '').toUpperCase()
+  if (upper.includes('101-N') || upper.includes('SIZE N')) return '#2563eb'
+  if (upper.includes('P101-F') || upper.includes('SIZE F')) return '#00a68a'
+  if (upper.includes('101-F')) return '#8b5cf6'
+  if (upper.includes('P101-HS') || upper.includes('HS') || upper.includes('SIZE HS')) return '#ec4899'
+  if (upper.includes('P101-D') || upper.includes('SIZE D')) return '#f59e0b'
+  if (upper.includes('P101-E') || upper.includes('SIZE E')) return '#10b981'
+  if (upper.includes('P101-AG') || upper.includes('AG')) return '#06b6d4'
+  if (upper.includes('VIE') || upper.includes('LIQUID')) return '#64748b'
+  return CHART_COLORS[idx % CHART_COLORS.length]
+}
+
+const getCylinderMeta = (rawType: string) => {
+  const upper = (rawType || '').toUpperCase()
+  if (upper.includes('101-N') || upper === 'N' || upper.includes('SIZE N')) {
+    return { code: 'N', label: 'Size N', sub: '8.0 m³ (101-N)', full: 'Size N (101-N)', color: '#2563eb' }
+  }
+  if (upper.includes('P101-F') || upper.includes('101-F') || upper === 'F' || upper.includes('SIZE F')) {
+    return { code: 'F', label: 'Size F', sub: `1.4 m³ (${rawType})`, full: `Size F (${rawType})`, color: '#00a68a' }
+  }
+  if (upper.includes('P101-HS') || upper.includes('HS') || upper.includes('SIZE HS')) {
+    return { code: 'HS', label: 'Size HS', sub: '6.4 m³ (P101-HS)', full: 'Size HS (P101-HS)', color: '#ec4899' }
+  }
+  if (upper.includes('P101-D') || upper === 'D' || upper.includes('SIZE D')) {
+    return { code: 'D', label: 'Size D', sub: '0.4 m³ (P101-D)', full: 'Size D (P101-D)', color: '#f59e0b' }
+  }
+  if (upper.includes('P101-E') || upper === 'E' || upper.includes('SIZE E')) {
+    return { code: 'E', label: 'Size E', sub: '0.68 m³ (P101-E)', full: 'Size E (P101-E)', color: '#10b981' }
+  }
+  if (upper.includes('P101-AG') || upper === 'AG' || upper.includes('SIZE AG')) {
+    return { code: 'AG', label: 'Size AG', sub: 'P101-AG', full: 'Size AG (P101-AG)', color: '#06b6d4' }
+  }
+  if (upper.includes('VIE') || upper.includes('LIQUID')) {
+    return { code: 'VIE', label: 'VIE Liquid', sub: 'Tank', full: 'Liquid O2 (VIE Tank)', color: '#64748b' }
+  }
+  const clean = rawType.replace(/P101-|101-|Size\s*/gi, '').trim()
+  return { code: clean.slice(0, 3) || rawType.slice(0, 3), label: rawType, sub: rawType, full: rawType, color: '#00a68a' }
 }
 
 // ─── Tab Definitions ────────────────────────────────────────────────────────
@@ -110,6 +159,315 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+// ─── Performance Matrix Tooltip (Detailed Cylinder Size Breakdown) ───────────
+const PerformanceMatrixTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null
+
+  const rowData = payload[0]?.payload || {}
+  const totalDispatched = rowData.total !== undefined ? Number(rowData.total) : payload.reduce((sum: number, p: any) => sum + Number(p.value || 0), 0)
+  const fullTitle = rowData.fullLabel || label
+
+  // Extract cylinder sizes with count > 0
+  const validEntries = payload.filter((p: any) => {
+    if (p.dataKey === 'total' || p.dataKey === 'value' || p.dataKey === 'received' || p.dataKey === 'issued') return false
+    return Number(p.value) > 0
+  }).sort((a: any, b: any) => Number(b.value) - Number(a.value))
+
+  return (
+    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-slate-200/80 dark:border-slate-800 min-w-[220px] text-xs">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <span className="font-bold text-slate-900 dark:text-white font-mono text-xs block">{fullTitle}</span>
+          <span className="text-[10px] text-slate-400">Penggunaan Mengikut Saiz Silinder</span>
+        </div>
+        <span className="text-[10px] font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-full font-mono border border-teal-200/60">
+          {totalDispatched} Tanks
+        </span>
+      </div>
+
+      {validEntries.length > 0 ? (
+        <div className="space-y-1.5 mt-1">
+          {validEntries.map((entry: any, idx: number) => {
+            const meta = getCylinderMeta(entry.dataKey || entry.name)
+            const count = Number(entry.value || 0)
+            const sharePct = totalDispatched > 0 ? ((count / totalDispatched) * 100).toFixed(1) : '0.0'
+            const color = entry.color || entry.fill || getCylinderColor(entry.dataKey, idx)
+
+            return (
+              <div key={idx} className="flex items-center justify-between gap-3 text-[11px]">
+                <div className="flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 truncate">
+                    {meta.label} <span className="text-[9.5px] text-slate-400 font-mono">({meta.code})</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0 font-mono">
+                  <span className="font-bold text-slate-900 dark:text-white">{count}</span>
+                  <span className="text-[9.5px] text-slate-400">({sharePct}%)</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="text-slate-400 text-[11px] py-1">
+          {totalDispatched > 0 ? `${totalDispatched} Tanks (Total)` : 'Tiada penggunaan silinder direkodkan'}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Backorder Matrix Tooltip (Detailed Size Breakdown) ──────────────────────
+const BackorderMatrixTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null
+
+  const rowData = payload[0]?.payload || {}
+  const sizeName = rowData.label || label || 'Cylinder'
+  const meta = getCylinderMeta(rowData.sizeCode || sizeName)
+  const pendingCount = rowData.pending !== undefined ? Number(rowData.pending) : Number(payload[0]?.value || 0)
+
+  return (
+    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-slate-200/80 dark:border-slate-800 min-w-[210px] text-xs space-y-2">
+      <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center gap-2">
+          <div
+            className="w-4 h-4 rounded flex items-center justify-center font-black text-[9px] text-white shrink-0"
+            style={{ backgroundColor: rowData.color || getCylinderColor(rowData.sizeCode || '') }}
+          >
+            {meta.code}
+          </div>
+          <div>
+            <span className="font-bold text-slate-900 dark:text-white block leading-tight">{meta.label}</span>
+            <span className="text-[10px] text-slate-400 font-mono">{meta.sub}</span>
+          </div>
+        </div>
+        <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full font-mono border border-amber-200/60">
+          {pendingCount} Pending
+        </span>
+      </div>
+
+      <div className="space-y-1 text-[11px] font-mono">
+        <div className="flex justify-between items-center text-slate-600 dark:text-slate-300">
+          <span>Sent to Supplier:</span>
+          <span className="font-bold text-slate-900 dark:text-white">{rowData.returned || 0}</span>
+        </div>
+        <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
+          <span>Received Back:</span>
+          <span className="font-bold">{rowData.received || 0}</span>
+        </div>
+        <div className="flex justify-between items-center text-amber-600 dark:text-amber-400 font-bold">
+          <span>Pending Backorder:</span>
+          <span>{rowData.pending || 0}</span>
+        </div>
+        {Number(rowData.overdue || 0) > 0 && (
+          <div className="flex justify-between items-center text-rose-600 dark:text-rose-400 font-semibold pt-1 border-t border-slate-100 dark:border-slate-800">
+            <span>Critical Overdue (&gt;14d):</span>
+            <span>{rowData.overdue}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const BackorderComparisonTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null
+  const data = payload[0]?.payload || {}
+  const meta = getCylinderMeta(data.sizeCode || label)
+
+  return (
+    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-slate-200/80 dark:border-slate-800 min-w-[200px] text-xs space-y-1.5 font-mono">
+      <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800 font-sans">
+        <span className="w-3 h-3 rounded-md shrink-0" style={{ backgroundColor: data.color }} />
+        <span className="font-bold text-slate-900 dark:text-white">{meta.label}</span>
+      </div>
+      <div className="flex justify-between items-center text-slate-600 dark:text-slate-400">
+        <span>Sent to Supplier:</span>
+        <span className="font-bold text-slate-900 dark:text-white">{data.returned}</span>
+      </div>
+      <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
+        <span>Received Back:</span>
+        <span className="font-bold">{data.received}</span>
+      </div>
+      <div className="flex justify-between items-center text-amber-600 dark:text-amber-400 font-bold">
+        <span>Pending Backorder:</span>
+        <span>{data.pending}</span>
+      </div>
+    </div>
+  )
+}
+
+const BackorderAgingTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null
+  const data = payload[0]?.payload || {}
+  const meta = getCylinderMeta(data.sizeCode || label)
+
+  return (
+    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-slate-200/80 dark:border-slate-800 min-w-[210px] text-xs space-y-1.5 font-mono">
+      <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800 font-sans">
+        <span className="w-3 h-3 rounded-md shrink-0" style={{ backgroundColor: data.color }} />
+        <span className="font-bold text-slate-900 dark:text-white">{meta.label}</span>
+      </div>
+      <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
+        <span>&lt; 7d (Normal):</span>
+        <span className="font-bold">{data.under7}</span>
+      </div>
+      <div className="flex justify-between items-center text-amber-600 dark:text-amber-400">
+        <span>7–14d (Standard):</span>
+        <span className="font-bold">{data.between7And14}</span>
+      </div>
+      <div className="flex justify-between items-center text-rose-600 dark:text-rose-400 font-bold">
+        <span>&gt; 14d (Overdue SLA):</span>
+        <span>{data.over14}</span>
+      </div>
+    </div>
+  )
+}
+
+const BackorderWeeklyPerformanceTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null
+
+  const rowData = payload[0]?.payload || {}
+  const fullTitle = rowData.fullLabel || label || 'Weekly Backorder'
+  const totalPending = rowData.total !== undefined ? Number(rowData.total) : payload.reduce((sum: number, p: any) => sum + Number(p.value || 0), 0)
+
+  const validEntries = payload.filter((p: any) => p.dataKey && p.dataKey !== 'total' && p.dataKey !== 'value' && Number(p.value || 0) > 0)
+
+  return (
+    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-slate-200/80 dark:border-slate-800 min-w-[220px] text-xs">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <span className="font-bold text-slate-900 dark:text-white font-mono text-xs block">{fullTitle}</span>
+          <span className="text-[10px] text-slate-400">Backorder Tertunggak Mengikut Saiz Silinder</span>
+        </div>
+        <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full font-mono border border-amber-200/60">
+          {totalPending} Tanks
+        </span>
+      </div>
+
+      {validEntries.length > 0 ? (
+        <div className="space-y-1.5 mt-1">
+          {validEntries.map((entry: any, idx: number) => {
+            const meta = getCylinderMeta(entry.dataKey || entry.name)
+            const count = Number(entry.value || 0)
+            const sharePct = totalPending > 0 ? ((count / totalPending) * 100).toFixed(1) : '0.0'
+            const color = entry.color || entry.fill || getCylinderColor(entry.dataKey, idx)
+
+            return (
+              <div key={idx} className="flex items-center justify-between gap-3 text-[11px]">
+                <div className="flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 truncate">
+                    {meta.label} <span className="text-[9.5px] text-slate-400 font-mono">({meta.code})</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0 font-mono">
+                  <span className="font-bold text-slate-900 dark:text-white">{count}</span>
+                  <span className="text-[9.5px] text-slate-400">({sharePct}%)</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="text-slate-400 text-[11px] py-1">
+          {totalPending > 0 ? `${totalPending} Tanks (Pending)` : 'Tiada tunggakan silinder'}
+        </div>
+      )}
+    </div>
+  )
+}
+
+const BackorderWeeklyTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null
+  const data = payload[0]?.payload || {}
+
+  return (
+    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-slate-200/80 dark:border-slate-800 min-w-[210px] text-xs space-y-1.5 font-mono">
+      <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-slate-800 font-sans">
+        <span className="font-bold text-slate-900 dark:text-white">{data.fullLabel || label}</span>
+        <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-1.5 py-0.5 rounded">
+          {data.totalPending ?? data.pending ?? 0} Pending
+        </span>
+      </div>
+      <div className="flex justify-between items-center text-slate-600 dark:text-slate-400">
+        <span>Sent to Supplier:</span>
+        <span className="font-bold text-slate-900 dark:text-white">{data.totalReturned ?? data.returned ?? 0}</span>
+      </div>
+      <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
+        <span>Received Back:</span>
+        <span className="font-bold">{data.totalReceived ?? data.received ?? 0}</span>
+      </div>
+      <div className="flex justify-between items-center text-amber-600 dark:text-amber-400 font-bold">
+        <span>Outstanding Backorder:</span>
+        <span>{data.totalPending ?? data.pending ?? 0}</span>
+      </div>
+      {Number(data.totalOverdue ?? data.overdue ?? 0) > 0 && (
+        <div className="flex justify-between items-center text-rose-600 dark:text-rose-400 font-semibold pt-1 border-t border-slate-100 dark:border-slate-800">
+          <span>Critical Overdue (&gt;14d):</span>
+          <span>{data.totalOverdue ?? data.overdue}</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Balance Weekly Performance Tooltip (Detailed Cylinder Size Breakdown) ───
+const BalanceWeeklyPerformanceTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null
+
+  const rowData = payload[0]?.payload || {}
+  const fullTitle = rowData.fullLabel || label || 'Weekly Balance'
+  const totalBalance = rowData.total !== undefined ? Number(rowData.total) : payload.reduce((sum: number, p: any) => sum + Number(p.value || 0), 0)
+
+  const validEntries = payload.filter((p: any) => p.dataKey && p.dataKey !== 'total' && p.dataKey !== 'value' && Number(p.value || 0) > 0)
+
+  return (
+    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-slate-200/80 dark:border-slate-800 min-w-[220px] text-xs">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <span className="font-bold text-slate-900 dark:text-white font-mono text-xs block">{fullTitle}</span>
+          <span className="text-[10px] text-slate-400">Baki Stok Silinder di Hospital Mengikut Saiz</span>
+        </div>
+        <span className="text-[10px] font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full font-mono border border-blue-200/60">
+          {totalBalance} Tanks
+        </span>
+      </div>
+
+      {validEntries.length > 0 ? (
+        <div className="space-y-1.5 mt-1">
+          {validEntries.map((entry: any, idx: number) => {
+            const meta = getCylinderMeta(entry.dataKey || entry.name)
+            const count = Number(entry.value || 0)
+            const sharePct = totalBalance > 0 ? ((count / totalBalance) * 100).toFixed(1) : '0.0'
+            const color = entry.color || entry.fill || getCylinderColor(entry.dataKey, idx)
+
+            return (
+              <div key={idx} className="flex items-center justify-between gap-3 text-[11px]">
+                <div className="flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 truncate">
+                    {meta.label} <span className="text-[9.5px] text-slate-400 font-mono">({meta.code})</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0 font-mono">
+                  <span className="font-bold text-slate-900 dark:text-white">{count}</span>
+                  <span className="text-[9.5px] text-slate-400">({sharePct}%)</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="text-slate-400 text-[11px] py-1">
+          {totalBalance > 0 ? `${totalBalance} Tanks (Total)` : 'Tiada data baki silinder'}
+        </div>
+      )}
     </div>
   )
 }
@@ -286,6 +644,9 @@ export function CylinderReportPage() {
   const [usageTrendGranularity, setUsageTrendGranularity] = useState<'daily' | 'weekly' | 'monthly'>('daily')
   const [usageViewMode, setUsageViewMode] = useState<'metric' | 'types'>('metric')
   const [breakdownView, setBreakdownView] = useState<'weekly' | 'daily' | 'quarterly'>('weekly')
+  const [matrixChartMode, setMatrixChartMode] = useState<'stacked' | 'grouped' | 'total'>('stacked')
+  const [matrixSizeFilter, setMatrixSizeFilter] = useState<string>('all')
+  const [hoveredMatrixType, setHoveredMatrixType] = useState<string | null>(null)
   
   // Custom Dates (if custom range selected)
   const [customStartDate, setCustomStartDate] = useState(() => {
@@ -343,6 +704,269 @@ export function CylinderReportPage() {
   const [sizeFilter, setSizeFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const rowsPerPage = 10
+
+  // Backorder Analytics Filter states (mirroring Card 1 architecture)
+  const [backorderView, setBackorderView] = useState<'weekly' | 'total' | 'batches'>('weekly')
+  const [backorderChartMode, setBackorderChartMode] = useState<'stacked' | 'grouped' | 'total'>('stacked')
+  const [backorderSizeFilter, setBackorderSizeFilter] = useState<string>('all')
+  const [backorderStatusFilter, setBackorderStatusFilter] = useState<'all' | 'pending' | 'overdue' | 'fulfilled'>('all')
+  const [backorderSearchQuery, setBackorderSearchQuery] = useState<string>('')
+  const [hoveredBackorderType, setHoveredBackorderType] = useState<string | null>(null)
+  const [backorderPage, setBackorderPage] = useState<number>(1)
+  const backorderRowsPerPage = 8
+
+  // Active Backorder Summary & Size Data
+  const activeBackorderData = useMemo(() => {
+    const raw = reportData?.backorders
+    if (!raw) {
+      return {
+        summary: { totalReturned: 0, totalReceived: 0, totalPending: 0, totalOverdue: 0, fulfillmentRate: 0, avgAgingDays: 0 },
+        bySize: [] as any[],
+      }
+    }
+    return {
+      summary: raw.summary,
+      bySize: raw.bySize,
+    }
+  }, [reportData?.backorders])
+
+  // Backorder Weekly Matrix Data (mirroring weeklyStats in Card 1)
+  const backorderWeeklyStats = useMemo(() => {
+    const trend = reportData?.backorders?.weeklyTrend || []
+    const sizes = reportData?.backorders?.bySize || []
+    if (!trend.length || !sizes.length) return { rows: [], weekKeys: [], weeks: [] }
+
+    // Select active weeks with dispatches or pending backorders; fallback to last 4 weeks
+    let activeWeeks = trend.filter(w => w.totalReturned > 0 || w.totalPending > 0)
+    if (activeWeeks.length === 0) {
+      activeWeeks = trend.slice(-4)
+    } else if (activeWeeks.length > 5) {
+      activeWeeks = activeWeeks.slice(-5)
+    }
+
+    const weekKeys = activeWeeks.map(w => w.shortWeek)
+
+    const rows = sizes.map(s => {
+      const weekCounts: Record<string, number> = {}
+      let total = 0
+      activeWeeks.forEach(w => {
+        const val = w.bySize?.[s.sizeCode]?.pendingCount || 0
+        weekCounts[w.shortWeek] = val
+        total += val
+      })
+      const avgWeekly = activeWeeks.length > 0 ? parseFloat((total / activeWeeks.length).toFixed(1)) : 0
+      return {
+        sizeCode: s.sizeCode,
+        rawCode: s.rawCode,
+        capacity: s.capacity,
+        weekCounts,
+        avgWeekly,
+        total,
+      }
+    })
+
+    return { rows, weekKeys, weeks: activeWeeks }
+  }, [reportData?.backorders])
+
+  // Multi-Week Chart Data (mirroring weeklyOverallTrend in Card 1)
+  const backorderWeeklyChartData = useMemo(() => {
+    const { weeks } = backorderWeeklyStats
+    if (!weeks.length) return []
+    const sizes = reportData?.backorders?.bySize || []
+
+    return weeks.map(w => {
+      const item: any = {
+        name: w.shortWeek,
+        value: w.totalPending,
+        total: w.totalPending,
+        returned: w.totalReturned,
+        received: w.totalReceived,
+        fullLabel: w.week,
+      }
+      sizes.forEach(s => {
+        item[s.sizeCode] = w.bySize?.[s.sizeCode]?.pendingCount || 0
+      })
+      return item
+    })
+  }, [backorderWeeklyStats, reportData?.backorders?.bySize])
+
+  const backorderWeeklyAvg = useMemo(() => {
+    const { weeks } = backorderWeeklyStats
+    if (!weeks.length) return 0
+    const total = weeks.reduce((sum, w) => sum + w.totalPending, 0)
+    return parseFloat((total / weeks.length).toFixed(1))
+  }, [backorderWeeklyStats])
+
+  // Chart Data for Total Backorder Matrix
+  const backorderChartDataFiltered = useMemo(() => {
+    const raw = (activeBackorderData.bySize || []).map((s, idx) => {
+      const meta = getCylinderMeta(s.sizeCode)
+      return {
+        name: meta.code,
+        sizeCode: s.sizeCode,
+        label: meta.label,
+        color: getCylinderColor(s.sizeCode, idx),
+        pending: s.pendingCount,
+        returned: s.returnedCount,
+        received: s.receivedCount,
+        overdue: s.overdueCount,
+        under7: s.under7 || 0,
+        between7And14: s.between7And14 || 0,
+        over14: s.over14 || 0,
+      }
+    })
+
+    if (backorderSizeFilter !== 'all') {
+      return raw.filter(r => r.sizeCode === backorderSizeFilter)
+    }
+    return raw
+  }, [activeBackorderData.bySize, backorderSizeFilter])
+
+  // Filtered Backorder Batches
+  const filteredBackorderBatches = useMemo(() => {
+    if (!reportData?.backorders?.batches) return []
+    return reportData.backorders.batches.filter(batch => {
+      // Status Filter
+      if (backorderStatusFilter === 'pending' && batch.pendingQty === 0) return false
+      if (backorderStatusFilter === 'overdue' && !batch.isOverdue) return false
+      if (backorderStatusFilter === 'fulfilled' && batch.status !== 'fulfilled') return false
+
+      // Size Filter
+      if (backorderSizeFilter !== 'all') {
+        const hasSize = batch.sizesSummary?.some(s => s.sizeCode === backorderSizeFilter && s.count > 0)
+        if (!hasSize) return false
+      }
+
+      // Search Filter
+      if (backorderSearchQuery.trim()) {
+        const q = backorderSearchQuery.toLowerCase()
+        const matchesDoc = batch.documentNumber.toLowerCase().includes(q)
+        const matchesSupplier = batch.supplierName.toLowerCase().includes(q)
+        if (!matchesDoc && !matchesSupplier) return false
+      }
+
+      return true
+    })
+  }, [reportData?.backorders?.batches, backorderStatusFilter, backorderSizeFilter, backorderSearchQuery])
+
+  // Paginated Backorder Batches
+  const paginatedBackorderBatches = useMemo(() => {
+    const startIndex = (backorderPage - 1) * backorderRowsPerPage
+    return filteredBackorderBatches.slice(startIndex, startIndex + backorderRowsPerPage)
+  }, [filteredBackorderBatches, backorderPage, backorderRowsPerPage])
+
+  const totalBackorderPages = Math.ceil(filteredBackorderBatches.length / backorderRowsPerPage) || 1
+
+  // Cylinder Balance Matrix Filter states (Card 3 architecture)
+  const [balanceView, setBalanceView] = useState<'weekly' | 'status' | 'ward'>('weekly')
+  const [balanceChartMode, setBalanceChartMode] = useState<'stacked' | 'grouped' | 'total'>('stacked')
+  const [balanceSizeFilter, setBalanceSizeFilter] = useState<string>('all')
+  const [hoveredBalanceType, setHoveredBalanceType] = useState<string | null>(null)
+
+  // Balance Weekly Matrix Data (mirroring weeklyStats in Card 1 & Card 2)
+  const balanceWeeklyStats = useMemo(() => {
+    const trend = reportData?.inventory?.weeklyTrend || []
+    const invByType = reportData?.inventory?.byType || []
+    if (!invByType.length) return { rows: [], weekKeys: [], weeks: [] }
+
+    // Select active weeks; if trend is empty, fallback to backorders or usage trend weeks
+    let activeWeeks = trend
+    if (!activeWeeks.length) {
+      const fallbackWeeks = reportData?.backorders?.weeklyTrend?.slice(-4) || 
+        reportData?.usage?.weeklyTrend?.slice(-4) || []
+      
+      if (fallbackWeeks.length) {
+        activeWeeks = fallbackWeeks.map(fw => ({
+          weekKey: (fw as any).weekKey || fw.shortWeek,
+          week: fw.week,
+          shortWeek: fw.shortWeek,
+          startDate: fw.startDate || '',
+          endDate: fw.endDate || '',
+          totalBalance: reportData?.summary?.totalCylinders || 0,
+          totalFull: reportData?.inventory?.byType?.reduce((sum, t) => sum + t.full, 0) || 0,
+          totalInUse: reportData?.inventory?.byType?.reduce((sum, t) => sum + t.inUse, 0) || 0,
+          totalEmpty: reportData?.inventory?.byType?.reduce((sum, t) => sum + t.empty, 0) || 0,
+          bySize: invByType.reduce((acc, t) => {
+            const tot = t.full + t.inUse + t.empty + t.maintenance
+            acc[t.type] = { balance: tot, full: t.full, inUse: t.inUse, empty: t.empty }
+            return acc
+          }, {} as Record<string, any>)
+        }))
+      }
+    }
+
+    if (activeWeeks.length > 5) {
+      activeWeeks = activeWeeks.slice(-5)
+    }
+
+    const weekKeys = activeWeeks.map(w => w.shortWeek)
+
+    // Standard hospital cylinder sizes
+    const standardSizes = ['Size D', 'Size E', 'Size F', 'Size N', 'Size HS']
+    const existingTypes = invByType.map(t => t.type)
+    const typesToDisplay = Array.from(new Set([...standardSizes, ...existingTypes]))
+
+    const grandHospitalTotal = invByType.reduce((sum, t) => sum + (t.full + t.inUse + t.empty + t.maintenance), 0) || 1
+
+    const rows = typesToDisplay.map(t => {
+      const found = invByType.find(item => item.type === t)
+      const currentStock = found ? (found.full + found.inUse + found.empty + found.maintenance) : 0
+      const weekCounts: Record<string, number> = {}
+      let weekSum = 0
+
+      activeWeeks.forEach(w => {
+        const val = w.bySize?.[t]?.balance ?? currentStock
+        weekCounts[w.shortWeek] = val
+        weekSum += val
+      })
+
+      const avgWeekly = activeWeeks.length > 0 ? parseFloat((weekSum / activeWeeks.length).toFixed(1)) : currentStock
+      const meta = getCylinderMeta(t)
+
+      return {
+        type: t,
+        sizeCode: meta.code,
+        label: meta.label,
+        capacity: meta.sub,
+        weekCounts,
+        avgWeekly,
+        currentStock,
+        full: found?.full || 0,
+        inUse: found?.inUse || 0,
+        empty: found?.empty || 0,
+        maintenance: found?.maintenance || 0,
+        percentage: parseFloat(((currentStock / grandHospitalTotal) * 100).toFixed(1)),
+      }
+    }).filter(r => r.currentStock > 0 || Object.values(r.weekCounts).some(v => v > 0))
+
+    return { rows, weekKeys, weeks: activeWeeks }
+  }, [reportData?.inventory, reportData?.summary?.totalCylinders, reportData?.backorders?.weeklyTrend, reportData?.usage?.weeklyTrend])
+
+  // Multi-Week Chart Data for Cylinder Balance
+  const balanceWeeklyChartData = useMemo(() => {
+    const { weeks, rows } = balanceWeeklyStats
+    if (!weeks.length) return []
+
+    return weeks.map(w => {
+      const item: any = {
+        name: w.shortWeek,
+        value: w.totalBalance,
+        total: w.totalBalance,
+        fullLabel: w.week,
+      }
+      rows.forEach(r => {
+        item[r.type] = w.bySize?.[r.type]?.balance ?? r.weekCounts[w.shortWeek] ?? r.currentStock
+      })
+      return item
+    })
+  }, [balanceWeeklyStats])
+
+  const balanceWeeklyAvg = useMemo(() => {
+    const { weeks } = balanceWeeklyStats
+    if (!weeks.length) return reportData?.summary?.totalCylinders || 0
+    const total = weeks.reduce((sum, w) => sum + w.totalBalance, 0)
+    return parseFloat((total / weeks.length).toFixed(1))
+  }, [balanceWeeklyStats, reportData?.summary?.totalCylinders])
 
   // Fetch Report Data
   const fetchReport = async () => {
@@ -437,13 +1061,22 @@ export function CylinderReportPage() {
       q3Total += s.q3
       q4Total += s.q4
     })
-    return [
-      { name: 'Q1 (Jan-Mar)', value: q1Total },
-      { name: 'Q2 (Apr-Jun)', value: q2Total },
-      { name: 'Q3 (Jul-Sep)', value: q3Total },
-      { name: 'Q4 (Oct-Dec)', value: q4Total }
+    const types = reportData?.usage?.byType?.map(t => t.type) || []
+    const qData: any[] = [
+      { name: 'Q1', value: q1Total, total: q1Total, fullLabel: 'Q1 (Jan - Mar)' },
+      { name: 'Q2', value: q2Total, total: q2Total, fullLabel: 'Q2 (Apr - Jun)' },
+      { name: 'Q3', value: q3Total, total: q3Total, fullLabel: 'Q3 (Jul - Sep)' },
+      { name: 'Q4', value: q4Total, total: q4Total, fullLabel: 'Q4 (Oct - Dec)' }
     ]
-  }, [quarterlyStats])
+    types.forEach(t => {
+      const s = quarterlyStats.find((qs: any) => qs.type === t)
+      qData[0][t] = s ? s.q1 : 0
+      qData[1][t] = s ? s.q2 : 0
+      qData[2][t] = s ? s.q3 : 0
+      qData[3][t] = s ? s.q4 : 0
+    })
+    return qData
+  }, [quarterlyStats, reportData])
 
   const dynamicTrendData = useMemo(() => {
     if (!reportData?.usage || !reportData?.deliveries) return []
@@ -553,14 +1186,32 @@ export function CylinderReportPage() {
     return { rows, weekKeys }
   }, [reportData])
 
+  const cylinderTypesList = useMemo(() => {
+    if (!reportData?.usage?.byType) return []
+    return reportData.usage.byType.map((t: any) => t.type)
+  }, [reportData])
+
+  const totalPeriodTanks = useMemo(() => {
+    if (!reportData?.usage?.byType) return 0
+    return reportData.usage.byType.reduce((sum: number, t: any) => sum + Number(t.count || 0), 0)
+  }, [reportData])
+
   const weeklyOverallTrend = useMemo(() => {
     if (!reportData?.usage?.weeklyTrend?.length) return []
-    return reportData.usage.weeklyTrend.slice(-6).map(w => ({
-      name: w.shortWeek,
-      value: w.issued,
-      received: w.received,
-      fullLabel: w.week,
-    }))
+    const types = reportData?.usage?.byType?.map(t => t.type) || []
+    return reportData.usage.weeklyTrend.slice(-6).map(w => {
+      const item: any = {
+        name: w.shortWeek,
+        value: w.issued,
+        total: w.issued,
+        received: w.received,
+        fullLabel: w.week,
+      }
+      types.forEach(t => {
+        item[t] = Number(w[t] || 0)
+      })
+      return item
+    })
   }, [reportData])
 
   // Daily Performance Matrix (stats per cylinder size)
@@ -602,12 +1253,21 @@ export function CylinderReportPage() {
 
   const dailyOverallTrend = useMemo(() => {
     if (!reportData?.usage?.dailyTrend?.length) return []
+    const types = reportData?.usage?.byType?.map(t => t.type) || []
     const days = reportData.usage.dailyTrend
-    return days.slice(-14).map(d => ({
-      name: d.formattedDate,
-      value: d.issued,
-      received: d.received,
-    }))
+    return days.slice(-14).map(d => {
+      const item: any = {
+        name: d.formattedDate,
+        value: d.issued,
+        total: d.issued,
+        received: d.received,
+        fullLabel: `${d.formattedDate} (${d.dayOfWeek || ''})`,
+      }
+      types.forEach(t => {
+        item[t] = Number(d[t] || 0)
+      })
+      return item
+    })
   }, [reportData])
 
   // Filtered detailed inventory items
@@ -1599,119 +2259,424 @@ export function CylinderReportPage() {
                         </div>
 
                         {/* Performance Matrix Section with Weekly, Daily & Quarterly Switcher */}
-                        <div className="bg-white border border-slate-200/50 rounded-xl p-5.5 shadow-[0_1px_3px_rgba(0,0,0,0.01),0_1px_2px_rgba(0,0,0,0.02)]">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-3">
-                            <SectionHeader 
-                              title={
-                                breakdownView === 'weekly'
-                                  ? 'Weekly Usage Performance'
-                                  : breakdownView === 'daily'
-                                  ? 'Daily Usage Performance'
-                                  : 'Quarterly Usage Performance'
-                              } 
-                              subtitle={
-                                breakdownView === 'weekly'
-                                  ? 'Weekly Consumption Volume by Cylinder Type'
-                                  : breakdownView === 'daily'
-                                  ? 'Daily Oxygen Velocity & Peak Demand by Type'
-                                  : 'Refill & Dispatch Summary'
-                              } 
-                              icon={breakdownView === 'daily' ? Calendar : BarChart3} 
-                            />
-                            
-                            {/* Breakdown Switcher Pills */}
-                            <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/40 shrink-0">
-                              {(['weekly', 'daily', 'quarterly'] as const).map(bView => (
-                                <button
-                                  key={bView}
-                                  onClick={() => setBreakdownView(bView)}
-                                  className={cn(
-                                    "px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-150",
-                                    breakdownView === bView
-                                      ? "bg-white text-slate-900 shadow-sm border border-slate-200/40"
-                                      : "text-slate-500 hover:text-slate-800"
-                                  )}
-                                >
-                                  {bView === 'weekly' ? 'Weekly' : bView === 'daily' ? 'Daily' : 'Quarterly'}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
+                        <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden transition-all">
+                          {/* Luxury Top Accent Strip */}
+                          <div className="h-1 bg-gradient-to-r from-teal-500 via-emerald-400 to-blue-500" />
                           
-                          {/* 1. WEEKLY BREAKDOWN VIEW */}
-                          {breakdownView === 'weekly' && (
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-                              <div className="md:col-span-1 border-r border-slate-100 pr-4">
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Weekly Totals</span>
-                                  <span className="text-[10px] font-bold text-[#00a68a] bg-[#e6f7f4] px-2 py-0.5 rounded-full font-mono">
-                                    {(reportData.summary.avgWeeklyUsage || 0).toFixed(1)} / wk
-                                  </span>
+                          {/* Header Area */}
+                          <div className="p-5 pb-4 border-b border-slate-100 dark:border-slate-800">
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                              <div className="flex items-start sm:items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-100/70 dark:from-teal-950/40 dark:to-emerald-950/20 border border-teal-200/50 dark:border-teal-800/30 flex items-center justify-center shrink-0 shadow-xs">
+                                  {breakdownView === 'daily' ? (
+                                    <Calendar className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                                  ) : breakdownView === 'quarterly' ? (
+                                    <TrendingUp className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                                  ) : (
+                                    <BarChart3 className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                                  )}
                                 </div>
-                                <div className="h-[190px] w-full">
-                                  <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={weeklyOverallTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.02)" />
-                                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                                      <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                                      <Tooltip content={<CustomTooltip />} />
-                                      <Bar dataKey="value" name="Tanks" fill="#00a68a" radius={[4, 4, 0, 0]} barSize={16} />
-                                    </BarChart>
-                                  </ResponsiveContainer>
+                                <div>
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
+                                      {breakdownView === 'weekly'
+                                        ? 'Weekly Usage Performance & Cylinder Size Breakdown'
+                                        : breakdownView === 'daily'
+                                        ? 'Daily Usage Performance & Oxygen Velocity'
+                                        : 'Quarterly Usage Matrix & Refill Distribution'}
+                                    </h3>
+                                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 dark:bg-teal-950/50 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/50">
+                                      {breakdownView} Active
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                    {breakdownView === 'weekly'
+                                      ? 'Weekly consumption volume stratified by each cylinder size (D, E, F, N, HS)'
+                                      : breakdownView === 'daily'
+                                      ? 'Daily oxygen velocity, restock pace, and peak demand across all cylinder sizes'
+                                      : 'Quarterly aggregated dispatch volume and seasonal consumption trends by size'}
+                                  </p>
                                 </div>
                               </div>
-                              
-                              <div className="md:col-span-2">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Weekly Performance Matrix (All Cylinder Types)</span>
-                                <div className="overflow-x-auto border border-slate-100 rounded-lg">
-                                  <table className="w-full text-[11px] text-left border-collapse">
-                                    <thead>
-                                      <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
-                                        <th className="px-2.5 py-2 font-semibold text-slate-600">Type</th>
-                                        {weeklyStats.weekKeys.map(wk => (
-                                          <th key={wk} className="px-2.5 py-2 text-center font-semibold text-slate-600">{wk}</th>
-                                        ))}
-                                        <th className="px-2.5 py-2 text-center font-semibold text-[#00a68a]">Wk Avg</th>
-                                        <th className="px-2.5 py-2 text-right font-bold text-slate-700">Total</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-50">
-                                      {weeklyStats.rows.map((row: any) => (
-                                        <tr key={row.type} className="hover:bg-slate-50/50">
-                                          <td className="px-2.5 py-2 font-medium text-slate-700 flex items-center gap-1.5">
-                                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: getCylinderColor(row.type, 0) }} />
-                                            {row.type}
-                                          </td>
+
+                              {/* Right Header: Quick stats + Breakdown Switcher */}
+                              <div className="flex flex-wrap items-center gap-2.5">
+                                <div className="hidden sm:flex items-center gap-2 mr-1">
+                                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-[11px]">
+                                    <span className="text-slate-400 font-medium">Period Total:</span>
+                                    <span className="font-bold text-slate-900 dark:text-white font-mono">{totalPeriodTanks}</span>
+                                    <span className="text-[10px] text-slate-400">tanks</span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-50/70 dark:bg-teal-950/40 border border-teal-200/50 dark:border-teal-800/50 text-[11px]">
+                                    <span className="text-teal-600 dark:text-teal-400 font-medium">
+                                      {breakdownView === 'daily' ? 'Daily Avg:' : 'Weekly Avg:'}
+                                    </span>
+                                    <span className="font-bold text-teal-700 dark:text-teal-300 font-mono">
+                                      {breakdownView === 'daily'
+                                        ? (reportData.summary.avgDailyUsage || 0).toFixed(1)
+                                        : (reportData.summary.avgWeeklyUsage || 0).toFixed(1)}
+                                    </span>
+                                    <span className="text-[10px] text-teal-600/80">
+                                      {breakdownView === 'daily' ? '/day' : '/wk'}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Granularity Switcher Pills */}
+                                <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                                  {(['weekly', 'daily', 'quarterly'] as const).map(bView => (
+                                    <button
+                                      key={bView}
+                                      onClick={() => setBreakdownView(bView)}
+                                      className={cn(
+                                        "px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-150",
+                                        breakdownView === bView
+                                          ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs border border-slate-200/40 dark:border-slate-600 font-extrabold"
+                                          : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
+                                      )}
+                                    >
+                                      {bView === 'weekly' ? 'Weekly' : bView === 'daily' ? 'Daily' : 'Quarterly'}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Interactive Control & Filter Subbar */}
+                            <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                              {/* Chart Mode Toggle */}
+                              <div className="flex items-center gap-1 bg-slate-100/70 dark:bg-slate-800/80 p-0.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                                <span className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">View:</span>
+                                <button
+                                  onClick={() => setMatrixChartMode('stacked')}
+                                  className={cn(
+                                    "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all flex items-center gap-1.5",
+                                    matrixChartMode === 'stacked'
+                                      ? "bg-[#00a68a] text-white shadow-xs"
+                                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                                  )}
+                                  title="Stacked breakdown of each cylinder size (D, E, F, N, HS)"
+                                >
+                                  <Layers className="w-3 h-3" />
+                                  Stacked Sizes
+                                </button>
+                                <button
+                                  onClick={() => setMatrixChartMode('grouped')}
+                                  className={cn(
+                                    "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all flex items-center gap-1.5",
+                                    matrixChartMode === 'grouped'
+                                      ? "bg-[#00a68a] text-white shadow-xs"
+                                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                                  )}
+                                  title="Side-by-side grouped bars for comparison"
+                                >
+                                  <BarChart2 className="w-3 h-3" />
+                                  Grouped
+                                </button>
+                                <button
+                                  onClick={() => setMatrixChartMode('total')}
+                                  className={cn(
+                                    "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all",
+                                    matrixChartMode === 'total'
+                                      ? "bg-[#00a68a] text-white shadow-xs"
+                                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                                  )}
+                                  title="Total volume single bar"
+                                >
+                                  Total Only
+                                </button>
+                              </div>
+
+                              {/* Quick Filter Pills by Cylinder Size */}
+                              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+                                  <Filter className="w-2.5 h-2.5" />
+                                  Filter:
+                                </span>
+                                <button
+                                  onClick={() => setMatrixSizeFilter('all')}
+                                  className={cn(
+                                    "px-2.5 py-1 text-[10px] font-bold rounded-md border transition-all shrink-0 uppercase tracking-wider",
+                                    matrixSizeFilter === 'all'
+                                      ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs"
+                                      : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                                  )}
+                                >
+                                  All Sizes
+                                </button>
+                                {cylinderTypesList.map((typeStr, idx) => {
+                                  const meta = getCylinderMeta(typeStr)
+                                  const color = getCylinderColor(typeStr, idx)
+                                  const isSelected = matrixSizeFilter === typeStr
+                                  return (
+                                    <button
+                                      key={typeStr}
+                                      onClick={() => setMatrixSizeFilter(isSelected ? 'all' : typeStr)}
+                                      onMouseEnter={() => setHoveredMatrixType(typeStr)}
+                                      onMouseLeave={() => setHoveredMatrixType(null)}
+                                      className={cn(
+                                        "px-2 py-1 text-[10px] font-bold rounded-md border transition-all shrink-0 flex items-center gap-1.5",
+                                        isSelected
+                                          ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs ring-1"
+                                          : "bg-white dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                                      )}
+                                      style={{
+                                        borderColor: isSelected ? color : undefined,
+                                        boxShadow: isSelected ? `0 0 0 1px ${color}` : undefined
+                                      }}
+                                    >
+                                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                                      <span>{meta.label}</span>
+                                      <span className="text-[9px] opacity-70 font-mono">({meta.code})</span>
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 1. WEEKLY BREAKDOWN VIEW */}
+                          {breakdownView === 'weekly' && (
+                            <div className="p-5">
+                              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {/* Left Chart (5 cols) */}
+                                <div className="lg:col-span-5 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-slate-800 pb-5 lg:pb-0 lg:pr-5">
+                                  <div>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        {matrixSizeFilter === 'all'
+                                          ? matrixChartMode === 'stacked'
+                                            ? 'Weekly Volume by Cylinder Size'
+                                            : matrixChartMode === 'grouped'
+                                            ? 'Weekly Comparison by Size'
+                                            : 'Weekly Overall Totals'
+                                          : `Weekly Volume: ${getCylinderMeta(matrixSizeFilter).label}`}
+                                      </span>
+                                      <span className="text-[10px] font-bold text-[#00a68a] bg-[#e6f7f4] dark:bg-teal-950/60 px-2 py-0.5 rounded-full font-mono border border-teal-200/50">
+                                        {(reportData.summary.avgWeeklyUsage || 0).toFixed(1)} / wk
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mb-2">
+                                      {matrixSizeFilter === 'all'
+                                        ? 'Tanks dispatched each week, broken down by individual cylinder size (D, E, F, N, HS)'
+                                        : `Displaying consumption for ${getCylinderMeta(matrixSizeFilter).full}`}
+                                    </p>
+                                  </div>
+
+                                  <div className="h-[240px] w-full mt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                      <BarChart data={weeklyOverallTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                                        <XAxis dataKey="name" stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} />
+                                        <YAxis stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} />
+                                        <Tooltip content={<PerformanceMatrixTooltip />} />
+
+                                        {matrixSizeFilter !== 'all' ? (
+                                          <Bar
+                                            dataKey={matrixSizeFilter}
+                                            name={getCylinderMeta(matrixSizeFilter).label}
+                                            fill={getCylinderColor(matrixSizeFilter, 0)}
+                                            radius={[4, 4, 0, 0]}
+                                            barSize={20}
+                                          />
+                                        ) : matrixChartMode === 'total' ? (
+                                          <Bar
+                                            dataKey="total"
+                                            name="Total Dispatched"
+                                            fill="#00a68a"
+                                            radius={[4, 4, 0, 0]}
+                                            barSize={22}
+                                          />
+                                        ) : matrixChartMode === 'grouped' ? (
+                                          cylinderTypesList.map((typeStr, idx) => (
+                                            <Bar
+                                              key={typeStr}
+                                              dataKey={typeStr}
+                                              name={getCylinderMeta(typeStr).label}
+                                              fill={getCylinderColor(typeStr, idx)}
+                                              radius={[3, 3, 0, 0]}
+                                              barSize={8}
+                                            />
+                                          ))
+                                        ) : (
+                                          cylinderTypesList.map((typeStr, idx) => (
+                                            <Bar
+                                              key={typeStr}
+                                              dataKey={typeStr}
+                                              name={getCylinderMeta(typeStr).label}
+                                              stackId="weeklyStack"
+                                              fill={getCylinderColor(typeStr, idx)}
+                                              barSize={20}
+                                              radius={idx === cylinderTypesList.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                                            />
+                                          ))
+                                        )}
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  {/* Interactive Size Legend Below Chart */}
+                                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-center gap-2">
+                                    {cylinderTypesList.map((t, idx) => {
+                                      const meta = getCylinderMeta(t)
+                                      const color = getCylinderColor(t, idx)
+                                      const isDimmed = matrixSizeFilter !== 'all' && matrixSizeFilter !== t
+                                      return (
+                                        <button
+                                          key={t}
+                                          onClick={() => setMatrixSizeFilter(matrixSizeFilter === t ? 'all' : t)}
+                                          className={cn(
+                                            "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold transition-all border",
+                                            isDimmed
+                                              ? "opacity-35 border-transparent"
+                                              : "opacity-100 border-slate-200/60 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 hover:bg-slate-100"
+                                          )}
+                                        >
+                                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                                          <span className="text-slate-700 dark:text-slate-300">{meta.label}</span>
+                                          <span className="text-[9px] text-slate-400 font-mono">({meta.code})</span>
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+
+                                {/* Right Table (7 cols) */}
+                                <div className="lg:col-span-7">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                      Weekly Performance Matrix (All Cylinder Sizes)
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-slate-400">
+                                      {weeklyStats.rows.length} Sizes • Last {weeklyStats.weekKeys.length} Weeks
+                                    </span>
+                                  </div>
+                                  <div className="overflow-x-auto border border-slate-200/70 dark:border-slate-800 rounded-xl shadow-2xs">
+                                    <table className="w-full text-[11px] text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200/70 dark:border-slate-700 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                                          <th className="px-3 py-2.5 font-bold text-slate-700 dark:text-slate-300">Cylinder Size / Type</th>
                                           {weeklyStats.weekKeys.map(wk => (
-                                            <td key={wk} className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                              {row.weekCounts[wk] || 0}
-                                            </td>
+                                            <th key={wk} className="px-2 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">{wk}</th>
                                           ))}
-                                          <td className="px-2.5 py-2 text-center font-bold font-mono text-[#00a68a] tabular-nums">
-                                            {row.avgWeekly}
-                                          </td>
-                                          <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">{row.total}</td>
+                                          <th className="px-2.5 py-2.5 text-center font-bold text-[#00a68a] bg-teal-50/40 dark:bg-teal-950/20">Wk Avg</th>
+                                          <th className="px-3 py-2.5 text-right font-bold text-slate-900 dark:text-white">Total</th>
                                         </tr>
-                                      ))}
-                                    </tbody>
-                                    <tfoot>
-                                      <tr className="bg-slate-50/80 border-t border-slate-100 font-bold text-slate-800 text-[10.5px]">
-                                        <td className="px-2.5 py-2 text-slate-600 uppercase tracking-wider">Total Dispatched</td>
-                                        {weeklyStats.weekKeys.map(wk => {
-                                          const colTotal = weeklyStats.rows.reduce((sum: number, r: any) => sum + (r.weekCounts[wk] || 0), 0)
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+                                        {weeklyStats.rows.map((row: any, rIdx: number) => {
+                                          const meta = getCylinderMeta(row.type)
+                                          const color = getCylinderColor(row.type, rIdx)
+                                          const isSelected = matrixSizeFilter === row.type
+                                          const isDimmed = matrixSizeFilter !== 'all' && !isSelected
+                                          const grandTotal = weeklyStats.rows.reduce((sum: number, r: any) => sum + r.total, 0) || 1
+                                          const pct = ((row.total / grandTotal) * 100).toFixed(1)
+
                                           return (
-                                            <td key={wk} className="px-2.5 py-2 text-center font-mono text-slate-900 tabular-nums">{colTotal}</td>
+                                            <tr
+                                              key={row.type}
+                                              onClick={() => setMatrixSizeFilter(isSelected ? 'all' : row.type)}
+                                              onMouseEnter={() => setHoveredMatrixType(row.type)}
+                                              onMouseLeave={() => setHoveredMatrixType(null)}
+                                              className={cn(
+                                                "cursor-pointer transition-colors duration-150",
+                                                isSelected
+                                                  ? "bg-teal-50/50 dark:bg-teal-950/30 font-medium"
+                                                  : "hover:bg-slate-50/80 dark:hover:bg-slate-800/40",
+                                                isDimmed && "opacity-35"
+                                              )}
+                                            >
+                                              {/* Cylinder Size Badge */}
+                                              <td className="px-3 py-2">
+                                                <div className="flex items-center gap-2">
+                                                  <div
+                                                    className="w-6 h-6 rounded-md flex items-center justify-center font-black text-[10px] text-white shrink-0 shadow-2xs"
+                                                    style={{ backgroundColor: color }}
+                                                  >
+                                                    {meta.code}
+                                                  </div>
+                                                  <div className="flex flex-col min-w-0">
+                                                    <span className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate">
+                                                      {meta.label}
+                                                    </span>
+                                                    <span className="text-[9.5px] text-slate-400 font-mono truncate">
+                                                      {meta.sub}
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                              </td>
+
+                                              {/* Weekly Counts */}
+                                              {weeklyStats.weekKeys.map(wk => {
+                                                const count = row.weekCounts[wk] || 0
+                                                return (
+                                                  <td key={wk} className="px-2 py-2 text-center font-mono font-semibold text-slate-800 dark:text-slate-200 tabular-nums">
+                                                    {count > 0 ? (
+                                                      <span className={cn(
+                                                        "px-1.5 py-0.5 rounded text-[11px]",
+                                                        count >= 20 ? "bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 font-bold" : ""
+                                                      )}>
+                                                        {count}
+                                                      </span>
+                                                    ) : (
+                                                      <span className="text-slate-300 dark:text-slate-600">-</span>
+                                                    )}
+                                                  </td>
+                                                )
+                                              })}
+
+                                              {/* Wk Avg */}
+                                              <td className="px-2.5 py-2 text-center tabular-nums bg-teal-50/20 dark:bg-teal-950/10">
+                                                <span className="inline-block px-1.5 py-0.5 rounded-full text-[10.5px] font-bold font-mono text-[#00a68a] bg-[#e6f7f4] dark:bg-teal-900/40">
+                                                  {row.avgWeekly}
+                                                </span>
+                                              </td>
+
+                                              {/* Total + Percentage Share */}
+                                              <td className="px-3 py-2 text-right tabular-nums">
+                                                <div className="flex flex-col items-end">
+                                                  <span className="font-black font-mono text-slate-900 dark:text-white text-xs">
+                                                    {row.total}
+                                                  </span>
+                                                  <div className="flex items-center gap-1 mt-0.5">
+                                                    <div className="w-12 h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                      <div
+                                                        className="h-full rounded-full"
+                                                        style={{ width: `${pct}%`, backgroundColor: color }}
+                                                      />
+                                                    </div>
+                                                    <span className="text-[8.5px] font-mono text-slate-400">{pct}%</span>
+                                                  </div>
+                                                </div>
+                                              </td>
+                                            </tr>
                                           )
                                         })}
-                                        <td className="px-2.5 py-2 text-center font-mono text-[#00a68a] tabular-nums">
-                                          {(reportData.summary.avgWeeklyUsage || 0).toFixed(1)}
-                                        </td>
-                                        <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">
-                                          {weeklyStats.rows.reduce((sum: number, r: any) => sum + r.total, 0)}
-                                        </td>
-                                      </tr>
-                                    </tfoot>
-                                  </table>
+                                      </tbody>
+                                      {/* Grand Total Footer */}
+                                      <tfoot>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/90 border-t-2 border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white text-[11px]">
+                                          <td className="px-3 py-2.5 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-bold">
+                                            Total Dispatched
+                                          </td>
+                                          {weeklyStats.weekKeys.map(wk => {
+                                            const colTotal = weeklyStats.rows.reduce((sum: number, r: any) => sum + (r.weekCounts[wk] || 0), 0)
+                                            return (
+                                              <td key={wk} className="px-2 py-2.5 text-center font-mono font-black text-slate-900 dark:text-white tabular-nums">
+                                                {colTotal}
+                                              </td>
+                                            )
+                                          })}
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-[#00a68a] tabular-nums bg-teal-50/40 dark:bg-teal-950/20">
+                                            {(reportData.summary.avgWeeklyUsage || 0).toFixed(1)}
+                                          </td>
+                                          <td className="px-3 py-2.5 text-right font-black font-mono text-slate-900 dark:text-white tabular-nums">
+                                            {weeklyStats.rows.reduce((sum: number, r: any) => sum + r.total, 0)}
+                                          </td>
+                                        </tr>
+                                      </tfoot>
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1719,85 +2684,214 @@ export function CylinderReportPage() {
 
                           {/* 2. DAILY BREAKDOWN VIEW */}
                           {breakdownView === 'daily' && (
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-                              <div className="md:col-span-1 border-r border-slate-100 pr-4">
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Daily Volume (Recent)</span>
-                                  <span className="text-[10px] font-bold text-[#00a68a] bg-[#e6f7f4] px-2 py-0.5 rounded-full font-mono">
-                                    {(reportData.summary.avgDailyUsage || 0).toFixed(1)} / day
-                                  </span>
+                            <div className="p-5">
+                              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {/* Left Chart (5 cols) */}
+                                <div className="lg:col-span-5 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-slate-800 pb-5 lg:pb-0 lg:pr-5">
+                                  <div>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        {matrixSizeFilter === 'all'
+                                          ? matrixChartMode === 'stacked'
+                                            ? 'Daily Velocity by Cylinder Size (Recent 14 Days)'
+                                            : matrixChartMode === 'grouped'
+                                            ? 'Daily Size Comparison'
+                                            : 'Daily Total Volume'
+                                          : `Daily Volume: ${getCylinderMeta(matrixSizeFilter).label}`}
+                                      </span>
+                                      <span className="text-[10px] font-bold text-[#00a68a] bg-[#e6f7f4] dark:bg-teal-950/60 px-2 py-0.5 rounded-full font-mono border border-teal-200/50">
+                                        {(reportData.summary.avgDailyUsage || 0).toFixed(1)} / day
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mb-2">
+                                      {matrixSizeFilter === 'all'
+                                        ? 'Daily dispatched tanks across each cylinder size (D, E, F, N, HS)'
+                                        : `Displaying daily consumption for ${getCylinderMeta(matrixSizeFilter).full}`}
+                                    </p>
+                                  </div>
+
+                                  <div className="h-[240px] w-full mt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                      <BarChart data={dailyOverallTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                                        <XAxis dataKey="name" stroke="#94a3b8" fontSize={7.5} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+                                        <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
+                                        <Tooltip content={<PerformanceMatrixTooltip />} />
+
+                                        {matrixSizeFilter !== 'all' ? (
+                                          <Bar
+                                            dataKey={matrixSizeFilter}
+                                            name={getCylinderMeta(matrixSizeFilter).label}
+                                            fill={getCylinderColor(matrixSizeFilter, 0)}
+                                            radius={[3, 3, 0, 0]}
+                                            barSize={12}
+                                          />
+                                        ) : matrixChartMode === 'total' ? (
+                                          <Bar
+                                            dataKey="total"
+                                            name="Total Dispatched"
+                                            fill="#00a68a"
+                                            radius={[3, 3, 0, 0]}
+                                            barSize={14}
+                                          />
+                                        ) : matrixChartMode === 'grouped' ? (
+                                          cylinderTypesList.map((typeStr, idx) => (
+                                            <Bar
+                                              key={typeStr}
+                                              dataKey={typeStr}
+                                              name={getCylinderMeta(typeStr).label}
+                                              fill={getCylinderColor(typeStr, idx)}
+                                              radius={[2, 2, 0, 0]}
+                                              barSize={6}
+                                            />
+                                          ))
+                                        ) : (
+                                          cylinderTypesList.map((typeStr, idx) => (
+                                            <Bar
+                                              key={typeStr}
+                                              dataKey={typeStr}
+                                              name={getCylinderMeta(typeStr).label}
+                                              stackId="dailyStack"
+                                              fill={getCylinderColor(typeStr, idx)}
+                                              barSize={12}
+                                              radius={idx === cylinderTypesList.length - 1 ? [3, 3, 0, 0] : [0, 0, 0, 0]}
+                                            />
+                                          ))
+                                        )}
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  {/* Interactive Size Legend Below Chart */}
+                                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-center gap-2">
+                                    {cylinderTypesList.map((t, idx) => {
+                                      const meta = getCylinderMeta(t)
+                                      const color = getCylinderColor(t, idx)
+                                      const isDimmed = matrixSizeFilter !== 'all' && matrixSizeFilter !== t
+                                      return (
+                                        <button
+                                          key={t}
+                                          onClick={() => setMatrixSizeFilter(matrixSizeFilter === t ? 'all' : t)}
+                                          className={cn(
+                                            "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold transition-all border",
+                                            isDimmed
+                                              ? "opacity-35 border-transparent"
+                                              : "opacity-100 border-slate-200/60 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 hover:bg-slate-100"
+                                          )}
+                                        >
+                                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                                          <span className="text-slate-700 dark:text-slate-300">{meta.label}</span>
+                                          <span className="text-[9px] text-slate-400 font-mono">({meta.code})</span>
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
                                 </div>
-                                <div className="h-[190px] w-full">
-                                  <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={dailyOverallTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.02)" />
-                                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={7.5} tickLine={false} axisLine={false} interval="preserveStartEnd" />
-                                      <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                                      <Tooltip content={<CustomTooltip />} />
-                                      <Bar dataKey="value" name="Tanks" fill="#00a68a" radius={[3, 3, 0, 0]} barSize={10} />
-                                    </BarChart>
-                                  </ResponsiveContainer>
-                                </div>
-                              </div>
-                              
-                              <div className="md:col-span-2">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Daily Performance Matrix (All Cylinder Types)</span>
-                                <div className="overflow-x-auto border border-slate-100 rounded-lg">
-                                  <table className="w-full text-[11px] text-left border-collapse">
-                                    <thead>
-                                      <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
-                                        <th className="px-2.5 py-2 font-semibold text-slate-600">Type</th>
-                                        <th className="px-2.5 py-2 text-center font-semibold text-[#00a68a]">Daily Avg</th>
-                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Peak Day</th>
-                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Active Days</th>
-                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Share %</th>
-                                        <th className="px-2.5 py-2 text-right font-bold text-slate-700">Total Tanks</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-50">
-                                      {(dailyStats as any[]).map((d: any) => (
-                                        <tr key={d.type} className="hover:bg-slate-50/50">
-                                          <td className="px-2.5 py-2 font-medium text-slate-700 flex items-center gap-1.5">
-                                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: getCylinderColor(d.type, 0) }} />
-                                            {d.type}
-                                          </td>
-                                          <td className="px-2.5 py-2 text-center font-bold font-mono text-[#00a68a] tabular-nums">
-                                            {d.avgDaily} <span className="text-[9px] text-slate-400 font-normal">/day</span>
-                                          </td>
-                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                            {d.peakDay.count > 0 ? (
-                                              <span>{d.peakDay.formattedDate} <span className="text-[9px] font-bold text-slate-500">({d.peakDay.count})</span></span>
-                                            ) : (
-                                              <span className="text-slate-400 font-normal">-</span>
-                                            )}
-                                          </td>
-                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                            {d.activeDays} days
-                                          </td>
-                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-600 tabular-nums">
-                                            {d.percentage.toFixed(1)}%
-                                          </td>
-                                          <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">{d.total}</td>
+
+                                {/* Right Table (7 cols) */}
+                                <div className="lg:col-span-7">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                      Daily Performance Matrix (All Cylinder Sizes)
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-slate-400">
+                                      {dailyStats.length} Sizes Tracked
+                                    </span>
+                                  </div>
+                                  <div className="overflow-x-auto border border-slate-200/70 dark:border-slate-800 rounded-xl shadow-2xs">
+                                    <table className="w-full text-[11px] text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200/70 dark:border-slate-700 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                                          <th className="px-3 py-2.5 font-bold text-slate-700 dark:text-slate-300">Cylinder Size / Type</th>
+                                          <th className="px-2.5 py-2.5 text-center font-bold text-[#00a68a] bg-teal-50/40 dark:bg-teal-950/20">Daily Avg</th>
+                                          <th className="px-2.5 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">Peak Day</th>
+                                          <th className="px-2.5 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">Active Days</th>
+                                          <th className="px-2.5 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">Share %</th>
+                                          <th className="px-3 py-2.5 text-right font-bold text-slate-900 dark:text-white">Total Tanks</th>
                                         </tr>
-                                      ))}
-                                    </tbody>
-                                    <tfoot>
-                                      <tr className="bg-slate-50/80 border-t border-slate-100 font-bold text-slate-800 text-[10.5px]">
-                                        <td className="px-2.5 py-2 text-slate-600 uppercase tracking-wider">Total Consumed</td>
-                                        <td className="px-2.5 py-2 text-center font-mono text-[#00a68a] tabular-nums">
-                                          {(reportData.summary.avgDailyUsage || 0).toFixed(1)} /day
-                                        </td>
-                                        <td className="px-2.5 py-2 text-center font-mono text-slate-700 tabular-nums">
-                                          {reportData.summary.peakDayUsage?.formattedDate ? `${reportData.summary.peakDayUsage.formattedDate} (${reportData.summary.peakDayUsage.count})` : '-'}
-                                        </td>
-                                        <td className="px-2.5 py-2 text-center font-mono text-slate-700 tabular-nums">-</td>
-                                        <td className="px-2.5 py-2 text-center font-mono text-slate-700 tabular-nums">100%</td>
-                                        <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">
-                                          {(dailyStats as any[]).reduce((sum, d) => sum + d.total, 0)}
-                                        </td>
-                                      </tr>
-                                    </tfoot>
-                                  </table>
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+                                        {(dailyStats as any[]).map((d: any, dIdx: number) => {
+                                          const meta = getCylinderMeta(d.type)
+                                          const color = getCylinderColor(d.type, dIdx)
+                                          const isSelected = matrixSizeFilter === d.type
+                                          const isDimmed = matrixSizeFilter !== 'all' && !isSelected
+
+                                          return (
+                                            <tr
+                                              key={d.type}
+                                              onClick={() => setMatrixSizeFilter(isSelected ? 'all' : d.type)}
+                                              onMouseEnter={() => setHoveredMatrixType(d.type)}
+                                              onMouseLeave={() => setHoveredMatrixType(null)}
+                                              className={cn(
+                                                "cursor-pointer transition-colors duration-150",
+                                                isSelected
+                                                  ? "bg-teal-50/50 dark:bg-teal-950/30 font-medium"
+                                                  : "hover:bg-slate-50/80 dark:hover:bg-slate-800/40",
+                                                isDimmed && "opacity-35"
+                                              )}
+                                            >
+                                              <td className="px-3 py-2">
+                                                <div className="flex items-center gap-2">
+                                                  <div
+                                                    className="w-6 h-6 rounded-md flex items-center justify-center font-black text-[10px] text-white shrink-0 shadow-2xs"
+                                                    style={{ backgroundColor: color }}
+                                                  >
+                                                    {meta.code}
+                                                  </div>
+                                                  <div className="flex flex-col min-w-0">
+                                                    <span className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate">
+                                                      {meta.label}
+                                                    </span>
+                                                    <span className="text-[9.5px] text-slate-400 font-mono truncate">
+                                                      {meta.sub}
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-bold font-mono text-[#00a68a] tabular-nums bg-teal-50/20 dark:bg-teal-950/10">
+                                                {d.avgDaily} <span className="text-[9px] text-slate-400 font-normal">/day</span>
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 dark:text-slate-200 tabular-nums">
+                                                {d.peakDay.count > 0 ? (
+                                                  <span>{d.peakDay.formattedDate} <span className="text-[9px] font-bold text-slate-500">({d.peakDay.count})</span></span>
+                                                ) : (
+                                                  <span className="text-slate-400 font-normal">-</span>
+                                                )}
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-700 dark:text-slate-300 tabular-nums">
+                                                {d.activeDays} days
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-600 dark:text-slate-400 tabular-nums">
+                                                {d.percentage.toFixed(1)}%
+                                              </td>
+                                              <td className="px-3 py-2 text-right font-black font-mono text-slate-900 dark:text-white tabular-nums">
+                                                {d.total}
+                                              </td>
+                                            </tr>
+                                          )
+                                        })}
+                                      </tbody>
+                                      <tfoot>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/90 border-t-2 border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white text-[11px]">
+                                          <td className="px-3 py-2.5 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-bold">
+                                            Total Consumed
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono text-[#00a68a] tabular-nums bg-teal-50/40 dark:bg-teal-950/20">
+                                            {(reportData.summary.avgDailyUsage || 0).toFixed(1)} /day
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono text-slate-700 dark:text-slate-300 tabular-nums">
+                                            {reportData.summary.peakDayUsage?.formattedDate ? `${reportData.summary.peakDayUsage.formattedDate} (${reportData.summary.peakDayUsage.count})` : '-'}
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono text-slate-700 dark:text-slate-300 tabular-nums">-</td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono text-slate-700 dark:text-slate-300 tabular-nums">100%</td>
+                                          <td className="px-3 py-2.5 text-right font-black font-mono text-slate-900 dark:text-white tabular-nums">
+                                            {(dailyStats as any[]).reduce((sum, d) => sum + d.total, 0)}
+                                          </td>
+                                        </tr>
+                                      </tfoot>
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1805,60 +2899,1658 @@ export function CylinderReportPage() {
 
                           {/* 3. QUARTERLY BREAKDOWN VIEW */}
                           {breakdownView === 'quarterly' && (
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-                              <div className="md:col-span-1 border-r border-slate-100 pr-4">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Overall Quarterly Totals</span>
-                                <div className="h-[190px] w-full">
-                                  <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={quarterlyOverallTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.02)" />
-                                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                                      <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                                      <Tooltip content={<CustomTooltip />} />
-                                      <Bar dataKey="value" name="Tanks" fill="#00a68a" radius={[4, 4, 0, 0]} barSize={14} />
-                                    </BarChart>
-                                  </ResponsiveContainer>
+                            <div className="p-5">
+                              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {/* Left Chart (5 cols) */}
+                                <div className="lg:col-span-5 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-slate-800 pb-5 lg:pb-0 lg:pr-5">
+                                  <div>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        {matrixSizeFilter === 'all'
+                                          ? matrixChartMode === 'stacked'
+                                            ? 'Quarterly Volume by Cylinder Size'
+                                            : matrixChartMode === 'grouped'
+                                            ? 'Quarterly Size Comparison'
+                                            : 'Quarterly Overall Totals'
+                                          : `Quarterly Volume: ${getCylinderMeta(matrixSizeFilter).label}`}
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mb-2">
+                                      {matrixSizeFilter === 'all'
+                                        ? 'Quarterly consumption volume stratified across cylinder sizes (D, E, F, N, HS)'
+                                        : `Displaying quarterly volume for ${getCylinderMeta(matrixSizeFilter).full}`}
+                                    </p>
+                                  </div>
+
+                                  <div className="h-[240px] w-full mt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                      <BarChart data={quarterlyOverallTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                                        <XAxis dataKey="name" stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} />
+                                        <YAxis stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} />
+                                        <Tooltip content={<PerformanceMatrixTooltip />} />
+
+                                        {matrixSizeFilter !== 'all' ? (
+                                          <Bar
+                                            dataKey={matrixSizeFilter}
+                                            name={getCylinderMeta(matrixSizeFilter).label}
+                                            fill={getCylinderColor(matrixSizeFilter, 0)}
+                                            radius={[4, 4, 0, 0]}
+                                            barSize={22}
+                                          />
+                                        ) : matrixChartMode === 'total' ? (
+                                          <Bar
+                                            dataKey="total"
+                                            name="Total Tanks"
+                                            fill="#00a68a"
+                                            radius={[4, 4, 0, 0]}
+                                            barSize={24}
+                                          />
+                                        ) : matrixChartMode === 'grouped' ? (
+                                          cylinderTypesList.map((typeStr, idx) => (
+                                            <Bar
+                                              key={typeStr}
+                                              dataKey={typeStr}
+                                              name={getCylinderMeta(typeStr).label}
+                                              fill={getCylinderColor(typeStr, idx)}
+                                              radius={[3, 3, 0, 0]}
+                                              barSize={8}
+                                            />
+                                          ))
+                                        ) : (
+                                          cylinderTypesList.map((typeStr, idx) => (
+                                            <Bar
+                                              key={typeStr}
+                                              dataKey={typeStr}
+                                              name={getCylinderMeta(typeStr).label}
+                                              stackId="quarterlyStack"
+                                              fill={getCylinderColor(typeStr, idx)}
+                                              barSize={22}
+                                              radius={idx === cylinderTypesList.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                                            />
+                                          ))
+                                        )}
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  {/* Interactive Size Legend Below Chart */}
+                                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-center gap-2">
+                                    {cylinderTypesList.map((t, idx) => {
+                                      const meta = getCylinderMeta(t)
+                                      const color = getCylinderColor(t, idx)
+                                      const isDimmed = matrixSizeFilter !== 'all' && matrixSizeFilter !== t
+                                      return (
+                                        <button
+                                          key={t}
+                                          onClick={() => setMatrixSizeFilter(matrixSizeFilter === t ? 'all' : t)}
+                                          className={cn(
+                                            "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold transition-all border",
+                                            isDimmed
+                                              ? "opacity-35 border-transparent"
+                                              : "opacity-100 border-slate-200/60 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 hover:bg-slate-100"
+                                          )}
+                                        >
+                                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                                          <span className="text-slate-700 dark:text-slate-300">{meta.label}</span>
+                                          <span className="text-[9px] text-slate-400 font-mono">({meta.code})</span>
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+
+                                {/* Right Table (7 cols) */}
+                                <div className="lg:col-span-7">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                      Quarterly Performance Matrix (All Cylinder Sizes)
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-slate-400">
+                                      {quarterlyStats.length} Sizes Tracked
+                                    </span>
+                                  </div>
+                                  <div className="overflow-x-auto border border-slate-200/70 dark:border-slate-800 rounded-xl shadow-2xs">
+                                    <table className="w-full text-[11px] text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200/70 dark:border-slate-700 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                                          <th className="px-3 py-2.5 font-bold text-slate-700 dark:text-slate-300">Cylinder Size / Type</th>
+                                          <th className="px-2.5 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">Q1 (Jan-Mar)</th>
+                                          <th className="px-2.5 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">Q2 (Apr-Jun)</th>
+                                          <th className="px-2.5 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">Q3 (Jul-Sep)</th>
+                                          <th className="px-2.5 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">Q4 (Oct-Dec)</th>
+                                          <th className="px-3 py-2.5 text-right font-bold text-slate-900 dark:text-white">Total</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+                                        {(quarterlyStats as any[]).map((q: any, qIdx: number) => {
+                                          const meta = getCylinderMeta(q.type)
+                                          const color = getCylinderColor(q.type, qIdx)
+                                          const isSelected = matrixSizeFilter === q.type
+                                          const isDimmed = matrixSizeFilter !== 'all' && !isSelected
+
+                                          return (
+                                            <tr
+                                              key={q.type}
+                                              onClick={() => setMatrixSizeFilter(isSelected ? 'all' : q.type)}
+                                              onMouseEnter={() => setHoveredMatrixType(q.type)}
+                                              onMouseLeave={() => setHoveredMatrixType(null)}
+                                              className={cn(
+                                                "cursor-pointer transition-colors duration-150",
+                                                isSelected
+                                                  ? "bg-teal-50/50 dark:bg-teal-950/30 font-medium"
+                                                  : "hover:bg-slate-50/80 dark:hover:bg-slate-800/40",
+                                                isDimmed && "opacity-35"
+                                              )}
+                                            >
+                                              <td className="px-3 py-2">
+                                                <div className="flex items-center gap-2">
+                                                  <div
+                                                    className="w-6 h-6 rounded-md flex items-center justify-center font-black text-[10px] text-white shrink-0 shadow-2xs"
+                                                    style={{ backgroundColor: color }}
+                                                  >
+                                                    {meta.code}
+                                                  </div>
+                                                  <div className="flex flex-col min-w-0">
+                                                    <span className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate">
+                                                      {meta.label}
+                                                    </span>
+                                                    <span className="text-[9.5px] text-slate-400 font-mono truncate">
+                                                      {meta.sub}
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 dark:text-slate-200 tabular-nums">
+                                                {q.q1 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q1 || 0}</span>
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 dark:text-slate-200 tabular-nums">
+                                                {q.q2 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q2 || 0}</span>
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 dark:text-slate-200 tabular-nums">
+                                                {q.q3 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q3 || 0}</span>
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 dark:text-slate-200 tabular-nums">
+                                                {q.q4 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q4 || 0}</span>
+                                              </td>
+                                              <td className="px-3 py-2 text-right font-black font-mono text-slate-900 dark:text-white tabular-nums">
+                                                {q.total}
+                                              </td>
+                                            </tr>
+                                          )
+                                        })}
+                                      </tbody>
+                                      <tfoot>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/90 border-t-2 border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white text-[11px]">
+                                          <td className="px-3 py-2.5 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-bold">
+                                            Total Dispatched
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-slate-900 dark:text-white tabular-nums">
+                                            {(quarterlyStats as any[]).reduce((sum, q) => sum + (q.q1 || 0), 0)}
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-slate-900 dark:text-white tabular-nums">
+                                            {(quarterlyStats as any[]).reduce((sum, q) => sum + (q.q2 || 0), 0)}
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-slate-900 dark:text-white tabular-nums">
+                                            {(quarterlyStats as any[]).reduce((sum, q) => sum + (q.q3 || 0), 0)}
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-slate-900 dark:text-white tabular-nums">
+                                            {(quarterlyStats as any[]).reduce((sum, q) => sum + (q.q4 || 0), 0)}
+                                          </td>
+                                          <td className="px-3 py-2.5 text-right font-black font-mono text-slate-900 dark:text-white tabular-nums">
+                                            {(quarterlyStats as any[]).reduce((sum, q) => sum + (q.total || 0), 0)}
+                                          </td>
+                                        </tr>
+                                      </tfoot>
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
-                              
-                              <div className="md:col-span-2">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Quarterly Performance Matrix</span>
-                                <div className="overflow-x-auto border border-slate-100 rounded-lg">
-                                  <table className="w-full text-[11px] text-left border-collapse">
-                                    <thead>
-                                      <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
-                                        <th className="px-2.5 py-2 font-semibold text-slate-600">Type</th>
-                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q1</th>
-                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q2</th>
-                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q3</th>
-                                        <th className="px-2.5 py-2 text-center font-semibold text-slate-600">Q4</th>
-                                        <th className="px-2.5 py-2 text-right font-bold text-slate-700">Total</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-50">
-                                      {(quarterlyStats as any[]).map((q: any) => (
-                                        <tr key={q.type} className="hover:bg-slate-50/50">
-                                          <td className="px-2.5 py-2 font-medium text-slate-700 flex items-center gap-1.5">
-                                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: getCylinderColor(q.type, 0) }} />
-                                            {q.type}
-                                          </td>
-                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                            {q.q1 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q1 || 0}</span>
-                                          </td>
-                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                            {q.q2 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q2 || 0}</span>
-                                          </td>
-                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                            {q.q3 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q3 || 0}</span>
-                                          </td>
-                                          <td className="px-2.5 py-2 text-center font-semibold font-mono text-slate-800 tabular-nums">
-                                            {q.q4 || 0} <span className="text-[9px] text-slate-400 font-normal block">Avg {q.avg_q4 || 0}</span>
-                                          </td>
-                                          <td className="px-2.5 py-2 text-right font-black font-mono text-slate-900 tabular-nums">{q.total}</td>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* ─── PENDING TO RECEIVE CYLINDER ANALYTICS (BACKORDER) ─── */}
+                        <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden transition-all">
+                          {/* Luxury Top Accent Strip */}
+                          <div className="h-1 bg-gradient-to-r from-amber-500 via-orange-400 to-rose-500" />
+                          
+                          {/* Header Area */}
+                          <div className="p-5 pb-4 border-b border-slate-100 dark:border-slate-800">
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                              <div className="flex items-start sm:items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-50 to-orange-100/70 dark:from-amber-950/40 dark:to-orange-950/20 border border-amber-200/50 dark:border-amber-800/30 flex items-center justify-center shrink-0 shadow-xs">
+                                  <Truck className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
+                                      Pending to Receive Cylinder Analytics &amp; Backorder Matrix
+                                    </h3>
+                                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/50">
+                                      {backorderView === 'weekly' ? 'Weekly Active' : backorderView === 'total' ? 'Total Active' : 'Batch Log'}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                    {backorderView === 'weekly'
+                                      ? 'Weekly outstanding backorders awaiting return receipt stratified by cylinder size (D, E, F, N, HS)'
+                                      : backorderView === 'total'
+                                      ? 'All-time reconciliation matrix, SLA turnaround aging, and fulfillment rate across all cylinder sizes'
+                                      : 'Detailed transaction log of returned cylinder batches awaiting delivery receipt'}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Right Header: Quick stats + Switcher */}
+                              <div className="flex flex-wrap items-center gap-2.5">
+                                <div className="hidden sm:flex items-center gap-2 mr-1">
+                                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-[11px]">
+                                    <span className="text-slate-400 font-medium">Dispatched:</span>
+                                    <span className="font-bold text-slate-900 dark:text-white font-mono">
+                                      {reportData?.backorders?.summary?.totalReturned || 0}
+                                    </span>
+                                    <span className="text-[10px] text-slate-400">tanks</span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200/50 dark:border-amber-800/50 text-[11px]">
+                                    <span className="text-amber-600 dark:text-amber-400 font-medium">Outstanding:</span>
+                                    <span className="font-bold text-amber-700 dark:text-amber-300 font-mono">
+                                      {reportData?.backorders?.summary?.totalPending || 0}
+                                    </span>
+                                    <span className="text-[10px] text-amber-600/80">tanks</span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-50/70 dark:bg-teal-950/40 border border-teal-200/50 dark:border-teal-800/50 text-[11px]">
+                                    <span className="text-teal-600 dark:text-teal-400 font-medium">Weekly Avg:</span>
+                                    <span className="font-bold text-teal-700 dark:text-teal-300 font-mono">
+                                      {backorderWeeklyAvg}
+                                    </span>
+                                    <span className="text-[10px] text-teal-600/80">/wk</span>
+                                  </div>
+                                </div>
+
+                                {/* View Switcher Pills: WEEKLY vs TOTAL vs BATCH LOG */}
+                                <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                                  {(['weekly', 'total', 'batches'] as const).map(bView => (
+                                    <button
+                                      key={bView}
+                                      onClick={() => setBackorderView(bView)}
+                                      className={cn(
+                                        "px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-150",
+                                        backorderView === bView
+                                          ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs border border-slate-200/40 dark:border-slate-600 font-extrabold"
+                                          : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
+                                      )}
+                                    >
+                                      {bView === 'weekly' ? 'Weekly' : bView === 'total' ? 'Total' : 'Batch Log'}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Subbar: EXACT MATCH TO CARD 1 */}
+                            {backorderView !== 'batches' && (
+                              <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2.5">
+                                {/* Left: View Mode Toggle */}
+                                <div className="flex items-center gap-1 bg-slate-100/70 dark:bg-slate-800/80 p-0.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                                  <span className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">View:</span>
+                                  <button
+                                    onClick={() => setBackorderChartMode('stacked')}
+                                    className={cn(
+                                      "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all flex items-center gap-1.5",
+                                      backorderChartMode === 'stacked'
+                                        ? "bg-[#00a68a] text-white shadow-xs"
+                                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                                    )}
+                                    title="Stacked breakdown of each cylinder size (D, E, F, N, HS)"
+                                  >
+                                    <Layers className="w-3 h-3" />
+                                    Stacked Sizes
+                                  </button>
+                                  <button
+                                    onClick={() => setBackorderChartMode('grouped')}
+                                    className={cn(
+                                      "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all flex items-center gap-1.5",
+                                      backorderChartMode === 'grouped'
+                                        ? "bg-[#00a68a] text-white shadow-xs"
+                                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                                    )}
+                                    title="Side-by-side grouped bars for comparison"
+                                  >
+                                    <BarChart2 className="w-3 h-3" />
+                                    Grouped
+                                  </button>
+                                  <button
+                                    onClick={() => setBackorderChartMode('total')}
+                                    className={cn(
+                                      "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all",
+                                      backorderChartMode === 'total'
+                                        ? "bg-[#00a68a] text-white shadow-xs"
+                                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                                    )}
+                                    title="Total volume single bar"
+                                  >
+                                    Total Only
+                                  </button>
+                                </div>
+
+                                {/* Right: Quick Filter Pills by Cylinder Size (EXACT MATCH TO CARD 1) */}
+                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+                                    <Filter className="w-2.5 h-2.5" />
+                                    Filter:
+                                  </span>
+                                  <button
+                                    onClick={() => setBackorderSizeFilter('all')}
+                                    className={cn(
+                                      "px-2.5 py-1 text-[10px] font-bold rounded-md border transition-all shrink-0 uppercase tracking-wider",
+                                      backorderSizeFilter === 'all'
+                                        ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs"
+                                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                                    )}
+                                  >
+                                    All Sizes
+                                  </button>
+                                  {(reportData?.backorders?.bySize || []).map((s, idx) => {
+                                    const meta = getCylinderMeta(s.sizeCode)
+                                    const color = getCylinderColor(s.sizeCode, idx)
+                                    const isSelected = backorderSizeFilter === s.sizeCode
+                                    return (
+                                      <button
+                                        key={s.sizeCode}
+                                        onClick={() => setBackorderSizeFilter(isSelected ? 'all' : s.sizeCode)}
+                                        onMouseEnter={() => setHoveredBackorderType(s.sizeCode)}
+                                        onMouseLeave={() => setHoveredBackorderType(null)}
+                                        className={cn(
+                                          "px-2 py-1 text-[10px] font-bold rounded-md border transition-all shrink-0 flex items-center gap-1.5",
+                                          isSelected
+                                            ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs ring-1"
+                                            : "bg-white dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                                        )}
+                                        style={{
+                                          borderColor: isSelected ? color : undefined,
+                                          boxShadow: isSelected ? `0 0 0 1px ${color}` : undefined
+                                        }}
+                                      >
+                                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                                        <span>{meta.label}</span>
+                                        <span className="text-[9px] opacity-70 font-mono">({s.pendingCount})</span>
+                                      </button>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* 1. WEEKLY BREAKDOWN VIEW (EXACT MATCH TO CARD 1) */}
+                          {backorderView === 'weekly' && (
+                            <div className="p-5">
+                              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {/* Left Chart (5 cols) */}
+                                <div className="lg:col-span-5 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-slate-800 pb-5 lg:pb-0 lg:pr-5">
+                                  <div>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        {backorderSizeFilter === 'all'
+                                          ? backorderChartMode === 'stacked'
+                                            ? 'Weekly Backorders by Cylinder Size'
+                                            : backorderChartMode === 'grouped'
+                                            ? 'Weekly Comparison by Size'
+                                            : 'Weekly Overall Pending'
+                                          : `Weekly Pending: ${getCylinderMeta(backorderSizeFilter).label}`}
+                                      </span>
+                                      <span className="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full font-mono border border-amber-200/50">
+                                        {backorderWeeklyAvg} / wk
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mb-2">
+                                      {backorderSizeFilter === 'all'
+                                        ? 'Tanks awaiting return receipt each week, broken down by individual cylinder size (D, E, F, N, HS)'
+                                        : `Displaying outstanding backorders for ${getCylinderMeta(backorderSizeFilter).full}`}
+                                    </p>
+                                  </div>
+
+                                  <div className="h-[240px] w-full mt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                      <BarChart data={backorderWeeklyChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                                        <XAxis dataKey="name" stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} />
+                                        <YAxis stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} />
+                                        <Tooltip content={<BackorderWeeklyPerformanceTooltip />} />
+
+                                        {backorderSizeFilter !== 'all' ? (
+                                          <Bar
+                                            dataKey={backorderSizeFilter}
+                                            name={getCylinderMeta(backorderSizeFilter).label}
+                                            fill={getCylinderColor(backorderSizeFilter, 0)}
+                                            radius={[4, 4, 0, 0]}
+                                            barSize={20}
+                                          />
+                                        ) : backorderChartMode === 'total' ? (
+                                          <Bar
+                                            dataKey="total"
+                                            name="Total Outstanding"
+                                            fill="#f59e0b"
+                                            radius={[4, 4, 0, 0]}
+                                            barSize={22}
+                                          />
+                                        ) : backorderChartMode === 'grouped' ? (
+                                          (reportData?.backorders?.bySize || []).map((s, idx) => (
+                                            <Bar
+                                              key={s.sizeCode}
+                                              dataKey={s.sizeCode}
+                                              name={getCylinderMeta(s.sizeCode).label}
+                                              fill={getCylinderColor(s.sizeCode, idx)}
+                                              radius={[3, 3, 0, 0]}
+                                              barSize={8}
+                                            />
+                                          ))
+                                        ) : (
+                                          (reportData?.backorders?.bySize || []).map((s, idx) => (
+                                            <Bar
+                                              key={s.sizeCode}
+                                              dataKey={s.sizeCode}
+                                              name={getCylinderMeta(s.sizeCode).label}
+                                              stackId="boWeeklyStack"
+                                              fill={getCylinderColor(s.sizeCode, idx)}
+                                              barSize={20}
+                                              radius={idx === (reportData?.backorders?.bySize?.length || 1) - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                                            />
+                                          ))
+                                        )}
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  {/* Interactive Size Legend Below Chart */}
+                                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-center gap-2">
+                                    {(reportData?.backorders?.bySize || []).map((s, idx) => {
+                                      const meta = getCylinderMeta(s.sizeCode)
+                                      const color = getCylinderColor(s.sizeCode, idx)
+                                      const isDimmed = backorderSizeFilter !== 'all' && backorderSizeFilter !== s.sizeCode
+                                      return (
+                                        <button
+                                          key={s.sizeCode}
+                                          onClick={() => setBackorderSizeFilter(backorderSizeFilter === s.sizeCode ? 'all' : s.sizeCode)}
+                                          className={cn(
+                                            "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold transition-all border",
+                                            isDimmed
+                                              ? "opacity-35 border-transparent"
+                                              : "opacity-100 border-slate-200/60 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 hover:bg-slate-100"
+                                          )}
+                                        >
+                                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                                          <span className="text-slate-700 dark:text-slate-300">{meta.label}</span>
+                                          <span className="text-[9px] text-slate-400 font-mono">({s.pendingCount})</span>
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+
+                                {/* Right Table (7 cols) - EXACT SAME STRUCTURE AS CARD 1 */}
+                                <div className="lg:col-span-7">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                      Weekly Backorder Matrix (All Cylinder Sizes)
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-slate-400">
+                                      {backorderWeeklyStats.rows.length} Sizes • Last {backorderWeeklyStats.weekKeys.length} Weeks
+                                    </span>
+                                  </div>
+                                  <div className="overflow-x-auto border border-slate-200/70 dark:border-slate-800 rounded-xl shadow-2xs">
+                                    <table className="w-full text-[11px] text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200/70 dark:border-slate-700 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                                          <th className="px-3 py-2.5 font-bold text-slate-700 dark:text-slate-300">Cylinder Size / Type</th>
+                                          {backorderWeeklyStats.weekKeys.map(wk => (
+                                            <th key={wk} className="px-2 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">{wk}</th>
+                                          ))}
+                                          <th className="px-2.5 py-2.5 text-center font-bold text-amber-600 bg-amber-50/40 dark:bg-amber-950/20">Wk Avg</th>
+                                          <th className="px-3 py-2.5 text-right font-bold text-slate-900 dark:text-white">Total Pending</th>
                                         </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+                                        {backorderWeeklyStats.rows.map((row: any, rIdx: number) => {
+                                          const meta = getCylinderMeta(row.sizeCode)
+                                          const color = getCylinderColor(row.sizeCode, rIdx)
+                                          const isSelected = backorderSizeFilter === row.sizeCode
+                                          const isDimmed = backorderSizeFilter !== 'all' && !isSelected
+                                          const grandTotal = backorderWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.total, 0) || 1
+                                          const pct = ((row.total / grandTotal) * 100).toFixed(1)
+
+                                          return (
+                                            <tr
+                                              key={row.sizeCode}
+                                              onClick={() => setBackorderSizeFilter(isSelected ? 'all' : row.sizeCode)}
+                                              onMouseEnter={() => setHoveredBackorderType(row.sizeCode)}
+                                              onMouseLeave={() => setHoveredBackorderType(null)}
+                                              className={cn(
+                                                "cursor-pointer transition-colors duration-150",
+                                                isSelected
+                                                  ? "bg-amber-50/50 dark:bg-amber-950/30 font-medium"
+                                                  : "hover:bg-slate-50/80 dark:hover:bg-slate-800/40",
+                                                isDimmed && "opacity-35"
+                                              )}
+                                            >
+                                              {/* Cylinder Size Badge */}
+                                              <td className="px-3 py-2">
+                                                <div className="flex items-center gap-2">
+                                                  <div
+                                                    className="w-6 h-6 rounded-md flex items-center justify-center font-black text-[10px] text-white shrink-0 shadow-2xs"
+                                                    style={{ backgroundColor: color }}
+                                                  >
+                                                    {meta.code}
+                                                  </div>
+                                                  <div className="flex flex-col min-w-0">
+                                                    <span className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate">
+                                                      {meta.label}
+                                                    </span>
+                                                    <span className="text-[9.5px] text-slate-400 font-mono truncate">
+                                                      {row.capacity || meta.sub}
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                              </td>
+
+                                              {/* Weekly Counts */}
+                                              {backorderWeeklyStats.weekKeys.map(wk => {
+                                                const count = row.weekCounts[wk] || 0
+                                                return (
+                                                  <td key={wk} className="px-2 py-2 text-center font-mono font-semibold text-slate-800 dark:text-slate-200 tabular-nums">
+                                                    {count > 0 ? (
+                                                      <span className={cn(
+                                                        "px-1.5 py-0.5 rounded text-[11px]",
+                                                        count >= 20 ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold" : "text-amber-700 dark:text-amber-400 font-semibold"
+                                                      )}>
+                                                        {count}
+                                                      </span>
+                                                    ) : (
+                                                      <span className="text-slate-300 dark:text-slate-600">-</span>
+                                                    )}
+                                                  </td>
+                                                );
+                                              })}
+
+                                              {/* Wk Avg */}
+                                              <td className="px-2.5 py-2 text-center font-mono font-bold text-amber-700 dark:text-amber-300 tabular-nums bg-amber-50/30 dark:bg-amber-950/10">
+                                                {row.avgWeekly}
+                                              </td>
+
+                                              {/* Total Pending with mini bar */}
+                                              <td className="px-3 py-2 text-right tabular-nums">
+                                                <div className="flex flex-col items-end">
+                                                  <span className="font-black font-mono text-slate-900 dark:text-white text-xs">
+                                                    {row.total}
+                                                  </span>
+                                                  <div className="flex items-center gap-1 mt-0.5">
+                                                    <div className="w-12 h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                      <div
+                                                        className="h-full rounded-full"
+                                                        style={{ width: `${pct}%`, backgroundColor: color }}
+                                                      />
+                                                    </div>
+                                                    <span className="text-[8.5px] font-mono text-slate-400">{pct}%</span>
+                                                  </div>
+                                                </div>
+                                              </td>
+                                            </tr>
+                                          );
+                                        })}
+                                      </tbody>
+                                      <tfoot>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/90 border-t-2 border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white text-[11px]">
+                                          <td className="px-3 py-2.5 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-bold">
+                                            Total Outstanding
+                                          </td>
+                                          {backorderWeeklyStats.weekKeys.map(wk => {
+                                            const totalForWk = backorderWeeklyStats.rows.reduce((sum: number, r: any) => sum + (r.weekCounts[wk] || 0), 0)
+                                            return (
+                                              <td key={wk} className="px-2 py-2.5 text-center font-mono font-black text-amber-700 dark:text-amber-300 tabular-nums">
+                                                {totalForWk}
+                                              </td>
+                                            );
+                                          })}
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-amber-700 dark:text-amber-300 tabular-nums bg-amber-50/50 dark:bg-amber-950/30">
+                                            {backorderWeeklyAvg}
+                                          </td>
+                                          <td className="px-3 py-2.5 text-right font-black font-mono text-amber-700 dark:text-amber-300 tabular-nums text-xs">
+                                            {backorderWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.total, 0)}
+                                          </td>
+                                        </tr>
+                                      </tfoot>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 2. TOTAL (OPERATIONAL SLA AGING & RECONCILIATION) VIEW */}
+                          {backorderView === 'total' && (
+                            <div className="p-5">
+                              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {/* Left Chart (5 cols) */}
+                                <div className="lg:col-span-5 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-slate-800 pb-5 lg:pb-0 lg:pr-5">
+                                  <div>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        {backorderSizeFilter === 'all'
+                                          ? 'Outstanding Backorders by Cylinder Size'
+                                          : `Outstanding: ${getCylinderMeta(backorderSizeFilter).label}`}
+                                      </span>
+                                      <span className="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full font-mono border border-amber-200/50">
+                                        {reportData?.backorders?.summary?.totalPending || 0} total
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mb-2">
+                                      {backorderSizeFilter === 'all'
+                                        ? 'Unreceived cylinders currently with supplier for refilling'
+                                        : `Displaying pending reconciliation metrics for ${getCylinderMeta(backorderSizeFilter).full}`}
+                                    </p>
+                                  </div>
+
+                                  <div className="h-[240px] w-full mt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                      <BarChart data={backorderChartDataFiltered} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                                        <XAxis dataKey="name" stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} />
+                                        <YAxis stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} />
+                                        <Tooltip content={<BackorderMatrixTooltip />} />
+                                        <Bar dataKey="pending" name="Outstanding Backorder" radius={[4, 4, 0, 0]} barSize={22}>
+                                          {backorderChartDataFiltered.map((entry, idx) => (
+                                            <Cell key={`cell-${idx}`} fill={entry.color} />
+                                          ))}
+                                        </Bar>
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  {/* Interactive Legend */}
+                                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-center gap-2">
+                                    {(reportData?.backorders?.bySize || []).map((s, idx) => {
+                                      const meta = getCylinderMeta(s.sizeCode)
+                                      const color = getCylinderColor(s.sizeCode, idx)
+                                      const isDimmed = backorderSizeFilter !== 'all' && backorderSizeFilter !== s.sizeCode
+                                      return (
+                                        <button
+                                          key={s.sizeCode}
+                                          onClick={() => setBackorderSizeFilter(backorderSizeFilter === s.sizeCode ? 'all' : s.sizeCode)}
+                                          className={cn(
+                                            "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold transition-all border",
+                                            isDimmed
+                                              ? "opacity-35 border-transparent"
+                                              : "opacity-100 border-slate-200/60 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 hover:bg-slate-100"
+                                          )}
+                                        >
+                                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                                          <span className="text-slate-700 dark:text-slate-300">{meta.label}</span>
+                                          <span className="text-[9px] text-slate-400 font-mono">({s.pendingCount})</span>
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+
+                                {/* Right Table (7 cols) */}
+                                <div className="lg:col-span-7">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                      Cumulative Reconciliation &amp; SLA Aging
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-slate-400">
+                                      {(reportData?.backorders?.bySize || []).length} Sizes • BORNEO INDAH SDN BHD
+                                    </span>
+                                  </div>
+                                  <div className="overflow-x-auto border border-slate-200/70 dark:border-slate-800 rounded-xl shadow-2xs">
+                                    <table className="w-full text-[11px] text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200/70 dark:border-slate-700 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                                          <th className="px-3 py-2.5 font-bold text-slate-700 dark:text-slate-300">Cylinder Size / Type</th>
+                                          <th className="px-2 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">Sent</th>
+                                          <th className="px-2 py-2.5 text-center font-semibold text-emerald-600 dark:text-emerald-400">Rcvd</th>
+                                          <th className="px-2 py-2.5 text-center font-semibold text-slate-600 dark:text-slate-400">&lt; 7d</th>
+                                          <th className="px-2 py-2.5 text-center font-semibold text-amber-600 dark:text-amber-400">7–14d</th>
+                                          <th className="px-2 py-2.5 text-center font-semibold text-rose-600 dark:text-rose-400">&gt; 14d</th>
+                                          <th className="px-2.5 py-2.5 text-center font-bold text-[#00a68a] bg-teal-50/40 dark:bg-teal-950/20">SLA %</th>
+                                          <th className="px-3 py-2.5 text-right font-bold text-slate-900 dark:text-white">Outstanding</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+                                        {(reportData?.backorders?.bySize || []).map((s, sIdx) => {
+                                          const meta = getCylinderMeta(s.sizeCode)
+                                          const color = getCylinderColor(s.sizeCode, sIdx)
+                                          const isSelected = backorderSizeFilter === s.sizeCode
+                                          const isDimmed = backorderSizeFilter !== 'all' && !isSelected
+                                          const grandPending = reportData?.backorders?.summary?.totalPending || 1
+                                          const pct = ((s.pendingCount / grandPending) * 100).toFixed(1)
+
+                                          return (
+                                            <tr
+                                              key={s.sizeCode}
+                                              onClick={() => setBackorderSizeFilter(isSelected ? 'all' : s.sizeCode)}
+                                              onMouseEnter={() => setHoveredBackorderType(s.sizeCode)}
+                                              onMouseLeave={() => setHoveredBackorderType(null)}
+                                              className={cn(
+                                                "cursor-pointer transition-colors duration-150",
+                                                isSelected
+                                                  ? "bg-amber-50/50 dark:bg-amber-950/30 font-medium"
+                                                  : "hover:bg-slate-50/80 dark:hover:bg-slate-800/40",
+                                                isDimmed && "opacity-35"
+                                              )}
+                                            >
+                                              <td className="px-3 py-2">
+                                                <div className="flex items-center gap-2">
+                                                  <div
+                                                    className="w-6 h-6 rounded-md flex items-center justify-center font-black text-[10px] text-white shrink-0 shadow-2xs"
+                                                    style={{ backgroundColor: color }}
+                                                  >
+                                                    {meta.code}
+                                                  </div>
+                                                  <div className="flex flex-col min-w-0">
+                                                    <span className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate">
+                                                      {meta.label}
+                                                    </span>
+                                                    <span className="text-[9.5px] text-slate-400 font-mono truncate">
+                                                      {s.capacity || meta.sub}
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                              </td>
+                                              <td className="px-2 py-2 text-center font-mono text-slate-800 dark:text-slate-200 tabular-nums">
+                                                {s.returnedCount}
+                                              </td>
+                                              <td className="px-2 py-2 text-center font-mono text-emerald-600 dark:text-emerald-400 font-semibold tabular-nums">
+                                                {s.receivedCount}
+                                              </td>
+                                              <td className="px-2 py-2 text-center font-mono text-slate-700 dark:text-slate-300 tabular-nums">
+                                                {s.under7}
+                                              </td>
+                                              <td className="px-2 py-2 text-center font-mono text-amber-600 dark:text-amber-400 font-semibold tabular-nums">
+                                                {s.between7And14}
+                                              </td>
+                                              <td className="px-2 py-2 text-center font-mono tabular-nums">
+                                                {s.overdueCount > 0 ? (
+                                                  <span className="px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold">
+                                                    {s.overdueCount}
+                                                  </span>
+                                                ) : (
+                                                  <span className="text-slate-300 dark:text-slate-600">-</span>
+                                                )}
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-mono font-bold tabular-nums bg-teal-50/20 dark:bg-teal-950/10">
+                                                <span className={cn(
+                                                  s.fulfillmentRate >= 80 ? "text-emerald-600" : s.fulfillmentRate >= 50 ? "text-amber-600" : "text-slate-500"
+                                                )}>
+                                                  {s.fulfillmentRate.toFixed(1)}%
+                                                </span>
+                                              </td>
+                                              <td className="px-3 py-2 text-right tabular-nums">
+                                                <div className="flex flex-col items-end">
+                                                  <span className="font-black font-mono text-amber-600 dark:text-amber-400 text-xs">
+                                                    {s.pendingCount}
+                                                  </span>
+                                                  <div className="flex items-center gap-1 mt-0.5">
+                                                    <div className="w-12 h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                      <div
+                                                        className="h-full rounded-full"
+                                                        style={{ width: `${pct}%`, backgroundColor: color }}
+                                                      />
+                                                    </div>
+                                                    <span className="text-[8.5px] font-mono text-slate-400">{pct}%</span>
+                                                  </div>
+                                                </div>
+                                              </td>
+                                            </tr>
+                                          );
+                                        })}
+                                      </tbody>
+                                      <tfoot>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/90 border-t-2 border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white text-[11px]">
+                                          <td className="px-3 py-2.5 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-bold">
+                                            Total Outstanding
+                                          </td>
+                                          <td className="px-2 py-2.5 text-center font-mono font-black text-slate-900 dark:text-white tabular-nums">
+                                            {reportData?.backorders?.summary?.totalReturned || 0}
+                                          </td>
+                                          <td className="px-2 py-2.5 text-center font-mono font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
+                                            {reportData?.backorders?.summary?.totalReceived || 0}
+                                          </td>
+                                          <td className="px-2 py-2.5 text-center font-mono font-bold text-slate-700 dark:text-slate-300 tabular-nums">
+                                            {(reportData?.backorders?.bySize || []).reduce((sum, s) => sum + s.under7, 0)}
+                                          </td>
+                                          <td className="px-2 py-2.5 text-center font-mono font-bold text-amber-600 dark:text-amber-400 tabular-nums">
+                                            {(reportData?.backorders?.bySize || []).reduce((sum, s) => sum + s.between7And14, 0)}
+                                          </td>
+                                          <td className="px-2 py-2.5 text-center font-mono font-black text-rose-600 dark:text-rose-400 tabular-nums">
+                                            {reportData?.backorders?.summary?.totalOverdue || 0}
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-[#00a68a] tabular-nums bg-teal-50/40 dark:bg-teal-950/20">
+                                            {(reportData?.backorders?.summary?.fulfillmentRate || 0).toFixed(1)}%
+                                          </td>
+                                          <td className="px-3 py-2.5 text-right font-black font-mono text-amber-600 dark:text-amber-400 tabular-nums text-xs">
+                                            {reportData?.backorders?.summary?.totalPending || 0}
+                                          </td>
+                                        </tr>
+                                      </tfoot>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 3. BATCH LOG VIEW */}
+                          {backorderView === 'batches' && (
+                            <div className="p-5 space-y-3">
+                              {/* Search and Filters */}
+                              <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50/80 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+                                <div className="relative flex-1 min-w-[200px]">
+                                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                  <input
+                                    type="text"
+                                    placeholder="Cari No. Dokumen atau Pembekal..."
+                                    value={backorderSearchQuery}
+                                    onChange={e => {
+                                      setBackorderSearchQuery(e.target.value)
+                                      setBackorderPage(1)
+                                    }}
+                                    className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                  />
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  {(['all', 'pending', 'overdue', 'fulfilled'] as const).map(st => (
+                                    <button
+                                      key={st}
+                                      onClick={() => {
+                                        setBackorderStatusFilter(st)
+                                        setBackorderPage(1)
+                                      }}
+                                      className={cn(
+                                        "px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all border",
+                                        backorderStatusFilter === st
+                                          ? "bg-amber-500 text-white border-amber-500 shadow-xs"
+                                          : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                                      )}
+                                    >
+                                      {st}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Batches Table */}
+                              <div className="overflow-x-auto border border-slate-200/70 dark:border-slate-800 rounded-xl shadow-2xs">
+                                <table className="w-full text-[11px] text-left border-collapse">
+                                  <thead>
+                                    <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200/70 dark:border-slate-700 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                                      <th className="px-3.5 py-2.5">No. Dokumen Pulang</th>
+                                      <th className="px-3 py-2.5">Tarikh</th>
+                                      <th className="px-3 py-2.5">Pembekal</th>
+                                      <th className="px-3 py-2.5">Saiz Dihantar</th>
+                                      <th className="px-2.5 py-2.5 text-center">Qty Hantar</th>
+                                      <th className="px-2.5 py-2.5 text-center">Diterima</th>
+                                      <th className="px-2.5 py-2.5 text-center text-amber-600">Pending</th>
+                                      <th className="px-2.5 py-2.5 text-center">Penuaan SLA</th>
+                                      <th className="px-3.5 py-2.5 text-right">Status</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+                                    {paginatedBackorderBatches.length > 0 ? (
+                                      paginatedBackorderBatches.map(batch => (
+                                        <tr key={batch.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                                          <td className="px-3.5 py-2 font-mono font-bold text-slate-900 dark:text-white">
+                                            {batch.documentNumber}
+                                          </td>
+                                          <td className="px-3 py-2 text-slate-600 dark:text-slate-400">
+                                            {batch.returnedDate}
+                                          </td>
+                                          <td className="px-3 py-2 font-medium text-slate-800 dark:text-slate-200">
+                                            {batch.supplierName}
+                                          </td>
+                                          <td className="px-3 py-2">
+                                            <div className="flex items-center gap-1 flex-wrap">
+                                              {batch.sizesSummary?.map(s => (
+                                                <span
+                                                  key={s.sizeCode}
+                                                  className="px-1.5 py-0.5 rounded text-[9.5px] font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                                                >
+                                                  {s.sizeCode}: {s.count}
+                                                </span>
+                                              ))}
+                                            </div>
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-mono font-bold text-slate-900 dark:text-white tabular-nums">
+                                            {batch.returnedQty}
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-mono tabular-nums">
+                                            {batch.receivedQty > 0 ? (
+                                              <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-1 py-0.5 rounded">
+                                                {batch.receivedQty}
+                                              </span>
+                                            ) : (
+                                              <span className="text-slate-400">-</span>
+                                            )}
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-mono tabular-nums">
+                                            {batch.pendingQty > 0 ? (
+                                              <span className={cn(
+                                                "px-1.5 py-0.5 rounded font-black",
+                                                batch.isOverdue
+                                                  ? "bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300"
+                                                  : "bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300"
+                                              )}>
+                                                {batch.pendingQty}
+                                              </span>
+                                            ) : (
+                                              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">0</span>
+                                            )}
+                                          </td>
+                                          <td className="px-2.5 py-2 text-center font-mono tabular-nums">
+                                            <span className={cn(
+                                              "px-1.5 py-0.5 rounded text-[10px] font-semibold",
+                                              batch.agingDays <= 7
+                                                ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40"
+                                                : batch.agingDays <= 14
+                                                ? "text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40"
+                                                : "text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/50 font-bold"
+                                            )}>
+                                              {batch.agingDays}d
+                                            </span>
+                                          </td>
+                                          <td className="px-3.5 py-2 text-right whitespace-nowrap">
+                                            {batch.status === 'fulfilled' ? (
+                                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
+                                                <CheckCircle2 className="w-2.5 h-2.5" /> FULFILLED
+                                              </span>
+                                            ) : batch.isOverdue ? (
+                                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300">
+                                                <AlertTriangle className="w-2.5 h-2.5" /> OVERDUE
+                                              </span>
+                                            ) : (
+                                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300">
+                                                <Clock className="w-2.5 h-2.5" /> PENDING
+                                              </span>
+                                            )}
+                                          </td>
+                                        </tr>
+                                      ))
+                                    ) : (
+                                      <tr>
+                                        <td colSpan={9} className="px-4 py-6 text-center text-slate-400">
+                                          Tiada rekod penghantaran balik dijumpai.
+                                        </td>
+                                      </tr>
+                                    )}
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              {/* Pagination Footer */}
+                              <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+                                <span className="text-[11px]">
+                                  Menunjukkan {filteredBackorderBatches.length > 0 ? (backorderPage - 1) * backorderRowsPerPage + 1 : 0} - {Math.min(backorderPage * backorderRowsPerPage, filteredBackorderBatches.length)} daripada {filteredBackorderBatches.length} rekod
+                                </span>
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => setBackorderPage(p => Math.max(1, p - 1))}
+                                    disabled={backorderPage <= 1}
+                                    className="px-2 py-0.5 text-[11px] rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 disabled:opacity-40"
+                                  >
+                                    &larr;
+                                  </button>
+                                  <span className="px-2 text-[11px] font-mono">
+                                    {backorderPage} / {totalBackorderPages}
+                                  </span>
+                                  <button
+                                    onClick={() => setBackorderPage(p => Math.min(totalBackorderPages, p + 1))}
+                                    disabled={backorderPage >= totalBackorderPages}
+                                    className="px-2 py-0.5 text-[11px] rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 disabled:opacity-40"
+                                  >
+                                    &rarr;
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* ─── WEEKLY CYLINDER BALANCE & STOCK ON-HAND MATRIX (CARD 3) ─── */}
+                        <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden transition-all">
+                          {/* Luxury Top Accent Strip */}
+                          <div className="h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-400" />
+
+                          {/* Header Area */}
+                          <div className="p-5 pb-4 border-b border-slate-100 dark:border-slate-800">
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                              <div className="flex items-start sm:items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100/70 dark:from-blue-950/40 dark:to-indigo-950/20 border border-blue-200/50 dark:border-blue-800/30 flex items-center justify-center shrink-0 shadow-xs">
+                                  <Boxes className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
+                                      Weekly Cylinder Balance &amp; Stock On-Hand Matrix
+                                    </h3>
+                                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/50">
+                                      {balanceView === 'weekly' ? 'Weekly Active' : balanceView === 'status' ? 'By Status' : 'By Ward'}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                    {balanceView === 'weekly'
+                                      ? 'Weekly physical on-hand stock balance and inventory stability stratified by cylinder size (D, E, F, N, HS)'
+                                      : balanceView === 'status'
+                                      ? 'Live on-hand hospital inventory stratified across operating statuses (Full, In Use, Empty, Maintenance)'
+                                      : 'Hospital ward, clinic & emergency department cylinder allocation and storage distribution'}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Right Header: Quick stats + Switcher */}
+                              <div className="flex flex-wrap items-center gap-2.5">
+                                <div className="hidden sm:flex items-center gap-2 mr-1">
+                                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-[11px]">
+                                    <span className="text-slate-400 font-medium">Total In Hospital:</span>
+                                    <span className="font-bold text-slate-900 dark:text-white font-mono">
+                                      {reportData?.summary?.totalCylinders || 0}
+                                    </span>
+                                    <span className="text-[10px] text-slate-400">tanks</span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/50 dark:border-emerald-800/50 text-[11px]">
+                                    <span className="text-emerald-600 dark:text-emerald-400 font-medium">Full / Ready:</span>
+                                    <span className="font-bold text-emerald-700 dark:text-emerald-300 font-mono">
+                                      {reportData?.inventory?.byStatus?.find(s => s.status.toLowerCase().includes('full'))?.count ||
+                                       reportData?.inventory?.byType?.reduce((sum, t) => sum + t.full, 0) || 0}
+                                    </span>
+                                    <span className="text-[10px] text-emerald-600/80">tanks</span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/50 dark:border-blue-800/50 text-[11px]">
+                                    <span className="text-blue-600 dark:text-blue-400 font-medium">Weekly Avg:</span>
+                                    <span className="font-bold text-blue-700 dark:text-blue-300 font-mono">
+                                      {balanceWeeklyAvg}
+                                    </span>
+                                    <span className="text-[10px] text-blue-600/80">/wk</span>
+                                  </div>
+                                </div>
+
+                                {/* View Switcher Pills: WEEKLY vs BY STATUS vs BY WARD */}
+                                <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                                  {(['weekly', 'status', 'ward'] as const).map(bView => (
+                                    <button
+                                      key={bView}
+                                      onClick={() => setBalanceView(bView)}
+                                      className={cn(
+                                        "px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-150",
+                                        balanceView === bView
+                                          ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs border border-slate-200/40 dark:border-slate-600 font-extrabold"
+                                          : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
+                                      )}
+                                    >
+                                      {bView === 'weekly' ? 'Weekly' : bView === 'status' ? 'By Status' : 'By Ward'}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Interactive Control & Filter Subbar (Weekly View) */}
+                            {balanceView === 'weekly' && (
+                              <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                {/* Chart Mode Toggle */}
+                                <div className="flex items-center gap-1 bg-slate-100/70 dark:bg-slate-800/80 p-0.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                                  <span className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">View:</span>
+                                  <button
+                                    onClick={() => setBalanceChartMode('stacked')}
+                                    className={cn(
+                                      "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all flex items-center gap-1.5",
+                                      balanceChartMode === 'stacked'
+                                        ? "bg-blue-600 text-white shadow-xs"
+                                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                                    )}
+                                    title="Stacked balance breakdown of each cylinder size (D, E, F, N, HS)"
+                                  >
+                                    <Layers className="w-3 h-3" />
+                                    Stacked Sizes
+                                  </button>
+                                  <button
+                                    onClick={() => setBalanceChartMode('grouped')}
+                                    className={cn(
+                                      "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all flex items-center gap-1.5",
+                                      balanceChartMode === 'grouped'
+                                        ? "bg-blue-600 text-white shadow-xs"
+                                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                                    )}
+                                    title="Side-by-side grouped bars for weekly comparison"
+                                  >
+                                    <BarChart2 className="w-3 h-3" />
+                                    Grouped
+                                  </button>
+                                  <button
+                                    onClick={() => setBalanceChartMode('total')}
+                                    className={cn(
+                                      "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all",
+                                      balanceChartMode === 'total'
+                                        ? "bg-blue-600 text-white shadow-xs"
+                                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                                    )}
+                                    title="Total balance single bar"
+                                  >
+                                    Total Only
+                                  </button>
+                                </div>
+
+                                {/* Quick Filter Pills by Cylinder Size */}
+                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+                                    <Filter className="w-2.5 h-2.5" />
+                                    Filter:
+                                  </span>
+                                  <button
+                                    onClick={() => setBalanceSizeFilter('all')}
+                                    className={cn(
+                                      "px-2.5 py-1 text-[10px] font-bold rounded-md border transition-all shrink-0 uppercase tracking-wider",
+                                      balanceSizeFilter === 'all'
+                                        ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs"
+                                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                                    )}
+                                  >
+                                    All Sizes
+                                  </button>
+                                  {balanceWeeklyStats.rows.map((row: any, idx: number) => {
+                                    const meta = getCylinderMeta(row.type)
+                                    const color = getCylinderColor(row.type, idx)
+                                    const isSelected = balanceSizeFilter === row.type
+                                    return (
+                                      <button
+                                        key={row.type}
+                                        onClick={() => setBalanceSizeFilter(isSelected ? 'all' : row.type)}
+                                        onMouseEnter={() => setHoveredBalanceType(row.type)}
+                                        onMouseLeave={() => setHoveredBalanceType(null)}
+                                        className={cn(
+                                          "px-2.5 py-1 text-[10px] font-bold rounded-md border transition-all shrink-0 flex items-center gap-1.5",
+                                          isSelected
+                                            ? "bg-blue-600 text-white border-blue-600 shadow-xs"
+                                            : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                                        )}
+                                      >
+                                        <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: isSelected ? '#ffffff' : color }} />
+                                        <span>{meta.label}</span>
+                                        <span className="text-[9px] font-mono opacity-70">({meta.code})</span>
+                                      </button>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* 1. WEEKLY BALANCE VIEW (DEFAULT) */}
+                          {balanceView === 'weekly' && (
+                            <div className="p-5">
+                              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {/* Left Chart (5 cols) */}
+                                <div className="lg:col-span-5 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-slate-800 pb-5 lg:pb-0 lg:pr-5">
+                                  <div>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        {balanceSizeFilter === 'all'
+                                          ? balanceChartMode === 'stacked'
+                                            ? 'Weekly Balance by Cylinder Size'
+                                            : balanceChartMode === 'grouped'
+                                            ? 'Weekly Size Comparison'
+                                            : 'Weekly Stock Totals'
+                                          : `Weekly Balance: ${getCylinderMeta(balanceSizeFilter).label}`}
+                                      </span>
+                                      <span className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full font-mono border border-blue-200/50">
+                                        {balanceWeeklyAvg} / wk
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mb-2">
+                                      {balanceSizeFilter === 'all'
+                                        ? 'Physical inventory balance on hand each week stratified across cylinder sizes (D, E, F, N, HS)'
+                                        : `Displaying weekly on-hand stock trend for ${getCylinderMeta(balanceSizeFilter).full}`}
+                                    </p>
+                                  </div>
+
+                                  <div className="h-[240px] w-full mt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                      <BarChart data={balanceWeeklyChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                                        <XAxis dataKey="name" stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} />
+                                        <YAxis stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} />
+                                        <Tooltip content={<BalanceWeeklyPerformanceTooltip />} />
+
+                                        {balanceSizeFilter !== 'all' ? (
+                                          <Bar
+                                            dataKey={balanceSizeFilter}
+                                            name={getCylinderMeta(balanceSizeFilter).label}
+                                            fill={getCylinderColor(balanceSizeFilter, 0)}
+                                            radius={[4, 4, 0, 0]}
+                                            barSize={20}
+                                          />
+                                        ) : balanceChartMode === 'total' ? (
+                                          <Bar
+                                            dataKey="total"
+                                            name="Total On-Hand Balance"
+                                            fill="#2563eb"
+                                            radius={[4, 4, 0, 0]}
+                                            barSize={22}
+                                          />
+                                        ) : balanceChartMode === 'grouped' ? (
+                                          balanceWeeklyStats.rows.map((row: any, idx: number) => (
+                                            <Bar
+                                              key={row.type}
+                                              dataKey={row.type}
+                                              name={getCylinderMeta(row.type).label}
+                                              fill={getCylinderColor(row.type, idx)}
+                                              radius={[3, 3, 0, 0]}
+                                              barSize={8}
+                                            />
+                                          ))
+                                        ) : (
+                                          balanceWeeklyStats.rows.map((row: any, idx: number) => (
+                                            <Bar
+                                              key={row.type}
+                                              dataKey={row.type}
+                                              name={getCylinderMeta(row.type).label}
+                                              stackId="balanceStack"
+                                              fill={getCylinderColor(row.type, idx)}
+                                              barSize={20}
+                                              radius={idx === balanceWeeklyStats.rows.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                                            />
+                                          ))
+                                        )}
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  {/* Interactive Size Legend Below Chart */}
+                                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-center gap-2">
+                                    {balanceWeeklyStats.rows.map((row: any, idx: number) => {
+                                      const meta = getCylinderMeta(row.type)
+                                      const color = getCylinderColor(row.type, idx)
+                                      const isDimmed = balanceSizeFilter !== 'all' && balanceSizeFilter !== row.type
+                                      return (
+                                        <button
+                                          key={row.type}
+                                          onClick={() => setBalanceSizeFilter(balanceSizeFilter === row.type ? 'all' : row.type)}
+                                          className={cn(
+                                            "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold transition-all border",
+                                            isDimmed
+                                              ? "opacity-35 border-transparent"
+                                              : "opacity-100 border-slate-200/60 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 hover:bg-slate-100"
+                                          )}
+                                        >
+                                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                                          <span className="text-slate-700 dark:text-slate-300">{meta.label}</span>
+                                          <span className="text-[9px] text-slate-400 font-mono">({row.currentStock})</span>
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+
+                                {/* Right Table (7 cols) */}
+                                <div className="lg:col-span-7">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                      Weekly Cylinder Balance Matrix (All Cylinder Sizes)
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-slate-400">
+                                      {balanceWeeklyStats.rows.length} Sizes Monitored • Live Stock Balance
+                                    </span>
+                                  </div>
+                                  <div className="overflow-x-auto border border-slate-200/70 dark:border-slate-800 rounded-xl shadow-2xs">
+                                    <table className="w-full text-[11px] text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200/70 dark:border-slate-700 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                                          <th className="px-3 py-2.5">Cylinder Size / Type</th>
+                                          {balanceWeeklyStats.weekKeys.map(wk => (
+                                            <th key={wk} className="px-2 py-2.5 text-center">{wk}</th>
+                                          ))}
+                                          <th className="px-2.5 py-2.5 text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/30">
+                                            Wk Avg
+                                          </th>
+                                          <th className="px-3 py-2.5 text-right">On-Hand Stock</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+                                        {balanceWeeklyStats.rows.map((row: any, rIdx: number) => {
+                                          const meta = getCylinderMeta(row.type)
+                                          const color = getCylinderColor(row.type, rIdx)
+                                          const isSelected = balanceSizeFilter === row.type
+                                          const isDimmed = balanceSizeFilter !== 'all' && !isSelected
+
+                                          return (
+                                            <tr
+                                              key={row.type}
+                                              onClick={() => setBalanceSizeFilter(isSelected ? 'all' : row.type)}
+                                              onMouseEnter={() => setHoveredBalanceType(row.type)}
+                                              onMouseLeave={() => setHoveredBalanceType(null)}
+                                              className={cn(
+                                                "cursor-pointer transition-colors duration-150",
+                                                isSelected
+                                                  ? "bg-blue-50/50 dark:bg-blue-950/30 font-medium"
+                                                  : "hover:bg-slate-50/80 dark:hover:bg-slate-800/40",
+                                                isDimmed && "opacity-35"
+                                              )}
+                                            >
+                                              {/* Cylinder Size Badge */}
+                                              <td className="px-3 py-2">
+                                                <div className="flex items-center gap-2">
+                                                  <div
+                                                    className="w-6 h-6 rounded-md flex items-center justify-center font-black text-[10px] text-white shrink-0 shadow-2xs"
+                                                    style={{ backgroundColor: color }}
+                                                  >
+                                                    {meta.code}
+                                                  </div>
+                                                  <div className="flex flex-col min-w-0">
+                                                    <span className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate">
+                                                      {meta.label}
+                                                    </span>
+                                                    <span className="text-[9.5px] text-slate-400 font-mono truncate">
+                                                      {meta.sub}
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                              </td>
+
+                                              {/* Weekly Balance Counts */}
+                                              {balanceWeeklyStats.weekKeys.map(wk => {
+                                                const count = row.weekCounts[wk] || 0
+                                                return (
+                                                  <td key={wk} className="px-2 py-2 text-center font-mono font-semibold text-slate-800 dark:text-slate-200 tabular-nums">
+                                                    {count > 0 ? (
+                                                      <span className="px-1.5 py-0.5 rounded text-[11px]">
+                                                        {count}
+                                                      </span>
+                                                    ) : (
+                                                      <span className="text-slate-300 dark:text-slate-600">-</span>
+                                                    )}
+                                                  </td>
+                                                )
+                                              })}
+
+                                              {/* Wk Avg */}
+                                              <td className="px-2.5 py-2 text-center tabular-nums bg-blue-50/20 dark:bg-blue-950/10">
+                                                <span className="inline-block px-1.5 py-0.5 rounded-full text-[10.5px] font-bold font-mono text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60">
+                                                  {row.avgWeekly}
+                                                </span>
+                                              </td>
+
+                                              {/* Current On-Hand Stock + Percentage */}
+                                              <td className="px-3 py-2 text-right tabular-nums">
+                                                <div className="flex flex-col items-end">
+                                                  <span className="font-black font-mono text-slate-900 dark:text-white text-xs">
+                                                    {row.currentStock}
+                                                  </span>
+                                                  <div className="flex items-center gap-1 mt-0.5">
+                                                    <div className="w-12 h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                      <div
+                                                        className="h-full rounded-full"
+                                                        style={{ width: `${row.percentage}%`, backgroundColor: color }}
+                                                      />
+                                                    </div>
+                                                    <span className="text-[8.5px] font-mono text-slate-400">{row.percentage}%</span>
+                                                  </div>
+                                                </div>
+                                              </td>
+                                            </tr>
+                                          )
+                                        })}
+                                      </tbody>
+                                      {/* Grand Total Footer */}
+                                      <tfoot>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/90 border-t-2 border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white text-[11px]">
+                                          <td className="px-3 py-2.5 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-bold">
+                                            Total Hospital Balance
+                                          </td>
+                                          {balanceWeeklyStats.weekKeys.map(wk => {
+                                            const colTotal = balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + (r.weekCounts[wk] || 0), 0)
+                                            return (
+                                              <td key={wk} className="px-2 py-2.5 text-center font-mono font-black text-slate-900 dark:text-white tabular-nums">
+                                                {colTotal}
+                                              </td>
+                                            )
+                                          })}
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-blue-600 dark:text-blue-400 tabular-nums bg-blue-50/40 dark:bg-blue-950/20">
+                                            {balanceWeeklyAvg}
+                                          </td>
+                                          <td className="px-3 py-2.5 text-right font-black font-mono text-slate-900 dark:text-white tabular-nums">
+                                            {reportData?.summary?.totalCylinders || balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.currentStock, 0)}
+                                          </td>
+                                        </tr>
+                                      </tfoot>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 2. BY STATUS BREAKDOWN VIEW */}
+                          {balanceView === 'status' && (
+                            <div className="p-5">
+                              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {/* Left Status Distribution Chart (5 cols) */}
+                                <div className="lg:col-span-5 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-slate-800 pb-5 lg:pb-0 lg:pr-5">
+                                  <div>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        Hospital Inventory by Readiness Status
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mb-2">
+                                      Stock allocation categorized into ready full tanks, active ward cylinders, empties awaiting pickup, and workshop maintenance
+                                    </p>
+                                  </div>
+
+                                  <div className="h-[240px] w-full mt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                      <BarChart data={reportData?.inventory?.byStatus || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                                        <XAxis dataKey="status" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
+                                        <YAxis stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
+                                        <Tooltip content={<CustomTooltip />} />
+                                        <Bar dataKey="count" name="Cylinders" radius={[4, 4, 0, 0]} barSize={28}>
+                                          {(reportData?.inventory?.byStatus || []).map((entry, idx) => (
+                                            <Cell key={`status-cell-${idx}`} fill={entry.color || getStatusColor(entry.status)} />
+                                          ))}
+                                        </Bar>
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-center gap-2">
+                                    {(reportData?.inventory?.byStatus || []).map((st) => (
+                                      <div
+                                        key={st.status}
+                                        className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border border-slate-200/60 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60"
+                                      >
+                                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: st.color }} />
+                                        <span className="text-slate-700 dark:text-slate-300">{st.status}</span>
+                                        <span className="text-[9px] text-slate-400 font-mono">({st.count})</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Right Status Matrix Table (7 cols) */}
+                                <div className="lg:col-span-7">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                      Cylinder Status Matrix by Size
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-slate-400">
+                                      {balanceWeeklyStats.rows.length} Sizes Reconciled
+                                    </span>
+                                  </div>
+                                  <div className="overflow-x-auto border border-slate-200/70 dark:border-slate-800 rounded-xl shadow-2xs">
+                                    <table className="w-full text-[11px] text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200/70 dark:border-slate-700 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                                          <th className="px-3 py-2.5">Cylinder Size</th>
+                                          <th className="px-2.5 py-2.5 text-center text-emerald-600 dark:text-emerald-400">Full / Ready</th>
+                                          <th className="px-2.5 py-2.5 text-center text-teal-600 dark:text-teal-400">In Use (Wards)</th>
+                                          <th className="px-2.5 py-2.5 text-center text-amber-600 dark:text-amber-400">Empty</th>
+                                          <th className="px-2.5 py-2.5 text-center text-rose-600 dark:text-rose-400">Maintenance</th>
+                                          <th className="px-3 py-2.5 text-right">Total On-Hand</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+                                        {balanceWeeklyStats.rows.map((row: any, rIdx: number) => {
+                                          const meta = getCylinderMeta(row.type)
+                                          const color = getCylinderColor(row.type, rIdx)
+                                          return (
+                                            <tr key={row.type} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                                              <td className="px-3 py-2">
+                                                <div className="flex items-center gap-2">
+                                                  <div
+                                                    className="w-5 h-5 rounded flex items-center justify-center font-black text-[9px] text-white shrink-0"
+                                                    style={{ backgroundColor: color }}
+                                                  >
+                                                    {meta.code}
+                                                  </div>
+                                                  <span className="font-bold text-slate-800 dark:text-slate-200 text-xs">
+                                                    {meta.label}
+                                                  </span>
+                                                </div>
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-mono font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
+                                                {row.full}
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-mono font-semibold text-teal-600 dark:text-teal-400 tabular-nums">
+                                                {row.inUse}
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-mono font-semibold text-amber-600 dark:text-amber-400 tabular-nums">
+                                                {row.empty}
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-mono font-semibold text-rose-600 dark:text-rose-400 tabular-nums">
+                                                {row.maintenance}
+                                              </td>
+                                              <td className="px-3 py-2 text-right font-black font-mono text-slate-900 dark:text-white tabular-nums">
+                                                {row.currentStock}
+                                              </td>
+                                            </tr>
+                                          )
+                                        })}
+                                      </tbody>
+                                      <tfoot>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/90 border-t-2 border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white text-[11px]">
+                                          <td className="px-3 py-2.5 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-bold">
+                                            Hospital Total
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
+                                            {balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.full, 0)}
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-teal-600 dark:text-teal-400 tabular-nums">
+                                            {balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.inUse, 0)}
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-amber-600 dark:text-amber-400 tabular-nums">
+                                            {balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.empty, 0)}
+                                          </td>
+                                          <td className="px-2.5 py-2.5 text-center font-mono font-black text-rose-600 dark:text-rose-400 tabular-nums">
+                                            {balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.maintenance, 0)}
+                                          </td>
+                                          <td className="px-3 py-2.5 text-right font-black font-mono text-slate-900 dark:text-white tabular-nums">
+                                            {reportData?.summary?.totalCylinders || balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.currentStock, 0)}
+                                          </td>
+                                        </tr>
+                                      </tfoot>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 3. BY WARD BREAKDOWN VIEW */}
+                          {balanceView === 'ward' && (
+                            <div className="p-5">
+                              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {/* Left Department Bar Chart (5 cols) */}
+                                <div className="lg:col-span-5 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-slate-800 pb-5 lg:pb-0 lg:pr-5">
+                                  <div>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        Top Ward / Department Holdings
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mb-2">
+                                      Hospital clinical units and emergency areas holding highest cylinder inventories
+                                    </p>
+                                  </div>
+
+                                  <div className="h-[240px] w-full mt-2">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                      <BarChart
+                                        data={(reportData?.inventory?.departmentDistribution || []).slice(0, 6)}
+                                        margin={{ top: 10, right: 10, left: -20, bottom: 25 }}
+                                      >
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                                        <XAxis dataKey="department" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} interval={0} angle={-20} textAnchor="end" />
+                                        <YAxis stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
+                                        <Tooltip content={<CustomTooltip />} />
+                                        <Bar dataKey="count" name="Allocated Cylinders" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={20} />
+                                      </BarChart>
+                                    </ResponsiveContainer>
+                                  </div>
+
+                                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 text-center">
+                                    Central storage depot holds remaining reserve buffer cylinders
+                                  </div>
+                                </div>
+
+                                {/* Right Ward Table (7 cols) */}
+                                <div className="lg:col-span-7">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                      Department Allocation Register
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-slate-400">
+                                      {(reportData?.inventory?.departmentDistribution || []).length} Active Locations
+                                    </span>
+                                  </div>
+                                  <div className="overflow-x-auto border border-slate-200/70 dark:border-slate-800 rounded-xl shadow-2xs">
+                                    <table className="w-full text-[11px] text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200/70 dark:border-slate-700 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                                          <th className="px-3.5 py-2.5">Ward / Department</th>
+                                          <th className="px-2.5 py-2.5 text-center">Allocated Stock</th>
+                                          <th className="px-3.5 py-2.5 text-right">Share of Hospital Total</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+                                        {(reportData?.inventory?.departmentDistribution || []).map((dept, idx) => {
+                                          const totalCyl = reportData?.summary?.totalCylinders || 1
+                                          const share = ((dept.count / totalCyl) * 100).toFixed(1)
+                                          return (
+                                            <tr key={idx} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                                              <td className="px-3.5 py-2 font-medium text-slate-900 dark:text-white">
+                                                {dept.department}
+                                              </td>
+                                              <td className="px-2.5 py-2 text-center font-mono font-bold text-blue-600 dark:text-blue-400 tabular-nums">
+                                                {dept.count}
+                                              </td>
+                                              <td className="px-3.5 py-2 text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                  <div className="w-20 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                    <div
+                                                      className="h-full rounded-full bg-blue-600"
+                                                      style={{ width: `${share}%` }}
+                                                    />
+                                                  </div>
+                                                  <span className="font-mono font-bold text-slate-700 dark:text-slate-300 tabular-nums">
+                                                    {share}%
+                                                  </span>
+                                                </div>
+                                              </td>
+                                            </tr>
+                                          )
+                                        })}
+                                      </tbody>
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
                             </div>

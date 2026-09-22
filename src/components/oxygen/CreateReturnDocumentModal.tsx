@@ -22,6 +22,7 @@ interface CreateReturnDocumentModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  onOpenScanner?: () => void;
   sessionScannedCylinders: OxygenCylinderWithRelations[];
   setSessionScannedCylinders: React.Dispatch<React.SetStateAction<OxygenCylinderWithRelations[]>>;
 }
@@ -31,6 +32,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
   isOpen,
   onClose,
   onSuccess,
+  onOpenScanner,
   sessionScannedCylinders,
   setSessionScannedCylinders,
 }) => {
@@ -44,10 +46,6 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
   const [selectedCylinders, setSelectedCylinders] = useState<string[]>([]);
   const [expandedTypes, setExpandedTypes] = useState<{ [key: string]: boolean }>({});
   
-  // Manual Loan quantities state
-  const [manualLoans, setManualLoans] = useState<{ sizeCode: string; qty: number }[]>([]);
-  const [manualSizeSelect, setManualSizeSelect] = useState('101-F (1.4m3)');
-  const [manualQtyInput, setManualQtyInput] = useState<number>(1);
   const [supplierCylinders, setSupplierCylinders] = useState<OxygenCylinderWithRelations[]>([]);
   const [supplierSizeFilter, setSupplierSizeFilter] = useState<'all' | '101-N' | '101-F'>('all');
   const [supplierSearchTerm, setSupplierSearchTerm] = useState('');
@@ -65,7 +63,45 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
   const [currentPage, setCurrentPage] = useState(1);
   const [innerSearchTerm, setInnerSearchTerm] = useState('');
   const [selectedSizeFilter, setSelectedSizeFilter] = useState('');
+  const [scanFeedback, setScanFeedback] = useState<{ type: 'success' | 'info' | 'error'; text: string } | null>(null);
   const pageSize = 8;
+
+  const handleScanInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const code = innerSearchTerm.trim().toUpperCase();
+      if (!code) return;
+
+      const found = emptyCylinders.find(c => {
+        const sn = (c.serial_number || '').toUpperCase();
+        const qr = (c.qr_code || '').toUpperCase();
+        return sn === code || qr === code;
+      });
+
+      if (found) {
+        if (!scannedCylinders.some(c => c.id === found.id)) {
+          setScannedCylinders(prev => [...prev, found]);
+          setScanFeedback({
+            type: 'success',
+            text: `✓ Silinder ${found.serial_number || found.qr_code} berjaya dipilih.`
+          });
+        } else {
+          setScanFeedback({
+            type: 'info',
+            text: `Silinder ${found.serial_number || found.qr_code} sudah berada dalam senarai pilihan.`
+          });
+        }
+        setInnerSearchTerm('');
+        setTimeout(() => setScanFeedback(null), 3000);
+      } else {
+        setScanFeedback({
+          type: 'error',
+          text: `Silinder "${code}" tidak dijumpai dalam inventori kosong sedia ada.`
+        });
+        setTimeout(() => setScanFeedback(null), 4000);
+      }
+    }
+  };
 
   useEffect(() => {
     setCurrentPage(1);
@@ -74,8 +110,6 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
   useEffect(() => {
     setSelectedSizeFilter('');
   }, [cylinderTab]);
-
-  const loanSizes = ['101-F (1.4m3)', '101-N (8.0m3)'];
 
   // Load suppliers and empty cylinders
   useEffect(() => {
@@ -98,7 +132,6 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
   const loadData = async () => {
     setIsLoading(true);
     setError(null);
-    setManualLoans([]);
     setSupplierSearchTerm('');
     setStep('scan');
     setScannedCylinders(sessionScannedCylinders);
@@ -128,23 +161,10 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
         setSelectedSupplier(filteredSuppliers[0].id);
       }
 
-      // 2. Fetch empty cylinders in store (status='issued')
+      // 2. Fetch empty cylinders in store
       const res = await getEmptyCylindersInStore(hospitalId);
       if (res.error) throw new Error(res.error);
-      const filtered = (res.data || []).filter((c: any) => {
-        if (c.supplier_tagged) return true;
-        const serial = (c.serial_number || '').toUpperCase();
-        const typeName = (c.type_info?.type_name || '').toLowerCase();
-        const isLoan = c.is_loan || 
-                       typeName.includes('loan') || 
-                       serial.startsWith('101-N') || 
-                       serial.startsWith('101-F') ||
-                       serial.startsWith('101N') ||
-                       serial.startsWith('101F') ||
-                       serial.startsWith('LOAN');
-        return !isLoan;
-      });
-      setEmptyCylinders(filtered);
+      setEmptyCylinders(res.data || []);
       
       // Reset selections
       setSelectedCylinders([]);
@@ -160,11 +180,14 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
           type_info:pharmacy_oxygen_cylinder_types(*)
         `)
         .eq('hospital_id', hospitalId)
+        .neq('status', 'deactivated')
+        .eq('is_active', true)
         .or('supplier_tagged.eq.true,serial_number.ilike.%saboxy%,qr_code.ilike.%saboxy%')
         .order('serial_number', { ascending: true });
 
       if (!supCylsErr && Array.isArray(supCyls)) {
         const saboxyOnly = supCyls.filter((c: any) => {
+          if (c?.status === 'deactivated' || c?.is_active === false) return false;
           const serial = String(c?.serial_number || '').toLowerCase();
           const qr = String(c?.qr_code || '').toLowerCase();
           return c?.supplier_tagged === true || serial.includes('saboxy') || qr.includes('saboxy');
@@ -187,9 +210,9 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
   const availableSizes = Array.from(new Set(
     emptyCylinders
       .filter(c => {
+        if (c.status === 'deactivated' || c.is_active === false) return false;
         const isLoan = !c.supplier_tagged && (c.is_loan || c.type_info?.type_name?.toLowerCase().includes('loan'));
-        const isScanned = sessionScannedCylinders.some(sc => sc.id === c.id);
-        return (cylinderTab === 'loan' ? isLoan : !isLoan) && isScanned;
+        return (cylinderTab === 'loan' ? isLoan : !isLoan);
       })
       .map(c => c.type_info?.type_name)
       .filter(Boolean)
@@ -197,14 +220,11 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
 
   // Filter empty cylinders by active tab, search query, and size filter
   const filteredCylinders = emptyCylinders.filter(c => {
+    if (c.status === 'deactivated' || c.is_active === false) return false;
     const isLoan = !c.supplier_tagged && (c.is_loan || c.type_info?.type_name?.toLowerCase().includes('loan'));
     const matchesTab = cylinderTab === 'loan' ? isLoan : !isLoan;
     
     if (!matchesTab) return false;
-
-    // Only show cylinders that have been scanned/selected empty in this session
-    const isScanned = sessionScannedCylinders.some(sc => sc.id === c.id);
-    if (!isScanned) return false;
     
     if (selectedSizeFilter && c.type_info?.type_name !== selectedSizeFilter) {
       return false;
@@ -274,41 +294,14 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
     }
   };
 
-  // Add Manual Quantity (Strictly Loan Cylinders)
-  const handleAddManualLoan = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (manualQtyInput <= 0) return;
-
-    const existing = manualLoans.find(item => item.sizeCode === manualSizeSelect);
-    if (existing) {
-      setManualLoans(manualLoans.map(item => 
-        item.sizeCode === manualSizeSelect ? { ...item, qty: item.qty + manualQtyInput } : item
-      ));
-    } else {
-      setManualLoans([...manualLoans, { sizeCode: manualSizeSelect, qty: manualQtyInput }]);
-    }
-    setManualQtyInput(1);
-  };
-
-  const handleRemoveManualLoan = (sizeCode: string) => {
-    setManualLoans(manualLoans.filter(item => item.sizeCode !== sizeCode));
-  };
-
-  const handleKeyDownManualQty = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleAddManualLoan(e);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedSupplier) {
       setError('Please select a supplier.');
       return;
     }
-    if (scannedCylinders.length === 0 && manualLoans.length === 0) {
-      setError('Please scan at least one empty cylinder or add manual loan quantities.');
+    if (scannedCylinders.length === 0) {
+      setError('Please scan or select at least one empty cylinder.');
       return;
     }
 
@@ -316,18 +309,6 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
     setError(null);
     try {
       const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
-      
-      // Auto-generate placeholder cylinders for manual quantities
-      const payloadManualLoans: { serial_number: string; qr_code?: string }[] = [];
-      manualLoans.forEach(loan => {
-        for (let i = 0; i < loan.qty; i++) {
-          const rand = Math.floor(10000 + Math.random() * 90000);
-          payloadManualLoans.push({
-            serial_number: `LOAN-${loan.sizeCode.replace(/\s+/g, '')}-${rand}`,
-            qr_code: `qr-loan-${loan.sizeCode.toLowerCase().replace(/\s+/g, '')}-${rand}`
-          });
-        }
-      });
 
       const res = await createReturnDocument(
         hospitalId,
@@ -335,8 +316,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
         returnDate,
         scannedCylinders.map(c => c.id),
         remarks,
-        creatorId,
-        payloadManualLoans
+        creatorId
       );
 
       if (res.error) throw new Error(res.error);
@@ -359,13 +339,13 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
       {/* Backdrop overlay */}
       <div 
         onClick={handleClose}
-        className={`fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       />
 
       <div 
-        className={`fixed inset-y-0 right-0 z-50 w-full max-w-5xl bg-white shadow-2xl flex flex-col transform transition-transform duration-300 ease-out ${
+        className={`fixed inset-y-0 right-0 z-[100] w-full max-w-5xl bg-white shadow-2xl flex flex-col transform transition-transform duration-300 ease-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -436,16 +416,45 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                       </div>
                     </div>
 
-                    {/* Search filter input */}
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input
-                        type="text"
-                        value={innerSearchTerm}
-                        onChange={(e) => setInnerSearchTerm(e.target.value)}
-                        placeholder="Search by Serial, QR Code, Type or Location..."
-                        className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/30"
-                      />
+                    {/* Search & Direct Scan input with Quick Camera Trigger */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="relative flex-1">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="text"
+                            value={innerSearchTerm}
+                            onChange={(e) => setInnerSearchTerm(e.target.value)}
+                            onKeyDown={handleScanInputKeyDown}
+                            placeholder="Cari atau imbas kod bar / no. siri & tekan Enter..."
+                            className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/30"
+                          />
+                        </div>
+
+                        {onOpenScanner && (
+                          <button
+                            type="button"
+                            onClick={onOpenScanner}
+                            className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 border border-slate-200 cursor-pointer shadow-2xs hover:shadow-xs active:scale-95"
+                            title="Buka pengimbas kamera langsung"
+                          >
+                            <QrCode className="w-4 h-4 text-rose-600" />
+                            <span className="hidden sm:inline">Pengimbas Kamera</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {scanFeedback && (
+                        <div className={`text-[11px] font-bold px-3 py-1.5 rounded-lg border flex items-center gap-1.5 transition-all ${
+                          scanFeedback.type === 'success'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : scanFeedback.type === 'info'
+                            ? 'bg-blue-50 text-blue-700 border-blue-200'
+                            : 'bg-rose-50 text-rose-700 border-rose-200'
+                        }`}>
+                          <span>{scanFeedback.text}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Ownership tabs removed as loan cylinders are quantity-only/untracked */}
@@ -464,12 +473,11 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                         >
                           All ({emptyCylinders.filter(c => {
                             const isLoan = !c.supplier_tagged && (c.is_loan || c.type_info?.type_name?.toLowerCase().includes('loan'));
-                            const isScanned = sessionScannedCylinders.some(sc => sc.id === c.id);
-                            return (cylinderTab === 'loan' ? isLoan : !isLoan) && isScanned;
+                            return (cylinderTab === 'loan' ? isLoan : !isLoan);
                           }).length})
                         </button>
                         {availableSizes.map((sizeName) => {
-                          const count = emptyCylinders.filter(c => c.type_info?.type_name === sizeName && sessionScannedCylinders.some(sc => sc.id === c.id)).length;
+                          const count = emptyCylinders.filter(c => c.type_info?.type_name === sizeName).length;
                           return (
                             <button
                               key={sizeName}
@@ -654,11 +662,14 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                               const typeName = (c.type_info?.type_name || c.type_info?.name || '').toUpperCase();
                               const serial = (c.serial_number || '').toUpperCase();
                               const is101F = code === '101-F' || typeName.includes('101-F') || serial.includes('101-F') || serial.includes('101F') || typeName.includes('1.4');
+                              const is101N = code === '101-N' || typeName.includes('101-N') || serial.includes('101-N') || serial.includes('101N') || typeName.includes('8.0');
                               
                               if (filterVal === '101-F') {
                                 return is101F;
+                              } else if (filterVal === '101-N') {
+                                return is101N;
                               } else {
-                                return !is101F;
+                                return true;
                               }
                             }).length;
                             return (
@@ -707,10 +718,11 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                           const typeName = (c.type_info?.type_name || c.type_info?.name || '').toUpperCase();
                           const serial = (c.serial_number || '').toUpperCase();
                           const is101F = code === '101-F' || typeName.includes('101-F') || serial.includes('101-F') || serial.includes('101F') || typeName.includes('1.4');
+                          const is101N = code === '101-N' || typeName.includes('101-N') || serial.includes('101-N') || serial.includes('101N') || typeName.includes('8.0');
                           
                           let matchesSize = true;
                           if (supplierSizeFilter === '101-N') {
-                            matchesSize = !is101F;
+                            matchesSize = is101N;
                           } else if (supplierSizeFilter === '101-F') {
                             matchesSize = is101F;
                           }
@@ -770,71 +782,6 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                     </div>
                   ) : null}
 
-                  {/* Add Manual Quantity Widget */}
-                  <div className="bg-rose-50/30 border border-rose-100 rounded-2xl p-4 shadow-sm">
-                    <label className="block text-slate-700 font-bold text-xs mb-2 flex items-center gap-1.5">
-                      <Plus className="w-4 h-4 text-rose-600" />
-                      Add Manual Quantity (Generic Loan Cylinders Only)
-                    </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2.5">
-                      <div className="sm:col-span-2">
-                        <select
-                          value={manualSizeSelect}
-                          onChange={(e) => setManualSizeSelect(e.target.value)}
-                          className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800"
-                        >
-                          {loanSizes.map((size) => (
-                            <option key={size} value={size}>
-                              {size} Loan
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <input
-                          type="number"
-                          min={1}
-                          value={manualQtyInput}
-                          onChange={(e) => setManualQtyInput(parseInt(e.target.value) || 1)}
-                          onKeyDown={handleKeyDownManualQty}
-                          className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 text-center"
-                        />
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleAddManualLoan}
-                      className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
-                    >
-                      Add Loan Quantity
-                    </button>
-
-                    {manualLoans.length > 0 && (
-                      <div className="mt-4 border-t border-slate-200/60 pt-3">
-                        <span className="block text-slate-600 font-bold text-[10px] uppercase mb-1.5">
-                          Manual Loan Quantities Selected
-                        </span>
-                        <div className="space-y-1.5 max-h-32 overflow-y-auto">
-                          {manualLoans.map((item) => (
-                            <div key={item.sizeCode} className="flex items-center justify-between p-2.5 bg-white border border-slate-100 rounded-xl shadow-xs">
-                              <div className="flex flex-col">
-                                <span className="text-xs font-bold text-slate-700">{item.sizeCode} Loan Cylinder</span>
-                                <span className="text-[10px] text-slate-400 font-semibold">Quantity to return: {item.qty}</span>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveManualLoan(item.sizeCode)}
-                                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-rose-600 transition-colors"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
                   {/* Remarks */}
                   <div>
                     <label className="block text-slate-700 font-bold text-xs mb-1.5">Remarks / Notes</label>
@@ -845,7 +792,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                         placeholder="Enter supplier collection instructions or notes..."
                         value={remarks}
                         onChange={(e) => setRemarks(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/30 text-xs"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all resize-none"
                       />
                     </div>
                   </div>
@@ -855,21 +802,20 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="p-6 border-t border-slate-200/60 bg-slate-50/50 flex items-center justify-between gap-3">
+        {/* Modal Footer */}
+        <div className="p-4 md:p-6 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
           {step === 'scan' ? (
             <>
-              <button
-                type="button"
-                onClick={handleClose}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 font-bold text-xs text-slate-600 transition-colors shadow-sm"
-              >
-                Cancel
-              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-600 font-mono">
+                  {scannedCylinders.length} Selected
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={() => setStep('details')}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold text-xs shadow-lg hover:shadow-xl hover:scale-102 transition-all duration-300 flex items-center gap-1"
+                disabled={scannedCylinders.length === 0}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold text-xs shadow-lg hover:shadow-xl hover:scale-102 transition-all duration-300 disabled:opacity-50 disabled:scale-100 disabled:shadow-lg disabled:cursor-not-allowed flex items-center gap-2"
               >
                 <span>Proceed to Details</span>
                 <ChevronRight className="w-4 h-4" />
@@ -887,7 +833,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={isSubmitting || (scannedCylinders.length === 0 && manualLoans.length === 0)}
+                disabled={isSubmitting || scannedCylinders.length === 0}
                 className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold text-xs shadow-lg hover:shadow-xl hover:scale-102 transition-all duration-300 disabled:opacity-50 disabled:scale-100 disabled:shadow-lg disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Generating Document...' : 'Generate Return Document'}

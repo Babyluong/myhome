@@ -14,18 +14,18 @@ export const PorterSubMenu: React.FC = () => {
       <div className="mb-8">
         <button 
           onClick={() => navigate(ROUTES.HUB)}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors mb-4 cursor-pointer"
+          className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-4 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{language === 'ms' ? 'Kembali ke Hub Utama' : 'Back to Main Hub'}</span>
         </button>
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-sky-100 text-sky-600 rounded-xl">
+          <div className="p-3 bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-xl">
             <Truck className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">MyPorter</h1>
-            <p className="text-slate-500">{language === 'ms' ? 'Sistem Porter & Penghantaran' : 'Portering & Asset Transport System'}</p>
+            <h1 className="text-3xl font-bold text-white tracking-tight">MyPorter</h1>
+            <p className="text-slate-400 mt-1">{language === 'ms' ? 'Sistem Porter & Penghantaran' : 'Portering & Asset Transport System'}</p>
           </div>
         </div>
       </div>

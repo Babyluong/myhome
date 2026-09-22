@@ -1,9 +1,10 @@
-// @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import jsQR from 'jsqr';
-import { X, QrCode, AlertCircle, AlertTriangle, RefreshCw, CheckCircle2, Trash2, Camera, Keyboard, Check, Volume2, VolumeX, Search, Database, Wrench, ChevronDown } from 'lucide-react';
-import { getCylinderByQrOrSerial, markCylinderAsEmpty, markMultipleCylindersAsEmpty, updateCylinderValveType } from '@/services/pharmacy/oxygenService';
+import { X, QrCode, AlertCircle, AlertTriangle, RefreshCw, CheckCircle2, Trash2, Camera, Keyboard, Check, Volume2, VolumeX, Search, Database, Wrench, ChevronDown, CheckSquare, Square, ArrowRight, Sparkles, Layers, FileText, Truck } from 'lucide-react';
+import { getCylinderByQrOrSerial, markCylinderAsEmpty, markMultipleCylindersAsEmpty, updateCylinderValveType, getEmptyCylindersInStore } from '@/services/pharmacy/oxygenService';
 import { useAuthStore } from '@/stores/authStore';
+import { useLanguage } from '@/shared/contexts/LanguageContext';
 import { supabase } from '@/services/supabase';
 import type { OxygenCylinderWithRelations } from '@/types/pharmacy';
 
@@ -11,6 +12,8 @@ interface ScanEmptyCylinderModalProps {
   hospitalId: string;
   isOpen: boolean;
   onClose: () => void;
+  onOpenReturnModal?: () => void;
+  onCreateEmptyList?: (scannedCylinders: OxygenCylinderWithRelations[]) => void;
   onSuccess: () => void;
   sessionScannedCylinders: OxygenCylinderWithRelations[];
   setSessionScannedCylinders: React.Dispatch<React.SetStateAction<OxygenCylinderWithRelations[]>>;
@@ -21,6 +24,8 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   hospitalId,
   isOpen,
   onClose,
+  onOpenReturnModal,
+  onCreateEmptyList,
   onSuccess,
   sessionScannedCylinders,
   setSessionScannedCylinders,
@@ -28,6 +33,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
 }) => {
   // Navigation tabs for the 2 modes
   const { user } = useAuthStore();
+  const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'camera' | 'manual'>('camera');
   
   // Input text field
@@ -39,6 +45,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   const [showDemoShortcuts, setShowDemoShortcuts] = useState(true); // Expanded by default for quick selection
   const [selectedSizeFilter, setSelectedSizeFilter] = useState('');
   const [selectedTypeFilter, setSelectedTypeFilter] = useState('');
+  const [dbSearchQuery, setDbSearchQuery] = useState('');
   
   // Process states
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,6 +59,36 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   
   // Cylinder Quick Picker pagination page state
   const [pickerPage, setPickerPage] = useState(1);
+
+  const handleRemoveScannedCylinder = (id: string) => {
+    setSessionScannedCylinders(prev => prev.filter(c => c.id !== id));
+    if (lastScannedCylinder?.id === id) {
+      setLastScannedCylinder(null);
+    }
+  };
+
+  const handleClearSession = () => {
+    setSessionScannedCylinders([]);
+    setLastScannedCylinder(null);
+  };
+
+  const handleProceedToEmptyList = () => {
+    if (onCreateEmptyList) {
+      onCreateEmptyList(sessionScannedCylinders);
+    } else if (onOpenReturnModal) {
+      onOpenReturnModal();
+    }
+    onClose();
+  };
+
+  const handleProceedToReturn = () => {
+    if (onOpenReturnModal) {
+      onOpenReturnModal();
+    } else if (onCreateEmptyList) {
+      onCreateEmptyList(sessionScannedCylinders);
+    }
+    onClose();
+  };
 
   // Auto configure for targetCombo when modal opens
   useEffect(() => {
@@ -74,7 +111,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   // Reset picker page when search input or filter changes
   useEffect(() => {
     setPickerPage(1);
-  }, [qrInput, selectedSizeFilter, selectedTypeFilter]);
+  }, [qrInput, dbSearchQuery, selectedSizeFilter, selectedTypeFilter]);
   
   // Scan settings
   const [isBulkScanMode, setIsBulkScanMode] = useState(true);
@@ -91,12 +128,43 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   const [isRendered, setIsRendered] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Fetch real active/allocated cylinders from Supabase (including issued ward cylinders)
+  const normalizeCylinder = (c: any) => {
+    const upperSn = (c.serial_number || '').toUpperCase();
+    const upperQr = (c.qr_code || '').toUpperCase();
+    const sizeCode = c.size_info?.code || c.size_code || '';
+    const isHospitalAsset = upperSn.startsWith('O2-P') || upperSn.startsWith('02-P') || upperSn.startsWith('P101') || upperQr.startsWith('O2-P') || upperQr.startsWith('02-P') || upperQr.startsWith('P101') || sizeCode.startsWith('P');
+    const isLoan = !isHospitalAsset && (c.supplier_tagged || c.is_loan || upperSn.includes('SABOXY') || upperQr.includes('SABOXY'));
+
+    const prefix = isHospitalAsset ? (sizeCode.startsWith('P') ? sizeCode : `P${sizeCode}`) : sizeCode;
+    const typeCode = c.type_info?.code || '';
+    const capacity = c.size_info?.capacity ? `${Number(c.size_info.capacity)}${c.size_info.unit || 'm3'}` : '';
+
+    let displayName = prefix;
+    if (typeCode) {
+      displayName = `${prefix} ${typeCode}${capacity ? ` (${capacity})` : ''}`;
+    } else if (capacity) {
+      displayName = `${prefix} (${capacity})`;
+    }
+
+    return {
+      ...c,
+      type_name_display: displayName,
+      size_code: sizeCode,
+      is_loan: isLoan,
+      assigned_ward: c.department ? {
+        department_name: c.department.department_name || c.department.name
+      } : (c.current_location && c.current_location !== 'Store' && c.current_location !== 'Pharmacy Store' ? {
+        department_name: typeof c.current_location === 'object' ? c.current_location?.location_name : c.current_location
+      } : null)
+    };
+  };
+
+  // Fetch real active/allocated cylinders from Supabase (including issued ward cylinders and hospital assets)
   useEffect(() => {
     const fetchActiveCylinders = async () => {
       setIsDbLoading(true);
       try {
-        const { data, error } = await supabase
+        let query = supabase
           .from('pharmacy_oxygen_cylinder_inventory')
           .select(`
             *,
@@ -104,42 +172,32 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
             size_info:pharmacy_oxygen_cylinder_sizes(*),
             department:departments(*)
           `)
-          .eq('hospital_id', hospitalId)
-          .in('status', ['available', 'allocated', 'in_use', 'full', 'issued']) // retrieve active and deployed cylinders
-          .limit(1000);
+          .neq('status', 'deactivated')
+          .eq('is_active', true)
+          .limit(2000);
+
+        if (hospitalId) {
+          query = query.eq('hospital_id', hospitalId);
+        }
+
+        const { data, error } = await query;
 
         if (!error && data) {
           const normalized = data
             .filter((c: any) => {
-              if (c.supplier_tagged) return true;
-              const sizeCode = c.size_info?.code || '';
-              const isLoan = c.is_loan || c.size_info?.is_loan || !sizeCode.startsWith('P');
-              return !isLoan;
+              if (c.status === 'deactivated' || c.is_active === false) return false;
+              const upperSn = (c.serial_number || '').toUpperCase();
+              const upperQr = (c.qr_code || '').toUpperCase();
+              const sizeCode = c.size_info?.code || c.size_code || '';
+              const isHospitalAsset = upperSn.startsWith('O2-P') || upperSn.startsWith('02-P') || upperSn.startsWith('P101') || upperQr.startsWith('O2-P') || upperQr.startsWith('02-P') || upperQr.startsWith('P101') || sizeCode.startsWith('P');
+              const isLoan = !isHospitalAsset && (c.supplier_tagged || c.is_loan || upperSn.includes('SABOXY') || upperQr.includes('SABOXY'));
+
+              // Exclude supplier loan cylinders that are already empty or already returned (they are tracked in Empty Cylinder List and Supplier Returns)
+              if (isLoan && (c.status === 'empty' || c.status === 'returned_to_supplier')) return false;
+
+              return true;
             })
-            .map((c: any) => {
-              const sizeCode = c.size_info?.code || '';
-              const prefix = sizeCode.startsWith('P') ? sizeCode : `P${sizeCode}`;
-              const typeCode = c.type_info?.code || '';
-              const capacity = c.size_info?.capacity ? `${Number(c.size_info.capacity)}${c.size_info.unit || 'm3'}` : '';
-
-              let displayName = prefix;
-              if (typeCode) {
-                displayName = `${prefix} ${typeCode}${capacity ? ` (${capacity})` : ''}`;
-              } else if (capacity) {
-                displayName = `${prefix} (${capacity})`;
-              }
-
-              return {
-                ...c,
-                type_name_display: displayName,
-                size_code: sizeCode,
-                assigned_ward: c.department ? {
-                  department_name: c.department.department_name || c.department.name
-                } : (c.current_location && c.current_location !== 'Store' && c.current_location !== 'Pharmacy Store' ? {
-                  department_name: c.current_location
-                } : null)
-              };
-            });
+            .map(normalizeCylinder);
           setActiveCylinders(normalized);
         }
       } catch (err) {
@@ -149,6 +207,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
       }
     };
 
+    // On-demand real-time Supabase search for quick picker fallback
     if (isOpen) {
       setIsRendered(true);
       const timer = setTimeout(() => setIsAnimating(true), 20);
@@ -160,6 +219,50 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
       return () => clearTimeout(timer);
     }
   }, [isOpen, hospitalId]);
+
+  // On-demand real-time Supabase search for quick picker fallback
+  useEffect(() => {
+    const queryText = (dbSearchQuery || '').trim();
+    if (queryText.length < 2) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        const cleanQ = queryText.replace(/[^a-z0-9]/gi, '');
+        let remoteQuery = supabase
+          .from('pharmacy_oxygen_cylinder_inventory')
+          .select(`
+            *,
+            type_info:pharmacy_oxygen_cylinder_types(*),
+            size_info:pharmacy_oxygen_cylinder_sizes(*),
+            department:departments(*)
+          `)
+          .neq('status', 'deactivated')
+          .eq('is_active', true)
+          .or(`serial_number.ilike.%${queryText}%,qr_code.ilike.%${queryText}%,serial_number.ilike.%${cleanQ}%,qr_code.ilike.%${cleanQ}%`)
+          .limit(20);
+
+        if (hospitalId) {
+          remoteQuery = remoteQuery.eq('hospital_id', hospitalId);
+        }
+
+        const { data: remoteCyls } = await remoteQuery;
+
+        if (remoteCyls && remoteCyls.length > 0) {
+          setActiveCylinders(prev => {
+            const existingIds = new Set(prev.map(c => c.id));
+            const toAdd = remoteCyls
+              .filter(rc => !existingIds.has(rc.id) && rc.status !== 'deactivated' && rc.is_active !== false)
+              .map(normalizeCylinder);
+            return toAdd.length > 0 ? [...prev, ...toAdd] : prev;
+          });
+        }
+      } catch (e) {
+        console.warn('On-demand database search error:', e);
+      }
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [dbSearchQuery, hospitalId]);
 
   // Handle camera toggles
   useEffect(() => {
@@ -301,6 +404,36 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     };
   }, [cameraActive, useRealCamera, stream]);
 
+  // Helper to verify if cylinder matches active size filter (e.g. 1.4m3 F size vs N size vs E size)
+  const isCylinderMatchingFilter = (cyl: any, filter: string): boolean => {
+    if (!filter) return true;
+    const target = filter.toUpperCase().trim();
+    const cCode = (cyl.size_info?.code || cyl.size_code || '').toUpperCase().trim();
+    const cCap = Number(cyl.size_info?.capacity || (cyl as any).capacity || 0);
+
+    // 1.4m3 F size (accepts both P101-F and 101-F formatted 1.4m3 cylinders, rejects N size and E size)
+    if (target === 'P101-F' || target === '101-F' || target === '1.4' || target === '1.4M3' || target === '1.4M³') {
+      return cCap === 1.4 || cCode === 'P101-F' || cCode === '101-F';
+    }
+    // 0.7m3 E size
+    if (target === 'P101-E' || target === '101-E' || target === '0.7' || target === '0.7M3' || target === '0.7M³') {
+      return cCap === 0.7 || cCode === 'P101-E' || cCode === '101-E';
+    }
+    // 8.0m3 N size
+    if (target === '101-N' || target === 'P101-N' || target === '8.0' || target === '8M3' || target === '8.0M³') {
+      return cCap === 8.0 || cCode === '101-N' || cCode === 'P101-N';
+    }
+    // 0.5m3 D size
+    if (target === 'P101-D' || target === '101-D' || target === '0.5' || target === '0.5M3' || target === '0.5M³') {
+      return cCap === 0.5 || cCode === 'P101-D' || cCode === '101-D';
+    }
+    // 6.4m3 HS size
+    if (target === 'P101-HS' || target === '101-HS' || target === '6.4' || target === '6.4M3' || target === '6.4M³') {
+      return cCap === 6.4 || cCode === 'P101-HS' || cCode === '101-HS';
+    }
+    return cCode === target;
+  };
+
   // Unified lookup processing
   const handleCodeInput = async (inputStr: string) => {
     if (isSubmitting) return;
@@ -366,9 +499,13 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           continue;
         }
         try {
-          const res = await getCylinderByQrOrSerial(hospitalId, code);
+          const res = await getCylinderByQrOrSerial(hospitalId, code, selectedSizeFilter || undefined);
           if (res.data && !res.error) {
             let targetCylinder = res.data;
+            if (selectedSizeFilter && !isCylinderMatchingFilter(targetCylinder, selectedSizeFilter)) {
+              errorCount++;
+              continue;
+            }
             if (batchSeenIds.has(targetCylinder.id)) {
               errorCount++;
               continue;
@@ -379,7 +516,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
               const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
               const updateRes = await markCylinderAsEmpty(hospitalId, targetCylinder.id, creatorId);
               if (!updateRes.error) {
-                targetCylinder = { ...targetCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } };
+                targetCylinder = { ...targetCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any };
               }
             }
             newScannedBatch.push(targetCylinder);
@@ -398,67 +535,86 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           const toAdd = newScannedBatch.filter(c => !existingIds.has(c.id));
           return [...prev, ...toAdd];
         });
-        // Remove processed cylinders from active database list
+        // Update status in active list rather than removing, so it remains visible with '✓ Diimbas' badge
         const processedIds = new Set(newScannedBatch.map(c => c.id));
-        setActiveCylinders(prev => prev.filter(c => !processedIds.has(c.id)));
+        setActiveCylinders(prev => prev.map(c => processedIds.has(c.id) ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any } : c));
 
         playBeep('success');
         setSuccessFlash(true);
         setTimeout(() => setSuccessFlash(false), 500);
-        setStatusMessage({ 
-          type: 'success', 
-          text: `Processed ${successCount} unique cylinders marked as depleted / empty!${errorCount > 0 ? ` (${errorCount} skipped/duplicates/failed)` : ''}` 
+        setStatusMessage({
+          type: 'success',
+          text: `Successfully processed ${successCount} cylinders (${errorCount} skipped/failed)`
         });
         setQrInput('');
         onSuccess();
       } else {
         playBeep('error');
-        setStatusMessage({ type: 'error', text: `None of the pasted codes match existing trackable cylinders.` });
+        setStatusMessage({
+          type: 'error',
+          text: `Failed to find valid active cylinders matching current filter (${selectedSizeFilter || 'All Sizes'}).`
+        });
       }
-      setIsSubmitting(false);
       return;
     }
 
-    // Process single code
-    const singleCode = codes[0];
+    // Single code processing
     setIsSubmitting(true);
     setStatusMessage(null);
 
     try {
-      const res = await getCylinderByQrOrSerial(hospitalId, singleCode);
+      const res = await getCylinderByQrOrSerial(hospitalId, cleanedInput, selectedSizeFilter || undefined);
       if (res.error || !res.data) {
         playBeep('error');
-        setStatusMessage({ type: 'error', text: `Cylinder "${singleCode}" not found in inventory.` });
-        setMatchedCylinder(null);
+        setStatusMessage({ type: 'error', text: res.error || `Cylinder "${cleanedInput}" not found in system.` });
       } else {
         const cyl = res.data;
-        if (isBulkScanMode) {
+        if (selectedSizeFilter && !isCylinderMatchingFilter(cyl, selectedSizeFilter)) {
+          playBeep('error');
+          const cCode = cyl.size_info?.code || (cyl as any).size_code || 'Unknown';
+          const cCap = cyl.size_info?.capacity ? `${Number(cyl.size_info.capacity)} M³` : '';
+          setStatusMessage({
+            type: 'error',
+            text: `Silinder "${cyl.serial_number}" ialah saiz ${cCode}${cCap ? ` (${cCap})` : ''}. Penapis aktif ialah ${selectedSizeFilter}. Hanya silinder sepadan diterima.`
+          });
+          return;
+        }
+        if (cyl.status === 'empty') {
+          // Already empty: add directly to scanned list if not already present
+          setSessionScannedCylinders(prev => {
+            if (prev.some(c => c.id === cyl.id)) return prev;
+            return [...prev, cyl];
+          });
+          setLastScannedCylinder(cyl);
+          playBeep('success');
+          setSuccessFlash(true);
+          setTimeout(() => setSuccessFlash(false), 500);
+          setStatusMessage({ type: 'success', text: `Added Empty Cylinder: ${cyl.serial_number}` });
+          setQrInput('');
+          // Reset cooldown so camera is immediately ready for the NEXT cylinder
+          lastScannedRef.current = null;
+        } else if (isBulkScanMode) {
+          // In Bulk / Auto-Confirm mode, automatically deplete the cylinder without prompt
           let targetCylinder = cyl;
-          if (cyl.status !== 'empty') {
-            const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
-            const updateRes = await markCylinderAsEmpty(hospitalId, cyl.id, creatorId);
-            if (updateRes.error) {
-              playBeep('error');
-              setStatusMessage({ type: 'error', text: `Failed to mark empty: ${updateRes.error}` });
-              setIsSubmitting(false);
-              return;
-            }
-            targetCylinder = { ...cyl, status: 'empty', current_location: { location_name: 'Pharmacy Store' } };
+          const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
+          const updateRes = await markCylinderAsEmpty(hospitalId, targetCylinder.id, creatorId);
+          if (!updateRes.error) {
+            targetCylinder = { ...targetCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any };
           }
           setSessionScannedCylinders(prev => {
             if (prev.some(c => c.id === targetCylinder.id)) return prev;
             return [...prev, targetCylinder];
           });
-          // Remove from active list
-          setActiveCylinders(prev => prev.filter(c => c.id !== targetCylinder.id));
+          // Update status in active list rather than removing, so it remains visible with '✓ Diimbas' badge
+          setActiveCylinders(prev => prev.map(c => c.id === targetCylinder.id ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any } : c));
+
           // Track for valve type correction (QR codes don't embed valve type)
           setLastScannedCylinder(targetCylinder);
           playBeep('success');
           setSuccessFlash(true);
           setTimeout(() => setSuccessFlash(false), 500);
-          setStatusMessage({ type: 'success', text: `Marked as Depleted (Empty): ${targetCylinder.serial_number}` });
+          setStatusMessage({ type: 'success', text: `Marked as Depleted: ${targetCylinder.serial_number}` });
           setQrInput('');
-          // Reset cooldown so camera is immediately ready for the NEXT cylinder
           lastScannedRef.current = null;
           onSuccess();
         } else {
@@ -472,6 +628,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     } catch (err) {
       console.error(err);
       playBeep('error');
+      setStatusMessage({ type: 'error', text: 'An unexpected error occurred while updating status.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -487,7 +644,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           if (prev.some(c => c.id === matchedCylinder.id)) return prev;
           return [...prev, matchedCylinder];
         });
-        setStatusMessage({ type: 'success', text: `Added "${matchedCylinder.serial_number}" to returns.` });
+        setStatusMessage({ type: 'success', text: `Added "${matchedCylinder.serial_number}" to empty list.` });
         setMatchedCylinder(null);
         setQrInput('');
       } else {
@@ -496,13 +653,18 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
         if (res.error) {
           setStatusMessage({ type: 'error', text: res.error });
         } else {
-          const updated = { ...matchedCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } };
+          const updated: OxygenCylinderWithRelations = { ...matchedCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any };
           setSessionScannedCylinders(prev => {
             if (prev.some(c => c.id === updated.id)) return prev;
             return [...prev, updated];
           });
-          setActiveCylinders(prev => prev.filter(c => c.id !== updated.id));
-          setStatusMessage({ type: 'success', text: `Cylinder "${matchedCylinder.serial_number}" marked empty & added.` });
+          // Update status in active list rather than removing, so it remains visible with '✓ Diimbas' badge
+          setActiveCylinders(prev => prev.map(c => c.id === updated.id ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any } : c));
+          setLastScannedCylinder(updated);
+          playBeep('success');
+          setSuccessFlash(true);
+          setTimeout(() => setSuccessFlash(false), 500);
+          setStatusMessage({ type: 'success', text: `Marked as Depleted: ${updated.serial_number}` });
           setMatchedCylinder(null);
           setQrInput('');
           onSuccess();
@@ -510,45 +672,49 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
       }
     } catch (err) {
       console.error(err);
+      playBeep('error');
+      setStatusMessage({ type: 'error', text: 'An unexpected error occurred while updating status.' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Bulk deplete all cylinders currently displayed under the active ward group
   const handleBatchDepleteAll = async (cylsToDeplete: any[]) => {
-    if (isSubmitting || !cylsToDeplete || cylsToDeplete.length === 0) return;
+    if (!cylsToDeplete || cylsToDeplete.length === 0) return;
     setIsSubmitting(true);
     try {
-      const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
       const ids = cylsToDeplete.map(c => c.id);
+      const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
       const res = await markMultipleCylindersAsEmpty(hospitalId, ids, creatorId);
       if (!res.error) {
         const updatedList = cylsToDeplete.map(c => ({
           ...c,
           status: 'empty',
-          current_location: { location_name: 'Pharmacy Store' }
+          current_location: { location_name: 'Pharmacy Store' } as any
         }));
         setSessionScannedCylinders(prev => {
           const existingIds = new Set(prev.map(c => c.id));
           const toAdd = updatedList.filter(c => !existingIds.has(c.id));
           return [...prev, ...toAdd];
         });
-        setActiveCylinders(prev => prev.filter(c => !ids.includes(c.id)));
+        setActiveCylinders(prev => prev.map(c => ids.includes(c.id) ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any } : c));
         playBeep('success');
         setSuccessFlash(true);
         setTimeout(() => setSuccessFlash(false), 500);
         setStatusMessage({
           type: 'success',
-          text: `Successfully marked ${cylsToDeplete.length} cylinders as depleted / empty!`
+          text: `Successfully marked ${cylsToDeplete.length} cylinders as depleted`
         });
         onSuccess();
       } else {
         playBeep('error');
-        setStatusMessage({ type: 'error', text: `Failed to mark cylinders depleted: ${res.error}` });
+        setStatusMessage({ type: 'error', text: res.error || `Failed to mark cylinders depleted.` });
       }
     } catch (err) {
       console.error(err);
       playBeep('error');
+      setStatusMessage({ type: 'error', text: 'An unexpected error occurred during batch operation.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -571,8 +737,8 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           type: 'success',
           text: `✓ Valve type corrected → ${valveLabel} for ${lastScannedCylinder.serial_number}`
         });
-        // Update the cylinder in both lists
-        const corrected = { ...lastScannedCylinder, type_info: { ...lastScannedCylinder.type_info, code: targetCode } };
+        // Update the cylinder in scanned session list
+        const corrected: OxygenCylinderWithRelations = { ...lastScannedCylinder, type_info: { ...lastScannedCylinder.type_info, code: targetCode } as any };
         setSessionScannedCylinders(prev =>
           prev.map(c => c.id === corrected.id ? corrected : c)
         );
@@ -598,30 +764,48 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
 
   // Filter active database cylinders by manual search term, size filter, and type filter
   const filteredActiveCylinders = activeCylinders.filter(c => {
-    // 1. Cylinder Size Filter
-    if (selectedSizeFilter && c.size_info?.code !== selectedSizeFilter) return false;
+    // 1. Cylinder Size Filter (strictly enforces 1.4m3 / F size, E size, N size etc.)
+    if (selectedSizeFilter && !isCylinderMatchingFilter(c, selectedSizeFilter)) return false;
 
     // 2. Valve Type Filter
     if (selectedTypeFilter && c.type_info?.code !== selectedTypeFilter) return false;
 
-    // 3. Exclude already scanned cylinders in the current session
-    if (sessionScannedCylinders.some(sc => sc.id === c.id)) return false;
+    // 3. Search Filter (dedicated quick picker filter dbSearchQuery)
+    const q = (dbSearchQuery || '').trim().toLowerCase();
+    if (q) {
+      const cleanQ = q.replace(/[^a-z0-9]/gi, '');
+      const serialClean = (c.serial_number || '').toLowerCase().replace(/[^a-z0-9]/gi, '');
+      const qrClean = (c.qr_code || '').toLowerCase().replace(/[^a-z0-9]/gi, '');
+      const wardClean = (c.assigned_ward?.department_name || '').toLowerCase();
 
-    // 4. Search Text Filter
-    if (!qrInput.trim()) return true;
-    const q = qrInput.trim().toLowerCase();
-    return (
-      (c.serial_number || '').toLowerCase().includes(q) ||
-      (c.qr_code || '').toLowerCase().includes(q) ||
-      (c.assigned_ward?.department_name || '').toLowerCase().includes(q)
-    );
+      // Normalize 'o' and '0' so O2 and 02 match interchangeably
+      const normQ = cleanQ.replace(/o/g, '0');
+      const normSerial = serialClean.replace(/o/g, '0');
+      const normQr = qrClean.replace(/o/g, '0');
+
+      // Match numbers with or without leading zeroes (e.g. 21 matching 0021)
+      const numOnlyQ = cleanQ.replace(/^0+/, '');
+      const numMatch = numOnlyQ.length >= 2 && (serialClean.includes(numOnlyQ) || normSerial.includes(numOnlyQ));
+      
+      const matches = (
+        (c.serial_number || '').toLowerCase().includes(q) ||
+        (c.qr_code || '').toLowerCase().includes(q) ||
+        wardClean.includes(q) ||
+        (cleanQ.length >= 2 && (serialClean.includes(cleanQ) || qrClean.includes(cleanQ))) ||
+        (normQ.length >= 2 && (normSerial.includes(normQ) || normQr.includes(normQ))) ||
+        numMatch
+      );
+      if (!matches) return false;
+    }
+
+    return true;
   });
 
   const sortedActiveCylinders = [...filteredActiveCylinders].sort((a, b) => 
     (a.serial_number || '').localeCompare(b.serial_number || '')
   );
 
-  const pickerPageSize = 20; // 20 items in 2 columns (10 rows) fills space perfectly
+  const pickerPageSize = 20;
   const totalPickerItems = sortedActiveCylinders.length;
   const totalPickerPages = Math.max(1, Math.ceil(totalPickerItems / pickerPageSize));
   const paginatedPickerCylinders = sortedActiveCylinders.slice(
@@ -644,8 +828,8 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
 
   if (!isRendered) return null;
 
-  return (
-    <div className={`fixed inset-0 z-50 overflow-hidden flex justify-end transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}>
+  const modalContent = (
+    <div className={`fixed inset-0 z-[100] overflow-hidden flex justify-end transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}>
       
       {/* Backdrop overlay */}
       <div 
@@ -653,22 +837,34 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-all duration-300"
       />
 
-      {/* Expanded Width Drawer Panel (Redesign V9 - max-w-4xl) */}
-      <div className={`relative w-full max-w-4xl bg-slate-50 border-l border-slate-200/80 shadow-2xl flex flex-col h-full transform transition-transform duration-300 cubic-bezier(0.16, 1, 0.3, 1) ${isAnimating ? 'translate-x-0' : 'translate-x-full'}`}>
+      {/* Expanded Width Drawer Panel (max-w-5xl) */}
+      <div className={`relative w-full max-w-5xl bg-slate-50 border-l border-slate-200/80 shadow-2xl flex flex-col h-full transform transition-transform duration-300 cubic-bezier(0.16, 1, 0.3, 1) ${isAnimating ? 'translate-x-0' : 'translate-x-full'}`}>
         
-        {/* Dark slate console header (Redesign V4) */}
-        <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-slate-900 via-slate-850 to-indigo-950 border-b border-slate-800 text-white shadow-lg">
+        {/* Dark slate console header with live store badge */}
+        <div className="flex items-center justify-between px-6 md:px-8 py-5 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 border-b border-slate-800 text-white shadow-lg shrink-0">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/35 rounded-2xl flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.35)]">
+            <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/35 rounded-2xl flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.35)] shrink-0">
               <QrCode className="w-6 h-6 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white tracking-tight leading-tight">Scan Cylinder as Empty</h3>
-              <p className="text-slate-400 text-xs font-semibold mt-0.5">Change cylinder status to empty (ready for returns)</p>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h3 className="text-lg font-bold text-white tracking-tight leading-tight">
+                  {language === 'ms' ? 'Imbas Silinder Kosong' : 'Scan Empty Cylinder'}
+                </h3>
+                <span className="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full">
+                  {sessionScannedCylinders.length} Scanned
+                </span>
+              </div>
+              <p className="text-slate-300 text-xs font-medium mt-0.5">
+                {language === 'ms' 
+                  ? 'Imbas kod QR silinder untuk jana Senarai Silinder Kosong' 
+                  : 'Scan empty cylinders to create official Empty Cylinder List'}
+              </p>
             </div>
           </div>
           <button
             onClick={onClose}
+            aria-label="Close modal"
             className="w-10 h-10 rounded-full bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center transition-all duration-205 cursor-pointer hover:scale-105"
           >
             <X className="w-5 h-5 text-slate-300" />
@@ -678,8 +874,8 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
         {/* Split Column Workspace Container */}
         <div className="flex-1 overflow-y-auto p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 min-h-0">
           
-          {/* Left Column: Console Inputs & Viewports (col-span-7) */}
-          <div className="col-span-1 md:col-span-7 space-y-6 border-b md:border-b-0 md:border-r border-slate-200/50 pb-6 md:pb-0 pr-0 md:pr-8">
+          {/* Left Column: Console Inputs & Viewports (col-span-6) */}
+          <div className="col-span-1 md:col-span-6 space-y-6 border-b md:border-b-0 md:border-r border-slate-200/50 pb-6 md:pb-0 pr-0 md:pr-6">
             
             {/* Bulk Scan Mode Header Switcher */}
             <div className="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-xs">
@@ -832,16 +1028,16 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                         type="text"
                         value={qrInput}
                         onChange={(e) => setQrInput(e.target.value)}
-                        placeholder="Scan code or paste bulk lists..."
+                        placeholder="Scan barcode or key-in exact serial to mark empty..."
                         disabled={isSubmitting}
                         className="flex-1 px-2.5 py-1.5 bg-transparent text-xs font-semibold text-slate-800 focus:outline-none border-none"
                       />
                       <button
                         type="submit"
                         disabled={isSubmitting || !qrInput.trim()}
-                        className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center cursor-pointer shadow-xs"
+                        className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center cursor-pointer shadow-xs gap-1.5"
                       >
-                        {isSubmitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Search'}
+                        {isSubmitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Process Code'}
                       </button>
                     </div>
                   </form>
@@ -875,7 +1071,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                         onClick={handleSingleConfirm}
                         className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                       >
-                        {matchedCylinder.status === 'issued' ? 'Add to Return List' : 'Confirm: Mark Cylinder as Empty'}
+                        {matchedCylinder.status === 'empty' ? 'Add to Return List' : 'Confirm: Mark Cylinder as Empty'}
                       </button>
                     </div>
                   )}
@@ -899,48 +1095,73 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                     </button>
                     {showDemoShortcuts && (
                       <div className="space-y-3 pt-3 border-t border-slate-200/50">
-                                               {/* Size & Type Filter Controls */}
-                        <div className="grid grid-cols-2 gap-3 pb-3 border-b border-slate-200/50">
-                          {/* Size Filter Selector */}
-                          <div className="space-y-1.5">
-                            <label className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block">Cylinder Size</label>
-                            <select
-                              value={selectedSizeFilter}
-                              onChange={(e) => setSelectedSizeFilter(e.target.value)}
-                              className="w-full bg-white border border-slate-200 hover:border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-700 shadow-2xs focus:ring-4 focus:ring-[#00a68a]/10 focus:border-[#00a68a] transition-all cursor-pointer focus:outline-none"
-                            >
-                              <option value="">All Sizes</option>
-                              {uniqueSizes.map(size => {
-                                const sample = activeCylinders.find(c => c.size_info?.code === size);
-                                const cap = sample?.size_info?.capacity ? ` (${sample.size_info.capacity} M³)` : '';
-                                return (
-                                  <option key={size} value={size}>
-                                    {size}{cap}
-                                  </option>
-                                );
-                              })}
-                            </select>
+                        {/* Quick Filter Search & Dropdowns */}
+                        <div className="space-y-2.5 pb-3 border-b border-slate-200/50">
+                          {/* Dedicated Search Filter for Database Fallback */}
+                          <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                            <input
+                              type="text"
+                              value={dbSearchQuery}
+                              onChange={(e) => setDbSearchQuery(e.target.value)}
+                              placeholder="Filter cylinders by serial number or ward (e.g. 0067, ICU)..."
+                              className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 shadow-2xs focus:ring-4 focus:ring-[#00a68a]/10 focus:border-[#00a68a] transition-all focus:outline-none"
+                            />
+                            {dbSearchQuery && (
+                              <button
+                                type="button"
+                                onClick={() => setDbSearchQuery('')}
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold p-1 cursor-pointer"
+                              >
+                                ×
+                              </button>
+                            )}
                           </div>
 
-                          {/* Valve Type Filter Selector */}
-                          <div className="space-y-1.5">
-                            <label className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block">Valve Type</label>
-                            <select
-                              value={selectedTypeFilter}
-                              onChange={(e) => setSelectedTypeFilter(e.target.value)}
-                              className="w-full bg-white border border-slate-200 hover:border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-700 shadow-2xs focus:ring-4 focus:ring-[#00a68a]/10 focus:border-[#00a68a] transition-all cursor-pointer focus:outline-none"
-                            >
-                              <option value="">All Types</option>
-                              {uniqueTypes.map(type => {
-                                const sample = activeCylinders.find(c => c.type_info?.code === type);
-                                const typeName = sample?.type_info?.name ? ` (${sample.type_info.name})` : '';
-                                return (
-                                  <option key={type} value={type}>
-                                    {type}{typeName}
-                                  </option>
-                                );
-                              })}
-                            </select>
+                          <div className="grid grid-cols-2 gap-3">
+                            {/* Size Filter Selector */}
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block">Cylinder Size</label>
+                              <select
+                                value={selectedSizeFilter}
+                                onChange={(e) => setSelectedSizeFilter(e.target.value)}
+                                className="w-full bg-white border border-slate-200 hover:border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-700 shadow-2xs focus:ring-4 focus:ring-[#00a68a]/10 focus:border-[#00a68a] transition-all cursor-pointer focus:outline-none"
+                              >
+                                <option value="">All Sizes ({activeCylinders.length})</option>
+                                {uniqueSizes.map(size => {
+                                  const sample = activeCylinders.find(c => c.size_info?.code === size);
+                                  const cap = sample?.size_info?.capacity ? ` (${sample.size_info.capacity} M³)` : '';
+                                  const count = activeCylinders.filter(c => isCylinderMatchingFilter(c, size)).length;
+                                  return (
+                                    <option key={size} value={size}>
+                                      {size}{cap} ({count})
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                            </div>
+
+                            {/* Valve Type Filter Selector */}
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block">Valve Type</label>
+                              <select
+                                value={selectedTypeFilter}
+                                onChange={(e) => setSelectedTypeFilter(e.target.value)}
+                                className="w-full bg-white border border-slate-200 hover:border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-700 shadow-2xs focus:ring-4 focus:ring-[#00a68a]/10 focus:border-[#00a68a] transition-all cursor-pointer focus:outline-none"
+                              >
+                                <option value="">All Types</option>
+                                {uniqueTypes.map(type => {
+                                  const sample = activeCylinders.find(c => c.type_info?.code === type);
+                                  const typeName = sample?.type_info?.name ? ` (${sample.type_info.name})` : '';
+                                  const count = activeCylinders.filter(c => c.type_info?.code === type && (!selectedSizeFilter || isCylinderMatchingFilter(c, selectedSizeFilter))).length;
+                                  return (
+                                    <option key={type} value={type}>
+                                      {type}{typeName} ({count})
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                            </div>
                           </div>
                         </div>
 
@@ -1001,38 +1222,83 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                                   </span>
                                   <div className="h-px bg-slate-200/60 flex-1" />
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 gap-2.5">
                                   {paginatedGroupedCylinders[groupKey].map((c) => {
                                     const isWardCyl = c.status === 'issued' || c.status === 'in_use' || (c.assigned_ward && c.assigned_ward.department_name);
+                                    const cleanSerial = (c.serial_number || '').replace(/\s*\(\d+(?:\.\d+)?\s*(?:m3|m³)\)/gi, '');
+                                    const isAlreadyScanned = sessionScannedCylinders.some(sc => sc.id === c.id);
                                     return (
                                       <button
                                         key={c.id}
                                         type="button"
                                         onClick={() => handleCodeInput(c.serial_number)}
-                                        className="inline-flex items-center px-4 py-3 bg-white hover:bg-blue-600 hover:text-white border border-slate-200 hover:border-blue-600 text-left rounded-xl transition-all cursor-pointer shadow-xs active:scale-95 group justify-between"
-                                        title={`Location: ${c.assigned_ward?.department_name || 'Store'}`}
+                                        className={`w-full px-4 py-3 ${
+                                          isAlreadyScanned 
+                                            ? 'bg-emerald-50/70 border-emerald-300 hover:bg-emerald-100/60' 
+                                            : 'bg-white hover:bg-blue-600 hover:text-white border-slate-200 hover:border-blue-600'
+                                        } text-left rounded-xl transition-all cursor-pointer shadow-xs active:scale-[0.99] group flex items-center justify-between gap-3`}
+                                        title={`Serial: ${c.serial_number} | Location: ${c.assigned_ward?.department_name || 'Store'}`}
                                       >
-                                        <div className="flex items-center gap-2.5 min-w-0">
-                                          <span className={`w-2 h-2 rounded-full ${isWardCyl ? 'bg-blue-600' : 'bg-emerald-500'} group-hover:bg-white flex-shrink-0 animate-pulse`} />
-                                          <div className="flex flex-col min-w-0">
-                                            <span className="font-mono text-[11px] font-bold text-slate-800 group-hover:text-white whitespace-nowrap">
-                                              {(c.serial_number || '').replace(/\s*\(\d+(?:\.\d+)?\s*(?:m3|m³)\)/gi, '')}
-                                            </span>
+                                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                                          <span className={`w-2.5 h-2.5 rounded-full ${
+                                            isAlreadyScanned 
+                                              ? 'bg-emerald-500 ring-2 ring-emerald-300' 
+                                              : isWardCyl ? 'bg-blue-600 group-hover:bg-white animate-pulse' : 'bg-emerald-500 group-hover:bg-white animate-pulse'
+                                          } shrink-0`} />
+                                          <div className="flex flex-col min-w-0 flex-1">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                              <span className={`font-mono text-xs sm:text-[13px] font-bold ${
+                                                isAlreadyScanned ? 'text-emerald-900' : 'text-slate-800 group-hover:text-white'
+                                              } tracking-tight select-all`}>
+                                                {cleanSerial}
+                                              </span>
+                                              {c.type_info?.code && (
+                                                <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded ${
+                                                  isAlreadyScanned 
+                                                    ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+                                                    : 'bg-slate-100 group-hover:bg-blue-700/50 text-slate-600 group-hover:text-blue-100 border-slate-200/60 group-hover:border-blue-400/40'
+                                                } border font-mono`}>
+                                                  {c.type_info.code}
+                                                </span>
+                                              )}
+                                              {c.status && (
+                                                <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded capitalize ${
+                                                  isAlreadyScanned 
+                                                    ? 'bg-emerald-200/60 text-emerald-900'
+                                                    : 'bg-slate-100 text-slate-600 group-hover:bg-blue-700/40 group-hover:text-blue-100'
+                                                }`}>
+                                                  {c.status.replace(/_/g, ' ')}
+                                                </span>
+                                              )}
+                                            </div>
 
-                                            <span className="text-[9px] text-slate-500 group-hover:text-blue-100 font-semibold truncate leading-tight mt-0.5">
+                                            <span className={`text-[10px] ${
+                                              isAlreadyScanned ? 'text-emerald-700' : 'text-slate-500 group-hover:text-blue-100'
+                                            } font-medium truncate mt-0.5`}>
                                               {c.assigned_ward?.department_name ? `Ward: ${c.assigned_ward.department_name}` : 'Location: Store'}
                                             </span>
                                           </div>
                                         </div>
-                                        <div className="flex items-center gap-1.5">
-                                          <span className="text-[9px] text-slate-500 group-hover:text-blue-100 font-extrabold border border-slate-150 group-hover:border-blue-400/30 px-2 py-0.5 rounded bg-slate-50 group-hover:bg-blue-700/40 font-mono">
-                                            {c.size_info?.capacity ? `${c.size_info.capacity}M³` : '0.7M³'}
-                                          </span>
-                                          <span className={`text-[8px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                                            isWardCyl ? 'bg-blue-100 text-blue-800 group-hover:bg-white group-hover:text-blue-700' : 'bg-emerald-100 text-emerald-800 group-hover:bg-white group-hover:text-emerald-700'
-                                          }`}>
-                                            {isWardCyl ? 'Deplete' : 'Mark'}
-                                          </span>
+
+                                        <div className="flex items-center gap-2 shrink-0">
+                                          {isAlreadyScanned ? (
+                                            <span className="text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-lg bg-emerald-600 text-white shadow-2xs flex items-center gap-1">
+                                              <Check className="w-3 h-3 stroke-[3]" />
+                                              Diimbas
+                                            </span>
+                                          ) : c.status === 'empty' ? (
+                                            <span className="text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 group-hover:bg-white group-hover:text-blue-700 shadow-2xs transition-colors">
+                                              + Tambah
+                                            </span>
+                                          ) : (
+                                            <span className={`text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-lg shadow-2xs transition-colors ${
+                                              isWardCyl 
+                                                ? 'bg-blue-100 text-blue-800 group-hover:bg-white group-hover:text-blue-700' 
+                                                : 'bg-emerald-100 text-emerald-800 group-hover:bg-white group-hover:text-emerald-700'
+                                            }`}>
+                                              {isWardCyl ? 'Deplete' : 'Mark Empty'}
+                                            </span>
+                                          )}
                                         </div>
                                       </button>
                                     );
@@ -1082,221 +1348,240 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
             )}
           </div>
 
-          {/* Right Column: Scanned Activity Registries - Grouped by size (col-span-5) */}
-          <div className="col-span-1 md:col-span-5 space-y-6">
-            <div className="flex items-center justify-between">
-              <label className="block text-slate-800 font-bold text-sm">
-                Scanned Session Log
-              </label>
-              {sessionScannedCylinders.length > 0 && (
-                <div className="flex items-center gap-2">
+          {/* Right Column: Scanned Cylinders in Current Session (col-span-6) */}
+          <div className="col-span-1 md:col-span-6 flex flex-col space-y-4 min-h-0 pl-0 md:pl-2">
+            
+            {/* Header with Title & Clear Action */}
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-200/80 flex items-center justify-center text-indigo-600 shadow-2xs">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900 tracking-tight">
+                    {language === 'ms' ? 'Silinder Diimbas (Sesi Ini)' : 'Scanned Cylinders (Current Session)'}
+                  </h4>
+                  <p className="text-[10px] text-slate-500 font-medium">
+                    {language === 'ms' ? 'Silinder sedia dimasukkan ke Senarai Silinder Kosong' : 'Cylinders ready to build Empty Cylinder List'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="bg-indigo-100 text-indigo-800 text-xs font-mono font-extrabold px-2.5 py-1 rounded-full border border-indigo-200">
+                  {sessionScannedCylinders.length} {language === 'ms' ? 'silinder' : 'cylinders'}
+                </span>
+                {sessionScannedCylinders.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => setSessionScannedCylinders([])}
-                    className="text-[10px] font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-100 rounded-lg px-2.5 py-1 transition-colors cursor-pointer"
+                    onClick={handleClearSession}
+                    className="text-[11px] font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2 py-1 rounded-lg transition-colors cursor-pointer"
                   >
-                    Clear All
+                    {language === 'ms' ? 'Kosongkan' : 'Clear All'}
                   </button>
-                  <span className="bg-slate-100 border border-slate-200/80 text-slate-700 px-3 py-1 rounded-full text-xs font-bold font-mono">
-                    Total Scanned: {sessionScannedCylinders.length}
-                  </span>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
             {/* Dynamic Status message toast box */}
             {statusMessage && (
-              <div className={`p-4 rounded-xl border flex items-start gap-3 text-xs font-semibold animate-[toast-enter_150ms_cubic-bezier(0,0,0.2,1)] ${
+              <div className={`p-3.5 rounded-xl border flex items-start gap-2.5 text-xs font-semibold animate-[toast-enter_150ms_cubic-bezier(0,0,0.2,1)] ${
                 statusMessage.type === 'success' 
-                  ? 'bg-emerald-50/70 border-emerald-100 text-emerald-800' 
-                  : 'bg-rose-50/70 border-rose-100 text-rose-800'
+                  ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900' 
+                  : 'bg-rose-50/80 border-rose-200 text-rose-900'
               }`}>
                 {statusMessage.type === 'success' ? (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                  <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 flex-shrink-0 mt-0.5" />
                 ) : (
-                  <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0" />
+                  <AlertCircle className="w-4.5 h-4.5 text-rose-600 flex-shrink-0 mt-0.5" />
                 )}
-                <span>{statusMessage.text}</span>
+                <span className="flex-1">{statusMessage.text}</span>
               </div>
             )}
 
-            {/* ── VALVE TYPE CORRECTION PANEL ──────────────────────────────────────
-                QR labels on MOH cylinders (e.g. "P101-F-0114") do NOT encode the
-                valve type (Bullnose vs Pin Index). Both BN and PI cylinders share
-                the identical QR format. The correct valve type MUST be confirmed by
-                looking at the physical label sticker on the cylinder.
-                This panel appears after each scan so staff can immediately correct
-                any mis-classified cylinders without leaving the scan screen. */}
+            {/* Valve type correction panel */}
             {lastScannedCylinder && (
-              <div className="p-4 rounded-2xl border-2 border-amber-300 bg-amber-50 space-y-3 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0">
-                    <Wrench className="w-4 h-4 text-amber-600" />
+              <div className="p-3.5 rounded-2xl border-2 border-amber-300 bg-amber-50/90 space-y-2.5 shadow-xs">
+                <div className="flex items-start gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0">
+                    <Wrench className="w-3.5 h-3.5 text-amber-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-black text-amber-900">Verify Valve Type</span>
-                      <span className="font-mono text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-md truncate">
+                      <span className="text-xs font-black text-amber-900">Verify Valve Type:</span>
+                      <span className="font-mono text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-md truncate">
                         {lastScannedCylinder.serial_number}
                       </span>
                     </div>
-                    <p className="text-[10px] text-amber-700 font-semibold mt-0.5 leading-snug">
-                      QR labels do <strong>not</strong> encode valve type. Check the physical label — is this cylinder Bullnose or Pin Index?
+                    <p className="text-[10px] text-amber-700 font-medium mt-0.5 leading-tight">
+                      Check physical label on cylinder — is this Bullnose or Pin Index?
                     </p>
-                    {/* Current detected valve type */}
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[9px] text-amber-600 font-bold uppercase tracking-wider">Recorded as:</span>
-                      <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${
-                        lastScannedCylinder.type_info?.code === 'BN'
-                          ? 'bg-blue-100 text-blue-800 border-blue-200'
-                          : lastScannedCylinder.type_info?.code === 'PI'
-                          ? 'bg-purple-100 text-purple-800 border-purple-200'
-                          : 'bg-slate-100 text-slate-600 border-slate-200'
-                      }`}>
-                        {lastScannedCylinder.type_info?.code === 'BN'
-                          ? '🔵 Bullnose (BN)'
-                          : lastScannedCylinder.type_info?.code === 'PI'
-                          ? '🟣 Pin Index (PI)'
-                          : '⚪ Unknown'}
-                      </span>
-                    </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => setLastScannedCylinder(null)}
                     className="text-amber-400 hover:text-amber-600 p-1 rounded cursor-pointer"
-                    title="Dismiss"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                {/* Correction buttons */}
-                <div className="flex items-center gap-2 pt-1">
-                  <span className="text-[9px] text-amber-600 font-bold uppercase tracking-wider shrink-0">Fix to →</span>
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => handleCorrectValveType('BN')}
                     disabled={isCorrectingValveType}
-                    className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer border-2 flex items-center justify-center gap-1.5 ${
-                      lastScannedCylinder.type_info?.code === 'BN'
-                        ? 'bg-blue-100 border-blue-300 text-blue-700 opacity-60 cursor-default'
-                        : 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50 shadow-xs'
+                    className={`flex-1 py-1.5 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer border flex items-center justify-center gap-1 ${
+                      (lastScannedCylinder.type_info as any)?.code === 'BN'
+                        ? 'bg-blue-100 border-blue-300 text-blue-800 opacity-60'
+                        : 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50 shadow-2xs'
                     }`}
-                    title={lastScannedCylinder.type_info?.code === 'BN' ? 'Already Bullnose' : 'Change to Bullnose'}
                   >
                     🔵 Bullnose (BN)
-                    {lastScannedCylinder.type_info?.code === 'BN' && <Check className="w-3 h-3 ml-1 text-blue-500" />}
+                    {(lastScannedCylinder.type_info as any)?.code === 'BN' && <Check className="w-3 h-3 text-blue-600 ml-0.5" />}
                   </button>
                   <button
                     type="button"
                     onClick={() => handleCorrectValveType('PI')}
                     disabled={isCorrectingValveType}
-                    className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer border-2 flex items-center justify-center gap-1.5 ${
-                      lastScannedCylinder.type_info?.code === 'PI'
-                        ? 'bg-purple-100 border-purple-300 text-purple-700 opacity-60 cursor-default'
-                        : 'bg-white border-purple-300 text-purple-700 hover:bg-purple-50 shadow-xs'
+                    className={`flex-1 py-1.5 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer border flex items-center justify-center gap-1 ${
+                      (lastScannedCylinder.type_info as any)?.code === 'PI'
+                        ? 'bg-purple-100 border-purple-300 text-purple-800 opacity-60'
+                        : 'bg-white border-purple-300 text-purple-700 hover:bg-purple-50 shadow-2xs'
                     }`}
-                    title={lastScannedCylinder.type_info?.code === 'PI' ? 'Already Pin Index' : 'Change to Pin Index'}
                   >
                     {isCorrectingValveType ? <RefreshCw className="w-3 h-3 animate-spin" /> : '🟣 Pin Index (PI)'}
-                    {lastScannedCylinder.type_info?.code === 'PI' && <Check className="w-3 h-3 ml-1 text-purple-500" />}
+                    {(lastScannedCylinder.type_info as any)?.code === 'PI' && <Check className="w-3 h-3 text-purple-600 ml-0.5" />}
                   </button>
                 </div>
               </div>
             )}
 
-            {sessionScannedCylinders.length > 0 ? (() => {
-              const sizeGroups: { [key: string]: OxygenCylinderWithRelations[] } = {};
-              
-              sessionScannedCylinders.forEach((cyl) => {
-                const sizeLabel = cyl.size_info?.capacity ? `${cyl.size_info.capacity}M³` : '0.7M³';
-                if (!sizeGroups[sizeLabel]) {
-                  sizeGroups[sizeLabel] = [];
-                }
-                sizeGroups[sizeLabel].push(cyl);
-              });
-
-              return (
-                <div className="space-y-6 max-h-[580px] overflow-y-auto pr-1">
-                  {Object.keys(sizeGroups).sort().map((sizeName) => (
-                    <div key={sizeName} className="space-y-3">
-                      
-                      {/* Dynamic Size Heading Pill Layout */}
-                      <div className="text-xs font-bold text-slate-600 bg-slate-100 border border-slate-200/60 px-4 py-2.5 rounded-xl flex justify-between items-center shadow-2xs">
-                        <span className="font-extrabold text-slate-700">Cylinder Size: {sizeName}</span>
-                        <span className="bg-slate-200 text-slate-800 px-3 py-0.5 rounded-lg font-extrabold text-[10px] tracking-wider font-mono">
-                          {sizeGroups[sizeName].length} CYL
-                        </span>
-                      </div>
-
-                      {/* HIGH DENSITY CHIPS CONTAINER */}
-                      <div className="flex flex-wrap gap-2 p-4 bg-white border border-slate-200/75 rounded-2xl shadow-2xs">
-                        {sizeGroups[sizeName].map((cyl) => (
-                          <div 
-                            key={cyl.id} 
-                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 hover:border-rose-350 hover:bg-rose-50/15 rounded-lg text-xs font-bold text-slate-700 font-mono transition-all duration-150 group"
-                          >
-                            <span>{cyl.serial_number}</span>
-                            {/* Valve type badge — always show BN/PI so staff can spot mis-classified cylinders */}
-                            {cyl.type_info?.code && (
-                              <span className={`text-[8px] font-extrabold px-1.5 py-0.5 rounded-full border non-mono ${
-                                cyl.type_info.code === 'BN'
-                                  ? 'bg-blue-100 text-blue-700 border-blue-200'
-                                  : 'bg-purple-100 text-purple-700 border-purple-200'
-                              }`}>
-                                {cyl.type_info.code}
-                              </span>
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => setSessionScannedCylinders(prev => prev.filter(c => c.id !== cyl.id))}
-                              className="text-slate-400 hover:text-rose-600 cursor-pointer p-0.5 rounded-md hover:bg-slate-200 transition-colors"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-
-                    </div>
-                  ))}
+            {/* Scanned Cylinders List */}
+            <div className="flex-1 overflow-y-auto max-h-[460px] pr-1 space-y-2 min-h-[220px]">
+              {sessionScannedCylinders.length === 0 ? (
+                <div className="py-20 text-center border-2 border-dashed border-slate-200 rounded-2xl p-8 bg-slate-50/50 flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-500 mb-3">
+                    <QrCode className="w-6 h-6" />
+                  </div>
+                  <h5 className="text-sm font-bold text-slate-800">
+                    {language === 'ms' ? 'Belum Ada Silinder Diimbas' : 'No Cylinders Scanned Yet'}
+                  </h5>
+                  <p className="text-xs text-slate-400 mt-1 max-w-xs leading-relaxed">
+                    {language === 'ms' 
+                      ? 'Gunakan kamera atau taip no siri di sebelah kiri untuk imbas silinder kosong ke dalam senarai ini.' 
+                      : 'Scan barcodes with camera or key-in serial numbers on the left to add cylinders to this list.'}
+                  </p>
                 </div>
-              );
-            })() : (
-              /* Empty state message */
-              <div className="h-60 border border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center p-6 text-center bg-slate-50/30">
-                <Database className="w-8 h-8 text-slate-300 mb-2" />
-                <h4 className="text-xs font-bold text-slate-700">No scanned cylinders yet</h4>
-                <p className="text-[10px] text-slate-400 font-semibold max-w-xs mt-1">Cylinders marked empty during this session will display here categorized by size.</p>
-              </div>
-            )}
+              ) : (
+                sessionScannedCylinders.map((cyl, idx) => {
+                  const capacityStr = cyl.size_info?.capacity ? `${Number(cyl.size_info.capacity)}M³` : ((cyl as any).capacity ? `${(cyl as any).capacity}M³` : '—');
+                  const valveCode = (cyl.type_info as any)?.code || ((cyl.type_info as any)?.name?.toLowerCase().includes('bullnose') ? 'BN' : 'PI');
+                  const sizeLabel = cyl.size_info?.code || (cyl as any).size_code || '—';
+
+                  return (
+                    <div
+                      key={cyl.id}
+                      className="p-3 bg-white border border-slate-200/80 rounded-xl hover:border-slate-300 transition-all flex items-center justify-between gap-3 shadow-2xs"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="w-6 h-6 rounded-full bg-indigo-50 text-indigo-700 text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                          {idx + 1}
+                        </span>
+
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-mono text-xs font-bold text-slate-900 tracking-tight">
+                            {cyl.serial_number}
+                          </span>
+                          <div className="flex items-center gap-2 text-[10px] text-slate-500 font-medium mt-0.5">
+                            <span>Loc: {(cyl.current_location as any)?.location_name || (typeof cyl.current_location === 'string' ? cyl.current_location : 'Pharmacy Store')}</span>
+                            <span>•</span>
+                            <span className="font-mono text-slate-400">{cyl.qr_code || cyl.serial_number}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Badges: Size & Valve & Remove Button */}
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-md text-[10px] font-extrabold font-mono text-slate-700">
+                          {sizeLabel} ({capacityStr})
+                        </span>
+                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold border ${
+                          valveCode === 'BN'
+                            ? 'bg-blue-50 text-blue-700 border-blue-200'
+                            : 'bg-purple-50 text-purple-700 border-purple-200'
+                        }`}>
+                          {valveCode === 'BN' ? '🔵 BN' : '🟣 PI'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveScannedCylinder(cyl.id)}
+                          className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer ml-1"
+                          title="Remove from this session"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
           </div>
 
         </div>
 
         {/* Footer actions */}
-        <div className="p-6 border-t border-slate-200/55 bg-white flex gap-4">
+        <div className="p-4 md:p-6 border-t border-slate-200/60 bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer text-center"
+            className="px-5 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer text-center"
           >
-            Close Scanner
+            {language === 'ms' ? 'Tutup Pengimbas' : 'Close Scanner'}
           </button>
           
-          {sessionScannedCylinders.length > 0 && (
+          <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5">
+            <span className="text-xs font-bold text-slate-600 font-mono mr-1">
+              <strong className="text-rose-600 text-sm">{sessionScannedCylinders.length}</strong> {language === 'ms' ? 'silinder sedia' : 'cylinders ready'}
+            </span>
+
+            {onCreateEmptyList && (
+              <button
+                type="button"
+                onClick={handleProceedToEmptyList}
+                disabled={sessionScannedCylinders.length === 0}
+                className="px-3.5 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                title={language === 'ms' ? 'Lihat atau cetak senarai manifest silinder kosong' : 'View or print empty cylinder manifest'}
+              >
+                <FileText className="w-3.5 h-3.5 text-indigo-600" />
+                <span>{language === 'ms' ? 'Senarai Manifest' : 'View Manifest'}</span>
+              </button>
+            )}
+
             <button
               type="button"
-              onClick={onClose}
-              className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              onClick={handleProceedToReturn}
+              disabled={sessionScannedCylinders.length === 0}
+              className="px-5 py-2.5 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Check className="w-4 h-4" />
-              Use in Return Doc
+              <Truck className="w-4 h-4" />
+              <span>
+                {language === 'ms' ? 'Terus Ke Dokumen Pulang' : 'Proceed to Return Document'}
+              </span>
+              {sessionScannedCylinders.length > 0 && (
+                <span className="bg-white/20 text-white px-2 py-0.5 rounded-full text-[10px] font-mono">
+                  {sessionScannedCylinders.length} cyl
+                </span>
+              )}
+              <ArrowRight className="w-4 h-4 ml-0.5" />
             </button>
-          )}
+          </div>
         </div>
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : modalContent;
 };

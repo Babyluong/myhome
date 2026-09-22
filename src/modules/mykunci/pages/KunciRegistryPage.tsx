@@ -416,11 +416,11 @@ export const KunciRegistryPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
             <Building2 className="w-7 h-7 text-amber-500" />
             {language === 'ms' ? 'Daftar Kunci & Inventori Jabatan' : 'Key Registry & Department Inventory'}
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-400 mt-1">
             {language === 'ms' 
               ? 'Daftar induk anak kunci, ibu kunci, peti simpanan, dan pengkelasan tahap keselamatan'
               : 'Master registry of keys, padlocks, storage cabinets, and security clearance levels'}

@@ -76,7 +76,8 @@ import {
   type CylinderLedgerItem,
   type CylinderTransactionRow,
   type CylinderDeptBreakdown,
-  type CylinderStoreVerificationRecord
+  type CylinderStoreVerificationRecord,
+  CYLINDER_STANDARD_PRICES
 } from '../../services/cylinderKewPs4Service'
 
 const DEFAULT_GAS_SUPPLIERS = [
@@ -111,7 +112,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
 
   // Data states
   const [cylinderItems, setCylinderItems] = useState<CylinderLedgerItem[]>([])
-  const [selectedSizeId, setSelectedSizeId] = useState<string>('size-004')
+  const [selectedSizeId, setSelectedSizeId] = useState<string>('')
   const [selectedItemId, setSelectedItemId] = useState<string>('')
   const [selectedItem, setSelectedItem] = useState<CylinderLedgerItem | null>(null)
   const [ledgerRows, setLedgerRows] = useState<CylinderTransactionRow[]>([])
@@ -192,8 +193,16 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
       setCylinderItems(res.data)
       const querySize = searchParams.get('sizeId')
       const target = querySize
-        ? res.data.find(i => i.id === querySize || i.size_id === querySize || i.item_code?.toLowerCase().includes(querySize.toLowerCase()))
-        : (res.data.find(i => i.id === selectedItemId || i.size_id === selectedSizeId || i.item_code === '101-N') || res.data[0])
+        ? (res.data.find(i => 
+            i.id === querySize || 
+            i.size_id === querySize || 
+            i.item_code?.toLowerCase() === querySize.toLowerCase() ||
+            (querySize === 'size-004' && i.item_code === '101-N') ||
+            (querySize === 'size-003' && i.item_code === '101-F') ||
+            (querySize === 'size-002' && i.item_code === 'P101-E') ||
+            (querySize === 'size-001' && i.item_code === 'P101-D')
+          ) || res.data[0])
+        : (res.data.find(i => (selectedItemId && i.id === selectedItemId) || (selectedSizeId && i.size_id === selectedSizeId) || i.item_code === '101-N') || res.data[0])
 
       if (target) {
         setSelectedItemId(target.id)
@@ -213,12 +222,13 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
 
   // Load ledger details whenever selected size or filters change
   const loadLedgerDetails = async () => {
-    if (!selectedSizeId) return
+    const targetSize = selectedItem?.size_id || selectedSizeId
+    if (!targetSize) return
     setIsLoadingDetails(true)
 
     const [txRes, deptRes, verRes] = await Promise.all([
       getCylinderTransactions(hospitalId, {
-        sizeId: selectedItem?.size_id || selectedSizeId,
+        sizeId: targetSize,
         typeId: selectedItem?.type_id,
         comboId: selectedItem?.id,
         transaction_type: selectedTxType,
@@ -227,8 +237,8 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
         search_query: refSearch,
         ward_name: selectedWard
       }),
-      getCylinderDepartmentBreakdown(hospitalId, selectedItem?.size_id || selectedSizeId, dateFrom, dateTo),
-      getCylinderStoreVerificationHistory(hospitalId, selectedItem?.size_id || selectedSizeId)
+      getCylinderDepartmentBreakdown(hospitalId, targetSize, dateFrom, dateTo),
+      getCylinderStoreVerificationHistory(hospitalId, targetSize)
     ])
 
     if (txRes.data) {
@@ -245,7 +255,9 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
   }
 
   useEffect(() => {
-    loadLedgerDetails()
+    if (selectedSizeId || selectedItemId) {
+      loadLedgerDetails()
+    }
   }, [selectedItemId, selectedSizeId, selectedItem?.type_id, selectedTxType, dateFrom, dateTo, refSearch, selectedWard, hospitalId])
 
   // Handle Size Selection
@@ -330,6 +342,206 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
     return cylinderItems.filter(i => i.current_stock <= (i.min_stock || 0)).length
   }, [cylinderItems])
 
+  // Unit price helper for cylinder valuation (defaults to standard price by code or 117.20)
+  const unitPrice = useMemo(() => {
+    if (!selectedItem) return 117.20
+    const p = Number((selectedItem as any).unit_price || (selectedItem as any).price || (selectedItem as any).refill_price)
+    if (!isNaN(p) && p > 0) return p
+    const code = selectedItem.item_code
+    return CYLINDER_STANDARD_PRICES[code] || 117.20
+  }, [selectedItem])
+
+  const recorderName = useMemo(() => {
+    return user?.full_name || user?.name || 'AMRI AMIT'
+  }, [user])
+
+  const userDepartmentName = useMemo(() => {
+    return user?.department?.department_name || (user as any)?.department_name || 'Unit Farmasi Logistik / Stor Gas Perubatan'
+  }, [user])
+
+  const totalReceived = useMemo(() => {
+    if (ledgerRows && ledgerRows.length > 0) {
+      return ledgerRows.reduce((sum, r) => sum + (r.receiptQty || 0), 0)
+    }
+    return 0
+  }, [ledgerRows])
+
+  const totalIssued = useMemo(() => {
+    if (ledgerRows && ledgerRows.length > 0) {
+      return ledgerRows.reduce((sum, r) => sum + (r.issueQty || 0), 0)
+    }
+    return 0
+  }, [ledgerRows])
+
+  const issuePercentage = useMemo(() => {
+    if (totalReceived > 0) {
+      return Math.min(100, Math.round((totalIssued / totalReceived) * 100))
+    }
+    return totalIssued > 0 ? 100 : 0
+  }, [totalReceived, totalIssued])
+
+  // Annual stock parameters (separated per year, e.g. 2026, 2025)
+  const annualStockLevels = useMemo(() => {
+    const currentYear = new Date().getFullYear()
+    const prevYear = currentYear - 1
+
+    const minQty = selectedItem?.min_stock || 20
+    const bufferQty = (selectedItem as any)?.buffer_stock ?? Math.round(minQty * 0.5)
+    const maxQty = selectedItem?.max_stock || 100
+
+    return [
+      { year: currentYear, min: minQty, buffer: bufferQty, max: maxQty },
+      { year: prevYear, min: minQty, buffer: bufferQty, max: maxQty }
+    ]
+  }, [selectedItem])
+
+  // Compute quarterly cylinder movement summary (Q1, Q2, Q3, Q4) for current year and previous year
+  const quarterlySummary = useMemo(() => {
+    const currentYear = new Date().getFullYear()
+    const prevYear = currentYear - 1
+
+    const initYearStructure = (year: number) => ({
+      year,
+      q1: { receiptQty: 0, receiptVal: 0, issueQty: 0, issueVal: 0 },
+      q2: { receiptQty: 0, receiptVal: 0, issueQty: 0, issueVal: 0 },
+      q3: { receiptQty: 0, receiptVal: 0, issueQty: 0, issueVal: 0 },
+      q4: { receiptQty: 0, receiptVal: 0, issueQty: 0, issueVal: 0 },
+      total: { receiptQty: 0, receiptVal: 0, issueQty: 0, issueVal: 0 }
+    })
+
+    const yearsData: Record<number, ReturnType<typeof initYearStructure>> = {
+      [prevYear]: initYearStructure(prevYear),
+      [currentYear]: initYearStructure(currentYear)
+    }
+
+    ledgerRows.forEach(row => {
+      const dt = new Date(row.transaction_date || row.created_at)
+      if (isNaN(dt.getTime())) return
+
+      const y = dt.getFullYear()
+      if (!yearsData[y]) {
+        yearsData[y] = initYearStructure(y)
+      }
+
+      const month = dt.getMonth() // 0-11
+      let qKey: 'q1' | 'q2' | 'q3' | 'q4' = 'q1'
+      if (month >= 0 && month <= 2) qKey = 'q1'
+      else if (month >= 3 && month <= 5) qKey = 'q2'
+      else if (month >= 6 && month <= 8) qKey = 'q3'
+      else qKey = 'q4'
+
+      const rQty = Number(row.receiptQty) || 0
+      const iQty = Number(row.issueQty) || 0
+      const rVal = rQty * unitPrice
+      const iVal = iQty * unitPrice
+
+      yearsData[y][qKey].receiptQty += rQty
+      yearsData[y][qKey].receiptVal += rVal
+      yearsData[y][qKey].issueQty += iQty
+      yearsData[y][qKey].issueVal += iVal
+
+      yearsData[y].total.receiptQty += rQty
+      yearsData[y].total.receiptVal += rVal
+      yearsData[y].total.issueQty += iQty
+      yearsData[y].total.issueVal += iVal
+    })
+
+    return Object.values(yearsData).sort((a, b) => b.year - a.year)
+  }, [ledgerRows, unitPrice])
+
+  const sanitizeSupplierName = (str: string) => {
+    if (!str) return ''
+    return str
+      .replace(/pharmaniaga\s+lifescience\s*(sdn\s*bhd)?/gi, 'PHARMANIAGA LOGISTICS SDN BHD')
+      .replace(/linde\s+eox\s*(sdn\s*bhd)?/gi, 'LINDE EOX SDN BHD (CAW. MIRI)')
+  }
+
+  const resolveRecipientName = (row: CylinderTransactionRow) => {
+    if (row.transaction_type === 'check_found') {
+      return 'Semakan Stok Fizikal (Audit)'
+    }
+    if (row.transaction_type === 'store_verification') {
+      return 'Verifikasi Stor Tahunan (Pegawai Luar)'
+    }
+    if (row.transaction_type === 'bring_forward') {
+      return 'Baki Bawa Ke Hadapan (Baki Pembukaan Rasmi)'
+    }
+    if (row.source_destination) {
+      return sanitizeSupplierName(row.source_destination)
+    }
+    if (row.receiptQty !== null && row.receiptQty !== undefined) {
+      return 'LINDE EOX SDN BHD (CAW. MIRI)'
+    }
+    return 'Unit / Wad Klinikal'
+  }
+
+  const resolveRecorderName = (officerName?: string) => {
+    if (officerName && officerName !== 'Pegawai Stor' && officerName !== 'Pegawai Stor Farmasi') {
+      return officerName
+    }
+    return user?.full_name || 'AMRI AMIT'
+  }
+
+  const formatReferenceNumber = (row: CylinderTransactionRow) => {
+    const rawNum = row.transaction_number || ''
+    if (!rawNum || rawNum === '—') {
+      return row.transaction_type === 'store_verification'
+        ? 'VER-STR-2026-0001'
+        : row.transaction_type === 'receipt'
+        ? 'GRN-SUP-2026-0001'
+        : row.transaction_type === 'bring_forward'
+        ? 'BF-2026/01'
+        : row.transaction_type === 'check_found'
+        ? 'CHK-FND-2026-0001'
+        : row.transaction_type === 'return'
+        ? 'RET-CYL-2026-0001'
+        : 'ISS-DEPT-2026-0001'
+    }
+    if (rawNum.startsWith('TXN-')) {
+      const parts = rawNum.split('-')
+      const lastDigits = parts[parts.length - 1] || '0001'
+      if (row.transaction_type === 'store_verification') {
+        return `VER-STR-2026-${lastDigits}`
+      }
+      if (row.transaction_type === 'check_found') {
+        return `CHK-FND-2026-${lastDigits}`
+      }
+      if (row.receiptQty !== null) {
+        return `GRN-SUP-2026-${lastDigits}`
+      } else {
+        return `ISS-DEPT-2026-${lastDigits}`
+      }
+    }
+    return rawNum
+  }
+
+  // Summary log of receipts and issuances grouped by entity (Supplier / Department / Ward)
+  const movementLogSummary = useMemo(() => {
+    const map: Record<string, { name: string; totalReceived: number; totalIssued: number }> = {}
+
+    ledgerRows.forEach(row => {
+      const name = resolveRecipientName(row)
+      if (!map[name]) {
+        map[name] = { name, totalReceived: 0, totalIssued: 0 }
+      }
+      if (row.receiptQty !== null && row.receiptQty !== undefined) {
+        map[name].totalReceived += Number(row.receiptQty) || 0
+      }
+      if (row.issueQty !== null && row.issueQty !== undefined) {
+        map[name].totalIssued += Number(row.issueQty) || 0
+      }
+    })
+
+    if (Object.keys(map).length === 0 && deptBreakdown.length > 0) {
+      deptBreakdown.forEach(d => {
+        const name = d.department_name
+        map[name] = { name, totalReceived: 0, totalIssued: d.total_issued || 0 }
+      })
+    }
+
+    return Object.values(map)
+  }, [ledgerRows, deptBreakdown])
+
   // ==========================================
   // HANDLERS FOR ACTIONS & MODALS
   // ==========================================
@@ -357,7 +569,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
     setCheckFoundStatus(null)
 
     const res = await recordCylinderCheckFoundTransaction(hospitalId, {
-      size_id: selectedSizeId,
+      size_id: selectedItem?.size_id || selectedSizeId,
       item_code: selectedItem?.item_code,
       item_name: selectedItem?.item_name,
       physical_quantity: physical,
@@ -402,7 +614,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
     setBfStatus(null)
 
     const res = await recordCylinderBringForwardTransaction(hospitalId, {
-      size_id: selectedSizeId,
+      size_id: selectedItem?.size_id || selectedSizeId,
       item_code: selectedItem?.item_code,
       item_name: selectedItem?.item_name,
       balance_quantity: qty,
@@ -458,7 +670,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
     setVerificationStatus(null)
 
     const res = await recordCylinderStoreVerification(hospitalId, {
-      size_id: selectedSizeId,
+      size_id: selectedItem?.size_id || selectedSizeId,
       item_code: selectedItem?.item_code || '101-N',
       item_name: selectedItem?.item_name || 'Medical Oxygen Cylinder',
       verification_year: verificationYear,
@@ -508,135 +720,488 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
   }
 
   // ==========================================
-  // PRINT GENERATOR: OFFICIAL KEW.PS-4 KAD PETAK
+  // ENHANCED PRINTABLE KEW.PS-4 DOCUMENT GENERATOR (OFFICIAL KKM / TPS PK 2.1)
   // ==========================================
   const handlePrintLedger = () => {
-    if (!selectedItem) return
+    if (!selectedItem || ledgerRows.length === 0) return
 
-    const printWin = window.open('', '_blank')
-    if (!printWin) return
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) return
 
     const itemCode = selectedItem.item_code
     const itemName = selectedItem.item_name
     const uom = selectedItem.unit_of_measure
-    const location = selectedItem.location
-    const minStock = selectedItem.min_stock || 0
-    const maxStock = selectedItem.max_stock || 0
+    const itemLocationDisplay = selectedItem.location || 'Stor Gas Perubatan Utama (Central Gas Store)'
 
-    const rowsHtml = ledgerRows.map(row => {
-      const isReceipt = row.receiptQty !== null && row.receiptQty !== undefined
-      const isIssue = row.issueQty !== null && row.issueQty !== undefined
-      const isBf = row.transaction_type === 'bring_forward'
-      const isVer = row.transaction_type === 'store_verification'
+    const annualStockHtml = annualStockLevels.map(l => `
+      <tr>
+        <td style="padding: 5px 8px; border: 1px solid #334155; text-align: center; font-weight: bold; background-color: #f8fafc;">${l.year}</td>
+        <td style="padding: 5px 8px; border: 1px solid #334155; text-align: center; font-family: monospace; font-weight: bold;">${l.min} ${uom}</td>
+        <td style="padding: 5px 8px; border: 1px solid #334155; text-align: center; font-family: monospace; font-weight: bold;">${l.buffer} ${uom}</td>
+        <td style="padding: 5px 8px; border: 1px solid #334155; text-align: center; font-family: monospace; font-weight: bold;">${l.max} ${uom}</td>
+      </tr>
+    `).join('')
 
-      const dateDisplay = new Date(row.transaction_date).toLocaleDateString('ms-MY', {
-        day: '2-digit', month: '2-digit', year: 'numeric'
-      })
+    const quarterlySummaryHtml = quarterlySummary.map(yData => `
+      <tr>
+        <td rowspan="5" style="padding: 5px 8px; border: 1px solid #334155; text-align: center; font-weight: 800; vertical-align: middle; background-color: #f8fafc;">${yData.year}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; font-size: 10.5px;">Suku Pertama (Q1: Jan - Mac)</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace; font-weight: bold; color: #15803d;">${yData.q1.receiptQty > 0 ? `+${yData.q1.receiptQty} ${uom}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace;">${yData.q1.receiptVal > 0 ? `RM ${yData.q1.receiptVal.toFixed(2)}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace; font-weight: bold; color: #b91c1c;">${yData.q1.issueQty > 0 ? `-${yData.q1.issueQty} ${uom}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace;">${yData.q1.issueVal > 0 ? `RM ${yData.q1.issueVal.toFixed(2)}` : '—'}</td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 8px; border: 1px solid #334155; font-size: 10.5px;">Suku Kedua (Q2: Apr - Jun)</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace; font-weight: bold; color: #15803d;">${yData.q2.receiptQty > 0 ? `+${yData.q2.receiptQty} ${uom}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace;">${yData.q2.receiptVal > 0 ? `RM ${yData.q2.receiptVal.toFixed(2)}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace; font-weight: bold; color: #b91c1c;">${yData.q2.issueQty > 0 ? `-${yData.q2.issueQty} ${uom}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace;">${yData.q2.issueVal > 0 ? `RM ${yData.q2.issueVal.toFixed(2)}` : '—'}</td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 8px; border: 1px solid #334155; font-size: 10.5px;">Suku Ketiga (Q3: Jul - Sep)</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace; font-weight: bold; color: #15803d;">${yData.q3.receiptQty > 0 ? `+${yData.q3.receiptQty} ${uom}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace;">${yData.q3.receiptVal > 0 ? `RM ${yData.q3.receiptVal.toFixed(2)}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace; font-weight: bold; color: #b91c1c;">${yData.q3.issueQty > 0 ? `-${yData.q3.issueQty} ${uom}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace;">${yData.q3.issueVal > 0 ? `RM ${yData.q3.issueVal.toFixed(2)}` : '—'}</td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 8px; border: 1px solid #334155; font-size: 10.5px;">Suku Keempat (Q4: Okt - Dis)</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace; font-weight: bold; color: #15803d;">${yData.q4.receiptQty > 0 ? `+${yData.q4.receiptQty} ${uom}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace;">${yData.q4.receiptVal > 0 ? `RM ${yData.q4.receiptVal.toFixed(2)}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace; font-weight: bold; color: #b91c1c;">${yData.q4.issueQty > 0 ? `-${yData.q4.issueQty} ${uom}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace;">${yData.q4.issueVal > 0 ? `RM ${yData.q4.issueVal.toFixed(2)}` : '—'}</td>
+      </tr>
+      <tr style="background-color: #f1f5f9; font-weight: bold;">
+        <td style="padding: 4px 8px; border: 1px solid #334155; font-size: 10.5px;">Jumlah Keseluruhan Tahun ${yData.year}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace; color: #15803d;">${yData.total.receiptQty > 0 ? `+${yData.total.receiptQty} ${uom}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace;">RM ${yData.total.receiptVal.toFixed(2)}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace; color: #b91c1c;">${yData.total.issueQty > 0 ? `-${yData.total.issueQty} ${uom}` : '—'}</td>
+        <td style="padding: 4px 8px; border: 1px solid #334155; text-align: right; font-family: monospace;">RM ${yData.total.issueVal.toFixed(2)}</td>
+      </tr>
+    `).join('')
 
-      return `
-        <tr>
-          <td style="text-align: center; font-family: monospace;">${dateDisplay}</td>
-          <td style="font-weight: bold; font-family: monospace;">${row.transaction_number || '—'}</td>
-          <td>${row.source_destination || '—'}</td>
-          <td style="text-align: right; font-weight: bold; color: ${isReceipt || isBf ? '#047857' : '#334155'}; font-family: monospace;">
-            ${row.receiptQty !== null ? row.receiptQty : '—'}
-          </td>
-          <td style="text-align: right; font-weight: bold; color: ${isIssue ? '#b91c1c' : '#334155'}; font-family: monospace;">
-            ${row.issueQty !== null ? row.issueQty : '—'}
-          </td>
-          <td style="text-align: right; font-weight: 900; background: #f8fafc; font-family: monospace;">
-            ${row.runningBalance}
-          </td>
-          <td style="font-size: 8.5pt; text-align: center;">${row.officer_name || 'Pegawai Stor'}</td>
-        </tr>
-      `
-    }).join('')
+    const logSummaryHtml = movementLogSummary.map(m => `
+      <tr>
+        <td style="padding: 6px 10px; border: 1px solid #334155; font-size: 11px; font-weight: 600;">${m.name}</td>
+        <td style="padding: 6px 10px; border: 1px solid #334155; text-align: right; font-weight: bold; font-size: 11px; color: #15803d;">
+          ${m.totalReceived > 0 ? `+${m.totalReceived} ${uom}` : '—'}
+        </td>
+        <td style="padding: 6px 10px; border: 1px solid #334155; text-align: right; font-weight: bold; font-size: 11px; color: #b91c1c;">
+          ${m.totalIssued > 0 ? `-${m.totalIssued} ${uom}` : '—'}
+        </td>
+      </tr>
+    `).join('')
 
-    printWin.document.write(`
+    printWindow.document.write(`
       <!DOCTYPE html>
       <html>
-      <head>
-        <title>KEW.PS-4 Kad Petak Silinder - ${itemCode} - Hospital Lawas</title>
-        <style>
-          @page { size: A4 landscape; margin: 12mm 15mm; }
-          body { font-family: 'Arial', sans-serif; font-size: 9pt; color: #000; margin: 0; padding: 0; }
-          .header-box { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
-          .kewps-tag { border: 2px solid #000; padding: 4px 10px; font-weight: bold; font-size: 13pt; font-family: monospace; }
-          .meta-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 12px; border: 1px solid #000; padding: 8px; font-size: 8.5pt; }
-          table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 8.5pt; }
-          th, td { border: 1px solid #000; padding: 4px 6px; }
-          th { background-color: #f1f5f9; text-align: center; font-weight: bold; }
-          .footer { margin-top: 15px; font-size: 7.5pt; color: #475569; display: flex; justify-content: space-between; }
-        </style>
-      </head>
-      <body>
-        <div class="header-box">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <img src="${JATA_NEGARA_BASE64}" style="height: 48px; width: auto;" alt="Jata Negara" />
-            <div>
-              <div style="font-size: 8.5pt; font-weight: bold; letter-spacing: 0.5px;">KEMENTERIAN KESIHATAN MALAYSIA</div>
-              <div style="font-size: 12pt; font-weight: 900; text-transform: uppercase;">HOSPITAL LAWAS, SARAWAK</div>
-              <div style="font-size: 8pt; color: #475569;">PENGURUSAN STOR GAS PERUBATAN & SILINDER OKSIGEN</div>
+        <head>
+          <title>KEW.PS-4 Kad Petak - ${itemCode} - Hospital Lawas</title>
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 12mm 12mm 12mm 12mm;
+            }
+            body {
+              font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+              margin: 0;
+              padding: 0;
+              color: #0f172a;
+              font-size: 11px;
+              line-height: 1.4;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .gov-header {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              border-bottom: 2px solid #0f172a;
+              padding-bottom: 10px;
+              margin-bottom: 14px;
+            }
+            .gov-brand {
+              display: flex;
+              align-items: center;
+              gap: 14px;
+            }
+            .jata-logo {
+              height: 65px;
+              width: auto;
+              object-fit: contain;
+            }
+            .gov-titles {
+              display: flex;
+              flex-direction: column;
+            }
+            .kkm-title {
+              font-size: 13px;
+              font-weight: 800;
+              color: #0f172a;
+              letter-spacing: 0.5px;
+              text-transform: uppercase;
+            }
+            .hosp-title {
+              font-size: 11px;
+              font-weight: 700;
+              color: #1e293b;
+              text-transform: uppercase;
+              margin-top: 1px;
+            }
+            .sub-title {
+              font-size: 8.5px;
+              color: #475569;
+              margin-top: 2px;
+              font-style: italic;
+            }
+            .doc-badge {
+              text-align: right;
+            }
+            .kewps-box {
+              font-size: 13px;
+              font-weight: 900;
+              color: #0f172a;
+              text-transform: uppercase;
+              background-color: #f1f5f9;
+              padding: 6px 14px;
+              border: 1.5px solid #0f172a;
+              border-radius: 4px;
+              display: inline-block;
+              letter-spacing: 0.5px;
+            }
+            .kewps-sub {
+              font-size: 10px;
+              font-weight: 800;
+              color: #0f172a;
+              margin-top: 3px;
+              text-transform: uppercase;
+            }
+            .meta-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 14px;
+            }
+            .meta-table td {
+              border: 1px solid #334155;
+              padding: 5px 8px;
+              font-size: 10.5px;
+            }
+            .meta-label {
+              font-weight: 700;
+              background-color: #f8fafc;
+              color: #334155;
+            }
+            .meta-val {
+              font-weight: 600;
+              color: #0f172a;
+            }
+            .kpi-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 14px;
+            }
+            .kpi-table td {
+              border: 1px solid #cbd5e1;
+              padding: 8px;
+              text-align: center;
+              background-color: #f8fafc;
+            }
+            .kpi-title {
+              font-size: 8.5px;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            .kpi-num {
+              font-size: 14px;
+              font-weight: 800;
+              margin-top: 3px;
+              font-family: monospace;
+            }
+            .section-header {
+              font-weight: 800;
+              font-size: 11px;
+              margin-bottom: 6px;
+              text-transform: uppercase;
+              letter-spacing: 0.3px;
+              color: #0f172a;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            }
+            .page-break {
+              page-break-before: always;
+              break-before: page;
+              margin-top: 0 !important;
+              padding-top: 8px;
+            }
+
+            .ledger-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 15px;
+            }
+            .ledger-table th {
+              background-color: #e2e8f0;
+              border: 1px solid #334155;
+              padding: 6px 6px;
+              font-size: 9.5px;
+              font-weight: 800;
+              text-transform: uppercase;
+              text-align: center;
+              color: #0f172a;
+            }
+            .ledger-table td {
+              border: 1px solid #334155;
+              padding: 5px 6px;
+              font-size: 9.5px;
+              text-align: left;
+            }
+            .dept-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 14px;
+            }
+            .dept-table th {
+              background-color: #f1f5f9;
+              border: 1px solid #334155;
+              padding: 5px 8px;
+              font-size: 10px;
+              font-weight: 700;
+              text-transform: uppercase;
+            }
+            .center { text-align: center; }
+            .right { text-align: right; }
+            .mono { font-family: monospace; font-weight: 700; }
+            .sig-container {
+              margin-top: 30px;
+              display: flex;
+              justify-content: space-between;
+              page-break-inside: avoid;
+            }
+            .sig-box {
+              width: 46%;
+              border: 1px solid #334155;
+              padding: 10px;
+              border-radius: 4px;
+              background-color: #fafafa;
+              font-size: 10px;
+            }
+            .sig-line {
+              margin-top: 35px;
+              border-top: 1px dashed #334155;
+              padding-top: 4px;
+            }
+            .footer-note {
+              margin-top: 20px;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 6px;
+              font-size: 8px;
+              color: #64748b;
+              text-align: center;
+              font-weight: 600;
+            }
+          </style>
+        </head>
+        <body>
+          <!-- Government Letterhead Header with Jata Negara -->
+          <div class="gov-header">
+            <div class="gov-brand">
+              <img src="${JATA_NEGARA_BASE64}" class="jata-logo" alt="Jata Negara Malaysia" />
+              <div class="gov-titles">
+                <span class="kkm-title">KEMENTERIAN KESIHATAN MALAYSIA</span>
+                <span class="hosp-title">HOSPITAL LAWAS, SARAWAK</span>
+                <span class="sub-title">Tatacara Pengurusan Stor Perbendaharaan (Pekeliling Perbendaharaan PK 2.1)</span>
+              </div>
+            </div>
+            <div class="doc-badge">
+              <div class="kewps-box">KEW.PS-4</div>
+              <div class="kewps-sub">KAD PETAK</div>
             </div>
           </div>
-          <div style="text-align: right;">
-            <div class="kewps-tag">KEW.PS-4</div>
-            <div style="font-size: 8pt; font-weight: bold; margin-top: 3px;">KAD PETAK SILINDER (DIGITAL)</div>
-          </div>
-        </div>
 
-        <div class="meta-grid">
-          <div>
-            <strong>Perihal Stok (Gas & Silinder):</strong> ${itemName}<br/>
-            <strong>Jenis Gas:</strong> ${selectedItem.gas_type}<br/>
-            <strong>Kapasiti:</strong> ${selectedItem.capacity_m3} m³ (${selectedItem.capacity_liters} Liters)
-          </div>
-          <div>
-            <strong>No. Kod Silinder:</strong> ${itemCode}<br/>
-            <strong>Unit Pengukuran:</strong> ${uom}<br/>
-            <strong>Status Pemilikan:</strong> ${selectedItem.is_loan ? 'Pinjaman Pembekal (Loan)' : 'Milik Kerajaan (KKM)'}
-          </div>
-          <div>
-            <strong>Lokasi Stor:</strong> ${location}<br/>
-            <strong>Kuantiti Minima:</strong> ${minStock} ${uom}<br/>
-            <strong>Kuantiti Maksima:</strong> ${maxStock} ${uom}
-          </div>
-        </div>
-
-        <table>
-          <thead>
+          <!-- Item Metadata Table -->
+          <table class="meta-table">
             <tr>
-              <th rowspan="2" style="width: 10%;">Tarikh</th>
-              <th rowspan="2" style="width: 16%;">No. Rujukan / DO / Inden</th>
-              <th rowspan="2" style="width: 24%;">Terima Daripada / Keluar Kepada</th>
-              <th colspan="3" style="width: 30%;">Kuantiti (${uom})</th>
-              <th rowspan="2" style="width: 20%;">Tandatangan & Nama Pegawai</th>
+              <td width="15%" class="meta-label">Perihal Stok:</td>
+              <td width="45%" class="meta-val" style="font-size: 11px; font-weight: 800;">${itemName}</td>
+              <td width="15%" class="meta-label">No. Kod Stok:</td>
+              <td width="25%" class="meta-val mono" style="font-size: 11px; color: #1e3a8a;">${itemCode}</td>
             </tr>
             <tr>
-              <th style="width: 10%;">Terima</th>
-              <th style="width: 10%;">Keluar</th>
-              <th style="width: 10%;">Baki</th>
+              <td class="meta-label">Unit Pengukuran:</td>
+              <td class="meta-val">${uom}</td>
+              <td class="meta-label">Lokasi Item:</td>
+              <td class="meta-val" style="font-weight: 700; color: #0369a1;">${itemLocationDisplay}</td>
             </tr>
-          </thead>
-          <tbody>
-            ${rowsHtml || '<tr><td colspan="7" style="text-align:center; padding: 20px;">Tiada rekod transaksi.</td></tr>'}
-          </tbody>
-        </table>
+            <tr>
+              <td class="meta-label">Tempoh Laporan:</td>
+              <td class="meta-val">${dateFrom || 'Awal'} hingga ${dateTo || 'Kini'}</td>
+              <td class="meta-label">Harga Seunit (RM):</td>
+              <td class="meta-val mono">RM ${unitPrice.toFixed(2)} / ${uom}</td>
+            </tr>
+          </table>
 
-        <div class="footer">
-          <div>Dokumen Rasmi KEW.PS-4 • Hospital Lawas • Dijana Automatik Menerusi H.O.M.E. System pada ${new Date().toLocaleString('ms-MY')}</div>
-          <div>Muka Surat 1 / 1</div>
-        </div>
+          <!-- Paras Stok Tahunan -->
+          <div class="section-header">PARAS STOK TAHUNAN:</div>
+          <table class="dept-table" style="margin-bottom: 14px;">
+            <thead>
+              <tr>
+                <th width="25%" style="text-align: center;">TAHUN</th>
+                <th width="25%" style="text-align: center;">STOK MIN</th>
+                <th width="25%" style="text-align: center;">STOK BUFFER (TAMBAHAN)</th>
+                <th width="25%" style="text-align: center;">STOK MAX</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${annualStockHtml}
+            </tbody>
+          </table>
 
-        <script>
-          window.onload = function() {
-            window.print();
-          }
-        </script>
-      </body>
+          <!-- Rekod Terimaan Dan Pengeluaran Suku Tahun -->
+          <div class="section-header">REKOD TERIMAAN DAN PENGELUARAN SUKU TAHUN:</div>
+          <table class="dept-table" style="margin-bottom: 14px;">
+            <thead>
+              <tr>
+                <th rowspan="2" width="12%" style="text-align: center; vertical-align: middle;">TAHUN</th>
+                <th rowspan="2" width="28%" style="vertical-align: middle;">SUKU TAHUN</th>
+                <th colspan="2" width="30%" style="text-align: center; background-color: #dcfce7; border-bottom: 1px solid #16a34a;">DITERIMA</th>
+                <th colspan="2" width="30%" style="text-align: center; background-color: #ffe4e6; border-bottom: 1px solid #e11d48;">DIKELUARKAN</th>
+              </tr>
+              <tr>
+                <th style="text-align: right; background-color: #f0fdf4;">Kuantiti</th>
+                <th style="text-align: right; background-color: #f0fdf4;">Nilai (RM)</th>
+                <th style="text-align: right; background-color: #fff1f2;">Kuantiti</th>
+                <th style="text-align: right; background-color: #fff1f2;">Nilai (RM)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${quarterlySummaryHtml}
+            </tbody>
+          </table>
+
+          <!-- Movement Summary Strip -->
+          <table class="kpi-table">
+            <tr>
+              <td width="25%">
+                <div class="kpi-title" style="color: #475569;">BAKI SEMASA</div>
+                <div class="kpi-num" style="color: #0f172a;">${currentStockBalance} ${uom}</div>
+              </td>
+              <td width="25%">
+                <div class="kpi-title" style="color: #166534;">JUMLAH DITERIMA</div>
+                <div class="kpi-num" style="color: #15803d;">+${totalReceived} ${uom}</div>
+              </td>
+              <td width="25%">
+                <div class="kpi-title" style="color: #991b1b;">JUMLAH DIKELUARKAN</div>
+                <div class="kpi-num" style="color: #b91c1c;">-${totalIssued} ${uom}</div>
+              </td>
+              <td width="25%">
+                <div class="kpi-title" style="color: #3730a3;">% PENGELUARAN</div>
+                <div class="kpi-num" style="color: #4338ca;">${issuePercentage}%</div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Log Penerimaan Dan Pengeluaran (Rekod Mengikut Jabatan / Pembekal) -->
+          ${movementLogSummary.length > 0 ? `
+            <div class="section-header">LOG PENERIMAAN DAN PENGELUARAN (REKOD MENGIKUT JABATAN / PEMBEKAL):</div>
+            <table class="dept-table">
+              <thead>
+                <tr>
+                  <th>Nama Jabatan / Pembekal / Wad</th>
+                  <th style="text-align: right;">Jumlah Diterima (+)</th>
+                  <th style="text-align: right;">Jumlah Dikeluarkan (-)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${logSummaryHtml}
+              </tbody>
+            </table>
+          ` : ''}
+
+          <!-- Full Ledger Transactions Table (Page 2) -->
+          <div class="section-header page-break">
+            <span>Rekod Transaksi Pergerakan (Buku Daftar KEW.PS-4):</span>
+            <span style="font-size: 9px; font-weight: normal; color: #475569;">Jumlah Rekod: ${ledgerRows.length}</span>
+          </div>
+
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th width="4%">Bil</th>
+                <th width="14%">Tarikh & Masa</th>
+                <th width="17%">No Rujukan Dokumen</th>
+                <th width="9%">Terima (+)</th>
+                <th width="9%">Keluar (-)</th>
+                <th width="9%">Baki</th>
+                <th width="18%">Penerima / Jabatan</th>
+                <th width="12%">Perekod</th>
+                <th width="8%">Catatan</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ledgerRows.map(row => {
+                const isStoreVerification = row.transaction_type === 'store_verification'
+                const isCheckFound = row.transaction_type === 'check_found'
+                const rowBg = isStoreVerification ? 'background-color: #ecfdf5;' : isCheckFound ? 'background-color: #eef2ff;' : ''
+                return `
+                <tr style="${rowBg}">
+                  <td class="center mono">${row.index}</td>
+                  <td class="center font-mono">${new Date(row.transaction_date || row.created_at).toLocaleString('ms-MY', {
+                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                  })}</td>
+                  <td class="mono" style="color: #0369a1;">${formatReferenceNumber(row)}</td>
+                  <td class="right mono" style="color: #15803d;">
+                    ${row.receiptQty !== null && row.receiptQty !== undefined ? `+${row.receiptQty}` : '—'}
+                    ${row.serial_numbers && row.serial_numbers.length > 0 ? `<br/><span style="font-size: 8px; color: #0d9488; font-weight: bold;">S/N: ${row.serial_numbers.slice(0, 3).join(', ')}${row.serial_numbers.length > 3 ? '...' : ''}</span>` : ''}
+                  </td>
+                  <td class="right mono" style="color: #b91c1c;">
+                    ${row.issueQty !== null && row.issueQty !== undefined ? `-${row.issueQty}` : '—'}
+                    ${row.serial_numbers && row.serial_numbers.length > 0 ? `<br/><span style="font-size: 8px; color: #0d9488; font-weight: bold;">S/N: ${row.serial_numbers.slice(0, 3).join(', ')}${row.serial_numbers.length > 3 ? '...' : ''}</span>` : ''}
+                  </td>
+                  <td class="right mono" style="background-color: ${isStoreVerification ? '#d1fae5' : isCheckFound ? '#e0e7ff' : '#f8fafc'}; font-weight: 800;">${row.runningBalance}</td>
+                  <td style="font-weight: 600;">${resolveRecipientName(row)}</td>
+                  <td>${resolveRecorderName(row.officer_name)}</td>
+                  <td style="font-size: 8.5px; color: #475569;">${sanitizeSupplierName(row.remarks || '—')}</td>
+                </tr>
+              `}).join('')}
+            </tbody>
+          </table>
+
+          <!-- Official Sign-off Section -->
+          <div class="sig-container">
+            <div class="sig-box">
+              <strong style="color: #0f172a; text-transform: uppercase;">Disediakan Oleh (Pegawai Stor / Farmasi):</strong>
+              <div class="sig-line">
+                Nama: <strong>${recorderName}</strong><br/>
+                Jawatan: <strong>${userDepartmentName}</strong><br/>
+                Tarikh: <strong>${new Date().toLocaleDateString('ms-MY')}</strong>
+              </div>
+            </div>
+            <div class="sig-box">
+              <strong style="color: #0f172a; text-transform: uppercase;">Disahkan Oleh (Ketua Jabatan / Pegawai Farmasi):</strong>
+              <div class="sig-line">
+                Nama: _______________________________<br/>
+                Jawatan: ____________________________<br/>
+                Tarikh: _____________________________
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            Dokumen Rasmi KEW.PS-4 • Hospital Lawas, Sarawak • Dijana Secara Automatik Menerusi H.O.M.E. System pada ${new Date().toLocaleString('ms-MY')}
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
       </html>
     `)
-    printWin.document.close()
+    printWindow.document.close()
   }
 
   // ==========================================
@@ -1170,246 +1735,507 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* ZONE C: FILTERS & PRESET STRIP */}
-              <div className="bg-white border border-slate-100 rounded-3xl shadow-sm p-5 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-50 pb-3">
-                  <div className="flex items-center gap-2">
-                    <SlidersHorizontal className="w-4 h-4 text-teal-600" />
-                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider">Penapis Lejar KEW.PS-4</span>
-                  </div>
+              {/* MOBILE SEGMENTED VIEW SWITCHER TABS */}
+              <div className="lg:hidden flex bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80 gap-1 shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => setMobileTab('ledger')}
+                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+                    mobileTab === 'ledger'
+                      ? 'bg-white text-teal-700 shadow-sm border border-slate-200/60'
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Buku Rekod ({ledgerRows.length})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileTab('summary')}
+                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+                    mobileTab === 'summary'
+                      ? 'bg-white text-teal-700 shadow-sm border border-slate-200/60'
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  <BarChart3 className="w-3.5 h-3.5" />
+                  <span>Ringkasan</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileTab('departments')}
+                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+                    mobileTab === 'departments'
+                      ? 'bg-white text-teal-700 shadow-sm border border-slate-200/60'
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  <Building className="w-3.5 h-3.5" />
+                  <span>Jabatan</span>
+                </button>
+              </div>
 
-                  {/* Preset Pills */}
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-                    <button
-                      type="button"
-                      onClick={() => applyDatePreset('today')}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                        activeDatePreset === 'today' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                      }`}
-                    >
-                      Hari Ini
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => applyDatePreset('week')}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                        activeDatePreset === 'week' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                      }`}
-                    >
-                      7 Hari
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => applyDatePreset('month')}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                        activeDatePreset === 'month' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                      }`}
-                    >
-                      Bulan Ini
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => applyDatePreset('3months')}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                        activeDatePreset === '3months' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                      }`}
-                    >
-                      3 Bulan
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => applyDatePreset('all')}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                        activeDatePreset === 'all' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                      }`}
-                    >
-                      Semua
-                    </button>
+              {/* ZONE B: MOVEMENT SUMMARY STRIP (4 KPI CARDS) */}
+              <div className={`${mobileTab === 'summary' ? 'grid' : 'hidden'} lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4`}>
+                {/* 1. Baki Semasa */}
+                <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm border-l-4 border-l-teal-500 space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Baki Kedudukan</span>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-black text-slate-900 font-mono">
+                      {currentStockBalance}
+                    </span>
+                    <span className="text-xs text-slate-400 uppercase font-bold">{selectedItem.unit_of_measure}</span>
                   </div>
+                  <span className="text-[10px] text-teal-600 font-semibold block pt-0.5">Pegangan Silinder Penuh</span>
                 </div>
 
-                {/* Filter Inputs Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Tarikh Mula</label>
-                    <Input
-                      type="date"
-                      className="text-xs py-1.5 rounded-xl font-mono"
-                      value={dateFrom}
-                      onChange={(e) => {
-                        setDateFrom(e.target.value)
-                        setActiveDatePreset('all')
-                      }}
-                    />
+                {/* 2. Jumlah Diterima */}
+                <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm border-l-4 border-l-emerald-500 space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Diterima (+)</span>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-black text-emerald-600 font-mono">
+                      +{totalReceived}
+                    </span>
+                    <span className="text-xs text-slate-400 uppercase font-bold">{selectedItem.unit_of_measure}</span>
                   </div>
+                  <span className="text-[10px] text-emerald-600 font-semibold block pt-0.5">Penerimaan Tempoh Ini</span>
+                </div>
 
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Tarikh Akhir</label>
-                    <Input
-                      type="date"
-                      className="text-xs py-1.5 rounded-xl font-mono"
-                      value={dateTo}
-                      onChange={(e) => {
-                        setDateTo(e.target.value)
-                        setActiveDatePreset('all')
-                      }}
-                    />
+                {/* 3. Jumlah Dikeluarkan */}
+                <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm border-l-4 border-l-rose-500 space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Dikeluarkan (-)</span>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-black text-rose-600 font-mono">
+                      -{totalIssued}
+                    </span>
+                    <span className="text-xs text-slate-400 uppercase font-bold">{selectedItem.unit_of_measure}</span>
                   </div>
+                  <span className="text-[10px] text-rose-600 font-semibold block pt-0.5">Pengeluaran Tempoh Ini</span>
+                </div>
 
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Jenis Transaksi</label>
-                    <Select
-                      className="text-xs py-1.5 rounded-xl font-medium"
-                      value={selectedTxType}
-                      onChange={(e) => setSelectedTxType(e.target.value)}
-                    >
-                      <option value="all">Semua Jenis Transaksi</option>
-                      <option value="receipt">Penerimaan DO Pembekal (+)</option>
-                      <option value="issue">Pengeluaran ke Wad (-)</option>
-                      <option value="store_verification">Verifikasi Stor (KEW.PS-14)</option>
-                      <option value="check_found">Semak & Penemuan</option>
-                      <option value="bring_forward">Bawa Ke Hadapan</option>
-                    </Select>
+                {/* 4. % Pengeluaran */}
+                <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm border-l-4 border-l-indigo-500 space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">% Pengeluaran</span>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-black text-indigo-600 font-mono">
+                      {issuePercentage}%
+                    </span>
                   </div>
-
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Jabatan / Wad Destinasi</label>
-                    <Select
-                      className="text-xs py-1.5 rounded-xl font-medium"
-                      value={selectedWard}
-                      onChange={(e) => setSelectedWard(e.target.value)}
-                    >
-                      <option value="all">Semua Jabatan / Wad</option>
-                      {CLINICAL_WARM_DEPARTMENTS.map(dept => (
-                        <option key={dept} value={dept}>{dept}</option>
-                      ))}
-                    </Select>
-                  </div>
+                  <span className="text-[10px] text-indigo-600 font-semibold block pt-0.5">Nisbah Pengeluaran Stok</span>
                 </div>
               </div>
 
-              {/* ZONE E: DIGITAL KEW.PS-4 TRANSACTION TABLE */}
-              <div className="bg-white border border-slate-100 rounded-3xl shadow-sm p-6 space-y-6">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                  <h3 className="font-black text-slate-800 text-base md:text-lg flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-teal-600" />
-                    <span>Buku Daftar Transaksi (Digital KEW.PS-4 Silinder)</span>
-                  </h3>
-                  <Badge variant="secondary" className="font-mono text-xs">
-                    {ledgerRows.length} Rekod
-                  </Badge>
+              {/* SUMMARY TAB EXTRA SECTIONS (D1, D2, D3) */}
+              <div className={`${mobileTab === 'summary' ? 'block' : 'hidden'} lg:block space-y-6`}>
+                {/* ZONE D1: PARAS STOK TAHUNAN */}
+                <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <span className="font-black text-xs text-slate-800 flex items-center gap-2">
+                      <Layers className="w-4 h-4 text-teal-600" />
+                      <span>Paras Stok Tahunan (Min, Buffer & Max)</span>
+                    </span>
+                    <Badge variant="outline" className="font-mono text-[10px]">
+                      {annualStockLevels.length} Tahun Rekod
+                    </Badge>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] border-b border-slate-200">
+                          <th className="py-2 px-3">Tahun</th>
+                          <th className="py-2 px-3 text-center">Paras Stok Min</th>
+                          <th className="py-2 px-3 text-center">Stok Buffer (Tambahan)</th>
+                          <th className="py-2 px-3 text-center">Paras Stok Max</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 font-mono">
+                        {annualStockLevels.map((l, i) => (
+                          <tr key={i} className="hover:bg-slate-50/50">
+                            <td className="py-2 px-3 font-bold font-sans text-slate-900">{l.year}</td>
+                            <td className="py-2 px-3 text-center font-black text-rose-600">{l.min} {selectedItem.unit_of_measure}</td>
+                            <td className="py-2 px-3 text-center font-black text-amber-600">{l.buffer} {selectedItem.unit_of_measure}</td>
+                            <td className="py-2 px-3 text-center font-black text-emerald-600">{l.max} {selectedItem.unit_of_measure}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
-                {isLoadingDetails ? (
-                  <div className="flex items-center justify-center py-20">
-                    <Spinner size="lg" />
+                {/* ZONE D2: REKOD TERIMAAN DAN PENGELUARAN SUKU TAHUN */}
+                <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <span className="font-black text-xs text-slate-800 flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-indigo-600" />
+                      <span>Rekod Terimaan & Pengeluaran Suku Tahun (Kuantiti & Nilai RM)</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono">Harga Seunit: RM {unitPrice.toFixed(2)} / {selectedItem.unit_of_measure}</span>
                   </div>
-                ) : ledgerRows.length === 0 ? (
-                  <div className="py-16 text-center text-slate-400 font-medium text-sm space-y-4 bg-slate-50/50 rounded-2xl p-6 border border-dashed border-slate-200">
-                    <Clock className="w-10 h-10 text-slate-300 mx-auto" />
-                    <div className="space-y-1.5">
-                      <p className="font-black text-slate-800 text-base">Tiada Rekod Pergerakan Ditemui</p>
-                      <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-                        Tiada transaksi dikesan bagi penapis ini. Sila tukar tarikh atau tekan <button type="button" onClick={() => applyDatePreset('all')} className="text-teal-600 font-bold underline cursor-pointer">"Semua"</button>.
-                      </p>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 text-slate-600 font-bold text-[10px] border-b border-slate-200">
+                          <th rowSpan={2} className="py-2 px-3 text-center border-r border-slate-200">Tahun</th>
+                          <th rowSpan={2} className="py-2 px-3 border-r border-slate-200">Suku Tahun</th>
+                          <th colSpan={2} className="py-2 px-3 text-center bg-emerald-50 text-emerald-800 border-r border-slate-200">Diterima</th>
+                          <th colSpan={2} className="py-2 px-3 text-center bg-rose-50 text-rose-800">Dikeluarkan</th>
+                        </tr>
+                        <tr className="border-b border-slate-200 text-[9px] font-bold">
+                          <th className="py-1.5 px-3 text-right bg-emerald-50/50 text-emerald-700">Kuantiti</th>
+                          <th className="py-1.5 px-3 text-right bg-emerald-50/50 text-emerald-700 border-r border-slate-200">Nilai (RM)</th>
+                          <th className="py-1.5 px-3 text-right bg-rose-50/50 text-rose-700">Kuantiti</th>
+                          <th className="py-1.5 px-3 text-right bg-rose-50/50 text-rose-700">Nilai (RM)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 font-mono text-xs">
+                        {quarterlySummary.map(yData => (
+                          <React.Fragment key={yData.year}>
+                            <tr>
+                              <td rowSpan={5} className="py-2 px-3 text-center font-bold font-sans text-slate-900 border-r border-slate-200 bg-slate-50/70 align-middle">
+                                {yData.year}
+                              </td>
+                              <td className="py-2 px-3 font-sans font-medium text-slate-700 border-r border-slate-100">Suku Pertama (Q1: Jan - Mac)</td>
+                              <td className="py-2 px-3 text-right font-black text-emerald-600">{yData.q1.receiptQty > 0 ? `+${yData.q1.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-3 text-right text-slate-600 border-r border-slate-100">{yData.q1.receiptVal > 0 ? `RM ${yData.q1.receiptVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-3 text-right font-black text-rose-600">{yData.q1.issueQty > 0 ? `-${yData.q1.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-3 text-right text-slate-600">{yData.q1.issueVal > 0 ? `RM ${yData.q1.issueVal.toFixed(2)}` : '—'}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-2 px-3 font-sans font-medium text-slate-700 border-r border-slate-100">Suku Kedua (Q2: Apr - Jun)</td>
+                              <td className="py-2 px-3 text-right font-black text-emerald-600">{yData.q2.receiptQty > 0 ? `+${yData.q2.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-3 text-right text-slate-600 border-r border-slate-100">{yData.q2.receiptVal > 0 ? `RM ${yData.q2.receiptVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-3 text-right font-black text-rose-600">{yData.q2.issueQty > 0 ? `-${yData.q2.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-3 text-right text-slate-600">{yData.q2.issueVal > 0 ? `RM ${yData.q2.issueVal.toFixed(2)}` : '—'}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-2 px-3 font-sans font-medium text-slate-700 border-r border-slate-100">Suku Ketiga (Q3: Jul - Sep)</td>
+                              <td className="py-2 px-3 text-right font-black text-emerald-600">{yData.q3.receiptQty > 0 ? `+${yData.q3.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-3 text-right text-slate-600 border-r border-slate-100">{yData.q3.receiptVal > 0 ? `RM ${yData.q3.receiptVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-3 text-right font-black text-rose-600">{yData.q3.issueQty > 0 ? `-${yData.q3.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-3 text-right text-slate-600">{yData.q3.issueVal > 0 ? `RM ${yData.q3.issueVal.toFixed(2)}` : '—'}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-2 px-3 font-sans font-medium text-slate-700 border-r border-slate-100">Suku Keempat (Q4: Okt - Dis)</td>
+                              <td className="py-2 px-3 text-right font-black text-emerald-600">{yData.q4.receiptQty > 0 ? `+${yData.q4.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-3 text-right text-slate-600 border-r border-slate-100">{yData.q4.receiptVal > 0 ? `RM ${yData.q4.receiptVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-3 text-right font-black text-rose-600">{yData.q4.issueQty > 0 ? `-${yData.q4.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-3 text-right text-slate-600">{yData.q4.issueVal > 0 ? `RM ${yData.q4.issueVal.toFixed(2)}` : '—'}</td>
+                            </tr>
+                            <tr className="bg-slate-50 font-bold border-t border-slate-200">
+                              <td className="py-2 px-3 font-sans text-slate-900 border-r border-slate-200">Jumlah Keseluruhan Tahun {yData.year}</td>
+                              <td className="py-2 px-3 text-right text-emerald-700">{yData.total.receiptQty > 0 ? `+${yData.total.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-3 text-right text-slate-900 border-r border-slate-200">RM ${yData.total.receiptVal.toFixed(2)}</td>
+                              <td className="py-2 px-3 text-right text-rose-700">{yData.total.issueQty > 0 ? `-${yData.total.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-3 text-right text-slate-900">RM ${yData.total.issueVal.toFixed(2)}</td>
+                            </tr>
+                          </React.Fragment>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* ZONE D3: LOG PENERIMAAN DAN PENGELUARAN (REKOD MENGIKUT JABATAN / PEMBEKAL) */}
+                {movementLogSummary.length > 0 && (
+                  <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm space-y-3">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <span className="font-black text-xs text-slate-800 flex items-center gap-2">
+                        <Building className="w-4 h-4 text-teal-600" />
+                        <span>Log Penerimaan Dan Pengeluaran (Rekod Mengikut Jabatan / Pembekal)</span>
+                      </span>
+                      <Badge variant="outline" className="font-mono text-[10px]">
+                        {movementLogSummary.length} Entiti
+                      </Badge>
                     </div>
-                  </div>
-                ) : (
-                  <div>
-                    {/* DESKTOP TABLE VIEW */}
-                    <div className="hidden md:block overflow-x-auto">
-                      <table className="w-full text-left text-xs border-collapse">
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-slate-200 bg-slate-50/80 text-slate-600 font-bold uppercase text-[10px] tracking-wider">
-                            <th className="py-3 px-3 w-12 text-center">#</th>
-                            <th className="py-3 px-3">Tarikh & Masa</th>
-                            <th className="py-3 px-3">No. Rujukan / DO</th>
-                            <th className="py-3 px-4">Daripada / Kepada</th>
-                            <th className="py-3 px-3 text-right text-emerald-700">Terima (+)</th>
-                            <th className="py-3 px-3 text-right text-rose-700">Keluar (-)</th>
-                            <th className="py-3 px-3 text-right font-black">Baki</th>
-                            <th className="py-3 px-3">Pegawai Stor</th>
+                          <tr className="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] border-b border-slate-200">
+                            <th className="py-2 px-3">Nama Jabatan / Pembekal / Wad</th>
+                            <th className="py-2 px-3 text-right text-emerald-700">Jumlah Diterima (+)</th>
+                            <th className="py-2 px-3 text-right text-rose-700">Jumlah Dikeluarkan (-)</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
-                          {ledgerRows.map(row => {
-                            const isReceipt = row.receiptQty !== null && row.receiptQty !== undefined
-                            const isIssue = row.issueQty !== null && row.issueQty !== undefined
-                            const isBf = row.transaction_type === 'bring_forward'
-                            const isVer = row.transaction_type === 'store_verification'
-
-                            return (
-                              <tr key={row.id} className="hover:bg-slate-50/80 transition-colors">
-                                <td className="py-3 px-3 text-center font-mono text-slate-400 font-bold">
-                                  {row.index}
-                                </td>
-                                <td className="py-3 px-3 font-mono text-slate-600 whitespace-nowrap">
-                                  {new Date(row.transaction_date).toLocaleString('ms-MY', {
-                                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                                  })}
-                                </td>
-                                <td className="py-3 px-3 font-mono font-bold text-teal-700 whitespace-nowrap">
-                                  {row.transaction_number}
-                                </td>
-                                <td className="py-3 px-4">
-                                  <div className="font-semibold text-slate-800">{row.source_destination}</div>
-                                  {row.remarks && (
-                                    <div className="text-[10px] text-slate-400 truncate max-w-xs">{row.remarks}</div>
-                                  )}
-                                </td>
-                                <td className="py-3 px-3 text-right font-mono font-bold text-emerald-600">
-                                  {row.receiptQty !== null ? `+${row.receiptQty}` : '—'}
-                                </td>
-                                <td className="py-3 px-3 text-right font-mono font-bold text-rose-600">
-                                  {row.issueQty !== null ? `-${row.issueQty}` : '—'}
-                                </td>
-                                <td className="py-3 px-3 text-right font-mono font-black text-slate-900 bg-slate-50/50">
-                                  {row.runningBalance}
-                                </td>
-                                <td className="py-3 px-3 text-slate-600 whitespace-nowrap">
-                                  {row.officer_name}
-                                </td>
-                              </tr>
-                            )
-                          })}
+                        <tbody className="divide-y divide-slate-100 font-mono">
+                          {movementLogSummary.map((item, idx) => (
+                            <tr key={idx} className="hover:bg-slate-50/50">
+                              <td className="py-2.5 px-3 font-semibold font-sans text-slate-800">{item.name}</td>
+                              <td className="py-2.5 px-3 text-right font-black text-emerald-600">
+                                {item.totalReceived > 0 ? `+${item.totalReceived} ${selectedItem.unit_of_measure}` : '—'}
+                              </td>
+                              <td className="py-2.5 px-3 text-right font-black text-rose-600">
+                                {item.totalIssued > 0 ? `-${item.totalIssued} ${selectedItem.unit_of_measure}` : '—'}
+                              </td>
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
-                    </div>
-
-                    {/* MOBILE CARD VIEW */}
-                    <div className="md:hidden space-y-3">
-                      {ledgerRows.map(row => (
-                        <div key={row.id} className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-2.5">
-                          <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-200">
-                            <span className="font-mono font-bold text-slate-400">#{row.index}</span>
-                            <span className="font-mono font-bold text-teal-700">{row.transaction_number}</span>
-                            <span className="text-[10px] text-slate-500 font-mono">
-                              {new Date(row.transaction_date).toLocaleDateString('ms-MY')}
-                            </span>
-                          </div>
-
-                          <div className="font-bold text-xs text-slate-800">{row.source_destination}</div>
-                          {row.remarks && <div className="text-[11px] text-slate-500">{row.remarks}</div>}
-
-                          <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-xs font-mono">
-                            <div>
-                              {row.receiptQty && <span className="text-emerald-700 font-bold">Terima: +{row.receiptQty}</span>}
-                              {row.issueQty && <span className="text-rose-700 font-bold">Keluar: -{row.issueQty}</span>}
-                            </div>
-                            <div>
-                              <span className="text-slate-400">Baki: </span>
-                              <span className="font-black text-slate-900">{row.runningBalance} {selectedItem.unit_of_measure}</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
                     </div>
                   </div>
                 )}
               </div>
 
+              {/* LEDGER TAB CONTENT (Zone C Filters & Digital KEW.PS-4 Records) */}
+              <div className={`${mobileTab === 'ledger' ? 'block' : 'hidden'} lg:block space-y-6`}>
+                {/* ZONE C: FILTERS & PRESET STRIP */}
+                <div className="bg-white border border-slate-100 rounded-3xl shadow-sm p-5 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-50 pb-3">
+                    <div className="flex items-center gap-2">
+                      <SlidersHorizontal className="w-4 h-4 text-teal-600" />
+                      <span className="text-xs font-black text-slate-800 uppercase tracking-wider">Penapis Lejar KEW.PS-4</span>
+                    </div>
+
+                    {/* Preset Pills */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                      <button
+                        type="button"
+                        onClick={() => applyDatePreset('today')}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                          activeDatePreset === 'today' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        Hari Ini
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyDatePreset('week')}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                          activeDatePreset === 'week' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        7 Hari
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyDatePreset('month')}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                          activeDatePreset === 'month' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        Bulan Ini
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyDatePreset('3months')}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                          activeDatePreset === '3months' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        3 Bulan
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyDatePreset('all')}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                          activeDatePreset === 'all' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        Semua
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Filter Inputs Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Tarikh Mula</label>
+                      <Input
+                        type="date"
+                        className="text-xs py-1.5 rounded-xl font-mono"
+                        value={dateFrom}
+                        onChange={(e) => {
+                          setDateFrom(e.target.value)
+                          setActiveDatePreset('all')
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Tarikh Akhir</label>
+                      <Input
+                        type="date"
+                        className="text-xs py-1.5 rounded-xl font-mono"
+                        value={dateTo}
+                        onChange={(e) => {
+                          setDateTo(e.target.value)
+                          setActiveDatePreset('all')
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Jenis Transaksi</label>
+                      <Select
+                        className="text-xs py-1.5 rounded-xl font-medium"
+                        value={selectedTxType}
+                        onChange={(e) => setSelectedTxType(e.target.value)}
+                      >
+                        <option value="all">Semua Jenis Transaksi</option>
+                        <option value="receipt">Penerimaan DO Pembekal (+)</option>
+                        <option value="issue">Pengeluaran ke Wad (-)</option>
+                        <option value="return">Pemulangan Silinder Kosong</option>
+                        <option value="store_verification">Verifikasi Stor (KEW.PS-14)</option>
+                        <option value="check_found">Semak & Penemuan</option>
+                        <option value="bring_forward">Bawa Ke Hadapan</option>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Jabatan / Wad Destinasi</label>
+                      <Select
+                        className="text-xs py-1.5 rounded-xl font-medium"
+                        value={selectedWard}
+                        onChange={(e) => setSelectedWard(e.target.value)}
+                      >
+                        <option value="all">Semua Jabatan / Wad</option>
+                        {CLINICAL_WARM_DEPARTMENTS.map(dept => (
+                          <option key={dept} value={dept}>{dept}</option>
+                        ))}
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ZONE E: DIGITAL KEW.PS-4 TRANSACTION TABLE (9 COLUMNS OFFICIAL) */}
+                <div className="bg-white border border-slate-100 rounded-3xl shadow-sm p-6 space-y-6">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <h3 className="font-black text-slate-800 text-base md:text-lg flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-teal-600" />
+                      <span>Buku Daftar Transaksi (Digital KEW.PS-4 Silinder)</span>
+                    </h3>
+                    <Badge variant="secondary" className="font-mono text-xs">
+                      {ledgerRows.length} Rekod
+                    </Badge>
+                  </div>
+
+                  {isLoadingDetails ? (
+                    <div className="flex items-center justify-center py-20">
+                      <Spinner size="lg" />
+                    </div>
+                  ) : ledgerRows.length === 0 ? (
+                    <div className="py-16 text-center text-slate-400 font-medium text-sm space-y-4 bg-slate-50/50 rounded-2xl p-6 border border-dashed border-slate-200">
+                      <Clock className="w-10 h-10 text-slate-300 mx-auto" />
+                      <div className="space-y-1.5">
+                        <p className="font-black text-slate-800 text-base">Tiada Rekod Pergerakan Ditemui</p>
+                        <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                          Tiada transaksi dikesan bagi penapis ini. Sila tukar tarikh atau tekan <button type="button" onClick={() => applyDatePreset('all')} className="text-teal-600 font-bold underline cursor-pointer">"Semua"</button>.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      {/* DESKTOP TABLE VIEW - OFFICIAL 9 COLUMNS */}
+                      <div className="hidden md:block overflow-x-auto">
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead>
+                            <tr className="border-b border-slate-200 bg-slate-50/80 text-slate-600 font-bold uppercase text-[10px] tracking-wider">
+                              <th className="py-3 px-3 w-12 text-center">Bil</th>
+                              <th className="py-3 px-3">Tarikh & Masa</th>
+                              <th className="py-3 px-3">No Rujukan Dokumen</th>
+                              <th className="py-3 px-3 text-right text-emerald-700">Terima (+)</th>
+                              <th className="py-3 px-3 text-right text-rose-700">Keluar (-)</th>
+                              <th className="py-3 px-3 text-right font-black">Baki</th>
+                              <th className="py-3 px-4">Penerima / Jabatan</th>
+                              <th className="py-3 px-3">Perekod</th>
+                              <th className="py-3 px-3">Catatan</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {ledgerRows.map(row => {
+                              const isStoreVerification = row.transaction_type === 'store_verification'
+                              const isCheckFound = row.transaction_type === 'check_found'
+                              const rowBg = isStoreVerification ? 'bg-emerald-50/60' : isCheckFound ? 'bg-indigo-50/60' : 'hover:bg-slate-50/80'
+
+                              return (
+                                <tr key={row.id} className={`${rowBg} transition-colors`}>
+                                  <td className="py-3 px-3 text-center font-mono text-slate-400 font-bold">
+                                    {row.index}
+                                  </td>
+                                  <td className="py-3 px-3 font-mono text-slate-600 whitespace-nowrap">
+                                    {new Date(row.transaction_date || row.created_at).toLocaleString('ms-MY', {
+                                      day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                                    })}
+                                  </td>
+                                  <td className="py-3 px-3 font-mono font-bold text-teal-700 whitespace-nowrap">
+                                    {formatReferenceNumber(row)}
+                                  </td>
+                                  <td className="py-3 px-3 text-right font-mono font-bold text-emerald-600">
+                                    {row.receiptQty !== null && row.receiptQty !== undefined ? `+${row.receiptQty}` : '—'}
+                                    {row.serial_numbers && row.serial_numbers.length > 0 && (
+                                      <span className="block text-[9px] text-teal-600 font-normal">
+                                        S/N: {row.serial_numbers.slice(0, 2).join(', ')}{row.serial_numbers.length > 2 ? '...' : ''}
+                                      </span>
+                                    )}
+                                  </td>
+                                  <td className="py-3 px-3 text-right font-mono font-bold text-rose-600">
+                                    {row.issueQty !== null && row.issueQty !== undefined ? `-${row.issueQty}` : '—'}
+                                    {row.serial_numbers && row.serial_numbers.length > 0 && (
+                                      <span className="block text-[9px] text-rose-500 font-normal">
+                                        S/N: {row.serial_numbers.slice(0, 2).join(', ')}{row.serial_numbers.length > 2 ? '...' : ''}
+                                      </span>
+                                    )}
+                                  </td>
+                                  <td className="py-3 px-3 text-right font-mono font-black text-slate-900 bg-slate-50/50">
+                                    {row.runningBalance}
+                                  </td>
+                                  <td className="py-3 px-4 font-semibold text-slate-800">
+                                    {resolveRecipientName(row)}
+                                  </td>
+                                  <td className="py-3 px-3 text-slate-600 whitespace-nowrap">
+                                    {resolveRecorderName(row.officer_name)}
+                                  </td>
+                                  <td className="py-3 px-3 text-slate-500 text-[11px] max-w-xs truncate" title={row.remarks}>
+                                    {sanitizeSupplierName(row.remarks || '—')}
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* MOBILE CARD VIEW */}
+                      <div className="md:hidden space-y-3">
+                        {ledgerRows.map(row => (
+                          <div key={row.id} className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-2.5">
+                            <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-200">
+                              <span className="font-mono font-bold text-slate-400">#{row.index}</span>
+                              <span className="font-mono font-bold text-teal-700">{formatReferenceNumber(row)}</span>
+                              <span className="text-[10px] text-slate-500 font-mono">
+                                {new Date(row.transaction_date || row.created_at).toLocaleDateString('ms-MY')}
+                              </span>
+                            </div>
+
+                            <div className="font-bold text-xs text-slate-800">{resolveRecipientName(row)}</div>
+                            {row.remarks && <div className="text-[11px] text-slate-500">{sanitizeSupplierName(row.remarks)}</div>}
+
+                            <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-xs font-mono">
+                              <div>
+                                {row.receiptQty !== null && <span className="text-emerald-700 font-bold">Terima: +{row.receiptQty}</span>}
+                                {row.issueQty !== null && <span className="text-rose-700 font-bold">Keluar: -{row.issueQty}</span>}
+                              </div>
+                              <div>
+                                <span className="text-slate-400">Baki: </span>
+                                <span className="font-black text-slate-900">{row.runningBalance} {selectedItem.unit_of_measure}</span>
+                              </div>
+                            </div>
+
+                            <div className="text-[10px] text-slate-400 pt-1 border-t border-slate-200/60 flex items-center justify-between">
+                              <span>Perekod: {resolveRecorderName(row.officer_name)}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* ZONE F: WARD & DEPARTMENT CONSUMPTION BREAKDOWN */}
-              <div className="bg-white border border-slate-100 rounded-3xl shadow-sm p-6 space-y-5">
+              <div className={`${mobileTab === 'departments' ? 'block' : 'hidden'} lg:block bg-white border border-slate-100 rounded-3xl shadow-sm p-6 space-y-5`}>
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <h3 className="font-black text-slate-800 text-sm md:text-base flex items-center gap-2">
                     <Building2 className="w-4 h-4 text-teal-600" />
