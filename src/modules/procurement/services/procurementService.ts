@@ -27,10 +27,95 @@ import {
 } from '@/services/pharmacy/mockData'
 import { getBudgetForPO } from '@/services/pharmacy/budgetEngine'
 import { WARRANT_CATEGORIES } from '@/services/pharmacy/warrantService'
+import { offlineAdapter } from '@/services/offlineAdapter'
+import { cylinderOfflineDB } from '@/modules/mycylinder/services/cylinderOfflineDB'
 
 // =====================================================
 // PURCHASE ORDER MANAGEMENT
 // =====================================================
+
+function filterAndPaginateOrders(
+  rawOrders: PurchaseOrderWithRelations[],
+  filter?: ProcurementFilter,
+  page: number = 1,
+  pageSize: number = 10
+): PaginatedResponse<PurchaseOrderWithRelations> {
+  let orders = [...rawOrders]
+
+  if (filter?.search) {
+    const search = filter.search.toLowerCase()
+    orders = orders.filter(o =>
+      o.po_number?.toLowerCase().includes(search) ||
+      (o.manual_supplier_name || '').toLowerCase().includes(search) ||
+      o.supplier?.company_name?.toLowerCase().includes(search) ||
+      o.items?.some((item: any) => 
+        (item.item_name || '').toLowerCase().includes(search) ||
+        (item.item_code || '').toLowerCase().includes(search)
+      )
+    )
+  }
+
+  if (filter?.status && filter.status !== 'all') {
+    const statusValue = filter.status as string
+    if (statusValue.includes(',')) {
+      const statuses = statusValue.split(',').map(s => s.trim())
+      orders = orders.filter(o => statuses.includes(o.status))
+    } else {
+      orders = orders.filter(o => o.status === filter.status)
+    }
+  }
+
+  if (filter?.supplier_id) {
+    orders = orders.filter(o => o.supplier_id === filter.supplier_id)
+  }
+
+  if (filter?.po_type && filter.po_type !== 'all') {
+    if (filter.po_type === 'regular' || filter.po_type.toUpperCase() === 'PO') {
+      orders = orders.filter(o => !o.po_type || o.po_type === 'regular' || o.po_type.toLowerCase() === 'po')
+    } else if (filter.po_type.toUpperCase() === 'SQ') {
+      orders = orders.filter(o => o.po_type === 'sq')
+    } else if (filter.po_type.toUpperCase() === 'MANUAL') {
+      orders = orders.filter(o => o.po_type === 'manual')
+    } else {
+      orders = orders.filter(o => o.po_type === filter.po_type)
+    }
+  }
+
+  if (filter?.vote_code) {
+    orders = orders.filter(o => o.vote_code === filter.vote_code)
+  }
+
+  if (filter?.category) {
+    orders = orders.filter(o => o.category === filter.category)
+  }
+
+  if (filter?.department) {
+    orders = orders.filter(o => o.department === filter.department)
+  }
+
+  if (filter?.date_from) {
+    orders = orders.filter(o => o.order_date >= filter.date_from!)
+  }
+
+  if (filter?.date_to) {
+    orders = orders.filter(o => o.order_date <= filter.date_to!)
+  }
+
+  orders.sort((a, b) => new Date(b.order_date).getTime() - new Date(a.order_date).getTime())
+
+  const total = orders.length
+  const totalPages = Math.ceil(total / pageSize)
+  const start = (page - 1) * pageSize
+  const data = orders.slice(start, start + pageSize)
+
+  return {
+    data,
+    total,
+    page,
+    pageSize,
+    totalPages,
+  }
+}
 
 /**
  * Get all purchase orders with optional filtering
@@ -41,8 +126,27 @@ export async function getPurchaseOrders(
   page: number = 1,
   pageSize: number = 10
 ): Promise<ApiResponse<PaginatedResponse<PurchaseOrderWithRelations>>> {
+  const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true
+
+  // Fast offline return directly from local IndexedDB
+  if (!isOnline) {
+    try {
+      const cached = await offlineAdapter.getCache<PurchaseOrderWithRelations>(
+        'pharmacy_purchase_orders',
+        'procurement',
+        'pharmacy_purchase_orders'
+      )
+      if (cached && cached.length > 0) {
+        return {
+          data: filterAndPaginateOrders(cached, filter, page, pageSize),
+          error: null,
+        }
+      }
+    } catch (_) {}
+  }
+
   try {
-    if (isSupabaseConfigured()) {
+    if (isSupabaseConfigured() && isOnline) {
       let query = supabase
         .from('pharmacy_purchase_orders')
         .select(
@@ -228,6 +332,34 @@ export async function getPurchaseOrders(
 
       const rows = (data || []) as PurchaseOrderWithRelations[]
 
+      // Persist latest rows into local cache for offline availability
+      if (rows.length > 0) {
+        if (page === 1 && !filter?.search && (!filter?.status || filter.status === 'all')) {
+          void offlineAdapter.setCache('pharmacy_purchase_orders', rows)
+        }
+        return {
+          data: {
+            data: rows,
+            total: count || 0,
+            page,
+            pageSize,
+            totalPages: Math.ceil((count || 0) / pageSize),
+          },
+          error: null,
+        }
+      }
+
+      // If online query returned 0 rows but filter was empty, check if we have cached records
+      if (!filter?.search) {
+        const cached = await offlineAdapter.getCache<PurchaseOrderWithRelations>('pharmacy_purchase_orders', 'procurement', 'pharmacy_purchase_orders')
+        if (cached && cached.length > 0) {
+          return {
+            data: filterAndPaginateOrders(cached, filter, page, pageSize),
+            error: null,
+          }
+        }
+      }
+
       return {
         data: {
           data: rows,
@@ -240,90 +372,46 @@ export async function getPurchaseOrders(
       }
     }
 
-    // Fallback to mock data when Supabase is not configured
-    let orders = [...mockPurchaseOrders]
-
-    if (filter?.search) {
-      const search = filter.search.toLowerCase()
-      orders = orders.filter(o =>
-        o.po_number.toLowerCase().includes(search) ||
-        (o.manual_supplier_name || '').toLowerCase().includes(search) ||
-        o.supplier?.company_name.toLowerCase().includes(search) ||
-        o.items?.some(item => 
-          (item.item_name || '').toLowerCase().includes(search) ||
-          (item.item_code || '').toLowerCase().includes(search)
-        ) ||
-        o.lpo?.some(l => 
-          l.lpo_number?.toLowerCase().includes(search) ||
-          l.receiving?.some(r => r.do_number?.toLowerCase().includes(search))
-        ) ||
-        o.goods_receipts?.some(gr => 
-          gr.gr_number?.toLowerCase().includes(search) ||
-          gr.delivery_note_number?.toLowerCase().includes(search)
-        )
-      )
-    }
-
-    if (filter?.status && filter.status !== 'all') {
-      orders = orders.filter(o => o.status === filter.status)
-    }
-
-    if (filter?.supplier_id) {
-      orders = orders.filter(o => o.supplier_id === filter.supplier_id)
-    }
-
-    if (filter?.po_type && filter.po_type !== 'all') {
-      orders = orders.filter(o => o.po_type === filter.po_type)
-    }
-
-    if (filter?.vote_code) {
-      orders = orders.filter(o => o.vote_code === filter.vote_code)
-    }
-
-    if (filter?.category) {
-      orders = orders.filter(o => o.category === filter.category)
-    }
-
-    if (filter?.department) {
-      orders = orders.filter(o => o.department === filter.department)
-    }
-
-    if (filter?.date_from) {
-      orders = orders.filter(o => o.order_date >= filter.date_from!)
-    }
-
-    if (filter?.date_to) {
-      orders = orders.filter(o => o.order_date <= filter.date_to!)
-    }
-
-    orders.sort((a, b) => new Date(b.order_date).getTime() - new Date(a.order_date).getTime())
-
-    const total = orders.length
-    const totalPages = Math.ceil(total / pageSize)
-    const start = (page - 1) * pageSize
-    const data = orders.slice(start, start + pageSize)
+    // Fallback to offline cache
+    let orders: PurchaseOrderWithRelations[] = []
+    try {
+      const cached = await offlineAdapter.getCache<PurchaseOrderWithRelations>('pharmacy_purchase_orders', 'procurement', 'pharmacy_purchase_orders')
+      if (cached && cached.length > 0) {
+        orders = [...cached]
+      }
+    } catch (_) {}
 
     return {
-      data: {
-        data,
-        total,
-        page,
-        pageSize,
-        totalPages,
-      },
+      data: filterAndPaginateOrders(orders, filter, page, pageSize),
       error: null,
     }
   } catch (error) {
-    console.error('Error fetching purchase orders:', error)
+    console.warn('Error fetching purchase orders, falling back to local cache:', error)
+    try {
+      const cached = await offlineAdapter.getCache<PurchaseOrderWithRelations>('pharmacy_purchase_orders', 'procurement', 'pharmacy_purchase_orders')
+      if (cached && cached.length > 0) {
+        return {
+          data: filterAndPaginateOrders(cached, filter, page, pageSize),
+          error: null,
+        }
+      }
+    } catch (_) {}
+
     return {
-      data: null,
-      error: error instanceof Error ? error.message : 'Failed to fetch purchase orders',
+      data: {
+        data: [],
+        total: 0,
+        page,
+        pageSize,
+        totalPages: 0,
+      },
+      error: null,
     }
   }
 }
 
 /**
- * Get aggregate statistics for purchase orders â€” counts each real status independently
+ * Get aggregate statistics for purchase orders
  */
 export async function getPurchaseOrderStats(
   hospitalId: string
@@ -338,8 +426,49 @@ export async function getPurchaseOrderStats(
   completedCount: number;
   cancelledCount: number;
 }>> {
+  const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true
+
+  // Fast offline return directly from local IndexedDB
+  if (!isOnline) {
+    try {
+      const cachedStats = await offlineAdapter.getCache<any>('pharmacy_purchase_order_stats')
+      if (cachedStats && cachedStats.length > 0 && cachedStats[0].totalCount > 0) {
+        return { data: cachedStats[0], error: null }
+      }
+      const cachedOrders = await offlineAdapter.getCache<PurchaseOrderWithRelations>(
+        'pharmacy_purchase_orders',
+        'procurement',
+        'pharmacy_purchase_orders'
+      )
+      if (cachedOrders && cachedOrders.length > 0) {
+        const stats = cachedOrders
+          .filter(po => po.po_type !== 'sq')
+          .reduce(
+            (acc, po) => {
+              acc.totalCount += 1
+              if (po.status !== 'cancelled') {
+                acc.totalValue += po.total_amount || 0
+              }
+              switch (po.status) {
+                case 'draft': acc.draftCount += 1; break
+                case 'pending_approval': acc.pendingApprovalCount += 1; break
+                case 'approved': acc.approvedCount += 1; break
+                case 'sent': acc.sentCount += 1; break
+                case 'partial_received': acc.partialReceivedCount += 1; break
+                case 'completed': acc.completedCount += 1; break
+                case 'cancelled': acc.cancelledCount += 1; break
+              }
+              return acc
+            },
+            { totalCount: 0, totalValue: 0, draftCount: 0, pendingApprovalCount: 0, approvedCount: 0, sentCount: 0, partialReceivedCount: 0, completedCount: 0, cancelledCount: 0 }
+          )
+        return { data: stats, error: null }
+      }
+    } catch (_) {}
+  }
+
   try {
-    if (isSupabaseConfigured()) {
+    if (isSupabaseConfigured() && isOnline) {
       const { data, error } = await supabase
         .from('pharmacy_purchase_orders')
         .select('status, total_amount')
@@ -368,36 +497,89 @@ export async function getPurchaseOrderStats(
         { totalCount: 0, totalValue: 0, draftCount: 0, pendingApprovalCount: 0, approvedCount: 0, sentCount: 0, partialReceivedCount: 0, completedCount: 0, cancelledCount: 0 }
       )
 
+      if (stats.totalCount > 0) {
+        void offlineAdapter.setCache('pharmacy_purchase_order_stats', [stats])
+      }
+
       return { data: stats, error: null }
     }
 
-    // Fallback to mock data
-    const stats = mockPurchaseOrders.reduce(
-      (acc, po) => {
-        acc.totalCount += 1
-        if (po.status !== 'cancelled') {
-          acc.totalValue += po.total_amount || 0
-        }
-        switch (po.status) {
-          case 'draft': acc.draftCount += 1; break
-          case 'pending_approval': acc.pendingApprovalCount += 1; break
-          case 'approved': acc.approvedCount += 1; break
-          case 'sent': acc.sentCount += 1; break
-          case 'partial_received': acc.partialReceivedCount += 1; break
-          case 'completed': acc.completedCount += 1; break
-          case 'cancelled': acc.cancelledCount += 1; break
-        }
-        return acc
-      },
-      { totalCount: 0, totalValue: 0, draftCount: 0, pendingApprovalCount: 0, approvedCount: 0, sentCount: 0, partialReceivedCount: 0, completedCount: 0, cancelledCount: 0 }
+    // Fallback: check cached orders before fallback to zero
+    const cachedOrders = await offlineAdapter.getCache<PurchaseOrderWithRelations>(
+      'pharmacy_purchase_orders',
+      'procurement',
+      'pharmacy_purchase_orders'
     )
+    if (cachedOrders && cachedOrders.length > 0) {
+      const stats = cachedOrders
+        .filter(po => po.po_type !== 'sq')
+        .reduce(
+          (acc, po) => {
+            acc.totalCount += 1
+            if (po.status !== 'cancelled') {
+              acc.totalValue += po.total_amount || 0
+            }
+            switch (po.status) {
+              case 'draft': acc.draftCount += 1; break
+              case 'pending_approval': acc.pendingApprovalCount += 1; break
+              case 'approved': acc.approvedCount += 1; break
+              case 'sent': acc.sentCount += 1; break
+              case 'partial_received': acc.partialReceivedCount += 1; break
+              case 'completed': acc.completedCount += 1; break
+              case 'cancelled': acc.cancelledCount += 1; break
+            }
+            return acc
+          },
+          { totalCount: 0, totalValue: 0, draftCount: 0, pendingApprovalCount: 0, approvedCount: 0, sentCount: 0, partialReceivedCount: 0, completedCount: 0, cancelledCount: 0 }
+        )
+      return { data: stats, error: null }
+    }
 
-    return { data: stats, error: null }
-  } catch (error) {
-    console.error('Error fetching purchase order stats:', error)
     return {
-      data: null,
-      error: error instanceof Error ? error.message : 'Failed to fetch stats',
+      data: { totalCount: 0, totalValue: 0, draftCount: 0, pendingApprovalCount: 0, approvedCount: 0, sentCount: 0, partialReceivedCount: 0, completedCount: 0, cancelledCount: 0 },
+      error: null,
+    }
+  } catch (error) {
+    console.warn('Error fetching purchase order stats, checking cache:', error)
+    try {
+      const cachedStats = await offlineAdapter.getCache<any>('pharmacy_purchase_order_stats')
+      if (cachedStats && cachedStats.length > 0) {
+        return { data: cachedStats[0], error: null }
+      }
+      const cachedOrders = await offlineAdapter.getCache<PurchaseOrderWithRelations>(
+        'pharmacy_purchase_orders',
+        'procurement',
+        'pharmacy_purchase_orders'
+      )
+      if (cachedOrders && cachedOrders.length > 0) {
+        const stats = cachedOrders
+          .filter(po => po.po_type !== 'sq')
+          .reduce(
+            (acc, po) => {
+              acc.totalCount += 1
+              if (po.status !== 'cancelled') {
+                acc.totalValue += po.total_amount || 0
+              }
+              switch (po.status) {
+                case 'draft': acc.draftCount += 1; break
+                case 'pending_approval': acc.pendingApprovalCount += 1; break
+                case 'approved': acc.approvedCount += 1; break
+                case 'sent': acc.sentCount += 1; break
+                case 'partial_received': acc.partialReceivedCount += 1; break
+                case 'completed': acc.completedCount += 1; break
+                case 'cancelled': acc.cancelledCount += 1; break
+              }
+              return acc
+            },
+            { totalCount: 0, totalValue: 0, draftCount: 0, pendingApprovalCount: 0, approvedCount: 0, sentCount: 0, partialReceivedCount: 0, completedCount: 0, cancelledCount: 0 }
+          )
+        return { data: stats, error: null }
+      }
+    } catch (_) {}
+
+    return {
+      data: { totalCount: 0, totalValue: 0, draftCount: 0, pendingApprovalCount: 0, approvedCount: 0, sentCount: 0, partialReceivedCount: 0, completedCount: 0, cancelledCount: 0 },
+      error: null,
     }
   }
 }
@@ -434,6 +616,12 @@ export async function getProcurementMetadata(hospitalId: string): Promise<ApiRes
     return { data: { voteCodes: ['080702', '990102', '080600 (APPL)', '080600 (CC)'], categories: ['drug', 'non_drug', 'duit_khas'] }, error: null }
   } catch (error) {
     console.error('Error fetching metadata:', error)
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      return {
+        data: { voteCodes: ['080702', '990102', '080600 (APPL)', '080600 (CC)'], categories: ['drug', 'non_drug', 'duit_khas'] },
+        error: null,
+      }
+    }
     return { data: null, error: error instanceof Error ? error.message : 'Failed to fetch metadata' }
   }
 }
@@ -444,6 +632,20 @@ export async function getProcurementMetadata(hospitalId: string): Promise<ApiRes
 export async function getPurchaseOrderById(
   poId: string
 ): Promise<ApiResponse<PurchaseOrderWithRelations>> {
+  const isOnline = typeof navigator === 'undefined' ? true : navigator.onLine
+
+  if (!isOnline) {
+    try {
+      const cached = await offlineAdapter.getCache<PurchaseOrderWithRelations>(
+        'pharmacy_purchase_orders',
+        'procurement',
+        'pharmacy_purchase_orders'
+      )
+      const found = cached?.find(o => o.id === poId)
+      if (found) return { data: found, error: null }
+    } catch (_) {}
+  }
+
   try {
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
@@ -708,6 +910,58 @@ export async function createPurchaseOrder(
     const tax_amount = 0 // No tax
     const total_amount = subtotal
 
+    const isOnline = typeof navigator === 'undefined' ? true : navigator.onLine
+
+    if (!isOnline) {
+      const year = new Date().getFullYear()
+      const rand = Math.floor(1000 + Math.random() * 9000)
+      const prefix = data.po_type === 'sq' ? 'SQ-' : 'PO-'
+      const poNumber = `${prefix}${year}-OFFLINE-${rand}`
+      const localId = `po_offline_${Date.now()}`
+
+      const newOrder: any = {
+        id: localId,
+        hospital_id: hospitalId,
+        po_number: poNumber,
+        po_type: data.po_type || 'regular',
+        supplier_id: data.supplier_id === 'other' ? null : data.supplier_id,
+        sq_suppliers: data.sq_suppliers,
+        budget_id: data.budget_id,
+        vote_code: data.vote_code,
+        vote_activity: data.vote_activity,
+        category: data.category,
+        department: data.department,
+        order_date: new Date().toISOString().split('T')[0],
+        expected_delivery_date: data.expected_delivery_date,
+        subtotal,
+        tax_amount,
+        total_amount,
+        payment_terms: data.payment_terms,
+        delivery_address: data.delivery_address,
+        status: 'draft',
+        created_by: userId,
+        notes: data.notes,
+        created_at: new Date().toISOString(),
+        items: data.items.map((item, idx) => ({
+          id: `item_offline_${Date.now()}_${idx}`,
+          po_id: localId,
+          ...item,
+          total_price: item.quantity * item.unit_price
+        })),
+        __offlinePending: true
+      }
+
+      await offlineAdapter.executeMutation({
+        module: 'procurement',
+        table: 'pharmacy_purchase_orders',
+        action: 'INSERT',
+        payload: newOrder,
+        conflictPolicy: 'client-wins'
+      })
+
+      return { data: newOrder as PurchaseOrder, error: null }
+    }
+
     if (isSupabaseConfigured()) {
       const today = new Date()
       const orderDate = today.toISOString().split('T')[0]
@@ -883,6 +1137,41 @@ export async function updatePurchaseOrder(
     const subtotal = data.items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0)
     const tax_amount = 0 // No tax
     const total_amount = subtotal
+
+    const isOnline = typeof navigator === 'undefined' ? true : navigator.onLine
+
+    if (!isOnline) {
+      const updatedPO: any = {
+        id: poId,
+        supplier_id: data.supplier_id === 'other' ? null : data.supplier_id,
+        sq_suppliers: data.sq_suppliers,
+        budget_id: data.budget_id,
+        vote_code: data.vote_code,
+        vote_activity: data.vote_activity,
+        category: data.category,
+        department: data.department,
+        expected_delivery_date: data.expected_delivery_date,
+        subtotal,
+        tax_amount,
+        total_amount,
+        payment_terms: data.payment_terms,
+        delivery_address: data.delivery_address,
+        notes: data.notes,
+        updated_at: new Date().toISOString(),
+        __offlinePending: true
+      }
+
+      await offlineAdapter.executeMutation({
+        module: 'procurement',
+        table: 'pharmacy_purchase_orders',
+        action: 'UPDATE',
+        payload: updatedPO,
+        matchCriteria: { id: poId },
+        conflictPolicy: 'server-wins'
+      })
+
+      return { data: updatedPO as PurchaseOrder, error: null }
+    }
 
     if (isSupabaseConfigured()) {
       // First, get the existing PO to preserve po_number
@@ -1629,8 +1918,19 @@ export async function getSupplierById(supplierId: string): Promise<ApiResponse<S
  * Get active suppliers for dropdown
  */
 export async function getActiveSuppliers(hospitalId?: string): Promise<ApiResponse<Supplier[]>> {
+  const isOnline = typeof navigator === 'undefined' ? true : navigator.onLine
+
+  if (!isOnline) {
+    try {
+      const cached = await offlineAdapter.getCache<Supplier>('suppliers')
+      if (cached && cached.length > 0) return { data: cached, error: null }
+      const staticSuppliers = await cylinderOfflineDB.getStaticTable('suppliers')
+      if (staticSuppliers && staticSuppliers.length > 0) return { data: staticSuppliers as any, error: null }
+    } catch (_) {}
+  }
+
   try {
-    if (isSupabaseConfigured()) {
+    if (isSupabaseConfigured() && isOnline) {
       let query = supabase
         .from('suppliers')
         .select('*')

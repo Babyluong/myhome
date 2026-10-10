@@ -86,7 +86,7 @@ export const StaffHodPage: React.FC = () => {
       toast.success(isMs ? `Permohonan cuti ${leave.user?.full_name || 'pegawai'} berjaya diluluskan!` : `Leave application for ${leave.user?.full_name || 'officer'} approved!`)
       await loadData()
     } catch (err: any) {
-      toast.error(err.message || (isMs ? 'Gagal meluluskan permohonan cuti' : 'Failed to approve leave application'))
+      toast.error(err.message || (isMs ? 'Failed to approve leave application' : 'Failed to approve leave application'))
     } finally {
       setProcessing(false)
     }
@@ -101,13 +101,13 @@ export const StaffHodPage: React.FC = () => {
       const res = await updateLeaveStatus(activeLeaveToReject.id, 'rejected', user?.id || 'hod-user-id', rejectionReason)
       if (res.error) throw new Error(res.error)
 
-      toast.success(isMs ? 'Permohonan cuti telah ditolak.' : 'Leave application rejected.')
+      toast.success(isMs ? 'Leave application has been rejected.' : 'Leave application rejected.')
       setRejectModalOpen(false)
       setActiveLeaveToReject(null)
       setRejectionReason('')
       await loadData()
     } catch (err: any) {
-      toast.error(err.message || (isMs ? 'Gagal menolak permohonan' : 'Failed to reject application'))
+      toast.error(err.message || (isMs ? 'Failed to reject application' : 'Failed to reject application'))
     } finally {
       setProcessing(false)
     }
@@ -148,7 +148,7 @@ export const StaffHodPage: React.FC = () => {
             className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-2xl border shadow-sm font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm bg-white"
           >
             <Printer className="w-4 h-4 text-slate-500" />
-            <span>{isMs ? 'Cetak Ringkasan' : 'Print Summary'}</span>
+            <span>{isMs ? 'Print Summary' : 'Print Summary'}</span>
           </Button>
         </div>
       </div>

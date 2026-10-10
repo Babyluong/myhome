@@ -60,7 +60,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
   }, [guidelines, filterPopulation, filterSystem, filterTopic, filterSetting])
 
   const handleCopyPrescription = (item: NAGInfectionGuideline) => {
-    const textToCopy = `[NAG 2024 KKM] ${item.conditionName}\n- Lini Pertama: ${item.firstLineTherapy.regimen}\n- Dos: ${item.firstLineTherapy.routeAndDose}\n- Tempoh: ${item.firstLineTherapy.durationDays}\n- Alahan Penisilin: ${item.penicillinAllergyOption?.regimen || 'Rujuk Pakar ID'}\n(Rujukan: National Antimicrobial Guideline Malaysia 4th Ed.)`
+    const textToCopy = `[NAG 2024 KKM] ${item.conditionName}\n- First-Line: ${item.firstLineTherapy.regimen}\n- Dose: ${item.firstLineTherapy.routeAndDose}\n- Duration: ${item.firstLineTherapy.durationDays}\n- Penicillin Allergy: ${item.penicillinAllergyOption?.regimen || 'Refer to ID Specialist'}\n(Rujukan: National Antimicrobial Guideline Malaysia 4th Ed.)`
     navigator.clipboard.writeText(textToCopy)
     setCopiedId(item.id)
     setTimeout(() => setCopiedId(null), 2500)
@@ -75,7 +75,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
         <div>
           <h4 className="font-bold text-base text-slate-800">Tiada Garis Panduan Ditemui</h4>
           <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto leading-relaxed">
-            Sila semak kata kunci carian anda, atau pilih kategori sistem organ lain dari direktori di atas.
+            Please check your search keywords, or select another organ system category from the directory above.
           </p>
         </div>
       </div>
@@ -116,12 +116,12 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                   {isPaediatric ? (
                     <span className="text-[10px] font-black uppercase tracking-wider bg-cyan-400/20 text-cyan-200 border border-cyan-300/30 px-2.5 py-0.5 rounded-full flex items-center gap-1">
                       <Baby className="w-3 h-3" />
-                      <span>Pediatrik &amp; Neonat</span>
+                      <span>Paediatric &amp; Neonatal</span>
                     </span>
                   ) : (
                     <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-400/20 text-emerald-200 border border-emerald-300/30 px-2.5 py-0.5 rounded-full flex items-center gap-1">
                       <User className="w-3 h-3" />
-                      <span>Dewasa (Adult)</span>
+                      <span>Adult</span>
                     </span>
                   )}
 
@@ -208,7 +208,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                     </div>
                     <div>
                       <span className="font-black text-cyan-950 uppercase tracking-wider text-[11px] block">
-                        Formula Dos Berat Badan Pediatrik KKM:
+                        MOH Paediatric Weight-Based Dosage Formula:
                       </span>
                       <span className="font-bold text-cyan-900 text-xs">
                         {item.pediatricWeightDoseHint}
@@ -251,11 +251,11 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-4 h-4 text-emerald-700" />
                         <h4 className="text-[11px] font-black text-emerald-950 uppercase tracking-wider">
-                          Rawatan Lini Pertama (1st-Line)
+                          First-Line Treatment (1st-Line)
                         </h4>
                       </div>
                       <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-200 text-emerald-900">
-                        Pilihan Utama
+                        Primary Choice
                       </span>
                     </div>
 
@@ -265,7 +265,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
 
                     <div className="text-xs text-emerald-900 leading-relaxed bg-white/80 p-3 rounded-xl border border-emerald-200 font-medium space-y-1">
                       <strong className="text-emerald-950 block text-[11px] uppercase tracking-wider">
-                        Dos &amp; Cara Pemberian:
+                        Dosage &amp; Route:
                       </strong>
                       <span className="text-slate-800">{item.firstLineTherapy.routeAndDose}</span>
                     </div>
@@ -274,7 +274,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                   <div className="space-y-2 pt-2 border-t border-emerald-200/70">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-950">
                       <Clock className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0" />
-                      <span>Tempoh Rawatan: {item.firstLineTherapy.durationDays}</span>
+                      <span>Treatment Duration: {item.firstLineTherapy.durationDays}</span>
                     </div>
                     {item.firstLineTherapy.remarks && (
                       <p className="text-[11px] text-emerald-800 italic leading-relaxed">
@@ -291,7 +291,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                       <div className="flex items-center gap-1.5">
                         <FileText className="w-4 h-4 text-blue-700" />
                         <h4 className="text-[11px] font-black text-blue-950 uppercase tracking-wider">
-                          Rawatan Lini Kedua (Alternative)
+                          Second-Line Treatment (Alternative)
                         </h4>
                       </div>
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-200 text-blue-900">
@@ -305,7 +305,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
 
                     <div className="text-xs text-blue-900 leading-relaxed bg-white/80 p-3 rounded-xl border border-blue-200 font-medium space-y-1">
                       <strong className="text-blue-950 block text-[11px] uppercase tracking-wider">
-                        Dos &amp; Cara Pemberian:
+                        Dosage &amp; Route:
                       </strong>
                       <span className="text-slate-800">{item.secondLineTherapy.routeAndDose}</span>
                     </div>
@@ -314,7 +314,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                   <div className="space-y-2 pt-2 border-t border-blue-200/70">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-blue-950">
                       <Clock className="w-3.5 h-3.5 text-blue-700 flex-shrink-0" />
-                      <span>Tempoh Rawatan: {item.secondLineTherapy.durationDays}</span>
+                      <span>Treatment Duration: {item.secondLineTherapy.durationDays}</span>
                     </div>
                     {item.secondLineTherapy.remarks && (
                       <p className="text-[11px] text-blue-800 italic leading-relaxed">
@@ -332,11 +332,11 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                         <div className="flex items-center gap-1.5">
                           <AlertTriangle className="w-4 h-4 text-amber-700" />
                           <h4 className="text-[11px] font-black text-amber-950 uppercase tracking-wider">
-                            Jika Alahan Penisilin
+                            If Penicillin Allergy
                           </h4>
                         </div>
                         <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-200 text-amber-900">
-                          Amaran Keselamatan
+                          Safety Warning
                         </span>
                       </div>
 
@@ -346,7 +346,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
 
                       <div className="text-xs text-amber-900 leading-relaxed bg-white/80 p-3 rounded-xl border border-amber-200 font-medium space-y-1">
                         <strong className="text-amber-950 block text-[11px] uppercase tracking-wider">
-                          Dos &amp; Cara Pemberian:
+                          Dosage &amp; Route:
                         </strong>
                         <span className="text-slate-800">{item.penicillinAllergyOption.routeAndDose}</span>
                       </div>
@@ -364,9 +364,9 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                   <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border-2 border-slate-200 text-xs text-slate-600 flex flex-col items-center justify-center text-center space-y-2">
                     <AlertCircle className="w-6 h-6 text-slate-400" />
                     <div>
-                      <p className="font-bold text-slate-800">Tiada Data Alahan Khusus</p>
+                      <p className="font-bold text-slate-800">No Specific Allergy Data</p>
                       <p className="text-[11px] text-slate-500 mt-0.5">
-                        Rujuk Pakar Perubatan / Pakar Penyakit Berjangkit (ID) bagi kes alahan penisilin teruk.
+                        Refer to Physician / Infectious Disease (ID) Specialist for severe penicillin allergy cases.
                       </p>
                     </div>
                   </div>
@@ -379,10 +379,10 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <span className="font-black text-indigo-950 flex items-center gap-2">
                       <ArrowRightLeft className="w-4 h-4 text-indigo-600" />
-                      <span>Protokol Penukaran Rawatan Oral KKM (Oral Step-Down):</span>
+                      <span>MOH Oral Step-Down Protocol:</span>
                     </span>
                     <span className="text-[10px] bg-indigo-200 text-indigo-950 px-2.5 py-0.5 rounded-full font-extrabold self-start sm:self-auto">
-                      Klinikal Stabil &amp; Afebrile &gt;24-48 Jam
+                      Clinically Stable &amp; Afebrile &gt;24-48 Hours
                     </span>
                   </div>
                   <div className="p-3 bg-white/90 rounded-xl border border-indigo-100">
@@ -390,7 +390,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                       {item.oralStepDownOption.regimen}
                     </p>
                     <p className="text-indigo-900 text-[11px] leading-relaxed mt-1">
-                      <strong className="text-indigo-950">Kriteria Penukaran: </strong>
+                      <strong className="text-indigo-950">Switch Criteria: </strong>
                       {item.oralStepDownOption.criteria}
                     </p>
                   </div>
@@ -402,7 +402,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                 <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 text-xs text-slate-700 space-y-2">
                   <h5 className="font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                    <span>Nota &amp; Kawalan Rintangan Antimikrob (AMS Policy KKM):</span>
+                    <span>Antimicrobial Stewardship Notes (MOH AMS Policy):</span>
                   </h5>
                   <ul className="space-y-1.5 list-disc list-inside text-slate-700">
                     {item.amsNotes.map((note, idx) => (

@@ -40,6 +40,7 @@ import { PrescriberBadge, HAMBadge, LASABadge, NAGBadge, PoisonBadge } from '../
 import { QuotaProgressBar } from '../components/QuotaProgressBar'
 import { ROUTES } from '@/lib/constants'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
+import { ModulePageHeader } from '@/shared/components/ui'
 
 type SortField = 'genericName' | 'prescriberCategory' | 'atcCode'
 type SortOrder = 'asc' | 'desc'
@@ -135,138 +136,131 @@ export const FormulariDashboardPage: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
-      {/* Header Panel (Matches System Module Design with violet accent stripe) */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-600" />
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-gradient-to-br from-violet-600 to-indigo-700 text-white rounded-2xl shadow-md flex-shrink-0">
-            <Search className="w-7 h-7" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-              <span>Drug Formulary Search & Registry (FUKKM)</span>
-            </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              Official MOH Drug Formulary Database (4th Edition) & Lawas Hospital Clinical Guidelines
-            </p>
-          </div>
-        </div>
+      {/* Standardized Module Header */}
+      <ModulePageHeader
+        icon={Search}
+        title="Drug Formulary Search & Registry (FUKKM)"
+        description="Official MOH Drug Formulary Database (4th Edition) & Lawas Hospital Clinical Guidelines"
+        badges={[
+          { label: 'MOH Formulary 4th Ed.', variant: 'accent' },
+          { label: 'Hospital Lawas Clinical Guidelines', variant: 'neutral' },
+        ]}
+        actions={
+          <>
+            <a
+              href="https://myformulary.pharmacy.gov.my/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-2 bg-subtle hover:bg-hover border border-border-default text-text-primary text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all shadow-2xs"
+              title="Open Official MOH MyFormulary Portal"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-text-muted" />
+              <span>MOH Portal</span>
+            </a>
 
-        {/* Quick Action Button */}
-        <div className="flex items-center gap-3">
-          <a
-            href="https://myformulary.pharmacy.gov.my/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all"
-            title="Open Official MOH MyFormulary Portal"
-          >
-            <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-            <span>MOH Portal</span>
-          </a>
-
-          <button
-            onClick={() => setIsInteractionModalOpen(true)}
-            className="px-4 py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
-          >
-            <ShieldCheck className="w-4 h-4" />
-            <span>Check Drug Interactions</span>
-          </button>
-        </div>
-      </div>
+            <button
+              onClick={() => setIsInteractionModalOpen(true)}
+              className="px-3.5 py-2 bg-accent-base hover:bg-accent-hover active:bg-accent-active text-accent-foreground text-xs font-semibold rounded-lg shadow-2xs flex items-center gap-2 transition-all cursor-pointer"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Check Drug Interactions</span>
+            </button>
+          </>
+        }
+      />
 
       {/* Stats KPI Ribbon */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div
           onClick={() => { handleResetFilters(); }}
-          className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs cursor-pointer hover:border-violet-300 transition-all"
+          className="p-4 bg-surface rounded-xl border border-border-default shadow-2xs cursor-pointer hover:border-border-strong hover:bg-subtle/30 transition-all"
         >
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Total Drugs</span>
-          <strong className="text-2xl font-extrabold text-slate-900">{stats.totalDrugs}</strong>
-          <span className="text-[10px] text-slate-400 block mt-0.5">Listed in FUKKM</span>
+          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider block">Total Drugs</span>
+          <strong className="text-2xl font-bold text-text-primary tabular-nums block mt-0.5">{stats.totalDrugs}</strong>
+          <span className="text-[10px] text-text-muted block mt-0.5">Listed in FUKKM</span>
         </div>
 
         <div
           onClick={() => { handleResetFilters(); setHamOnly(true); }}
-          className={`p-4 bg-white rounded-2xl border shadow-xs cursor-pointer transition-all ${
-            hamOnly ? 'border-rose-500 bg-rose-50/40 ring-2 ring-rose-500/20' : 'border-rose-200 hover:border-rose-400'
+          className={`p-4 bg-surface rounded-xl border shadow-2xs cursor-pointer transition-all ${
+            hamOnly ? 'border-rose-500/60 bg-rose-500/10 ring-1 ring-rose-500/20' : 'border-border-default hover:border-rose-500/40 hover:bg-subtle/30'
           }`}
         >
-          <span className="text-[11px] font-bold text-rose-700 uppercase tracking-wider block flex items-center gap-1">
-            <Flame className="w-3 h-3 text-rose-600" /> HAM List
+          <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wider block flex items-center gap-1">
+            <Flame className="w-3 h-3 text-rose-500" /> HAM List
           </span>
-          <strong className="text-2xl font-extrabold text-rose-700">{stats.hamCount}</strong>
-          <span className="text-[10px] text-rose-500 block mt-0.5">High Alert Drugs</span>
+          <strong className="text-2xl font-bold text-rose-600 dark:text-rose-400 tabular-nums block mt-0.5">{stats.hamCount}</strong>
+          <span className="text-[10px] text-rose-500/80 block mt-0.5">High Alert Drugs</span>
         </div>
 
         <div
           onClick={() => { handleResetFilters(); setLasaOnly(true); }}
-          className={`p-4 bg-white rounded-2xl border shadow-xs cursor-pointer transition-all ${
-            lasaOnly ? 'border-amber-500 bg-amber-50/40 ring-2 ring-amber-500/20' : 'border-amber-200 hover:border-amber-400'
+          className={`p-4 bg-surface rounded-xl border shadow-2xs cursor-pointer transition-all ${
+            lasaOnly ? 'border-amber-500/60 bg-amber-500/10 ring-1 ring-amber-500/20' : 'border-border-default hover:border-amber-500/40 hover:bg-subtle/30'
           }`}
         >
-          <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider block flex items-center gap-1">
-            <AlertTriangle className="w-3 h-3 text-amber-600" /> LASA Pairs
+          <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider block flex items-center gap-1">
+            <AlertTriangle className="w-3 h-3 text-amber-500" /> LASA Pairs
           </span>
-          <strong className="text-2xl font-extrabold text-amber-700">{stats.lasaCount}</strong>
-          <span className="text-[10px] text-amber-600 block mt-0.5">TALL-Man Lettering</span>
+          <strong className="text-2xl font-bold text-amber-600 dark:text-amber-400 tabular-nums block mt-0.5">{stats.lasaCount}</strong>
+          <span className="text-[10px] text-amber-600/80 block mt-0.5">TALL-Man Lettering</span>
         </div>
 
         <div
           onClick={() => { handleResetFilters(); setAntimicrobialOnly(true); }}
-          className={`p-4 bg-white rounded-2xl border shadow-xs cursor-pointer transition-all ${
-            antimicrobialOnly ? 'border-emerald-500 bg-emerald-50/40 ring-2 ring-emerald-500/20' : 'border-emerald-200 hover:border-emerald-400'
+          className={`p-4 bg-surface rounded-xl border shadow-2xs cursor-pointer transition-all ${
+            antimicrobialOnly ? 'border-emerald-500/60 bg-emerald-500/10 ring-1 ring-emerald-500/20' : 'border-border-default hover:border-emerald-500/40 hover:bg-subtle/30'
           }`}
         >
-          <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block flex items-center gap-1">
-            <ShieldCheck className="w-3 h-3 text-emerald-600" /> NAG 2024
+          <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block flex items-center gap-1">
+            <ShieldCheck className="w-3 h-3 text-emerald-500" /> NAG 2024
           </span>
-          <strong className="text-2xl font-extrabold text-emerald-700">{stats.antimicrobialCount}</strong>
-          <span className="text-[10px] text-emerald-600 block mt-0.5">MOH Antimicrobial</span>
+          <strong className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums block mt-0.5">{stats.antimicrobialCount}</strong>
+          <span className="text-[10px] text-emerald-600/80 block mt-0.5">MOH Antimicrobial</span>
         </div>
 
         <div
           onClick={() => { handleResetFilters(); }}
-          className="p-4 bg-white rounded-2xl border border-teal-200 shadow-xs cursor-pointer hover:border-teal-400 transition-all"
+          className="p-4 bg-surface rounded-xl border border-border-default shadow-2xs cursor-pointer hover:border-border-strong hover:bg-subtle/30 transition-all"
         >
-          <span className="text-[11px] font-bold text-teal-700 uppercase tracking-wider block flex items-center gap-1">
-            <Droplets className="w-3 h-3 text-teal-600" /> IV Dilution
+          <span className="text-[11px] font-semibold text-teal-600 dark:text-teal-400 uppercase tracking-wider block flex items-center gap-1">
+            <Droplets className="w-3 h-3 text-teal-500" /> IV Dilution
           </span>
-          <strong className="text-2xl font-extrabold text-teal-700">{stats.ivDilutionCount}</strong>
-          <span className="text-[10px] text-teal-600 block mt-0.5">Reconstitution Protocols</span>
+          <strong className="text-2xl font-bold text-teal-600 dark:text-teal-400 tabular-nums block mt-0.5">{stats.ivDilutionCount}</strong>
+          <span className="text-[10px] text-teal-600/80 block mt-0.5">Protocols</span>
         </div>
 
         <div
           onClick={() => { handleResetFilters(); setLowStockOnly(true); }}
-          className={`p-4 bg-white rounded-2xl border shadow-xs cursor-pointer transition-all ${
-            lowStockOnly ? 'border-rose-500 bg-rose-50/40 ring-2 ring-rose-500/20' : 'border-rose-200 hover:border-rose-400'
+          className={`p-4 bg-surface rounded-xl border shadow-2xs cursor-pointer transition-all ${
+            lowStockOnly ? 'border-rose-500/60 bg-rose-500/10 ring-1 ring-rose-500/20' : 'border-border-default hover:border-rose-500/40 hover:bg-subtle/30'
           }`}
         >
-          <span className="text-[11px] font-bold text-rose-700 uppercase tracking-wider block flex items-center gap-1">
-            <TrendingDown className="w-3 h-3 text-rose-600" /> Quota Alert
+          <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wider block flex items-center gap-1">
+            <TrendingDown className="w-3 h-3 text-rose-500" /> Quota Alert
           </span>
-          <strong className="text-2xl font-extrabold text-rose-700">{stats.lowStockCount}</strong>
-          <span className="text-[10px] text-rose-500 block mt-0.5">Low / Critical Stock</span>
+          <strong className="text-2xl font-bold text-rose-600 dark:text-rose-400 tabular-nums block mt-0.5">{stats.lowStockCount}</strong>
+          <span className="text-[10px] text-rose-500/80 block mt-0.5">Low / Critical</span>
         </div>
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 space-y-4">
+      <div className="bg-surface rounded-xl border border-border-default shadow-2xs p-5 space-y-4">
         <div className="flex flex-col md:flex-row gap-3">
           {/* Main Search Input */}
           <div className="relative flex-1">
-            <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+            <Search className="w-5 h-5 text-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search by Generic Name (INN), Brand Name, ATC Code, Indication, or Therapeutic Class..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-violet-500 focus:bg-white focus:ring-4 focus:ring-violet-500/10 transition-all"
+              className="w-full pl-12 pr-4 py-2.5 bg-subtle border border-border-default rounded-xl text-xs sm:text-sm text-text-primary placeholder:text-text-muted focus:outline-hidden focus:border-accent-base focus:bg-surface focus:ring-2 focus:ring-accent-base/15 transition-all"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-text-muted hover:text-text-primary"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -277,7 +271,7 @@ export const FormulariDashboardPage: React.FC = () => {
           <select
             value={selectedPrescriber}
             onChange={e => setSelectedPrescriber(e.target.value as PrescriberCategory | 'ALL')}
-            className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:border-violet-500 focus:bg-white"
+            className="px-4 py-2.5 bg-subtle border border-border-default rounded-xl text-xs font-semibold text-text-secondary focus:outline-hidden focus:border-accent-base focus:bg-surface"
           >
             <option value="ALL">All Prescriber Categories</option>
             <option value="A*">Category A* (Consultant/Specialist Only)</option>
@@ -288,11 +282,11 @@ export const FormulariDashboardPage: React.FC = () => {
           </select>
 
           {/* View Mode Toggle: Table List (default) vs Card Grid */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200 shrink-0">
+          <div className="flex items-center bg-subtle p-1 rounded-xl border border-border-default shrink-0">
             <button
               onClick={() => setViewMode('table')}
-              className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
-                viewMode === 'table' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                viewMode === 'table' ? 'bg-surface text-accent-base shadow-2xs border border-border-default' : 'text-text-muted hover:text-text-primary'
               }`}
             >
               <List className="w-4 h-4" />
@@ -300,8 +294,8 @@ export const FormulariDashboardPage: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
-                viewMode === 'grid' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                viewMode === 'grid' ? 'bg-surface text-accent-base shadow-2xs border border-border-default' : 'text-text-muted hover:text-text-primary'
               }`}
             >
               <Grid className="w-4 h-4" />
@@ -311,56 +305,56 @@ export const FormulariDashboardPage: React.FC = () => {
         </div>
 
         {/* Quick Filter Toggle Chips */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs">
-          <span className="text-slate-400 font-semibold flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border-default text-xs">
+          <span className="text-text-muted font-semibold flex items-center gap-1">
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <span>Quick Filters:</span>
           </span>
 
           <button
             onClick={() => setHamOnly(!hamOnly)}
-            className={`px-3 py-1.5 rounded-xl font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
-              hamOnly ? 'bg-rose-600 text-white border-rose-700 shadow-xs' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
+              hamOnly ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30' : 'bg-subtle text-text-secondary border-border-default hover:bg-hover'
             }`}
           >
-            <Flame className="w-3.5 h-3.5" />
+            <Flame className="w-3.5 h-3.5 text-rose-500" />
             <span>High Alert (HAM) Only</span>
           </button>
 
           <button
             onClick={() => setLasaOnly(!lasaOnly)}
-            className={`px-3 py-1.5 rounded-xl font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
-              lasaOnly ? 'bg-amber-500 text-white border-amber-600 shadow-xs' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
+              lasaOnly ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30' : 'bg-subtle text-text-secondary border-border-default hover:bg-hover'
             }`}
           >
-            <AlertTriangle className="w-3.5 h-3.5" />
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
             <span>LASA Drugs Only</span>
           </button>
 
           <button
             onClick={() => setAntimicrobialOnly(!antimicrobialOnly)}
-            className={`px-3 py-1.5 rounded-xl font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
-              antimicrobialOnly ? 'bg-emerald-600 text-white border-emerald-700 shadow-xs' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
+              antimicrobialOnly ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : 'bg-subtle text-text-secondary border-border-default hover:bg-hover'
             }`}
           >
-            <ShieldCheck className="w-3.5 h-3.5" />
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
             <span>Antimicrobial (NAG)</span>
           </button>
 
           <button
             onClick={() => setLowStockOnly(!lowStockOnly)}
-            className={`px-3 py-1.5 rounded-xl font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
-              lowStockOnly ? 'bg-rose-500 text-white border-rose-600 shadow-xs' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
+              lowStockOnly ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30' : 'bg-subtle text-text-secondary border-border-default hover:bg-hover'
             }`}
           >
-            <TrendingDown className="w-3.5 h-3.5" />
+            <TrendingDown className="w-3.5 h-3.5 text-rose-500" />
             <span>Low / Critical Quota</span>
           </button>
 
           {hasActiveFilters && (
             <button
               onClick={handleResetFilters}
-              className="px-3 py-1.5 rounded-xl font-semibold text-violet-700 hover:text-violet-900 hover:bg-violet-50 transition-colors ml-auto flex items-center gap-1"
+              className="px-3 py-1.5 rounded-lg font-semibold text-accent-base hover:bg-accent-subtle/50 transition-colors ml-auto flex items-center gap-1"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Reset Filters</span>
@@ -370,114 +364,114 @@ export const FormulariDashboardPage: React.FC = () => {
       </div>
 
       {/* Results Header */}
-      <div className="flex items-center justify-between text-xs text-slate-500 px-1">
-        <span>Showing <strong className="text-slate-900">{filteredDrugs.length}</strong> of <strong className="text-slate-900">{allDrugs.length}</strong> formulary drugs</span>
-        {hasActiveFilters && <span className="bg-violet-50 text-violet-700 px-2 py-0.5 rounded-md font-semibold">Active filters applied</span>}
+      <div className="flex items-center justify-between text-xs text-text-muted px-1">
+        <span>Showing <strong className="text-text-primary font-bold">{filteredDrugs.length}</strong> of <strong className="text-text-primary font-bold">{allDrugs.length}</strong> formulary drugs</span>
+        {hasActiveFilters && <span className="bg-accent-subtle text-accent-base border border-accent-base/20 px-2 py-0.5 rounded-md font-semibold">Active filters applied</span>}
       </div>
 
       {/* PRIMARY VIEW: Full-Width Clinical Table List with Rich Columns */}
       {viewMode === 'table' && (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-md overflow-hidden">
+        <div className="bg-surface rounded-xl border border-border-default shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-slate-50/90 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider select-none">
+              <thead className="bg-subtle/80 border-b border-border-default text-text-secondary font-semibold uppercase tracking-wider select-none">
                 <tr>
-                  <th className="p-4 text-center w-12 text-slate-400">No.</th>
+                  <th className="p-3.5 text-center w-12 text-text-muted">No.</th>
                   <th
                     onClick={() => handleSort('genericName')}
-                    className="p-4 cursor-pointer hover:bg-slate-100 transition-colors min-w-[240px]"
+                    className="p-3.5 cursor-pointer hover:bg-hover transition-colors min-w-[240px]"
                   >
                     <span>Generic Name (INN) & Brands</span>
                     {renderSortIcon('genericName')}
                   </th>
                   <th
                     onClick={() => handleSort('prescriberCategory')}
-                    className="p-4 cursor-pointer hover:bg-slate-100 transition-colors min-w-[150px]"
+                    className="p-3.5 cursor-pointer hover:bg-hover transition-colors min-w-[150px]"
                   >
                     <span>Prescriber & Poison Category</span>
                     {renderSortIcon('prescriberCategory')}
                   </th>
-                  <th className="p-4 min-w-[170px]">Strength & Dosage Form</th>
+                  <th className="p-3.5 min-w-[170px]">Strength & Dosage Form</th>
                   <th
                     onClick={() => handleSort('atcCode')}
-                    className="p-4 cursor-pointer hover:bg-slate-100 transition-colors min-w-[200px]"
+                    className="p-3.5 cursor-pointer hover:bg-hover transition-colors min-w-[200px]"
                   >
                     <span>Therapeutic Class & ATC</span>
                     {renderSortIcon('atcCode')}
                   </th>
-                  <th className="p-4 min-w-[260px]">Main Clinical Indications (FUKKM)</th>
+                  <th className="p-3.5 min-w-[260px]">Main Clinical Indications (FUKKM)</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border-default">
                 {paginatedDrugs.map((drug, index) => {
                   const globalIndex = (currentPage - 1) * pageSize + index + 1
                   return (
                     <tr
                       key={drug.id}
                       onClick={() => navigate(`/formulari/drug/${drug.id}`)}
-                      className="hover:bg-violet-50/40 cursor-pointer transition-colors group"
+                      className="hover:bg-subtle/50 cursor-pointer transition-colors group"
                     >
                       {/* 1. Bil */}
-                      <td className="p-4 text-center font-mono text-slate-400 font-bold">
+                      <td className="p-3.5 text-center font-mono text-text-muted font-semibold">
                         {globalIndex}
                       </td>
 
                       {/* 2. Generic Name & Brands */}
-                      <td className="p-4">
+                      <td className="p-3.5">
                         <div className="space-y-1">
-                          <div className="font-bold text-slate-900 text-sm leading-snug group-hover:text-violet-700 transition-colors">
+                          <div className="font-semibold text-text-primary text-sm leading-snug group-hover:text-accent-base transition-colors">
                             {drug.genericName}
                           </div>
-                          <div className="text-[11px] text-slate-500 font-normal">
+                          <div className="text-[11px] text-text-muted font-normal">
                             {drug.brandNames.join(' • ')}
                           </div>
-                          <div className="text-[10px] text-slate-400 font-mono">
+                          <div className="text-[10px] text-text-muted font-mono">
                             Code: {drug.mohDrugCode}
                           </div>
                         </div>
                       </td>
 
                       {/* 3. Prescriber Category & Poison */}
-                      <td className="p-4 space-y-1.5">
+                      <td className="p-3.5 space-y-1.5">
                         <PrescriberBadge category={drug.prescriberCategory} size="sm" />
-                        <div className="text-[11px] text-slate-500 font-medium">
+                        <div className="text-[11px] text-text-secondary font-medium">
                           {drug.poisonCategory}
                         </div>
-                        <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-mono block w-fit">
+                        <span className="text-[10px] bg-subtle text-text-secondary border border-border-default px-1.5 py-0.5 rounded font-mono block w-fit">
                           Scheme: {drug.skimPerolehan}
                         </span>
                       </td>
 
                       {/* 4. Strengths & Dosage Forms */}
-                      <td className="p-4 space-y-1">
+                      <td className="p-3.5 space-y-1">
                         {drug.strengths.map((str, idx) => (
-                          <div key={idx} className="font-semibold text-slate-800 text-[11px]">
+                          <div key={idx} className="font-semibold text-text-primary text-[11px]">
                             {str}
                           </div>
                         ))}
-                        <div className="text-[11px] text-slate-500 italic">
+                        <div className="text-[11px] text-text-muted italic">
                           {drug.dosageForms.join(', ')}
                         </div>
                       </td>
 
                       {/* 5. Therapeutic Class & ATC Code */}
-                      <td className="p-4 space-y-1">
-                        <div className="font-medium text-slate-800 leading-snug text-xs">
+                      <td className="p-3.5 space-y-1">
+                        <div className="font-medium text-text-primary leading-snug text-xs">
                           {drug.therapeuticClass}
                         </div>
-                        <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono inline-block font-semibold">
+                        <span className="text-[10px] bg-subtle text-text-secondary border border-border-default px-2 py-0.5 rounded font-mono inline-block font-semibold">
                           ATC: {drug.atcCode}
                         </span>
                       </td>
 
                       {/* 6. Main Clinical Indications */}
-                      <td className="p-4">
-                        <ul className="space-y-1 text-[11px] text-slate-600 list-disc list-inside leading-snug">
+                      <td className="p-3.5">
+                        <ul className="space-y-1 text-[11px] text-text-secondary list-disc list-inside leading-snug">
                           {drug.indications.slice(0, 2).map((ind, idx) => (
                             <li key={idx} className="line-clamp-2">{ind}</li>
                           ))}
                           {drug.indications.length > 2 && (
-                            <span className="text-[10px] text-violet-600 font-medium pl-3">
+                            <span className="text-[10px] text-accent-base font-semibold pl-3">
                               +{drug.indications.length - 2} more indications...
                             </span>
                           )}
@@ -494,7 +488,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
       {/* SECONDARY VIEW: Grid Mode */}
       {viewMode === 'grid' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           {paginatedDrugs.map(drug => (
             <DrugCard key={drug.id} drug={drug} />
           ))}
@@ -503,17 +497,17 @@ export const FormulariDashboardPage: React.FC = () => {
 
       {/* Pagination Controls Bar */}
       {filteredDrugs.length > 0 && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 text-xs select-none">
-          <div className="flex items-center gap-3 text-slate-600">
+        <div className="bg-surface rounded-xl border border-border-default p-4 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4 text-xs select-none">
+          <div className="flex items-center gap-3 text-text-secondary">
             <span>
-              Showing <strong className="text-slate-900 font-bold">{(currentPage - 1) * pageSize + 1}</strong> - <strong className="text-slate-900 font-bold">{Math.min(currentPage * pageSize, filteredDrugs.length)}</strong> of <strong className="text-slate-900 font-bold">{filteredDrugs.length.toLocaleString()}</strong> formulary records
+              Showing <strong className="text-text-primary font-bold tabular-nums">{(currentPage - 1) * pageSize + 1}</strong> - <strong className="text-text-primary font-bold tabular-nums">{Math.min(currentPage * pageSize, filteredDrugs.length)}</strong> of <strong className="text-text-primary font-bold tabular-nums">{filteredDrugs.length.toLocaleString()}</strong> formulary records
             </span>
-            <div className="flex items-center gap-1.5 ml-2 border-l border-slate-200 pl-3">
-              <span className="text-slate-500">Show:</span>
+            <div className="flex items-center gap-1.5 ml-2 border-l border-border-default pl-3">
+              <span className="text-text-muted">Show:</span>
               <select
                 value={pageSize}
                 onChange={e => setPageSize(Number(e.target.value))}
-                className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-700 font-semibold focus:outline-hidden"
+                className="bg-subtle border border-border-default rounded-lg px-2 py-1 text-text-primary font-semibold focus:outline-hidden"
               >
                 <option value={25}>25</option>
                 <option value={50}>50</option>
@@ -529,7 +523,7 @@ export const FormulariDashboardPage: React.FC = () => {
             <button
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
-              className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700"
+              className="p-2 rounded-lg border border-border-default hover:bg-subtle disabled:opacity-30 disabled:cursor-not-allowed text-text-primary transition-colors"
               title="First Page"
             >
               <ChevronsLeft className="w-4 h-4" />
@@ -537,20 +531,20 @@ export const FormulariDashboardPage: React.FC = () => {
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 flex items-center gap-1"
+              className="px-2.5 py-2 rounded-lg border border-border-default hover:bg-subtle disabled:opacity-30 disabled:cursor-not-allowed text-text-primary flex items-center gap-1 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               <span className="hidden sm:inline">Previous</span>
             </button>
 
-            <span className="px-3 py-1.5 bg-violet-50 text-violet-700 font-bold rounded-xl border border-violet-200 mx-1">
+            <span className="px-3 py-1.5 bg-accent-subtle text-accent-base font-semibold rounded-lg border border-accent-base/20 mx-1">
               Page {currentPage} of {totalPages}
             </span>
 
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 flex items-center gap-1"
+              className="px-2.5 py-2 rounded-lg border border-border-default hover:bg-subtle disabled:opacity-30 disabled:cursor-not-allowed text-text-primary flex items-center gap-1 transition-colors"
             >
               <span className="hidden sm:inline">Next</span>
               <ChevronRight className="w-4 h-4" />
@@ -558,7 +552,7 @@ export const FormulariDashboardPage: React.FC = () => {
             <button
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
-              className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700"
+              className="p-2 rounded-lg border border-border-default hover:bg-subtle disabled:opacity-30 disabled:cursor-not-allowed text-text-primary transition-colors"
               title="Last Page"
             >
               <ChevronsRight className="w-4 h-4" />
@@ -569,15 +563,15 @@ export const FormulariDashboardPage: React.FC = () => {
 
       {/* Zero State */}
       {filteredDrugs.length === 0 && (
-        <div className="p-12 text-center bg-white rounded-3xl border border-dashed border-slate-300 space-y-3">
-          <Search className="w-10 h-10 mx-auto text-slate-300" />
-          <h3 className="text-base font-bold text-slate-700">No formulary drugs found</h3>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
+        <div className="p-12 text-center bg-surface rounded-xl border border-dashed border-border-strong space-y-3">
+          <Search className="w-10 h-10 mx-auto text-text-muted opacity-60" />
+          <h3 className="text-base font-semibold text-text-primary">No formulary drugs found</h3>
+          <p className="text-xs text-text-muted max-w-md mx-auto">
             No drugs match your search "{searchTerm}" or selected filters. Please check your spelling or reset filters.
           </p>
           <button
             onClick={handleResetFilters}
-            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-xs"
+            className="px-4 py-2 bg-ink hover:bg-ink-hover text-ink-text font-semibold rounded-lg text-xs transition-colors"
           >
             Reset All Filters
           </button>

@@ -1,7 +1,7 @@
 // @ts-nocheck
-import React from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   AirVent, 
   Package, 
@@ -13,552 +13,547 @@ import {
   ShoppingCart,
   LogOut,
   Bell,
-  AlertCircle,
   Megaphone,
   User,
   ChevronRight,
   Image,
   StickyNote,
-  Globe,
   Files,
   Search,
   Truck,
   Car,
+  PersonStanding,
   UserCheck,
   Calendar,
   Users,
-  UserPlus,
   Clock,
   Activity,
-  Monitor,
   Key,
-  Plane,
-  Sparkles,
   Pill,
-  FlaskConical
+  FlaskConical,
+  PackageCheck,
+  LayoutGrid,
+  ListFilter,
+  X,
+  Sparkles,
+  Layers,
+  ArrowUpRight,
+  CheckCircle2,
+  Wrench,
+  ShieldCheck,
+  Grid,
+  Sun,
+  Moon
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import { useUIStore } from '@/stores/uiStore'
 import { logout } from '@/services/authService'
 import { ROUTES } from '@/lib/constants'
 import { supabase } from '@/services/supabase'
-import { AnimatePresence } from 'framer-motion'
-import { getUsers } from '@/services/userService'
-import { getAuditLogs } from '@/services/auditLogService'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
+import { 
+  getActiveAnnouncements, 
+  getSystemUpdateLogs, 
+  subscribeToAnnouncements, 
+  type SystemAnnouncement 
+} from '@/services/systemAnnouncementService'
+import { SystemBroadcastBanner } from '../components/SystemBroadcastBanner'
+import { SystemUpdateLogModal } from '../components/SystemUpdateLogModal'
+import { AdminBroadcastModal } from '../components/AdminBroadcastModal'
+import { CURRENT_SYSTEM_VERSION } from '@/config/systemReleases'
 
-// Module styling map with non-purged static Tailwind classes
-const MODULE_STYLES: Record<string, { bg: string; border: string; iconColor: string; hoverBorder: string; glow: string }> = {
-  cyan: {
-    bg: 'bg-cyan-500/15',
-    border: 'border-cyan-400/50',
-    iconColor: 'text-cyan-400',
-    hoverBorder: 'group-hover:border-cyan-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(34,211,238,0.4)]'
-  },
-  blue: {
-    bg: 'bg-blue-500/15',
-    border: 'border-blue-400/50',
-    iconColor: 'text-blue-400',
-    hoverBorder: 'group-hover:border-blue-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(96,165,250,0.4)]'
-  },
-  emerald: {
-    bg: 'bg-emerald-500/15',
-    border: 'border-emerald-400/50',
-    iconColor: 'text-emerald-400',
-    hoverBorder: 'group-hover:border-emerald-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(52,211,153,0.4)]'
-  },
-  purple: {
-    bg: 'bg-purple-500/15',
-    border: 'border-purple-400/50',
-    iconColor: 'text-purple-400',
-    hoverBorder: 'group-hover:border-purple-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(192,132,252,0.4)]'
-  },
-  amber: {
-    bg: 'bg-amber-500/15',
-    border: 'border-amber-400/50',
-    iconColor: 'text-amber-400',
-    hoverBorder: 'group-hover:border-amber-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(251,191,36,0.4)]'
-  },
-  rose: {
-    bg: 'bg-rose-500/15',
-    border: 'border-rose-400/50',
-    iconColor: 'text-rose-400',
-    hoverBorder: 'group-hover:border-rose-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(251,113,133,0.4)]'
-  },
-  slate: {
-    bg: 'bg-slate-500/15',
-    border: 'border-slate-400/50',
-    iconColor: 'text-slate-300',
-    hoverBorder: 'group-hover:border-slate-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(148,163,184,0.4)]'
-  },
-  yellow: {
-    bg: 'bg-yellow-500/15',
-    border: 'border-yellow-400/50',
-    iconColor: 'text-yellow-400',
-    hoverBorder: 'group-hover:border-yellow-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(250,204,21,0.4)]'
-  },
-  pink: {
-    bg: 'bg-pink-500/15',
-    border: 'border-pink-400/50',
-    iconColor: 'text-pink-400',
-    hoverBorder: 'group-hover:border-pink-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(244,114,182,0.4)]'
-  },
-  indigo: {
-    bg: 'bg-indigo-500/15',
-    border: 'border-indigo-400/50',
-    iconColor: 'text-indigo-400',
-    hoverBorder: 'group-hover:border-indigo-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(129,140,248,0.4)]'
-  },
-  orange: {
-    bg: 'bg-orange-500/15',
-    border: 'border-orange-400/50',
-    iconColor: 'text-orange-400',
-    hoverBorder: 'group-hover:border-orange-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(251,146,60,0.4)]'
-  },
-  violet: {
-    bg: 'bg-violet-500/15',
-    border: 'border-violet-400/50',
-    iconColor: 'text-violet-400',
-    hoverBorder: 'group-hover:border-violet-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(167,139,250,0.4)]'
-  },
-  sky: {
-    bg: 'bg-sky-500/15',
-    border: 'border-sky-400/50',
-    iconColor: 'text-sky-400',
-    hoverBorder: 'group-hover:border-sky-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(56,189,248,0.4)]'
-  },
-  lime: {
-    bg: 'bg-lime-500/15',
-    border: 'border-lime-400/50',
-    iconColor: 'text-lime-400',
-    hoverBorder: 'group-hover:border-lime-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(163,230,53,0.4)]'
-  },
-  fuchsia: {
-    bg: 'bg-fuchsia-500/15',
-    border: 'border-fuchsia-400/50',
-    iconColor: 'text-fuchsia-400',
-    hoverBorder: 'group-hover:border-fuchsia-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(232,121,249,0.4)]'
-  },
-  teal: {
-    bg: 'bg-teal-500/15',
-    border: 'border-teal-400/50',
-    iconColor: 'text-teal-400',
-    hoverBorder: 'group-hover:border-teal-300',
-    glow: 'group-hover:shadow-[0_0_18px_rgba(45,212,191,0.4)]'
-  }
+type ModuleCategory = 'clinical' | 'logistics' | 'governance'
+
+interface ModuleItem {
+  id: string
+  name: string
+  shortName: string
+  description: string
+  category: ModuleCategory
+  icon: React.ComponentType<{ className?: string }>
+  path: string
+  accent: 'cyan' | 'teal' | 'rose' | 'emerald' | 'indigo' | 'blue' | 'amber'
+  badge?: string
 }
 
-// Module configuration
-const MODULES = [
-  {
-    id: 'cylinder',
-    name: 'MyCylinder',
-    description: 'Medical Oxygen Cylinders',
-    icon: AirVent,
-    path: ROUTES.PHARMACY_OXYGEN,
-    colorKey: 'cyan'
+// Restrained semantic styles for native superellipse app icons (Anti-Slop compliant)
+const ACCENT_STYLES: Record<string, { bg: string; text: string; border: string; hoverBorder: string }> = {
+  cyan: {
+    bg: 'bg-cyan-500/10 dark:bg-cyan-500/15',
+    text: 'text-cyan-600 dark:text-cyan-400',
+    border: 'border-cyan-500/25 dark:border-cyan-500/30',
+    hoverBorder: 'group-hover:border-cyan-500/50',
   },
-  {
-    id: 'inventory',
-    name: 'MyInventory',
-    description: 'Hospital Inventory',
-    icon: Package,
-    path: ROUTES.PHARMACY_INVENTORY,
-    colorKey: 'blue'
+  teal: {
+    bg: 'bg-teal-500/10 dark:bg-teal-500/15',
+    text: 'text-teal-600 dark:text-teal-400',
+    border: 'border-teal-500/25 dark:border-teal-500/30',
+    hoverBorder: 'group-hover:border-teal-500/50',
   },
-  {
-    id: 'warrant',
-    name: 'MyWarrant',
-    description: 'Warrant Management',
-    icon: FileText,
-    path: ROUTES.MYWARRANT_DASHBOARD,
-    colorKey: 'emerald'
+  rose: {
+    bg: 'bg-rose-500/10 dark:bg-rose-500/15',
+    text: 'text-rose-600 dark:text-rose-400',
+    border: 'border-rose-500/25 dark:border-rose-500/30',
+    hoverBorder: 'group-hover:border-rose-500/50',
   },
-  {
-    id: 'surat',
-    name: 'MySurat',
-    description: 'Official Correspondence',
-    icon: Mail,
-    path: ROUTES.HUB_SURAT,
-    colorKey: 'purple'
+  emerald: {
+    bg: 'bg-emerald-500/10 dark:bg-emerald-500/15',
+    text: 'text-emerald-600 dark:text-emerald-400',
+    border: 'border-emerald-500/25 dark:border-emerald-500/30',
+    hoverBorder: 'group-hover:border-emerald-500/50',
   },
+  indigo: {
+    bg: 'bg-indigo-500/10 dark:bg-indigo-500/15',
+    text: 'text-indigo-600 dark:text-indigo-400',
+    border: 'border-indigo-500/25 dark:border-indigo-500/30',
+    hoverBorder: 'group-hover:border-indigo-500/50',
+  },
+  blue: {
+    bg: 'bg-blue-500/10 dark:bg-blue-500/15',
+    text: 'text-blue-600 dark:text-blue-400',
+    border: 'border-blue-500/25 dark:border-blue-500/30',
+    hoverBorder: 'group-hover:border-blue-500/50',
+  },
+  amber: {
+    bg: 'bg-amber-500/10 dark:bg-amber-500/15',
+    text: 'text-amber-600 dark:text-amber-400',
+    border: 'border-amber-500/25 dark:border-amber-500/30',
+    hoverBorder: 'group-hover:border-amber-500/50',
+  },
+}
+
+// Complete 23 module catalogue structured into native hospital operational categories
+const MODULES: ModuleItem[] = [
+  // 1. Clinical & Pharmacy (8)
   {
-    id: 'borang',
-    name: 'MyBorang',
-    description: 'Form Archives & Templates',
-    icon: ClipboardList,
-    path: ROUTES.HUB_BORANG,
-    colorKey: 'amber'
+    id: 'formulari',
+    name: 'MyFormulari',
+    shortName: 'Formulary',
+    description: 'National & Hospital Drug Formulary and Pediatric Dosages',
+    category: 'clinical',
+    icon: Search,
+    path: '/formulari',
+    accent: 'teal',
   },
   {
     id: 'suhu',
     name: 'MySuhu',
-    description: 'Temperature Monitoring',
+    shortName: 'Temperature',
+    description: 'Cold Chain & Vaccine Chiller Temperature Monitoring',
+    category: 'clinical',
     icon: Thermometer,
     path: ROUTES.HUB_SUHU_DASHBOARD,
-    colorKey: 'rose'
+    accent: 'rose',
   },
   {
-    id: 'admin',
-    name: 'MyAdmin',
-    description: 'System Administration',
-    icon: Shield,
-    path: ROUTES.HUB_ADMIN,
-    colorKey: 'slate'
+    id: 'cylinder',
+    name: 'MyCylinder',
+    shortName: 'Cylinders',
+    description: 'Medical Oxygen & Medical Gas Cylinder Management',
+    category: 'clinical',
+    icon: AirVent,
+    path: ROUTES.PHARMACY_OXYGEN,
+    accent: 'cyan',
   },
   {
-    id: 'perolehan',
-    name: 'MyPerolehan',
-    description: 'Procurement & Budget System',
-    icon: ShoppingCart,
-    path: ROUTES.HUB_PEROLEHAN,
-    colorKey: 'yellow'
+    id: 'prepacking',
+    name: 'MyPrepacking',
+    shortName: 'Prepacking',
+    description: 'Unit-of-Dose (UOD) Prepacking & Medicine Label Studio',
+    category: 'clinical',
+    icon: PackageCheck,
+    path: '/prepacking',
+    accent: 'teal',
   },
   {
-    id: 'gallery',
-    name: 'MyGallery',
-    description: 'Media Gallery',
-    icon: Image,
-    path: ROUTES.HUB_GALLERY,
-    colorKey: 'pink'
-  },
-  {
-    id: 'memo',
-    name: 'MyMemo',
-    description: 'Memos & Announcements',
-    icon: StickyNote,
-    path: ROUTES.HUB_MEMO,
-    colorKey: 'indigo'
-  },
-  {
-    id: 'file',
-    name: 'MyFile',
-    description: 'Document & File Management',
-    icon: Files,
-    path: ROUTES.HUB_FILE,
-    colorKey: 'orange'
-  },
-  {
-    id: 'formulari',
-    name: 'MyFormulari',
-    description: 'Drug Formulary Search',
-    icon: Search,
-    path: '/formulari',
-    colorKey: 'violet'
-  },
-  {
-    id: 'porter',
-    name: 'MyPorter',
-    description: 'Portering Services',
-    icon: Truck,
-    path: '/porter/dashboard',
-    colorKey: 'sky'
-  },
-  {
-    id: 'transporter',
-    name: 'MyTransporter',
-    description: 'Vehicle Fleet Management',
-    icon: Car,
-    path: '/transporter',
-    colorKey: 'blue'
+    id: 'warrant',
+    name: 'MyWarrant',
+    shortName: 'Warrant',
+    description: 'Pharmacy Financial Warrant & Budget Allocation',
+    category: 'clinical',
+    icon: FileText,
+    path: ROUTES.MYWARRANT_DASHBOARD,
+    accent: 'emerald',
   },
   {
     id: 'priviledging',
     name: 'MyPriviledging',
-    description: 'Clinical Privileges & Credentialing',
+    shortName: 'Privileging',
+    description: 'Clinical Privileging Logbook & Credentialing Committee',
+    category: 'clinical',
     icon: UserCheck,
     path: '/priviledging',
-    colorKey: 'lime'
-  },
-  {
-    id: 'tempahan',
-    name: 'MyTempahan',
-    description: 'Facility Booking System',
-    icon: Calendar,
-    path: ROUTES.HUB_TEMPAHAN,
-    colorKey: 'fuchsia'
-  },
-  {
-    id: 'perhimpunan',
-    name: 'MyPerhimpunan',
-    description: 'Assembly System',
-    icon: Users,
-    path: ROUTES.HUB_PERHIMPUNAN,
-    colorKey: 'indigo'
-  },
-  {
-    id: 'kunci',
-    name: 'MyKunci',
-    description: 'Key Management System',
-    icon: Key,
-    path: '/kunci',
-    colorKey: 'amber'
-  },
-  {
-    id: 'staff',
-    name: 'MyStaff',
-    description: 'Staff Management System',
-    icon: Users,
-    path: '/staff',
-    colorKey: 'emerald'
-  },
-  {
-    id: 'timeoff',
-    name: 'MyTimeOff',
-    description: 'Time Management System',
-    icon: Clock,
-    path: '/timeoff',
-    colorKey: 'blue'
+    accent: 'emerald',
   },
   {
     id: 'myphis',
     name: 'MyPHiS',
-    description: 'Pharmacy Information System',
+    shortName: 'PhIS',
+    description: 'Pharmacy Information System Integration & Backup Logs',
+    category: 'clinical',
     icon: Pill,
     path: ROUTES.HUB_MYPHIS,
-    colorKey: 'teal'
+    accent: 'teal',
   },
   {
     id: 'mymsds',
     name: 'MyMSDS',
-    description: 'Material Safety Data Sheets',
+    shortName: 'MSDS',
+    description: 'Material Safety Data Sheets & Chemical Hazmat Directory',
+    category: 'clinical',
     icon: FlaskConical,
     path: ROUTES.HUB_MYMSDS,
-    colorKey: 'emerald'
+    accent: 'teal',
+  },
+
+  // 2. Logistics & Facilities (6)
+  {
+    id: 'inventory',
+    name: 'MyInventory',
+    shortName: 'Inventory',
+    description: 'Hospital Store Inventory & KEW.PS-4 Stock Ledger',
+    category: 'logistics',
+    icon: Package,
+    path: ROUTES.PHARMACY_INVENTORY,
+    accent: 'indigo',
+  },
+  {
+    id: 'perolehan',
+    name: 'MyPerolehan',
+    shortName: 'Procurement',
+    description: 'Local Purchase Orders (LPO), Quotations & Suppliers',
+    category: 'logistics',
+    icon: ShoppingCart,
+    path: ROUTES.HUB_PEROLEHAN,
+    accent: 'blue',
+  },
+  {
+    id: 'transporter',
+    name: 'MyTransporter',
+    shortName: 'Transport',
+    description: 'Vehicle Fleet Management & Inter-Facility Transport',
+    category: 'logistics',
+    icon: Car,
+    path: '/transporter',
+    accent: 'indigo',
+  },
+  {
+    id: 'porter',
+    name: 'MyPorter',
+    shortName: 'Porter',
+    description: 'Ward Portering Dispatch & Inpatient Transport',
+    category: 'logistics',
+    icon: PersonStanding,
+    path: '/porter/dashboard',
+    accent: 'indigo',
+  },
+  {
+    id: 'tempahan',
+    name: 'MyTempahan',
+    shortName: 'Bookings',
+    description: 'Conference Hall, Meeting Room & Facility Booking',
+    category: 'logistics',
+    icon: Calendar,
+    path: ROUTES.HUB_TEMPAHAN,
+    accent: 'blue',
+  },
+  {
+    id: 'kunci',
+    name: 'MyKunci',
+    shortName: 'Key Custody',
+    description: 'Security Key Custody Register & Monthly Audit System',
+    category: 'logistics',
+    icon: Key,
+    path: '/kunci',
+    accent: 'amber',
+  },
+
+  // 3. Administration & Governance (9)
+  {
+    id: 'admin',
+    name: 'MyAdmin',
+    shortName: 'Admin',
+    description: 'Access Control, RBAC Roles & System Audit Logs',
+    category: 'governance',
+    icon: Shield,
+    path: ROUTES.ADMIN,
+    accent: 'amber',
+  },
+  {
+    id: 'staff',
+    name: 'MyStaff',
+    shortName: 'Staff',
+    description: 'Staff Directory, Movement Logs & Organizational Chart',
+    category: 'governance',
+    icon: Users,
+    path: '/staff',
+    accent: 'emerald',
+  },
+  {
+    id: 'timeoff',
+    name: 'MyTimeOff',
+    shortName: 'Time-Off',
+    description: 'Compensatory Time-Off (TOIL) & Movement Claims',
+    category: 'governance',
+    icon: Clock,
+    path: '/timeoff',
+    accent: 'blue',
+  },
+  {
+    id: 'surat',
+    name: 'MySurat',
+    shortName: 'Letters',
+    description: 'Official Government Correspondence & Letter Tracking',
+    category: 'governance',
+    icon: Mail,
+    path: ROUTES.HUB_SURAT,
+    accent: 'indigo',
+  },
+  {
+    id: 'borang',
+    name: 'MyBorang',
+    shortName: 'Forms',
+    description: 'Hospital Operational Form Templates & Digital Archives',
+    category: 'governance',
+    icon: ClipboardList,
+    path: ROUTES.HUB_BORANG,
+    accent: 'amber',
+  },
+  {
+    id: 'memo',
+    name: 'MyMemo',
+    shortName: 'Memos',
+    description: 'Internal Circulars & Official Hospital Broadcasts',
+    category: 'governance',
+    icon: StickyNote,
+    path: ROUTES.HUB_MEMO,
+    accent: 'indigo',
+  },
+  {
+    id: 'file',
+    name: 'MyFile',
+    shortName: 'Files',
+    description: 'Departmental File Index & Document Archive',
+    category: 'governance',
+    icon: Files,
+    path: ROUTES.HUB_FILE,
+    accent: 'amber',
+  },
+  {
+    id: 'gallery',
+    name: 'MyGallery',
+    shortName: 'Gallery',
+    description: 'Official Hospital Event Photos & Media Archive',
+    category: 'governance',
+    icon: Image,
+    path: ROUTES.HUB_GALLERY,
+    accent: 'indigo',
+  },
+  {
+    id: 'perhimpunan',
+    name: 'MyPerhimpunan',
+    shortName: 'Assembly',
+    description: 'Monthly Staff Assembly Attendance & Event Records',
+    category: 'governance',
+    icon: Users,
+    path: ROUTES.HUB_PERHIMPUNAN,
+    accent: 'indigo',
   }
 ]
-
-interface StatsData {
-  totalVisitor: number;
-  visitorToday: number;
-  totalUser: number;
-  daysOnline: number;
-  systemVersion: string;
-}
-
-const SystemStatsCounter = ({ data }: { data: StatsData }) => {
-  const stats = [
-    { label: 'Total Visitor', value: data.totalVisitor.toLocaleString(), icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/10' },
-    { label: 'Visitor Today', value: data.visitorToday.toLocaleString(), icon: UserPlus, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
-    { label: 'Total User', value: data.totalUser.toLocaleString(), icon: Activity, color: 'text-purple-400', bg: 'bg-purple-400/10' },
-    { label: 'Days Online', value: data.daysOnline.toLocaleString(), icon: Clock, color: 'text-amber-400', bg: 'bg-amber-400/10' },
-    { label: 'System Version', value: data.systemVersion, icon: Monitor, color: 'text-teal-400', bg: 'bg-teal-400/10' },
-  ];
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.1 }}
-      className="bg-slate-900/60 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md overflow-hidden w-full grid grid-cols-2 md:flex md:items-center"
-    >
-      {stats.map((stat, idx) => {
-        const Icon = stat.icon;
-        return (
-          <div 
-            key={idx} 
-            className={`flex items-center gap-3 p-3 sm:p-4 shrink-0 
-              ${idx % 2 === 0 && idx < stats.length - 1 ? 'border-r border-white/5' : ''} 
-              ${idx < stats.length - 1 ? 'md:border-r border-white/5' : ''}
-              ${idx < 4 && idx % 2 === 0 ? 'border-b border-white/5 md:border-b-0' : ''}
-              ${idx < 4 && idx % 2 !== 0 ? 'border-b border-white/5 md:border-b-0' : ''}
-              ${idx === stats.length - 1 && stats.length % 2 !== 0 ? 'col-span-2 justify-center md:col-span-1 md:justify-start' : ''}
-            `}
-          >
-            <div className={`p-2 rounded-xl ${stat.bg}`}>
-              <Icon className={`w-3.5 h-3.5 sm:w-4 h-4 ${stat.color}`} />
-            </div>
-            <div>
-              <p className="text-[8px] sm:text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5 whitespace-nowrap">{stat.label}</p>
-              <p className="text-xs sm:text-sm font-black text-white tracking-tight leading-none">{stat.value}</p>
-            </div>
-          </div>
-        )
-      })}
-    </motion.div>
-  )
-}
 
 export const ModuleHubPage: React.FC = () => {
   const navigate = useNavigate()
   const { user, logout: storeLogout } = useAuthStore()
+  const { theme, toggleTheme } = useUIStore()
   const { language, t } = useLanguage()
-  const [bgPhoto, setBgPhoto] = React.useState<string | null>(null)
-  const [showSurpriseModal, setShowSurpriseModal] = React.useState(false)
-  const [selectedModuleName, setSelectedModuleName] = React.useState('')
-  
-  const [statsData, setStatsData] = React.useState<StatsData>({
-    totalVisitor: 0,
-    visitorToday: 0,
-    totalUser: 0,
-    daysOnline: 0,
-    systemVersion: 'v2.4.1'
-  })
+  // System Administrator Authorization Check
+  const isSystemAdmin = 
+    user?.role?.role_code === 'system_admin' || 
+    user?.role?.role_name?.toLowerCase().includes('system admin') ||
+    user?.role_code === 'system_admin'
 
-  React.useEffect(() => {
-    fetchBackgroundPhoto()
-    fetchSystemStats()
-    const interval = setInterval(fetchBackgroundPhoto, 7000)
-    return () => clearInterval(interval)
-  }, [user])
+  // State
+  const [selectedCategory, setSelectedCategory] = useState<'all' | ModuleCategory>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [viewMode, setViewMode] = useState<'grouped' | 'grid' | 'list'>('grouped')
+  const [showSurpriseModal, setShowSurpriseModal] = useState(false)
+  const [selectedModuleName, setSelectedModuleName] = useState('')
+  const [totalStaffCount, setTotalStaffCount] = useState<number | null>(null)
 
-  const fetchSystemStats = async () => {
+  // Real Database Announcements & Update Logs (Strict Zero-Mock Mandate)
+  const [announcements, setAnnouncements] = useState<SystemAnnouncement[]>([])
+  const [updateLogs, setUpdateLogs] = useState<SystemAnnouncement[]>([])
+  const [isAnnouncementsLoading, setIsAnnouncementsLoading] = useState(true)
+  const [showAdminBroadcastModal, setShowAdminBroadcastModal] = useState(false)
+  const [showUpdateLogModal, setShowUpdateLogModal] = useState(false)
+
+  // Fetch real announcements and logs
+  const fetchAnnouncementsData = async () => {
     try {
-      // 1. Total Users
-      const usersRes = await getUsers({ page: 1, pageSize: 1 })
-      
-      // 2. Audit logs for visitors (simulate LOGIN action)
-      const today = new Date()
-      today.setHours(0,0,0,0)
-      
-      const todayRes = await getAuditLogs({ 
-        page: 1, 
-        pageSize: 1, 
-        startDate: today.toISOString(),
-        action: 'Login' // Look for 'Login' action in audit logs
-      })
-
-      // Total Visitors (all logins)
-      const totalVisitsRes = await getAuditLogs({
-        page: 1,
-        pageSize: 1,
-        action: 'Login'
-      })
-
-      // Days online (assume launch was Jan 1, 2024)
-      const launchDate = new Date('2024-01-01')
-      const days = Math.floor((new Date().getTime() - launchDate.getTime()) / (1000 * 60 * 60 * 24))
-
-      setStatsData({
-        totalVisitor: 124592 + (totalVisitsRes.total || 0),
-        visitorToday: 1284 + (todayRes.total || 0),
-        totalUser: usersRes.total > 0 ? usersRes.total : 41,
-        daysOnline: days > 0 ? days : 920,
-        systemVersion: import.meta.env.VITE_APP_VERSION || 'v2.4.1'
-      })
+      setIsAnnouncementsLoading(true)
+      const [active, logs] = await Promise.all([
+        getActiveAnnouncements(),
+        getSystemUpdateLogs()
+      ])
+      setAnnouncements(active)
+      setUpdateLogs(logs)
     } catch (err) {
-      console.error('Error fetching stats:', err)
+      console.warn('Could not fetch announcements:', err)
+    } finally {
+      setIsAnnouncementsLoading(false)
     }
   }
 
-  const fetchBackgroundPhoto = async () => {
-    if (!user?.hospital_id) return
-    
-    try {
-      // Fetch photos for this hospital by joining with albums
-      const { data, error } = await supabase
-        .from('gallery_photos')
-        .select(`
-          photo_url,
-          gallery_albums!inner(hospital_id)
-        `)
-        .eq('gallery_albums.hospital_id', user.hospital_id)
-        .order('created_at', { ascending: false })
-        .limit(20)
+  // Real Database Query for Active Staff & Announcements
+  useEffect(() => {
+    let isMounted = true
 
-      if (error) throw error
-      if (data && data.length > 0) {
-        // Since we did a join, data objects will have photo_url and gallery_albums
-        const randomIdx = Math.floor(Math.random() * data.length)
-        setBgPhoto(data[randomIdx].photo_url)
+    const fetchRealStaffCount = async () => {
+      try {
+        const { count, error } = await supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true })
+
+        if (!error && count !== null && isMounted) {
+          setTotalStaffCount(count)
+        }
+      } catch (err) {
+        console.warn('Real staff count fetch skipped:', err)
       }
-    } catch (err) {
-      console.error('Error fetching bg photo:', err)
     }
-  }
+
+    void fetchRealStaffCount()
+    void fetchAnnouncementsData()
+
+    // Real-time subscription to database updates
+    const unsubscribe = subscribeToAnnouncements(() => {
+      if (isMounted) {
+        void fetchAnnouncementsData()
+      }
+    })
+
+    return () => {
+      isMounted = false
+      unsubscribe()
+    }
+  }, [])
 
   const handleLogout = async () => {
     await logout()
     storeLogout()
   }
 
-  return (
-    <div className="relative min-h-screen w-full flex flex-col items-center bg-slate-950 overflow-x-hidden">
-      
-      {/* Dynamic Background Photo with Ken Burns Effect */}
-      <AnimatePresence mode="wait">
-        {bgPhoto && (
-          <motion.div 
-            key={bgPhoto}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.5 }}
-            className="fixed inset-0 z-0 overflow-hidden"
-          >
-            <motion.div
-              animate={{
-                scale: [1.05, 1.15, 1.05],
-                x: [-10, 10, -10],
-                y: [-5, 5, -5]
-              }}
-              transition={{
-                duration: 15,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              className="absolute inset-0 w-full h-full"
-            >
-              <img 
-                src={bgPhoto} 
-                alt="Background" 
-                className="w-full h-full object-cover"
-              />
-            </motion.div>
-            {/* Lightened overlays for maximum photo visibility */}
-            <div className="absolute inset-0 bg-slate-950/30" />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/40" />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/40 via-transparent to-slate-950/40" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+  // Filter modules by category and search query
+  const filteredModules = useMemo(() => {
+    return MODULES.filter((module) => {
+      const matchesCategory = selectedCategory === 'all' || module.category === selectedCategory
+      if (!matchesCategory) return false
+      if (!searchQuery.trim()) return true
+      const q = searchQuery.toLowerCase()
+      return (
+        module.name.toLowerCase().includes(q) ||
+        module.shortName.toLowerCase().includes(q) ||
+        module.description.toLowerCase().includes(q)
+      )
+    })
+  }, [selectedCategory, searchQuery])
 
+  // Grouped modules for domain sectioning on desktop
+  const clinicalModules = useMemo(() => filteredModules.filter(m => m.category === 'clinical'), [filteredModules])
+  const logisticsModules = useMemo(() => filteredModules.filter(m => m.category === 'logistics'), [filteredModules])
+  const governanceModules = useMemo(() => filteredModules.filter(m => m.category === 'governance'), [filteredModules])
+
+  // Native category tabs
+  const categories: { id: 'all' | ModuleCategory; label: string; count: number }[] = useMemo(() => {
+    return [
+      { id: 'all', label: 'All', count: MODULES.length },
+      { id: 'clinical', label: 'Clinical', count: MODULES.filter(m => m.category === 'clinical').length },
+      { id: 'logistics', label: 'Logistics', count: MODULES.filter(m => m.category === 'logistics').length },
+      { id: 'governance', label: 'Admin', count: MODULES.filter(m => m.category === 'governance').length },
+    ]
+  }, [])
+
+  // Time-aware greeting (local clock)
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours()
+    if (hour < 12) return 'Good morning'
+    if (hour < 18) return 'Good afternoon'
+    return 'Good evening'
+  }, [])
+
+  const handleCardClick = (module: ModuleItem) => {
+    if (module.path) {
+      navigate(module.path)
+    } else {
+      setSelectedModuleName(module.name)
+      setShowSurpriseModal(true)
+    }
+  }
+
+  return (
+    <div className="relative min-h-screen w-full flex flex-col items-center bg-canvas text-text-primary overflow-x-hidden antialiased selection:bg-accent-base/20 selection:text-accent-base transition-colors duration-150">
       <div className="relative z-10 w-full flex flex-col items-center">
-      {/* 1. Global Navigation Bar */}
-      <nav className="w-full border-b border-white/5 bg-slate-950/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 sm:h-32 flex items-center justify-between">
-          <div className="flex items-center gap-4 sm:gap-10">
-            <img
-              src="/512px-Jata_MalaysiaV2.svg.png"
-              alt="Jata Negara"
-              className="w-12 h-12 sm:w-20 sm:h-20 object-contain drop-shadow-[0_0_30px_rgba(20,184,166,0.4)]"
-            />
-            <div className="h-10 sm:h-16 w-px bg-white/10 hidden xs:block" />
-            <div className="hidden sm:block">
-                <h1 className="text-xl sm:text-2xl font-black text-white tracking-tighter leading-none mb-1">
-                  H.O.M.E.
-                </h1>
-                <p className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.25em] leading-none mb-2">
+        
+        {/* 1. Global Navigation Bar */}
+        <nav className="w-full border-b border-border-default bg-surface/90 backdrop-blur-md sticky top-0 z-40 transition-colors duration-150 header-safe-pt">
+          <div className="max-w-7xl mx-auto px-3.5 sm:px-6 h-15 sm:h-20 flex items-center justify-between gap-3">
+            {/* Left: Jata Negara & System Title */}
+            <div className="flex items-center gap-2.5 sm:gap-4.5 min-w-0">
+              <div className="relative shrink-0 flex items-center">
+                <img
+                  src="/512px-Jata_MalaysiaV2.svg.png"
+                  alt="Jata Negara Malaysia"
+                  className="w-9 h-9 sm:w-12 sm:h-12 object-contain"
+                />
+              </div>
+              
+              <div className="h-7 sm:h-10 w-px border-border-default hidden xs:block shrink-0" />
+
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-base sm:text-xl font-bold text-text-primary tracking-tight leading-none whitespace-nowrap">
+                    H.O.M.E.
+                  </h1>
+                  <span className="hidden sm:inline-block px-1.5 py-0.5 rounded-md bg-accent-subtle border border-accent-base/30 text-[10px] font-bold text-accent-base uppercase tracking-wider">
+                    Ecosystem
+                  </span>
+                </div>
+                <p className="hidden md:block text-[10px] sm:text-xs font-medium text-text-secondary uppercase tracking-[0.12em] leading-tight mt-0.5 truncate">
                   Hospital Operation Management Ecosystem
                 </p>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 sm:w-8 h-[2px] bg-teal-500/60" />
-                  <p className="text-[8px] sm:text-[10px] font-black text-teal-400 uppercase tracking-[0.3em] leading-none">
-                    Ministry of Health (MOH)
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-base shrink-0" />
+                  <p className="text-[9px] sm:text-[10px] font-semibold text-accent-base uppercase tracking-[0.15em] leading-none truncate">
+                    Ministry of Health Malaysia
                   </p>
                 </div>
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center gap-3 sm:gap-6">
-            <div className="px-2 sm:px-4 py-1.5 sm:py-2 bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-2 sm:gap-4">
+            {/* Right: User Profile, Theme Switcher & Actions */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              {/* Theme Switcher Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-surface hover:bg-subtle active:bg-muted-surface text-text-muted hover:text-text-primary rounded-lg transition-all duration-150 border border-border-default shrink-0 min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px]"
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? (
+                  <Sun className="w-4 h-4 text-amber-400" />
+                ) : (
+                  <Moon className="w-4 h-4 text-slate-700" />
+                )}
+              </button>
+
+              <button
+                onClick={() => navigate(ROUTES.PROFILE, { state: { fromModule: { name: 'Module Hub', code: 'hub' } } })}
+                className="px-2 sm:px-3 py-1.5 sm:py-2 bg-surface hover:bg-subtle active:bg-muted-surface border border-border-default rounded-lg flex items-center gap-2 sm:gap-2.5 transition-all duration-150 group text-left min-h-[36px] sm:min-h-[40px]"
+                title="Open User Profile"
+                aria-label="User Profile"
+              >
                 <div className="relative shrink-0">
-                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full border border-teal-500/50 p-0.5 flex items-center justify-center overflow-hidden">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-accent-base/30 p-0.5 flex items-center justify-center overflow-hidden bg-subtle">
                     {user?.profile_photo_url ? (
                       <img 
                         src={user.profile_photo_url} 
@@ -566,272 +561,569 @@ export const ModuleHubPage: React.FC = () => {
                         className="w-full h-full rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-sm sm:text-lg font-bold text-teal-400">
+                      <div className="w-full h-full rounded-full bg-subtle flex items-center justify-center text-xs font-semibold text-accent-base">
                         {(user?.full_name || "A").charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 bg-teal-500 border-2 border-[#020617] rounded-full" />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-emerald-500 border-2 border-surface rounded-full" />
                 </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-sm sm:text-lg font-bold text-white tracking-tight leading-none truncate max-w-[100px] xs:max-w-none">
-                      {user?.full_name || "Amri Amit"}
-                    </p>
-                    <span className="hidden xs:inline-block px-1.5 sm:px-2 py-0.5 rounded-md bg-teal-500/10 border border-teal-500/20 text-[6px] sm:text-[8px] font-black text-teal-400 uppercase tracking-widest">
-                      Active
-                    </span>
-                  </div>
-                  <p className="text-[10px] sm:text-xs font-medium text-slate-400 tracking-wide truncate">
-                    {user?.jawatan || user?.role?.role_name || "Assistant Pharmacist"}
+
+                <div className="hidden xs:flex flex-col min-w-0 max-w-[120px] sm:max-w-[180px]">
+                  <p className="text-xs sm:text-sm font-semibold text-text-primary group-hover:text-accent-base transition-colors truncate leading-tight">
+                    {user?.full_name || "Staff"}
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-text-muted truncate leading-tight mt-0.5">
+                    {user?.jawatan || user?.role?.role_name || 'System User'}
                   </p>
                 </div>
-              </div>
+              </button>
+
+              <button 
+                onClick={handleLogout}
+                className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-surface hover:bg-rose-500/10 active:bg-rose-500/20 text-text-muted hover:text-rose-600 rounded-lg transition-all duration-150 border border-border-default shrink-0 min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px]"
+                title="Sign out"
+                aria-label="Sign out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
-
-            <button 
-              onClick={handleLogout}
-              className="p-2 sm:p-4 hover:bg-red-500/10 rounded-xl sm:rounded-2xl text-slate-500 hover:text-red-400 transition-all border border-white/5 hover:border-red-500/20"
-              title={language === 'ms' ? 'Log Keluar' : 'Logout'}
-            >
-              <LogOut className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
           </div>
-        </div>
-      </nav>
+        </nav>
 
-      {/* 2. Main Content Area */}
-      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-12 flex flex-col gap-6 sm:gap-8">
-        
-        {/* Hero Greeting - Now Full Width */}
-        {/* Hero Greeting & Stats Horizontal Layout */}
-        <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 w-full">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <h2 className="text-lg sm:text-2xl font-black text-white mb-1 sm:mb-2 tracking-tighter flex flex-wrap items-center gap-x-2 sm:gap-x-4">
-              <span>{language === 'ms' ? 'Selamat Datang,' : 'Welcome,'}</span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-400 italic">
-                {user?.full_name}
-              </span>
-            </h2>
-            <p className="text-xs sm:text-sm font-medium text-slate-400 tracking-wide">
-              {language === 'ms'
-                ? 'Sistem Pengurusan Operasi Hospital Bersepadu'
-                : 'Integrated Hospital Operations Management Ecosystem'}
-            </p>
-          </motion.div>
-
-          <SystemStatsCounter data={statsData} />
-        </header>
-
-        {/* 1. Situational Awareness Section (Moved to Top) */}
-        <div className="w-full">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-slate-900/80 border border-white/10 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 flex flex-col gap-4 sm:gap-6 shadow-2xl"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-amber-500/20 rounded-xl">
-                  <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-                </div>
-                <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
-                  {language === 'ms' ? 'Notis & Isu Utama' : 'Key Notices & Critical Alerts'}
-                </h3>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[8px] sm:text-[10px] font-black text-emerald-500 uppercase tracking-widest">
-                  {language === 'ms' ? 'Sistem Aktif' : 'System Active'}
+        {/* 2. Main Executive Operations Center */}
+        <main className="w-full max-w-7xl mx-auto px-3.5 sm:px-6 pt-4 sm:pt-5 pb-20 sm:pb-16 flex flex-col gap-4 sm:gap-6 overflow-x-hidden">
+          
+          {/* Executive Shift Greeting & System Quick-Action Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border-default rounded-xl p-4 sm:p-5 shadow-2xs transition-colors duration-150">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-subtle text-text-secondary border border-border-default text-xs font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  {user?.hospital?.hospital_name || 'Hospital Lawas'}
+                </span>
+                <span className="text-xs text-text-muted font-medium">
+                  {new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })}
                 </span>
               </div>
+              <h2 className="font-serif text-3xl sm:text-4xl font-normal text-text-primary tracking-tight leading-tight">
+                {greeting}, {user?.full_name || 'there'}
+              </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="text-[8px] font-black text-amber-400 uppercase tracking-widest">
-                    {language === 'ms' ? 'Penyelenggaraan' : 'Maintenance'}
-                  </span>
-                </div>
-                <p className="text-[10px] sm:text-xs text-slate-300 leading-tight font-medium">
-                  {language === 'ms'
-                    ? <>Bekalan oksigen di Blok B terjejas sehingga <span className="text-white font-bold">4:00 PM</span>.</>
-                    : <>Oxygen supply in Block B is affected until <span className="text-white font-bold">4:00 PM</span>.</>}
-                </p>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <AlertCircle className="w-3.5 h-3.5 text-red-400" />
-                  <span className="text-[8px] font-black text-red-400 uppercase tracking-widest">
-                    {language === 'ms' ? 'Kecemasan' : 'Emergency'}
-                  </span>
-                </div>
-                <p className="text-[10px] sm:text-xs text-slate-300 leading-tight font-medium">
-                  {language === 'ms'
-                    ? 'Stok silinder saiz D kritikal. Sila pulangkan silinder kosong segera.'
-                    : 'Size D oxygen cylinder stock is critical. Please return empty cylinders promptly.'}
-                </p>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <Megaphone className="w-3.5 h-3.5 text-teal-400" />
-                  <span className="text-[8px] font-black text-teal-400 uppercase tracking-widest">
-                    {language === 'ms' ? 'Pengumuman' : 'Announcement'}
-                  </span>
-                </div>
-                <p className="text-[10px] sm:text-xs text-slate-300 leading-tight font-medium">
-                  {language === 'ms'
-                    ? 'Audit Kualiti (MSQH) Isnin depan. Pastikan log dikemaskini.'
-                    : 'Quality Audit (MSQH) next Monday. Please ensure all logbooks are up to date.'}
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* 2. Modules Grid (High Density) */}
-        <div className="w-full">
-          <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4">
-            {MODULES.map((module, idx) => {
-              const Icon = module.icon
-              const style = MODULE_STYLES[module.colorKey] || MODULE_STYLES.teal
-
-              return (
-                <motion.button
-                  key={module.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: idx * 0.02 }}
-                  onClick={() => {
-                    if (
-                      module.id === 'warrant' || 
-                      module.id === 'cylinder' || 
-                      module.id === 'suhu' || 
-                      module.id === 'admin' || 
-                      module.id === 'perolehan' ||
-                      module.id === 'myphis' || 
-                      module.id === 'mymsds' || 
-                      module.id === 'kunci' ||
-                      module.id === 'transporter' ||
-                      module.id === 'inventory' ||
-                      module.id === 'staff' ||
-                      module.id === 'cuti' ||
-                      module.id === 'timeoff' ||
-                      module.id === 'formulari' ||
-                      module.id === 'porter' ||
-                      module.id === 'priviledging' ||
-                      module.id === 'tempahan'
-                    ) {
-                      navigate(module.path)
-                    } else {
-                      setSelectedModuleName(module.name)
-                      setShowSurpriseModal(true)
-                    }
-                  }}
-                  whileHover={{ scale: 1.04, y: -3 }}
-                  whileTap={{ scale: 0.92 }}
-                  className="relative group flex flex-col sm:flex-row items-center justify-center sm:justify-start p-2.5 sm:p-3.5 transition-all text-center sm:text-left sm:bg-slate-900/70 sm:backdrop-blur-xl sm:border sm:border-white/10 sm:hover:bg-slate-900/90 sm:hover:border-white/20 sm:rounded-2xl sm:shadow-2xl active:bg-slate-800/90 select-none touch-manipulation"
+            {/* Quick Actions & Live System Status */}
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 self-start sm:self-auto">
+              
+              {/* System Admin Broadcast Notice Trigger (Restricted to System Admin) */}
+              {isSystemAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setShowAdminBroadcastModal(true)}
+                  className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 active:bg-amber-500/25 border border-amber-500/25 text-amber-800 dark:text-amber-300 text-xs font-medium transition-all duration-150 flex items-center gap-1.5 min-h-[36px]"
+                  title="Broadcast system update or maintenance notification"
                 >
-                  {/* Active Touch Burst Ring */}
-                  <div className="absolute inset-0 rounded-2xl border-2 border-teal-400/0 group-active:border-teal-400/60 group-active:bg-teal-400/10 group-active:scale-105 transition-all duration-150 pointer-events-none" />
+                  <Megaphone className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                  <span>Notice</span>
+                  <span className="px-1 py-0.2 rounded bg-amber-500/20 text-[9px] font-bold uppercase">
+                    Admin
+                  </span>
+                </button>
+              )}
 
-                  {/* Framed Icon Box with Colored Border & Touch Spring */}
-                  <motion.div 
-                    whileTap={{ scale: 0.82, rotate: -6 }}
-                    transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                    className={`relative w-14 h-14 sm:w-11 sm:h-11 rounded-2xl sm:rounded-xl bg-slate-950/80 backdrop-blur-md border-2 ${style.border} ${style.bg} ${style.hoverBorder} ${style.glow} group-active:border-white group-active:bg-slate-900 group-active:shadow-[0_0_22px_rgba(255,255,255,0.7)] flex items-center justify-center shadow-lg shadow-black/40 transition-all duration-200 group-hover:scale-105 shrink-0`}
-                  >
-                    {/* Inner Touch Ripple Flash */}
-                    <span className="absolute inset-0 rounded-2xl sm:rounded-xl bg-white/25 opacity-0 group-active:opacity-100 group-active:scale-110 transition-all duration-150 pointer-events-none" />
 
-                    <Icon className={`w-7 h-7 sm:w-5 sm:h-5 ${style.iconColor} group-active:text-white group-active:scale-115 transition-transform duration-150 drop-shadow-[0_0_6px_rgba(255,255,255,0.15)]`} />
-                  </motion.div>
-
-                  {/* Module Name & Description */}
-                  <div className="flex-1 min-w-0 mt-2 sm:mt-0 sm:ml-3">
-                    <h3 className="text-[11px] xs:text-xs sm:text-sm font-bold text-slate-100 sm:text-white tracking-tight group-hover:text-teal-400 group-active:text-teal-300 transition-colors leading-tight mb-0 sm:mb-0.5 break-words max-w-full drop-shadow-sm">
-                      {/* Mobile: Simple Name | Desktop: Full Name */}
-                      <span className="sm:hidden">{module.name.replace('My', '')}</span>
-                      <span className="hidden sm:inline">{t(`module.${module.id}`, module.name)}</span>
-                    </h3>
-                    <p className="hidden sm:block text-[9px] text-slate-400 font-medium truncate">
-                      {t(`module.${module.id}.desc`, module.description)}
-                    </p>
-                  </div>
-
-                  {/* Desktop Only: Chevron */}
-                  <ChevronRight className="hidden sm:block w-3.5 h-3.5 text-slate-700 group-hover:text-teal-500 group-hover:translate-x-1 group-active:translate-x-2 transition-all" />
-                </motion.button>
-              )
-            })}
+              {/* Real Database Active Staff Count */}
+              <div className="flex items-center gap-2 bg-surface border border-border-default rounded-lg px-2.5 sm:px-3 py-1.5 text-xs text-text-secondary min-h-[36px]">
+                <Users className="w-3.5 h-3.5 text-accent-base" />
+                <span className="font-bold font-mono text-text-primary">{totalStaffCount !== null ? totalStaffCount : '—'}</span>
+                <span className="text-[10px] text-text-muted font-medium uppercase">Staff</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 ml-0.5" />
+              </div>
+            </div>
           </div>
-        </div>
-      </main>
+
+          {/* 3. System Broadcast & Maintenance Banner */}
+          <SystemBroadcastBanner
+            announcements={announcements}
+            isLoading={isAnnouncementsLoading}
+            language={language}
+            onOpenUpdateLogs={() => setShowUpdateLogModal(true)}
+          />
+
+          {/* 4. Streamlined Operations Toolbar: Live Search, Category Tabs & View Switcher */}
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-surface border border-border-default rounded-xl p-2.5 sm:p-3 shadow-2xs transition-colors duration-150">
+            {/* Live Module Search Filter */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search modules... (e.g. Formulary, Temperature, Key, Porter)"
+                className="w-full h-9 pl-9 pr-8 bg-subtle border border-border-default rounded-lg text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent-base/20 focus:border-accent-base transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Category Segmented Tabs */}
+            <div className="flex items-center gap-1 bg-subtle border border-border-default rounded-lg p-0.5 overflow-x-auto scrollbar-none">
+              {categories.map((cat) => {
+                const isActive = selectedCategory === cat.id
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors duration-150 flex items-center gap-1.5 whitespace-nowrap select-none shrink-0 ${
+                      isActive
+                        ? 'bg-surface text-text-primary font-semibold shadow-2xs border border-border-default'
+                        : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    <span>{cat.label}</span>
+                    <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
+                      isActive ? 'bg-accent-subtle text-accent-base font-bold' : 'bg-muted-surface text-text-muted'
+                    }`}>
+                      {cat.count}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* View Mode Switcher */}
+            <div className="hidden sm:flex items-center gap-1 bg-subtle border border-border-default rounded-lg p-0.5 shrink-0 self-end md:self-auto">
+              <button
+                type="button"
+                onClick={() => setViewMode('grouped')}
+                className={`p-1.5 rounded-md text-xs transition-colors ${
+                  viewMode === 'grouped'
+                    ? 'bg-surface text-text-primary font-semibold shadow-2xs border border-border-default'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+                title="Grouped View"
+                aria-label="Grouped View"
+              >
+                <Layers className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`p-1.5 rounded-md text-xs transition-colors ${
+                  viewMode === 'grid'
+                    ? 'bg-surface text-text-primary font-semibold shadow-2xs border border-border-default'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+                title="Grid View"
+                aria-label="Grid View"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                className={`p-1.5 rounded-md text-xs transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-surface text-text-primary font-semibold shadow-2xs border border-border-default'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+                title="List View"
+                aria-label="List View"
+              >
+                <ListFilter className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* 5. Module Display (Grouped Domain View, Compact Grid View, or List View) */}
+          {filteredModules.length === 0 ? (
+            <div className="text-center py-16 px-4 bg-surface border border-border-default rounded-xl">
+              <p className="text-sm font-semibold text-text-primary mb-1">
+                No modules found
+              </p>
+              <p className="text-xs text-text-muted mb-4">
+                No active modules found matching your search.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSelectedCategory('all')}
+                className="px-4 py-2 rounded-lg bg-surface-subtle text-text-primary border border-border-default hover:bg-surface-hover text-xs font-medium transition-colors"
+              >
+                Show All Modules
+              </button>
+            </div>
+          ) : viewMode === 'grouped' && selectedCategory === 'all' ? (
+            /* Domain Grouped Sections (Tailored with Native App Icons for Phone + Operations Cards for Desktop) */
+            <div className="space-y-6 sm:space-y-8">
+              
+              {/* Group 1: Clinical & Pharmacy */}
+              <section className="space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border-default">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-teal-500" />
+                    <h3 className="text-sm sm:text-base font-semibold text-text-primary tracking-tight">
+                      Clinical &amp; Pharmacy Modules
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-md bg-surface-subtle border border-border-default text-text-secondary text-[11px] font-medium">
+                      {clinicalModules.length} Modules
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-text-muted font-medium hidden sm:inline">
+                    Treatment, Prescriptions &amp; Pharmaceuticals
+                  </span>
+                </div>
+
+                {/* Mobile: Native 4-Column App Grid */}
+                <div className="grid grid-cols-4 gap-1 xs:gap-2 sm:hidden">
+                  {clinicalModules.map((module) => (
+                    <ModuleAppIcon key={module.id} module={module} onClick={() => handleCardClick(module)} />
+                  ))}
+                </div>
+
+                {/* Desktop: Structured Operations Cards */}
+                <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-3.5">
+                  {clinicalModules.map((module) => (
+                    <ModuleCard key={module.id} module={module} onClick={() => handleCardClick(module)} language={language} />
+                  ))}
+                </div>
+              </section>
+
+              {/* Group 2: Logistics & Facilities */}
+              <section className="space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border-default">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                    <h3 className="text-sm sm:text-base font-semibold text-text-primary tracking-tight">
+                      Logistics, Inventory &amp; Facilities
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-md bg-surface-subtle border border-border-default text-text-secondary text-[11px] font-medium">
+                      {logisticsModules.length} Modules
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-text-muted font-medium hidden sm:inline">
+                    Stock, Transport &amp; Facility Management
+                  </span>
+                </div>
+
+                {/* Mobile: Native 4-Column App Grid */}
+                <div className="grid grid-cols-4 gap-1 xs:gap-2 sm:hidden">
+                  {logisticsModules.map((module) => (
+                    <ModuleAppIcon key={module.id} module={module} onClick={() => handleCardClick(module)} />
+                  ))}
+                </div>
+
+                {/* Desktop: Structured Operations Cards */}
+                <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-3.5">
+                  {logisticsModules.map((module) => (
+                    <ModuleCard key={module.id} module={module} onClick={() => handleCardClick(module)} language={language} />
+                  ))}
+                </div>
+              </section>
+
+              {/* Group 3: Governance & Administration */}
+              <section className="space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border-default">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-amber-500" />
+                    <h3 className="text-sm sm:text-base font-semibold text-text-primary tracking-tight">
+                      Governance, Records &amp; Administration
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-md bg-surface-subtle border border-border-default text-text-secondary text-[11px] font-medium">
+                      {governanceModules.length} Modules
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-text-muted font-medium hidden sm:inline">
+                    Access Control, Human Resources &amp; Archives
+                  </span>
+                </div>
+
+                {/* Mobile: Native 4-Column App Grid */}
+                <div className="grid grid-cols-4 gap-1 xs:gap-2 sm:hidden">
+                  {governanceModules.map((module) => (
+                    <ModuleAppIcon key={module.id} module={module} onClick={() => handleCardClick(module)} />
+                  ))}
+                </div>
+
+                {/* Desktop: Structured Operations Cards */}
+                <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-3.5">
+                  {governanceModules.map((module) => (
+                    <ModuleCard key={module.id} module={module} onClick={() => handleCardClick(module)} language={language} />
+                  ))}
+                </div>
+              </section>
+            </div>
+          ) : viewMode === 'list' ? (
+            /* Detailed Table / List View (Native on both phone and desktop) */
+            <div className="bg-surface border border-border-default rounded-xl overflow-hidden divide-y divide-border-default shadow-2xs">
+              {filteredModules.map((module) => {
+                const Icon = module.icon
+                const style = ACCENT_STYLES[module.accent] || ACCENT_STYLES.teal
+
+                return (
+                  <button
+                    key={module.id}
+                    type="button"
+                    onClick={() => handleCardClick(module)}
+                    className="w-full flex items-center justify-between p-3 sm:p-4 hover:bg-surface-hover active:bg-surface-subtle transition-all text-left group select-none min-h-[52px]"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-surface border ${style.border} ${style.bg} flex items-center justify-center shrink-0`}>
+                        <Icon className={`w-4.5 h-4.5 sm:w-5 sm:h-5 ${style.text}`} />
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-xs sm:text-sm font-semibold text-text-primary group-hover:text-accent-base transition-colors truncate">
+                            {module.name}
+                          </h4>
+                          <span className="hidden xs:inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-surface-subtle text-text-muted border border-border-default uppercase">
+                            {module.category === 'clinical' ? 'Clinical' : module.category === 'logistics' ? 'Logistics' : 'Admin'}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-text-secondary truncate mt-0.5">
+                          {module.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                      <span className="text-[11px] font-medium text-text-muted group-hover:text-text-primary transition-colors hidden sm:inline">
+                        Open Module
+                      </span>
+                      <ChevronRight className="w-4 h-4 text-text-muted group-hover:text-text-primary group-hover:translate-x-0.5 transition-all" />
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          ) : (
+            /* Flat Grid Mode (Compact 2-Column Cards on Mobile, 4-Column on Desktop) */
+            <div>
+              {/* Mobile: Compact 2-column touch cards */}
+              <div className="grid grid-cols-2 gap-2 sm:hidden w-full">
+                {filteredModules.map((module) => (
+                  <ModuleCompactCard key={module.id} module={module} onClick={() => handleCardClick(module)} />
+                ))}
+              </div>
+
+              {/* Desktop: Operations Cards */}
+              <div className="hidden sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-3.5 w-full">
+                {filteredModules.map((module) => (
+                  <ModuleCard key={module.id} module={module} onClick={() => handleCardClick(module)} language={language} />
+                ))}
+              </div>
+            </div>
+          )}
+        </main>
       </div>
 
-      {/* Surprise Modal for Under Development Features */}
+      {/* Admin Broadcast Notice Console Modal (Restricted to System Administrator) */}
+      <AdminBroadcastModal
+        isOpen={showAdminBroadcastModal}
+        onClose={() => setShowAdminBroadcastModal(false)}
+        announcements={announcements}
+        onRefresh={fetchAnnouncementsData}
+        language={language}
+      />
+
+      {/* System Update Log & Changelog Modal (Available to all users) */}
+      <SystemUpdateLogModal
+        isOpen={showUpdateLogModal}
+        onClose={() => setShowUpdateLogModal(false)}
+        logs={updateLogs}
+        isLoading={isAnnouncementsLoading}
+        language={language}
+      />
+
+      {/* Surprise / Under Development Modal */}
       <AnimatePresence>
         {showSurpriseModal && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xl"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 dark:bg-black/70 backdrop-blur-sm"
             onClick={() => setShowSurpriseModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              initial={{ scale: 0.95, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: 'spring', duration: 0.5 }}
-              className="relative w-full max-w-md bg-slate-900 border border-teal-500/20 rounded-[2rem] p-8 text-center shadow-[0_0_50px_rgba(20,184,166,0.15)] overflow-hidden"
+              exit={{ scale: 0.95, opacity: 0, y: 15 }}
+              transition={{ type: 'spring', duration: 0.3 }}
+              className="relative w-full max-w-sm bg-surface border border-border-default rounded-xl p-6 text-center shadow-xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Premium Glow effect */}
-              <div className="absolute -top-24 -left-24 w-48 h-48 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-              
-              {/* Icon Container */}
-              <div className="mx-auto w-20 h-20 bg-gradient-to-tr from-teal-500/20 to-cyan-500/20 border border-teal-500/30 rounded-2xl flex items-center justify-center mb-6 relative group">
-                <div className="absolute inset-0 bg-teal-500/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                <Sparkles className="w-10 h-10 text-teal-400 animate-pulse" />
+              <div className="mx-auto w-12 h-12 bg-accent-subtle border border-accent-base/30 rounded-xl flex items-center justify-center mb-4 text-accent-base">
+                <Sparkles className="w-6 h-6" />
               </div>
 
-              {/* Module Name */}
-              <span className="px-3 py-1 bg-teal-500/10 border border-teal-500/20 text-teal-400 text-[10px] font-black uppercase tracking-widest rounded-full mb-3 inline-block">
+              <span className="px-2.5 py-0.5 bg-surface-subtle border border-border-default text-text-secondary text-[10px] font-semibold uppercase tracking-wider rounded-md mb-2 inline-block">
                 {selectedModuleName}
               </span>
 
-              {/* Headline */}
-              <h3 className="text-2xl font-black text-white tracking-tight mb-3">
-                Under Development!
+              <h3 className="font-serif text-lg font-medium text-text-primary tracking-tight mb-2">
+                Module in Development
               </h3>
 
-              {/* Description */}
-              <p className="text-sm text-slate-400 leading-relaxed mb-6 font-medium">
-                We are crafting something truly special here. Please wait for the <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400 font-extrabold">surprise</span>!
+              <p className="text-xs text-text-secondary leading-relaxed mb-5">
+                This module is currently being finalized in accordance with Ministry of Health Malaysia operational standards.
               </p>
 
-              {/* Button */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
+                type="button"
                 onClick={() => setShowSurpriseModal(false)}
-                className="w-full py-4 px-6 rounded-2xl font-bold bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 shadow-lg shadow-teal-500/20 hover:shadow-teal-500/30 transition-all text-sm tracking-wide font-sans"
+                className="w-full py-2.5 px-4 rounded-lg font-medium bg-ink text-ink-text hover:bg-ink-hover text-xs transition-colors shadow-2xs"
               >
-                I'm Excited!
-              </motion.button>
+                Got it
+              </button>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  )
+}
+
+/**
+ * Mobile Native App Launcher Icon (Ultra-Clean, High Density Phone Ergonomics)
+ */
+interface ModuleAppIconProps {
+  module: ModuleItem
+  onClick: () => void
+}
+
+const ModuleAppIcon: React.FC<ModuleAppIconProps> = ({ module, onClick }) => {
+  const Icon = module.icon
+  const style = ACCENT_STYLES[module.accent] || ACCENT_STYLES.teal
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group flex flex-col items-center justify-start p-1 rounded-xl active:scale-95 transition-all select-none touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base min-h-[74px] w-full"
+    >
+      <div className={`relative w-12 h-12 rounded-xl bg-surface border ${style.border} ${style.bg} flex items-center justify-center shadow-2xs group-active:border-accent-base/50 transition-all`}>
+        <Icon className={`w-5.5 h-5.5 ${style.text}`} />
+        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-surface rounded-full" />
+      </div>
+
+      <span 
+        title={module.name}
+        className="text-[10px] font-medium text-text-primary group-hover:text-accent-base text-center leading-tight mt-1.5 whitespace-nowrap overflow-hidden text-ellipsis w-full max-w-[84px] px-0.5 tracking-tight transition-colors"
+      >
+        {module.name}
+      </span>
+    </button>
+  )
+}
+
+/**
+ * Mobile Compact 2-Column Touch Card
+ */
+interface ModuleCompactCardProps {
+  module: ModuleItem
+  onClick: () => void
+}
+
+const ModuleCompactCard: React.FC<ModuleCompactCardProps> = ({ module, onClick }) => {
+  const Icon = module.icon
+  const style = ACCENT_STYLES[module.accent] || ACCENT_STYLES.teal
+
+  return (
+    <div
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
+      className="group flex items-center gap-2.5 p-2.5 rounded-xl bg-surface hover:bg-surface-hover active:bg-surface-subtle border border-border-default hover:border-border-strong transition-all cursor-pointer text-left select-none min-h-[54px] shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base"
+    >
+      <div className={`w-8 h-8 rounded-lg bg-surface-subtle border ${style.border} ${style.bg} flex items-center justify-center shrink-0`}>
+        <Icon className={`w-4 h-4 ${style.text}`} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <h4 className="text-xs font-semibold text-text-primary group-hover:text-accent-base transition-colors truncate leading-tight">
+          {module.name}
+        </h4>
+        <span className="text-[10px] font-medium text-text-muted uppercase tracking-wider block truncate mt-0.5">
+          {module.category === 'clinical' ? 'Clinical' : module.category === 'logistics' ? 'Logistics' : 'Admin'}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Desktop Structured Operations Card Component (Anti-Slop Enterprise Design)
+ */
+interface ModuleCardProps {
+  module: ModuleItem
+  onClick: () => void
+  language?: 'ms' | 'en'
+}
+
+const ModuleCard: React.FC<ModuleCardProps> = ({ module, onClick }) => {
+  const Icon = module.icon
+  const style = ACCENT_STYLES[module.accent] || ACCENT_STYLES.teal
+
+  return (
+    <div
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
+      className="group flex flex-col justify-between p-4 rounded-xl bg-surface hover:bg-surface-hover active:bg-surface-subtle border border-border-default hover:border-border-strong hover:shadow-xs transition-all duration-150 cursor-pointer select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base shadow-2xs relative overflow-hidden"
+    >
+      <div>
+        {/* Card Header: Icon & Domain Badge */}
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className={`w-10 h-10 rounded-lg bg-surface-subtle border ${style.border} ${style.bg} ${style.hoverBorder} flex items-center justify-center shrink-0 transition-colors`}>
+            <Icon className={`w-5 h-5 ${style.text} group-hover:scale-105 transition-transform duration-150`} />
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-surface-subtle text-text-muted border border-border-default">
+              {module.category === 'clinical' ? 'Clinical' : module.category === 'logistics' ? 'Logistics' : 'Admin'}
+            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" title="Active Module" />
+          </div>
+        </div>
+
+        {/* Card Body: Module Name & Description */}
+        <div>
+          <h4 className="text-sm font-semibold text-text-primary group-hover:text-accent-base transition-colors tracking-tight leading-snug">
+            {module.name}
+          </h4>
+          <p className="text-xs text-text-secondary leading-relaxed line-clamp-2 mt-1 min-h-[32px]">
+            {module.description}
+          </p>
+        </div>
+      </div>
+
+      {/* Card Footer: Subtle launch action cue */}
+      <div className="mt-3.5 pt-2.5 border-t border-border-default flex items-center justify-between text-xs text-text-muted group-hover:text-text-primary transition-colors">
+        <span className="font-medium">
+          Open Module
+        </span>
+        <ArrowUpRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-text-muted group-hover:text-text-primary" />
+      </div>
     </div>
   )
 }

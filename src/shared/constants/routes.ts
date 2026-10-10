@@ -13,6 +13,15 @@ export const ROUTES = {
   HUB_SUHU_UNIT: '/suhu/unit/:unitId',
   HUB_SUHU_BREACHES: '/suhu/breaches',
   HUB_SUHU_ADMIN: '/suhu/admin',
+
+  // English Canonical Route Aliases for Temperature
+  TEMPERATURE: '/temperature',
+  TEMPERATURE_DASHBOARD: '/temperature/dashboard',
+  TEMPERATURE_DEPARTMENT: '/temperature/department/:departmentId',
+  TEMPERATURE_UNIT: '/temperature/unit/:unitId',
+  TEMPERATURE_BREACHES: '/temperature/breaches',
+  TEMPERATURE_ADMIN: '/temperature/admin',
+
   HUB_ADMIN: '/hub/admin',
   HUB_PEROLEHAN: '/perolehan',
   PEROLEHAN: '/perolehan',
@@ -22,6 +31,16 @@ export const ROUTES = {
   PEROLEHAN_ORDERS: '/perolehan/orders',
   PEROLEHAN_PAYMENTS: '/perolehan/payments',
   PEROLEHAN_CATALOG: '/perolehan/catalog',
+
+  // English Canonical Route Aliases for Procurement
+  PROCUREMENT: '/procurement',
+  PROCUREMENT_DASHBOARD: '/procurement/dashboard',
+  PROCUREMENT_MANAGEMENT: '/procurement/management',
+  PROCUREMENT_DEVELOPMENT: '/procurement/development',
+  PROCUREMENT_ORDERS: '/procurement/orders',
+  PROCUREMENT_PAYMENTS: '/procurement/payments',
+  PROCUREMENT_CATALOG: '/procurement/catalog',
+
   HUB_GALLERY: '/hub/gallery',
   HUB_MEMO: '/hub/memo',
   HUB_CROSSBORDER: '/hub/crossborder',
@@ -37,6 +56,11 @@ export const ROUTES = {
   FORMULARI_QUOTA: '/formulari/quota',
   FORMULARI_ALTERNATIVES: '/formulari/alternatives',
   FORMULARI_ANTIDOTES: '/formulari/antidotes',
+  FORMULARI_PAEDIATRIC_CATALOGUE: '/formulari/paediatric-catalogue',
+
+  // English Canonical Route Aliases for Formulary
+  FORMULARY: '/formulary',
+  FORMULARY_DASHBOARD: '/formulary/dashboard',
   HUB_PORTER: '/hub/porter',
   PORTER: '/porter',
   PORTER_DASHBOARD: '/porter/dashboard',
@@ -79,6 +103,17 @@ export const ROUTES = {
   TEMPAHAN_APPROVAL_QUEUE: '/tempahan/kelulusan',
   TEMPAHAN_ROOM_REGISTRY: '/tempahan/senarai-bilik',
   TEMPAHAN_REPORTS: '/tempahan/laporan',
+
+  // English Canonical Route Aliases for Bookings
+  BOOKINGS: '/bookings',
+  BOOKINGS_DASHBOARD: '/bookings/dashboard',
+  BOOKINGS_CALENDAR: '/bookings/calendar',
+  BOOKINGS_REQUEST_NEW: '/bookings/new',
+  BOOKINGS_MY_BOOKINGS: '/bookings/my',
+  BOOKINGS_APPROVAL_QUEUE: '/bookings/approvals',
+  BOOKINGS_ROOM_REGISTRY: '/bookings/rooms',
+  BOOKINGS_REPORTS: '/bookings/reports',
+
   HUB_PERHIMPUNAN: '/hub/perhimpunan',
   HUB_KUNCI: '/hub/kunci',
   KUNCI_DASHBOARD: '/kunci/dashboard',
@@ -86,6 +121,14 @@ export const ROUTES = {
   KUNCI_LOG: '/kunci/log',
   KUNCI_AUDIT: '/kunci/audit',
   KUNCI_POLISI: '/kunci/polisi',
+
+  // English Canonical Route Aliases for Keys
+  KEYS: '/keys',
+  KEYS_DASHBOARD: '/keys/dashboard',
+  KEYS_REGISTRY: '/keys/registry',
+  KEYS_LOG: '/keys/log',
+  KEYS_AUDIT: '/keys/audit',
+  KEYS_POLICY: '/keys/policy',
   CROSSBORDER_DASHBOARD: '/crossborder/dashboard',
   CROSSBORDER_CREATE: '/crossborder/create',
   CROSSBORDER_DETAIL: '/crossborder/detail/:id',
@@ -112,6 +155,18 @@ export const ROUTES = {
   TIMEOFF_HOD: '/timeoff/hod',
   HUB_MYPHIS: '/hub/myphis',
   HUB_MYMSDS: '/hub/mymsds',
+  HUB_PREPACKING: '/prepacking',
+  PREPACKING: '/prepacking',
+  PREPACKING_DASHBOARD: '/prepacking/dashboard',
+  PREPACKING_UOD: '/prepacking/uod',
+  PREPACKING_PREPACK: '/prepacking/prepack',
+  PREPACKING_ITEMS: '/prepacking/items',
+  PREPACKING_BATCHES: '/prepacking/batches',
+  PREPACKING_LABELS: '/prepacking/labels',
+  PREPACKING_KEWPS4: '/prepacking/kewps4',
+  PREPACKING_MOVEMENT: '/prepacking/movement',
+  PREPACKING_USAGE: '/prepacking/movement',
+  PREPACKING_REPORTS: '/prepacking/reports',
   RESET_PASSWORD: '/reset-password',
   PROFILE: '/profile',
   ADMIN: '/admin',

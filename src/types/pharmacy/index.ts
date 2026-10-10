@@ -313,6 +313,7 @@ export interface StockLocation extends BaseEntity {
   location_code: string
   location_name: string
   location_type: LocationType
+  department_id?: string
   parent_location_id?: string
   capacity?: number
   temperature_required?: TemperatureRequirement
@@ -448,6 +449,7 @@ export interface StockLevelSummary {
   procurement_scheme?: string
   location?: string | null
   facility_inventory_id?: string
+  store_location_id?: string
 }
 
 export interface MovementSummary {
@@ -1005,6 +1007,8 @@ export type WarrantDepartment =
   | 'operation_theater'
   | 'laboratory_pathology'
   | 'general_ward'
+  | 'female_ward'
+  | 'male_ward'
   | 'wound_care'
   | 'rehabilitation'
   | 'anaesthesiology'
@@ -1100,7 +1104,7 @@ export interface WarrantSummary {
 export interface BudgetQuery {
   hospitalId: string
   fiscalYear: number
-  voteCode?: WarrantVoteCode
+  voteCode?: WarrantVoteCode | WarrantVoteCode[] | string | string[]
   voteActivity?: WarrantVoteActivity
   category?: WarrantCategory
   department?: WarrantDepartment | 'all'
@@ -2055,10 +2059,12 @@ export interface InventoryFilter {
   item_type?: 'drug' | 'non_drug' | 'all'
   category_id?: string
   location_id?: string
+  store_location_id?: string
   status?: ItemStatus | 'all'
   stock_status?: 'in_stock' | 'low_stock' | 'critical' | 'out_of_stock' | 'all'
   is_controlled?: boolean
   procurement_vote?: string
+  include_unregistered?: boolean
 }
 
 export interface ExpiryFilter {

@@ -1,13 +1,110 @@
 import React from 'react';
 
-interface TableProps {
-  children: React.ReactNode;
+export interface TableColumn<T = any> {
+  key: string;
+  label: React.ReactNode;
+  render?: (value: any, item: T) => React.ReactNode;
+  sortable?: boolean;
+  className?: string;
+  align?: 'left' | 'center' | 'right';
+}
+
+export interface TableProps<T = any> {
+  children?: React.ReactNode;
   className?: string;
   striped?: boolean;
   hoverable?: boolean;
+  data?: T[];
+  columns?: TableColumn<T>[];
+  sortConfig?: { key: string; direction: 'asc' | 'desc' };
+  onSort?: (key: string) => void;
+  isLoading?: boolean;
+  emptyMessage?: React.ReactNode;
+  onRowClick?: (item: T) => void;
 }
 
-export function Table({ children, className = '', striped = false, hoverable = true }: TableProps) {
+export function Table<T = any>({
+  children,
+  className = '',
+  striped = false,
+  hoverable = true,
+  data,
+  columns,
+  sortConfig,
+  onSort,
+  isLoading,
+  emptyMessage = 'No data available',
+  onRowClick
+}: TableProps<T>) {
+  if (data !== undefined && columns !== undefined) {
+    return (
+      <div className={`w-full overflow-hidden rounded-xl border border-gray-200/70 bg-white shadow-md ${className}`}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead className="bg-gradient-to-r from-slate-50 via-blue-50/40 to-indigo-50/30 border-b-2 border-gray-200">
+              <tr>
+                {columns.map((column) => {
+                  const isSorted = sortConfig?.key === column.key;
+                  const sortDirection = isSorted ? sortConfig.direction : null;
+                  return (
+                    <TableHead
+                      key={String(column.key)}
+                      sortable={column.sortable}
+                      sortDirection={sortDirection}
+                      onSort={() => column.sortable && onSort?.(String(column.key))}
+                      align={column.align || 'left'}
+                      className={column.className}
+                    >
+                      {column.label}
+                    </TableHead>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {isLoading ? (
+                <TableEmpty message="Loading..." />
+              ) : data.length === 0 ? (
+                typeof emptyMessage === 'string' ? (
+                  <TableEmpty message={emptyMessage} />
+                ) : (
+                  <TableRow hoverable={false}>
+                    <TableCell colSpan={columns.length} className="py-12">
+                      {emptyMessage}
+                    </TableCell>
+                  </TableRow>
+                )
+              ) : (
+                data.map((row, index) => (
+                  <TableRow
+                    key={(row as any)?.id || index}
+                    onClick={onRowClick ? () => onRowClick(row) : undefined}
+                    hoverable={hoverable}
+                    striped={striped}
+                    index={index}
+                  >
+                    {columns.map((column) => {
+                      const value = (row as any)?.[column.key];
+                      return (
+                        <TableCell
+                          key={String(column.key)}
+                          align={column.align || 'left'}
+                          className={column.className}
+                        >
+                          {column.render ? column.render(value, row) : (value ?? '-')}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`w-full overflow-hidden rounded-xl border border-gray-200/70 bg-white shadow-md ${className}`}>
       <div className="overflow-x-auto">

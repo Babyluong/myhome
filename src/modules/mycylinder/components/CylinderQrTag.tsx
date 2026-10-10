@@ -39,6 +39,9 @@ export function resolveCylinderTagDetails(cylinder: any) {
     const match = cylinder.type_info.type_name.match(/(P?101-[A-Z0-9]+)/i);
     if (match) sizeCode = match[1].toUpperCase();
   }
+  if (!sizeCode && (cleanSerial.toUpperCase().startsWith('SABOXY') || cleanSerial.toUpperCase().startsWith('SOX') || cleanSerial.toUpperCase().includes('SABOXY'))) {
+    sizeCode = '101-N';
+  }
   if (!sizeCode) sizeCode = 'P101-F';
 
   // Capacity / Volume
@@ -149,7 +152,7 @@ export const CylinderQrTag: React.FC<CylinderQrTagProps> = ({
           <button
             onClick={() => onPrint(cylinder.id || tagId)}
             type="button"
-            title="Cetak Label"
+            title="Print Label"
             className="p-1.5 bg-white/95 hover:bg-white border border-black/30 hover:border-black text-black rounded-lg shadow-md transition-all active:scale-95"
           >
             <Printer className="w-3.5 h-3.5" />

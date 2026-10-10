@@ -628,7 +628,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                         <button
                           onClick={() => onDelete(req)}
                           className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all border border-rose-200/70 bg-white shadow-2xs hover:shadow-xs active:scale-95"
-                          title="Padam Permohonan / Delete Record (Dilindungi Kata Laluan)"
+                          title="Delete Requisition Record (Password Protected)"
                         >
                           <Trash2 className="w-3.5 h-3.5 text-rose-500" />
                         </button>

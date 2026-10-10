@@ -1,18 +1,30 @@
 <!DOCTYPE html>
-<html lang="ms" class="dark">
+<html lang="ms">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('home_theme');
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/png" href="/icons/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#020617" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#090d16" media="(prefers-color-scheme: dark)" />
     
     <!-- PWA & Mobile Web App Capabilities -->
     <link rel="manifest" href="/manifest.json" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="H.O.M.E." />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png" />
@@ -22,23 +34,18 @@
     <meta name="description" content="Hospital Operation Management Ecosystem (H.O.M.E.) - Sistem Pengurusan Operasi Hospital Bersepadu Kementerian Kesihatan Malaysia" />
     <title>H.O.M.E. - Hospital Operation Management Ecosystem</title>
     
-    <!-- Preconnect & Fonts -->
+    <!-- Preconnect & Fonts (Geist & Geist Mono with Plus Jakarta Sans & Inter fallbacks) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    
-    <!-- Preload Critical Logo Asset -->
-    <link rel="preload" as="image" type="image/png" href="/512px-Jata_MalaysiaV2.svg.png" fetchpriority="high" />
-    <script type="module" crossorigin src="/assets/index-Bm30lBPr.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/vendor-ocr-TEpLi32o.js">
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Geist:wght@300;400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/assets/index-B9BtaJno.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/vendor-react-cjLLDTsr.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-pdf-D24YlTId.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-utils-FhlWUNp8.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-ui-DZ18_YLf.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-ui-DxcboHef.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-supabase-BUiByx9r.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-CsPNT1np.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-7UtUp2s3.css">
   <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
-  <body class="bg-slate-950 text-slate-100 antialiased selection:bg-teal-500/20 selection:text-teal-300">
+  <body class="bg-canvas text-primary antialiased selection:bg-teal-500/20 selection:text-teal-800 dark:selection:text-teal-300 min-h-screen">
     <div id="root"></div>
   </body>
 </html>

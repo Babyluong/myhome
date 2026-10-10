@@ -1,15 +1,19 @@
-import React, { useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Outlet, Navigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
 import { BottomNav } from './BottomNav'
 import { ToastContainer } from '@/components/ui'
+import { OfflineBanner } from '@/shared/components/ui/OfflineBanner'
+import { OfflineSyncDrawer } from '@/shared/components/ui/OfflineSyncDrawer'
 import { useAuthStore } from '@/stores/authStore'
 import { useSidebar } from '@/stores/uiStore'
 import { ROUTES } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { recordAuditLog } from '@/services/auditLogService'
+import { getCurrentModuleInfo, saveLastActiveModule } from '@/shared/utils/moduleNavigation'
+import { offlinePreloader } from '@/services/offlinePreloader'
 
 const getModuleCodeFromPath = (pathname: string): { code: string; name: string } => {
   if (pathname.startsWith('/admin') || pathname.startsWith('/hub/admin')) return { code: 'myadmin', name: 'MyAdmin' }
@@ -34,10 +38,24 @@ export const MainLayout: React.FC = () => {
   const { sidebarCollapsed } = useSidebar()
   const location = useLocation()
   const lastLoggedPathRef = useRef<string>('')
+  const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false)
+
+  // Background hospital data preloading for offline operational readiness
+  useEffect(() => {
+    if (isAuthenticated && user?.hospital_id) {
+      void offlinePreloader.startPreload(user.hospital_id)
+    }
+  }, [isAuthenticated, user?.hospital_id])
 
   // Automatic Audit Navigation Tracker
   useEffect(() => {
     if (!isAuthenticated || !user || !location.pathname) return
+    // Persist active module whenever browsing a module route
+    const activeMod = getCurrentModuleInfo(location.pathname)
+    if (activeMod) {
+      saveLastActiveModule(activeMod)
+    }
+
     if (lastLoggedPathRef.current === location.pathname) return
 
     lastLoggedPathRef.current = location.pathname
@@ -63,10 +81,10 @@ export const MainLayout: React.FC = () => {
   // Show loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+      <div className="min-h-screen flex items-center justify-center bg-canvas">
         <div className="text-center">
-          <div className="w-14 h-14 border-4 border-teal-500/20 border-t-teal-400 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-sm font-semibold text-slate-400 tracking-wide">Memuatkan H.O.M.E. Ecosystem...</p>
+          <div className="w-12 h-12 border-3 border-teal-500/20 border-t-teal-600 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xs font-semibold text-text-muted tracking-wide uppercase">Memuatkan H.O.M.E. Ecosystem...</p>
         </div>
       </div>
     )
@@ -78,22 +96,28 @@ export const MainLayout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased selection:bg-teal-500/20 selection:text-teal-300 w-full max-w-full overflow-x-hidden">
+    <div className="min-h-screen bg-canvas text-primary flex flex-col antialiased selection:bg-teal-500/20 selection:text-teal-800 dark:selection:text-teal-300 w-full max-w-full overflow-x-hidden transition-colors duration-150">
       {/* Header - Fixed Full width at top */}
-      <Header />
+      <Header onOpenSyncDrawer={() => setIsSyncDrawerOpen(true)} />
 
       {/* Sidebar - Below header */}
       <Sidebar />
 
-      {/* Main Content - Padded to the left on desktop for the static sidebar */}
-      <div className="flex-1 flex flex-col lg:pl-[280px] pt-16 sm:pt-20 lg:pt-24 min-h-screen w-full max-w-full min-w-0 overflow-x-hidden">
-        <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden overflow-y-auto p-3 sm:p-5 md:p-6 pb-24 lg:pb-8 bg-slate-950 text-slate-100">
+      {/* Main Content - Padded to the left on desktop for the static sidebar, synchronized with header safe area */}
+      <div className="flex-1 flex flex-col lg:pl-[280px] main-content-offset min-h-screen w-full max-w-full min-w-0 overflow-x-hidden">
+        {/* Offline & Sync Status Banner */}
+        <OfflineBanner onOpenDrawer={() => setIsSyncDrawerOpen(true)} />
+
+        <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden overflow-y-auto p-3 sm:p-5 md:p-6 pb-24 lg:pb-8 bg-canvas text-primary transition-colors duration-150">
           <Outlet />
         </main>
       </div>
 
       {/* Mobile Bottom Navigation Bar (Thumb Zone) */}
-      <BottomNav />
+      <BottomNav onOpenSyncDrawer={() => setIsSyncDrawerOpen(true)} />
+
+      {/* Offline Sync Detailed Drawer */}
+      <OfflineSyncDrawer isOpen={isSyncDrawerOpen} onClose={() => setIsSyncDrawerOpen(false)} />
 
       {/* Toast Notifications */}
       <ToastContainer />

@@ -79,6 +79,8 @@ import { loadStoreLocations } from '@/services/pharmacy/storeLocationService'
 import { loadStoreSubLocations } from '@/services/pharmacy/storeSubLocationService'
 import { updateFacilityDrugInventoryItem } from '@/services/pharmacy/facilityDrugInventoryService'
 import { updateFacilityNonDrugInventoryItem } from '@/services/pharmacy/facilityNonDrugInventoryService'
+import { useInventoryStore } from '../../context/InventoryStoreContext'
+import { StoreLocationSelector } from '../../components/StoreLocationSelector'
 import type { 
   StockLevelSummary, 
   StockTransactionWithRelations,
@@ -251,6 +253,7 @@ const formatLocationDisplay = (locStr: string) => {
 export const KewPs4LedgerPage: React.FC = () => {
   const navigate = useNavigate()
   const { user } = useAuthStore()
+  const { activeStore, activeStoreId } = useInventoryStore()
   const hospitalId = user?.hospital_id
 
   // Data states
@@ -670,7 +673,7 @@ export const KewPs4LedgerPage: React.FC = () => {
       return 'Verifikasi Stor Tahunan (Pegawai Luar)'
     }
     if (row.transaction_type === 'bring_forward') {
-      return 'Baki Bawa Ke Hadapan (Pembukaan Ledger)'
+      return 'Balance Brought Forward (Pembukaan Ledger)'
     }
     const isReceipt = row.transaction_type === 'receipt'
 
@@ -885,7 +888,7 @@ export const KewPs4LedgerPage: React.FC = () => {
       setIsLoadingCatalog(true)
       try {
         const [catRes, locRes, supRes] = await Promise.all([
-          getStockLevelSummary(hospitalId),
+          getStockLevelSummary(hospitalId, undefined, activeStoreId || undefined),
           getStockLocations(hospitalId),
           getSuppliers(hospitalId, 1, 100).catch(() => ({ data: null }))
         ])
@@ -921,7 +924,7 @@ export const KewPs4LedgerPage: React.FC = () => {
       }
     }
     void loadMetadata()
-  }, [hospitalId])
+  }, [hospitalId, activeStoreId])
 
   // Track active item selection
   useEffect(() => {
@@ -977,6 +980,7 @@ export const KewPs4LedgerPage: React.FC = () => {
           item_id: selectedItemId,
           transaction_type: selectedTxType,
           to_location_id: selectedDeptId,
+          store_location_id: activeStoreId || undefined,
           date_from: dateFrom,
           date_to: dateTo,
           search_query: refSearch
@@ -1072,7 +1076,7 @@ export const KewPs4LedgerPage: React.FC = () => {
   // Reload data on filter change
   useEffect(() => {
     void reloadMovementData()
-  }, [hospitalId, selectedItemId, dateFrom, dateTo, selectedTxType, selectedDeptId, refSearch])
+  }, [hospitalId, selectedItemId, dateFrom, dateTo, selectedTxType, selectedDeptId, refSearch, activeStoreId])
 
   // Open Receiving Modal
   const openReceiveModal = () => {
@@ -1351,7 +1355,7 @@ export const KewPs4LedgerPage: React.FC = () => {
     setBfDate(`${currentYear}-01-01`)
     setBfPeriodType('previous_year')
     setBfRefNum(`BKH-${currentYear}-${randSuffix}`)
-    setBfReason(`Baki Bawa Ke Hadapan dari Tahun ${currentYear - 1}`)
+    setBfReason(`Balance Brought Forward dari Tahun ${currentYear - 1}`)
     setBfLocationId(locations[0]?.id || '')
     setBfStatus(null)
     setIsBringForwardModalOpen(true)
@@ -1365,18 +1369,18 @@ export const KewPs4LedgerPage: React.FC = () => {
     const randSuffix = Math.floor(1000 + Math.random() * 9000)
     if (type === 'previous_year') {
       setBfDate(`${currentYear}-01-01`)
-      setBfReason(`Baki Bawa Ke Hadapan dari Tahun ${currentYear - 1}`)
+      setBfReason(`Balance Brought Forward dari Tahun ${currentYear - 1}`)
       setBfRefNum(`BKH-${currentYear}-${randSuffix}`)
     } else if (type === 'previous_month') {
       const monthStr = String(now.getMonth() + 1).padStart(2, '0')
       setBfDate(`${currentYear}-${monthStr}-01`)
       const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       const prevMonthName = prevMonthDate.toLocaleString('ms-MY', { month: 'long', year: 'numeric' })
-      setBfReason(`Baki Bawa Ke Hadapan dari ${prevMonthName}`)
+      setBfReason(`Balance Brought Forward dari ${prevMonthName}`)
       setBfRefNum(`BKH-${currentYear}${monthStr}-${randSuffix}`)
     } else {
       setBfDate(now.toISOString().split('T')[0])
-      setBfReason('Baki Pembukaan Asal Ledger')
+      setBfReason('Original Ledger Opening Balance')
       setBfRefNum(`BKH-INIT-${currentYear}-${randSuffix}`)
     }
   }
@@ -1417,7 +1421,7 @@ export const KewPs4LedgerPage: React.FC = () => {
         period_type: bfPeriodType,
         location_id: bfLocationId || locations[0]?.id || '',
         performed_by: user?.id || recorderName,
-        reason: bfReason.trim() || 'Baki Bawa Ke Hadapan'
+        reason: bfReason.trim() || 'Balance Brought Forward'
       })
 
       if (res.error) throw new Error(res.error)
@@ -1425,10 +1429,10 @@ export const KewPs4LedgerPage: React.FC = () => {
       playBeep('success')
       setBfStatus({
         type: 'success',
-        text: `Berjaya merekodkan Baki Bawa Ke Hadapan sebanyak ${qty} ${selectedItem.unit_of_measure}! Baki stok ledger kini diperkemaskan.`
+        text: `Berjaya merekodkan Balance Brought Forward sebanyak ${qty} ${selectedItem.unit_of_measure}! Baki stok ledger kini diperkemaskan.`
       })
 
-      const catRes = await getStockLevelSummary(hospitalId)
+      const catRes = await getStockLevelSummary(hospitalId, undefined, activeStoreId || undefined)
       if (catRes.data) setCatalogItems(catRes.data)
       await reloadMovementData()
 
@@ -1496,7 +1500,7 @@ export const KewPs4LedgerPage: React.FC = () => {
       })
 
       // Refresh catalog and movement details
-      const catRes = await getStockLevelSummary(hospitalId)
+      const catRes = await getStockLevelSummary(hospitalId, undefined, activeStoreId || undefined)
       if (catRes.data) setCatalogItems(catRes.data)
       await reloadMovementData()
 
@@ -1666,7 +1670,7 @@ export const KewPs4LedgerPage: React.FC = () => {
       playBeep('success')
       setReceiveStatus({ type: 'success', text: `Berjaya merekodkan penerimaan ${qty} ${finalPackagingLabel} stok daripada ${receivedFromText}!` })
 
-      const catRes = await getStockLevelSummary(hospitalId)
+      const catRes = await getStockLevelSummary(hospitalId, undefined, activeStoreId || undefined)
       if (catRes.data) setCatalogItems(catRes.data)
       await reloadMovementData()
 
@@ -1796,7 +1800,7 @@ export const KewPs4LedgerPage: React.FC = () => {
         setIssueStatus({ type: 'success', text: `Berjaya merekodkan pengeluaran ${qty} ${issueBatchPackaging} stok!` })
       }
 
-      const catRes = await getStockLevelSummary(hospitalId)
+      const catRes = await getStockLevelSummary(hospitalId, undefined, activeStoreId || undefined)
       if (catRes.data) setCatalogItems(catRes.data)
       await reloadMovementData()
 
@@ -1822,7 +1826,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
     const physQty = parseInt(checkFoundPhysicalQty, 10)
     if (isNaN(physQty) || physQty < 0) {
-      setCheckFoundStatus({ type: 'error', text: 'Sila masukkan kuantiti fizikal yang sah (≥ 0).' })
+      setCheckFoundStatus({ type: 'error', text: 'Please enter a valid physical quantity (≥ 0).' })
       return
     }
 
@@ -1856,7 +1860,7 @@ export const KewPs4LedgerPage: React.FC = () => {
         text: `Berjaya merekodkan Semakan & Penemuan Stok! Kedudukan stok fizikal disahkan: ${physQty} ${selectedItem.unit_of_measure} [${diffLabel}].` 
       })
 
-      const catRes = await getStockLevelSummary(hospitalId)
+      const catRes = await getStockLevelSummary(hospitalId, undefined, activeStoreId || undefined)
       if (catRes.data) setCatalogItems(catRes.data)
       await reloadMovementData()
 
@@ -1949,7 +1953,7 @@ export const KewPs4LedgerPage: React.FC = () => {
           : `Verifikasi Stor Tahunan ${verificationYear} BERJAYA direkodkan dengan catatan percanggahan.`
       })
 
-      const catRes = await getStockLevelSummary(hospitalId)
+      const catRes = await getStockLevelSummary(hospitalId, undefined, activeStoreId || undefined)
       if (catRes.data) setCatalogItems(catRes.data)
       await reloadMovementData()
 
@@ -2519,7 +2523,7 @@ export const KewPs4LedgerPage: React.FC = () => {
       playBeep('success')
       setEditTxStatus({ type: 'success', text: 'Berjaya menyimpan pindaan rekod & pembekal!' })
 
-      const catRes = await getStockLevelSummary(hospitalId)
+      const catRes = await getStockLevelSummary(hospitalId, undefined, activeStoreId || undefined)
       if (catRes.data) setCatalogItems(catRes.data)
       await reloadMovementData()
 
@@ -2734,7 +2738,7 @@ export const KewPs4LedgerPage: React.FC = () => {
     // Stage 2: If not found in current state, attempt dynamic catalog re-fetch
     if (!matched && hospitalId) {
       try {
-        const catRes = await getStockLevelSummary(hospitalId)
+        const catRes = await getStockLevelSummary(hospitalId, undefined, activeStoreId || undefined)
         if (catRes.data && catRes.data.length > 0) {
           setCatalogItems(catRes.data)
           matched = matchStockItem(catRes.data, targetCode, targetId, targetType)
@@ -2817,7 +2821,7 @@ export const KewPs4LedgerPage: React.FC = () => {
       setQuickBatchNum('')
 
       // Refresh metadata & movement rows
-      const catRes = await getStockLevelSummary(hospitalId)
+      const catRes = await getStockLevelSummary(hospitalId, undefined, activeStoreId || undefined)
       if (catRes.data) setCatalogItems(catRes.data)
       await reloadMovementData()
 
@@ -3294,7 +3298,7 @@ export const KewPs4LedgerPage: React.FC = () => {
           <table class="kpi-table">
             <tr>
               <td width="25%">
-                <div class="kpi-title" style="color: #475569;">BAKI SEMASA</div>
+                <div class="kpi-title" style="color: #475569;">CURRENT BALANCE</div>
                 <div class="kpi-num" style="color: #0f172a;">${currentStockBalance} ${uom}</div>
               </td>
               <td width="25%">
@@ -3459,6 +3463,7 @@ export const KewPs4LedgerPage: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              <StoreLocationSelector />
               <Button
                 onClick={() => setIsQrModalOpen(true)}
                 className="bg-teal-600 hover:bg-teal-700 text-white rounded-2xl text-xs font-bold px-3.5 py-2.5 shadow-lg gap-1.5"
@@ -5176,7 +5181,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     {/* PERIOD SELECTION TABS */}
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-2">
-                        Jenis Baki Bawa Ke Hadapan (Period / Type) <span className="text-rose-500">*</span>
+                        Jenis Balance Brought Forward (Period / Type) <span className="text-rose-500">*</span>
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <button
@@ -5219,7 +5224,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                       
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">
-                          Kuantiti Baki Bawa Ke Hadapan <span className="text-rose-500">*</span>
+                          Kuantiti Balance Brought Forward <span className="text-rose-500">*</span>
                         </label>
                         <Input
                           type="number"
@@ -5268,7 +5273,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">
-                          Tarikh Luput (Pilihan)
+                          Expiry Date (Pilihan)
                         </label>
                         <Input
                           type="date"
@@ -5288,7 +5293,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                         Catatan / Sebab Bawa Ke Hadapan
                       </label>
                       <Input
-                        placeholder="Contoh: Baki Bawa Ke Hadapan dari Tahun 2025"
+                        placeholder="Contoh: Balance Brought Forward dari Tahun 2025"
                         className="text-xs py-2 rounded-xl"
                         value={bfReason}
                         onChange={(e) => setBfReason(e.target.value)}
@@ -5308,7 +5313,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                         <span className="text-lg font-black text-amber-300">{activeLedgerStock} {selectedItem?.unit_of_measure}</span>
                       </div>
                       <div className="bg-white/10 p-3 rounded-xl border border-white/10">
-                        <span className="text-[10px] text-sky-300 font-sans block">Baki Bawa Ke Hadapan (+)</span>
+                        <span className="text-[10px] text-sky-300 font-sans block">Balance Brought Forward (+)</span>
                         <span className="text-lg font-black text-sky-300">+{parsedBfQty} {selectedItem?.unit_of_measure}</span>
                       </div>
                       <div className="bg-sky-500/20 p-3 rounded-xl border border-sky-400/30">
@@ -5342,7 +5347,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                   className="bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold px-7 py-2.5 shadow-md gap-2"
                 >
                   {isSubmittingBf ? <Spinner size="sm" /> : <FastForward className="w-4 h-4" />}
-                  {isSubmittingBf ? 'Menyimpan Baki...' : 'Simpan Baki Bawa Ke Hadapan'}
+                  {isSubmittingBf ? 'Menyimpan Baki...' : 'Simpan Balance Brought Forward'}
                 </Button>
               </div>
 
@@ -6439,11 +6444,11 @@ export const KewPs4LedgerPage: React.FC = () => {
                         />
                       </div>
 
-                      {/* Field 6: Tarikh Luput */}
+                      {/* Field 6: Expiry Date */}
                       <div>
                         <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-emerald-600" />
-                          6. Tarikh Luput (Expiry Date)
+                          6. Expiry Date (Expiry Date)
                         </label>
                         <Input
                           type="date"
@@ -6553,7 +6558,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                         </div>
 
                         <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/40 border border-slate-800">
-                          <span className="text-[10px] font-medium text-slate-400">Tarikh Luput:</span>
+                          <span className="text-[10px] font-medium text-slate-400">Expiry Date:</span>
                           <span className="text-[11px] font-bold text-slate-200 font-mono">
                             {receiveExpiryDate || '—'}
                           </span>
@@ -6761,7 +6766,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                 </div>
                                 <div className="grid grid-cols-3 gap-3 text-xs">
                                   <div>
-                                    <span className="text-[10px] text-slate-400 font-bold block">Tarikh Luput:</span>
+                                    <span className="text-[10px] text-slate-400 font-bold block">Expiry Date:</span>
                                     <span className="font-mono font-black text-amber-300">{issueBatchExpiry}</span>
                                   </div>
                                   <div>
@@ -7165,7 +7170,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                         </div>
 
                         <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/40 border border-slate-800">
-                          <span className="text-[10px] font-medium text-slate-400">Tarikh Luput Batch:</span>
+                          <span className="text-[10px] font-medium text-slate-400">Expiry Date Batch:</span>
                           <span className="text-[11px] font-bold text-slate-200 font-mono">
                             {issueBatchExpiry || '—'}
                           </span>

@@ -478,7 +478,7 @@ const TransporterReportsPage: React.FC = () => {
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-2 cursor-pointer"
         >
           <Printer className="w-4 h-4" />
-          <span>{isEn ? 'Print Official Report' : 'Cetak Laporan Rasmi'}</span>
+          <span>{isEn ? 'Print Official Report' : 'Print Official Report'}</span>
         </Button>
       </div>
 
@@ -495,13 +495,13 @@ const TransporterReportsPage: React.FC = () => {
             <CardHeader className="bg-slate-50/50 border-b border-slate-100">
               <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
                 <Car className="w-5 h-5 text-blue-600" />
-                {isEn ? 'Vehicle Fleet Utilization' : 'Utilization Kenderaan'}
+                {isEn ? 'Vehicle Fleet Utilization' : 'Fleet Vehicle Utilization'}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               {vehicleUsage.length === 0 ? (
                 <div className="p-6 text-center text-slate-400 text-xs">
-                  {isEn ? 'No vehicle trip data recorded.' : 'Tiada data perjalanan kenderaan ditemui.'}
+                  {isEn ? 'No vehicle trip data recorded.' : 'No vehicle trip data found.'}
                 </div>
               ) : (
                 <div className="divide-y divide-slate-150">
@@ -530,7 +530,7 @@ const TransporterReportsPage: React.FC = () => {
             <CardHeader className="bg-slate-50/50 border-b border-slate-100">
               <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
                 <ClipboardList className="w-5 h-5 text-indigo-600" />
-                {isEn ? 'Driver Workload Distribution' : 'Beban Tugasan Pemandu'}
+                {isEn ? 'Driver Workload Distribution' : 'Driver Workload Distribution'}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">

@@ -21,6 +21,7 @@ import {
   validateBookingLeadTime,
   evaluateAutoStatusTransition
 } from './tempahanValidation'
+import { offlineQueue } from '@/services/offlineQueue'
 
 // =========================================================================
 // STORAGE SYNCHRONIZATION & INITIALIZATION
@@ -437,6 +438,15 @@ export async function createBooking(
   allBookings.push(newBooking)
   saveBookingsToStorage(allBookings)
 
+  // Track in universal offline queue for background cloud sync
+  void offlineQueue.enqueue({
+    module: 'mytempahan',
+    table: 'tempahan_booking',
+    action: 'INSERT',
+    payload: newBooking,
+    conflictPolicy: 'server-wins',
+  }).catch(() => {})
+
   return { data: newBooking, error: null }
 }
 
@@ -477,6 +487,23 @@ export async function updateBookingStatus(
 
   allBookings[index] = booking
   saveBookingsToStorage(allBookings)
+
+  // Track in universal offline queue for background cloud sync
+  void offlineQueue.enqueue({
+    module: 'mytempahan',
+    table: 'tempahan_booking',
+    action: 'UPDATE',
+    payload: {
+      status: newStatus,
+      approved_at: booking.approved_at,
+      catatan_pelulus: booking.catatan_pelulus,
+      rejection_reason: booking.rejection_reason,
+      cancellation_reason: booking.cancellation_reason,
+      updated_at: nowIso,
+    },
+    matchCriteria: { id: bookingId },
+    conflictPolicy: 'server-wins',
+  }).catch(() => {})
 
   return { data: booking, error: null }
 }

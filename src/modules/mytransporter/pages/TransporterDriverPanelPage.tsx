@@ -236,7 +236,7 @@ const TransporterDriverPanelPage: React.FC = () => {
     e.preventDefault()
 
     if (!selectedVehicleId || !odoReading) {
-      toast.error('Pemeriksaan Gagal', 'Sila pilih kenderaan dan masukkan bacaan odometer.')
+      toast.error('Pemeriksaan Gagal', 'Please select a vehicle and enter the odometer reading.')
       return
     }
 
@@ -282,7 +282,7 @@ const TransporterDriverPanelPage: React.FC = () => {
         if (res.error) throw new Error(res.error)
         
         if (decision === 'rejected') {
-          toast.warning('Tugasan Ditolak', 'Trip ditolak disebabkan keadaan kenderaan dan dihantar ke log aduan kerosakan.')
+          toast.warning('Assignment Declined', 'Trip declined due to vehicle condition and dispatched to maintenance log.')
           // Save rejection to localStorage
           if (loggedUser?.id && selectedReq) {
             const locallyRejected = localStorage.getItem(`rejected_requests_${loggedUser.id}`)
@@ -293,7 +293,7 @@ const TransporterDriverPanelPage: React.FC = () => {
             }
           }
         } else {
-          toast.success('Tugasan Diterima', 'Pemeriksaan berjaya disahkan. Sila tunggu kelulusan Pentadbir.')
+          toast.success('Assignment Accepted', 'Pemeriksaan berjaya disahkan. Sila tunggu kelulusan Pentadbir.')
         }
       } else {
         // Post trip complete trip
@@ -335,7 +335,7 @@ const TransporterDriverPanelPage: React.FC = () => {
 
   const handleCancelTripSubmit = async () => {
     if (!cancellingReqId || !cancelReason) {
-      toast.error('Sebab Diperlukan', 'Sila isi sebab pembatalan trip.')
+      toast.error('Reason Required', 'Sila isi sebab pembatalan trip.')
       return
     }
 
@@ -353,7 +353,7 @@ const TransporterDriverPanelPage: React.FC = () => {
 
   const handleDirectRejectSubmit = async () => {
     if (!rejectingReqId || !rejectReason) {
-      toast.error('Sebab Diperlukan', 'Sila isi sebab penolakan tugasan.')
+      toast.error('Reason Required', 'Sila isi sebab penolakan tugasan.')
       return
     }
 
@@ -361,7 +361,7 @@ const TransporterDriverPanelPage: React.FC = () => {
       const hospitalId = loggedUser?.hospital_id || 'hosp-1'
       const res = await driverRejectRequestDirect(rejectingReqId, loggedUser?.id || '', rejectReason, hospitalId)
       if (res.error) throw new Error(res.error)
-      toast.success('Tugasan Ditolak', 'Tugasan dikembalikan ke dalam senarai sistem.')
+      toast.success('Assignment Declined', 'Tugasan dikembalikan ke dalam senarai sistem.')
       
       // Save rejection to localStorage
       if (loggedUser?.id) {
@@ -808,7 +808,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                     className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
                     required
                   >
-                    <option value="">{isEn ? 'Please Select Vehicle' : 'Sila Pilih Kenderaan'}</option>
+                    <option value="">{isEn ? 'Please Select Vehicle' : 'Sila Select Vehicle'}</option>
                     {vehicles
                       .filter(v => v.jenis_kenderaan === selectedReq.jenis_permohonan)
                       .map(v => (
@@ -1378,7 +1378,7 @@ const TransporterDriverPanelPage: React.FC = () => {
             {selectedReq.kenderaan && (
               <div className="space-y-3 pt-4 border-t border-slate-100">
                 <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
-                  {isEn ? 'Assigned Vehicle & Duty Driver' : 'Kenderaan & Pemandu Bertugas'}
+                  {isEn ? 'Assigned Vehicle & Duty Driver' : 'Kenderaan & On-Duty Driver'}
                 </h4>
                 <div className="grid grid-cols-2 gap-y-3 text-sm">
                   <div>

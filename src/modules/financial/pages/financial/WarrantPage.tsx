@@ -97,6 +97,8 @@ const DEPARTMENT_COLORS: Record<WarrantDepartment, string> = {
   operation_theater: 'bg-pink-50 text-pink-700 border-pink-200',
   laboratory_pathology: 'bg-teal-50 text-teal-700 border-teal-200',
   general_ward: 'bg-sky-50 text-sky-800 border-sky-200',
+  female_ward: 'bg-pink-50 text-pink-700 border-pink-200',
+  male_ward: 'bg-blue-50 text-blue-700 border-blue-200',
   wound_care: 'bg-amber-50 text-amber-800 border-amber-200',
   rehabilitation: 'bg-lime-50 text-lime-800 border-lime-300',
   anaesthesiology: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200',

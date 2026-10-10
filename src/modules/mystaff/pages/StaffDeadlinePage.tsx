@@ -59,7 +59,7 @@ export const StaffDeadlinePage: React.FC = () => {
       if (res.data) setDeadlines(res.data)
     } catch (e) {
       console.error(e)
-      toast.error(isMs ? 'Ralat memuatkan senarai tarikh akhir' : 'Error loading deadlines list')
+      toast.error(isMs ? 'Error loading submission deadlines' : 'Error loading deadlines list')
     } finally {
       setIsLoading(false)
     }
@@ -94,7 +94,7 @@ export const StaffDeadlinePage: React.FC = () => {
       toast.success(
         dl.status === 'submitted' 
           ? (isMs ? 'Status ditukar ke belum selesai' : 'Status reverted to pending') 
-          : (isMs ? 'Tarikh akhir ditandakan selesai!' : 'Deadline marked as completed!')
+          : (isMs ? 'Deadline marked as completed!' : 'Deadline marked as completed!')
       )
       await loadDeadlines()
     } catch (e: any) {
@@ -105,7 +105,7 @@ export const StaffDeadlinePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formTitle.trim() || !formDate) {
-      toast.error(isMs ? 'Sila lengkapkan tajuk dan tarikh akhir.' : 'Please complete the title and deadline date.')
+      toast.error(isMs ? 'Please enter the title and deadline date.' : 'Please complete the title and deadline date.')
       return
     }
 
@@ -126,7 +126,7 @@ export const StaffDeadlinePage: React.FC = () => {
 
       if (res.error) throw new Error(res.error)
 
-      toast.success(isMs ? 'Tarikh akhir serahan berjaya didaftarkan!' : 'Deadline record successfully created!')
+      toast.success(isMs ? 'Submission deadline successfully created!' : 'Deadline record successfully created!')
       setIsModalOpen(false)
       // Reset
       setFormTitle('')
@@ -134,7 +134,7 @@ export const StaffDeadlinePage: React.FC = () => {
       setFormDate('')
       await loadDeadlines()
     } catch (err: any) {
-      toast.error(err.message || (isMs ? 'Gagal menyimpan tarikh akhir' : 'Failed to save deadline'))
+      toast.error(err.message || (isMs ? 'Failed to save submission deadline' : 'Failed to save deadline'))
     } finally {
       setSubmitting(false)
     }

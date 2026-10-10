@@ -170,8 +170,9 @@ function normalizeCategory(cat: string | null): string {
 
 function normalizeDept(d: string | null): string {
   if (!d) return 'Pharmacy'
-  const lower = d.trim().toLowerCase()
   if (lower === 'general ward' || lower === 'general_ward' || lower === 'wad general' || lower === 'general') return 'General Ward'
+  if (lower === 'female ward' || lower === 'female_ward' || lower === 'wad perempuan' || lower === 'female') return 'Female Ward'
+  if (lower === 'male ward' || lower === 'male_ward' || lower === 'wad lelaki' || lower === 'male') return 'Male Ward'
   if (lower === 'maternity ward' || lower === 'maternity_ward' || lower === 'wad maternity' || lower === 'wad bersalin' || lower === 'maternity') return 'Maternity Ward'
   if (lower === 'paediatric ward' || lower === 'paediatric_ward' || lower === 'wad pediatrik' || lower === 'paediatric' || lower === 'paed') return 'Paediatric Ward'
   if (lower === 'emergency' || lower === 'trauma' || lower === 'emergency_trauma' || lower === 'kecemasan') return 'Emergency & Trauma'

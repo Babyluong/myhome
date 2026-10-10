@@ -84,7 +84,7 @@ export const HamPrecautionsPanel: React.FC<HamPrecautionsPanelProps> = ({
             <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs flex items-start gap-2.5">
               <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <div className="text-xs">
-                <strong className="text-slate-900 block font-semibold">Pelekat Amaran Merah</strong>
+                <strong className="text-slate-900 block font-semibold">Red Warning Label</strong>
                 <span className="text-slate-600">
                   Bekas ubat, picagari, dan beg infusi mestilah ditampal dengan pelekat merah khas "HIGH ALERT MEDICATION".
                 </span>
@@ -96,7 +96,7 @@ export const HamPrecautionsPanel: React.FC<HamPrecautionsPanelProps> = ({
               <div className="text-xs">
                 <strong className="text-slate-900 block font-semibold">Penyimpanan Terkawal</strong>
                 <span className="text-slate-600">
-                  Disimpan di dalam peti / almari berkunci dengan akses terhad. Hadkan kepelbagaian kepekatan dalam stok wad.
+                  Stored in locked chiller / cabinet with restricted access. Limit concentration variety in ward stock.
                 </span>
               </div>
             </div>
@@ -116,7 +116,7 @@ export const HamPrecautionsPanel: React.FC<HamPrecautionsPanelProps> = ({
           {precautions.length > 0 && (
             <div>
               <h5 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-                Langkah Berjaga-jaga Khusus untuk {drugName}:
+                Specific Precautions for {drugName}:
               </h5>
               <ul className="space-y-1.5 text-xs text-slate-700">
                 {precautions.map((item, idx) => (

@@ -2,18 +2,45 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
+import { execSync } from 'child_process'
+import fs from 'fs'
+
+// Custom Vite Plugin: Automatically generates releases and synchronizes database on every build/dev
+function systemReleasesPlugin() {
+  return {
+    name: 'system-releases-plugin',
+    buildStart() {
+      try {
+        const scriptPath = path.resolve(__dirname, 'scripts/generate_system_releases.cjs')
+        if (fs.existsSync(scriptPath)) {
+          execSync(`node "${scriptPath}"`, { stdio: 'inherit' })
+        }
+      } catch (err: any) {
+        console.warn('[Vite Plugin] System release generation notice:', err?.message)
+      }
+    }
+  }
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    systemReleasesPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       includeAssets: [
         'favicon.svg',
+        'favicon.png',
         '512px-Jata_MalaysiaV2.svg.png',
+        'icons/icon-72.png',
+        'icons/icon-96.png',
+        'icons/icon-128.png',
+        'icons/icon-144.png',
+        'icons/icon-152.png',
         'icons/icon-192.png',
+        'icons/icon-384.png',
         'icons/icon-512.png',
         'icons/icon-maskable-512.png',
         'icons/apple-touch-icon.png',
@@ -25,8 +52,8 @@ export default defineConfig({
         start_url: '/',
         id: '/',
         display: 'standalone',
-        display_override: ['window-controls-overlay', 'standalone', 'minimal-ui'],
-        orientation: 'any',
+        display_override: ['standalone', 'window-controls-overlay', 'minimal-ui'],
+        orientation: 'portrait-primary',
         background_color: '#020617',
         theme_color: '#020617',
         scope: '/',
@@ -34,8 +61,44 @@ export default defineConfig({
         categories: ['medical', 'health', 'productivity', 'business'],
         icons: [
           {
+            src: '/icons/icon-72.png',
+            sizes: '72x72',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/icons/icon-96.png',
+            sizes: '96x96',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/icons/icon-128.png',
+            sizes: '128x128',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/icons/icon-144.png',
+            sizes: '144x144',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/icons/icon-152.png',
+            sizes: '152x152',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
             src: '/icons/icon-192.png',
             sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/icons/icon-384.png',
+            sizes: '384x384',
             type: 'image/png',
             purpose: 'any',
           },
@@ -52,16 +115,19 @@ export default defineConfig({
             purpose: 'maskable',
           },
           {
-            src: '/512px-Jata_MalaysiaV2.svg.png',
-            sizes: '512x512',
-            type: 'image/png',
+            src: '/favicon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
             purpose: 'any',
           },
         ],
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 25 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 30 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -92,14 +158,28 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/.*/i,
+            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/v1\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'supabase-api-cache',
-              networkTimeoutSeconds: 6,
+              networkTimeoutSeconds: 4,
               expiration: {
-                maxEntries: 120,
-                maxAgeSeconds: 60 * 60 * 24,
+                maxEntries: 500,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days stale cache fallback
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'supabase-storage-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
               },
               cacheableResponse: {
                 statuses: [0, 200],
@@ -118,6 +198,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,
     port: 3000,
     open: true,
     watch: {
@@ -149,6 +230,11 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 2500,
+    modulePreload: {
+      resolveDependencies: (_filename, deps) => {
+        return deps.filter((dep) => !dep.includes('vendor-ocr') && !dep.includes('vendor-pdf'))
+      },
+    },
     commonjsOptions: {
       transformMixedEsModules: true,
     },

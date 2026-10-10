@@ -1,0 +1,195 @@
+{
+  "version": "v2.6.1",
+  "buildTime": "2026-10-10T16:52:19.628Z",
+  "commitHash": "112fc9a",
+  "fullCommitHash": "112fc9adc8dc24d472fe7415cc8313fcf9e1298c",
+  "branch": "refactor/module-folders",
+  "latestCommitDate": "2026-10-11T00:51:19+08:00",
+  "latestCommitMessage": "chore(release): system release & production deployment sync v2.6.1",
+  "releases": [
+    {
+      "id": "release-v2-6-1",
+      "version_tag": "v2.6.1",
+      "title": "System Release & Production Deployment Sync v2.6.1",
+      "created_at": "2026-10-10T16:52:19.628Z"
+    },
+    {
+      "id": "release-v2-6-0",
+      "version_tag": "v2.6.0",
+      "title": "System Release & Ecosystem Language Unification v2.6.0",
+      "created_at": "2026-10-10T12:00:00.000Z"
+    },
+    {
+      "id": "release-v2-5-0",
+      "version_tag": "v2.5.0",
+      "title": "System Release & MyPrepacking Module Launch v2.5.0",
+      "created_at": "2026-10-08T12:00:00.000Z"
+    },
+    {
+      "id": "release-v2-4-1",
+      "version_tag": "v2.4.1",
+      "title": "Operations Hub Interface & Typography Enhancements v2.4.1",
+      "created_at": "2026-10-02T13:00:00.000Z"
+    },
+    {
+      "id": "release-v2-4-0",
+      "version_tag": "v2.4.0",
+      "title": "H.O.M.E. Ecosystem Architecture & Live Broadcasts v2.4.0",
+      "created_at": "2026-10-02T00:37:26.735Z"
+    },
+    {
+      "id": "release-v2-3-0",
+      "version_tag": "v2.3.0",
+      "title": "Supabase Database Export & Automated Backup Integration v2.3.0",
+      "created_at": "2026-09-22T13:47:38.000Z"
+    },
+    {
+      "id": "release-v2-2-0",
+      "version_tag": "v2.2.0",
+      "title": "Modular Architecture Refactor & File Scheme v2.2.0",
+      "created_at": "2026-06-17T23:52:17.000Z"
+    }
+  ],
+  "recentCommits": [
+    {
+      "hash": "112fc9adc8dc24d472fe7415cc8313fcf9e1298c",
+      "shortHash": "112fc9a",
+      "author": "Lawas@2025",
+      "date": "2026-10-11T00:51:19+08:00",
+      "message": "chore(release): system release & production deployment sync v2.6.1"
+    },
+    {
+      "hash": "b5e2fb51167523c7275cc5ebe70174ef2433ff39",
+      "shortHash": "b5e2fb5",
+      "author": "Lawas@2025",
+      "date": "2026-09-22T21:47:38+08:00",
+      "message": "backup: comprehensive system checkpoint & supabase database export (2026-09-22)"
+    },
+    {
+      "hash": "34eb684a0729530948c41cf631f6ee1d3f25c9c4",
+      "shortHash": "34eb684",
+      "author": "Lawas@2025",
+      "date": "2026-09-18T22:07:36+08:00",
+      "message": "backup: comprehensive system checkpoint & supabase database export (2026-09-18)"
+    },
+    {
+      "hash": "c22cd8d46b0f5ba51c293ef35a5a038074e800cd",
+      "shortHash": "c22cd8d",
+      "author": "Lawas@2025",
+      "date": "2026-08-30T22:15:02+08:00",
+      "message": "backup: save complete system state, new modules, migrations & database backup (2026-08-30)"
+    },
+    {
+      "hash": "7c257cc98a209e1dd577d1fb1d5b5779ce170e79",
+      "shortHash": "7c257cc",
+      "author": "Lawas@2025",
+      "date": "2026-08-15T13:08:01+08:00",
+      "message": "chore: refine local backup path handling in scripts"
+    },
+    {
+      "hash": "f688e9e512d9c374bf6a31adf78ae101918f3ed2",
+      "shortHash": "f688e9e",
+      "author": "Lawas@2025",
+      "date": "2026-08-15T13:04:50+08:00",
+      "message": "backup: comprehensive pre-module-expansion checkpoint (codebase, migrations, schemas & supabase export)"
+    },
+    {
+      "hash": "1d4863f5df8a30ed8ff2614977d46ea10dad7a2f",
+      "shortHash": "1d4863f",
+      "author": "Lawas@2025",
+      "date": "2026-07-20T09:49:34+08:00",
+      "message": "refactor: remove duplicate capitalized UI components from git index for Windows compatibility"
+    },
+    {
+      "hash": "c3eac45e53b7b8bf0afcdb8b3cf1217f2e0b9215",
+      "shortHash": "c3eac45",
+      "author": "Lawas@2025",
+      "date": "2026-07-20T09:47:49+08:00",
+      "message": "backup: save current progress with new module implementations and database migrations"
+    },
+    {
+      "hash": "a3fe4e87f724fefbe991a00f000c16a200b0b7bb",
+      "shortHash": "a3fe4e8",
+      "author": "Lawas@2025",
+      "date": "2026-06-30T12:30:43+08:00",
+      "message": "backup: refactor modules directory layout and system updates"
+    },
+    {
+      "hash": "a3c68d3b2513d720384cdd40527a5376a9bd1ab5",
+      "shortHash": "a3c68d3",
+      "author": "Lawas@2025",
+      "date": "2026-06-17T23:52:17+08:00",
+      "message": "refactor: migrate auth module to src/modules/auth with barrel indexes"
+    },
+    {
+      "hash": "d2949fbb1021e8e2dffd6aef2e4a4d3b1cbb5566",
+      "shortHash": "d2949fb",
+      "author": "Lawas@2025",
+      "date": "2026-06-17T23:46:53+08:00",
+      "message": "refactor: add backward compatibility shim files to preserve existing imports during transition"
+    },
+    {
+      "hash": "25366eca3e03d3dd1c99fa0b49a3b7b0cb975b7d",
+      "shortHash": "25366ec",
+      "author": "Lawas@2025",
+      "date": "2026-06-17T23:36:53+08:00",
+      "message": "refactor: move UI, layout, forms, charts, stores, and lib directories to src/shared/"
+    },
+    {
+      "hash": "447cb9d94ace3183aa2590a9fe1e1c2ecb5fc43c",
+      "shortHash": "447cb9d",
+      "author": "Lawas@2025",
+      "date": "2026-06-17T23:36:06+08:00",
+      "message": "refactor: split monolith types/index.ts and lib/constants.ts into shared domain-specific files"
+    },
+    {
+      "hash": "61c57d88b50d1e6ab36927bfd9d9bdaabb34103c",
+      "shortHash": "61c57d8",
+      "author": "Lawas@2025",
+      "date": "2026-06-17T23:33:34+08:00",
+      "message": "chore: archive legacy app-router and features folder"
+    },
+    {
+      "hash": "e56dd6f42bcdf144a03916539d9520289dadc72d",
+      "shortHash": "e56dd6f",
+      "author": "Lawas@2025",
+      "date": "2026-06-14T14:45:42+08:00",
+      "message": "chore: rollback codebase to June 12 production state"
+    },
+    {
+      "hash": "70611b5f323785286f3b9f05501542ebfaef8451",
+      "shortHash": "70611b5",
+      "author": "Lawas@2025",
+      "date": "2026-06-14T11:31:24+08:00",
+      "message": "chore: rollback to pre-cutoff state (June 13, 2026 8:16 PM)"
+    },
+    {
+      "hash": "6c43014e52b9101ffb20be90d79a3afb1274902a",
+      "shortHash": "6c43014",
+      "author": "Lawas@2025",
+      "date": "2026-01-08T23:49:01+08:00",
+      "message": "Update vercel.json for Vite deployment"
+    },
+    {
+      "hash": "b6e1efc2bca507f7ebb52ffdf9f85006f49bebc7",
+      "shortHash": "b6e1efc",
+      "author": "Lawas@2025",
+      "date": "2026-01-08T23:39:19+08:00",
+      "message": "Merge remote repository with local codebase"
+    },
+    {
+      "hash": "2dcef78e1882eed78d0491ac530bab970ef5714d",
+      "shortHash": "2dcef78",
+      "author": "Lawas@2025",
+      "date": "2026-01-08T23:36:11+08:00",
+      "message": "Initial commit: Hospital Operation Management Ecosystem"
+    },
+    {
+      "hash": "884681b96384558184be8bf0118804e40e4e56e0",
+      "shortHash": "884681b",
+      "author": "Lawas@2025",
+      "date": "2025-10-13T14:52:19+08:00",
+      "message": "feat: Add Patient Portal and Complete Offline Deployment System"
+    }
+  ]
+}

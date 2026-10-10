@@ -1,0 +1,195 @@
+const fs = require('fs');
+const path = require('path');
+const sharp = require('sharp');
+
+const ICONS_DIR = path.resolve(__dirname, '../public/icons');
+if (!fs.existsSync(ICONS_DIR)) {
+  fs.mkdirSync(ICONS_DIR, { recursive: true });
+}
+
+// 1. Standard App Icon SVG (512x512)
+const standardIconSvg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg-glow" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#0f3d3e" stop-opacity="0.9" />
+      <stop offset="40%" stop-color="#06202a" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#020617" stop-opacity="1" />
+    </radialGradient>
+    <linearGradient id="cross-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2dd4bf" />
+      <stop offset="50%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0d9488" />
+    </linearGradient>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+    <linearGradient id="border-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0.6" />
+      <stop offset="50%" stop-color="#0ea5e9" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#14b8a6" stop-opacity="0.4" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+  </defs>
+
+  <!-- Base Dark Canvas with Rounded Squircle -->
+  <rect width="512" height="512" rx="112" fill="url(#bg-glow)" />
+  <rect x="4" y="4" width="504" height="504" rx="108" fill="none" stroke="url(#border-grad)" stroke-width="4" />
+
+  <!-- Outer Tech Ring -->
+  <circle cx="256" cy="220" r="148" fill="none" stroke="#14b8a6" stroke-opacity="0.15" stroke-width="2" stroke-dasharray="6 6" />
+  <circle cx="256" cy="220" r="164" fill="none" stroke="#2dd4bf" stroke-opacity="0.1" stroke-width="1.5" />
+
+  <!-- Central Medical Cross (Iconic 3D Glow) -->
+  <g filter="url(#shadow)">
+    <!-- Vertical Bar -->
+    <rect x="222" y="110" width="68" height="220" rx="20" fill="url(#cross-grad)" filter="url(#glow)" />
+    <!-- Horizontal Bar -->
+    <rect x="146" y="186" width="220" height="68" rx="20" fill="url(#cross-grad)" filter="url(#glow)" />
+    <!-- Inner Cross Highlight Layer -->
+    <rect x="226" y="114" width="60" height="212" rx="16" fill="none" stroke="#5eead4" stroke-opacity="0.4" stroke-width="2" />
+    <rect x="150" y="190" width="212" height="60" rx="16" fill="none" stroke="#5eead4" stroke-opacity="0.4" stroke-width="2" />
+  </g>
+
+  <!-- Golden Center Hospital Emblem Core -->
+  <circle cx="256" cy="220" r="28" fill="#020617" stroke="url(#gold-grad)" stroke-width="3.5" filter="url(#shadow)" />
+  <path d="M256 208 L262 216 L272 217 L265 224 L267 234 L256 228 L245 234 L247 224 L240 217 L250 216 Z" fill="url(#gold-grad)" />
+
+  <!-- Pulse Line Accent across Cross -->
+  <path d="M 170 220 L 210 220 L 222 202 L 234 238 L 244 212 L 254 220 L 342 220" 
+        fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" />
+
+  <!-- System Typography: H.O.M.E. -->
+  <text x="256" y="396" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="44" font-weight="900" fill="#ffffff" letter-spacing="8">
+    H.O.M.E.
+  </text>
+  
+  <!-- Pill Badge: HOSPITAL ECOSYSTEM -->
+  <rect x="136" y="418" width="240" height="26" rx="13" fill="#0f172a" stroke="#14b8a6" stroke-opacity="0.4" stroke-width="1.5" />
+  <text x="256" y="435" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#2dd4bf" letter-spacing="2">
+    HOSPITAL ECOSYSTEM
+  </text>
+</svg>
+`;
+
+// 2. Maskable Icon SVG (512x512) - Safe Zone within 80% circle (r=204)
+const maskableIconSvg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="m-bg" cx="50%" cy="48%" r="70%">
+      <stop offset="0%" stop-color="#0f3d3e" />
+      <stop offset="50%" stop-color="#06202a" />
+      <stop offset="100%" stop-color="#020617" />
+    </radialGradient>
+    <linearGradient id="m-cross" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2dd4bf" />
+      <stop offset="50%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0d9488" />
+    </linearGradient>
+    <linearGradient id="m-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+    <filter id="m-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.7" />
+    </filter>
+  </defs>
+
+  <!-- Full Bleed Background for Maskable Icon -->
+  <rect width="512" height="512" fill="url(#m-bg)" />
+
+  <!-- Elements strictly inside 80% safe zone (Center: 256, 256 | Max Radius: 190) -->
+  <circle cx="256" cy="225" r="125" fill="none" stroke="#14b8a6" stroke-opacity="0.2" stroke-width="2" stroke-dasharray="5 5" />
+
+  <!-- Central Cross -->
+  <g filter="url(#m-shadow)">
+    <rect x="227" y="135" width="58" height="180" rx="16" fill="url(#m-cross)" />
+    <rect x="166" y="196" width="180" height="58" rx="16" fill="url(#m-cross)" />
+  </g>
+
+  <!-- Golden Center Emblem -->
+  <circle cx="256" cy="225" r="24" fill="#020617" stroke="url(#m-gold)" stroke-width="3" filter="url(#m-shadow)" />
+  <path d="M256 215 L261 222 L269 223 L263 229 L265 237 L256 232 L247 237 L249 229 L243 223 L251 222 Z" fill="url(#m-gold)" />
+
+  <!-- Pulse Line -->
+  <path d="M 185 225 L 218 225 L 228 210 L 238 240 L 246 218 L 254 225 L 327 225" 
+        fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" />
+
+  <!-- H.O.M.E. Typography within safe zone -->
+  <text x="256" y="362" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="900" fill="#ffffff" letter-spacing="6">
+    H.O.M.E.
+  </text>
+  
+  <rect x="156" y="380" width="200" height="22" rx="11" fill="#0f172a" stroke="#14b8a6" stroke-opacity="0.4" stroke-width="1.2" />
+  <text x="256" y="395" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#2dd4bf" letter-spacing="1.5">
+    HOSPITAL ECOSYSTEM
+  </text>
+</svg>
+`;
+
+async function generateAll() {
+  console.log('Generating distinct high-definition PWA icons...');
+
+  const standardBuffer = Buffer.from(standardIconSvg);
+  const maskableBuffer = Buffer.from(maskableIconSvg);
+
+  // 1. icon-512.png
+  await sharp(standardBuffer)
+    .resize(512, 512)
+    .png({ quality: 100, compressionLevel: 9 })
+    .toFile(path.join(ICONS_DIR, 'icon-512.png'));
+  console.log('✔ Generated icon-512.png');
+
+  // 2. icon-192.png
+  await sharp(standardBuffer)
+    .resize(192, 192)
+    .png({ quality: 100, compressionLevel: 9 })
+    .toFile(path.join(ICONS_DIR, 'icon-192.png'));
+  console.log('✔ Generated icon-192.png');
+
+  // 3. icon-maskable-512.png
+  await sharp(maskableBuffer)
+    .resize(512, 512)
+    .png({ quality: 100, compressionLevel: 9 })
+    .toFile(path.join(ICONS_DIR, 'icon-maskable-512.png'));
+  console.log('✔ Generated icon-maskable-512.png');
+
+  // 4. apple-touch-icon.png (180x180)
+  await sharp(standardBuffer)
+    .resize(180, 180)
+    .png({ quality: 100, compressionLevel: 9 })
+    .toFile(path.join(ICONS_DIR, 'apple-touch-icon.png'));
+  console.log('✔ Generated apple-touch-icon.png');
+
+  // 5. Additional PWA sizes for maximum device fidelity
+  const sizes = [72, 96, 128, 144, 152, 384];
+  for (const size of sizes) {
+    await sharp(standardBuffer)
+      .resize(size, size)
+      .png({ quality: 100, compressionLevel: 9 })
+      .toFile(path.join(ICONS_DIR, `icon-${size}.png`));
+    console.log(`✔ Generated icon-${size}.png`);
+  }
+
+  // 6. Favicon SVG & PNG
+  fs.writeFileSync(path.resolve(__dirname, '../public/favicon.svg'), standardIconSvg);
+  await sharp(standardBuffer)
+    .resize(64, 64)
+    .png()
+    .toFile(path.resolve(__dirname, '../public/favicon.png'));
+  console.log('✔ Generated public/favicon.svg and favicon.png');
+
+  console.log('\nAll PWA icons generated successfully with distinctive H.O.M.E. branding!');
+}
+
+generateAll().catch(err => {
+  console.error('Error generating icons:', err);
+  process.exit(1);
+});

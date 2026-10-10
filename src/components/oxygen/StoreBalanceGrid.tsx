@@ -39,6 +39,44 @@ export interface StoreBalanceGridProps {
   onQuickCreateReturn?: (combo: ComboInventory) => void;
 }
 
+/**
+ * Accurately determines whether a cylinder SKU has a Pin Index (PI) or Bullnose (BN) valve.
+ * Prioritizes database valve types (type_code / type_name), followed by explicit SKU naming tags (BN vs PI).
+ */
+export const isCylinderPinIndex = (combo: ComboInventory | { display_name?: string; type_code?: string; type_name?: string; type_id?: string }): boolean => {
+  const typeId = (combo as any).type_id || '';
+  const typeCode = (combo.type_code || '').toUpperCase().trim();
+  const typeName = (combo.type_name || '').toLowerCase();
+  const name = (combo.display_name || '').toLowerCase();
+
+  // 1. Direct database type ID check (canonical UUIDs for BN vs PI)
+  if (typeId === '3edfc0fe-98fb-4592-9ce1-4229718871a2') return false; // Bullnose (BN)
+  if (typeId === '1874961b-a46d-4cf6-8a47-90b18a1e0fb7') return true;  // Pin Index (PI)
+
+  // 2. Direct database type code check (highest authority: 'BN' vs 'PI')
+  if (typeCode === 'BN') return false;
+  if (typeCode === 'PI') return true;
+
+  // 3. Direct database type name check ('Bullnose' vs 'Pin Index')
+  if (typeName.includes('bull')) return false;
+  if (typeName.includes('pin')) return true;
+
+  // 3. Name explicit indicator checks
+  // If explicitly designated Bullnose (BN) in the name
+  if (/\b(bn|bullnose)\b/i.test(name) || name.includes('bull')) return false;
+  // If explicitly designated Pin Index (PI) in the name
+  if (/\b(pi|pin)\b/i.test(name) || name.includes('pin')) return true;
+
+  // 4. Default size conventions:
+  // Sizes D and E are universally Pin Index
+  if (name.includes('- d') || name.includes('-d') || name.includes('- e') || name.includes('-e')) return true;
+
+  // 5. Fallback for 101-F: Pin Index unless designated BN (handled above)
+  if (name.includes('101 - f') || name.includes('101-f')) return true;
+
+  return false;
+};
+
 export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({ 
   data,
   onQuickIssue,
@@ -59,14 +97,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
     return data.filter((combo) => {
       const name = combo.display_name.toLowerCase();
       const isLoan = name.includes('loan');
-      const isPinIndex = 
-        combo.type_code === 'PI' || 
-        combo.type_name?.toLowerCase().includes('pin') || 
-        name.includes('pi') || 
-        name.includes('- d') || 
-        name.includes('- e') || 
-        name.includes('101 - f') || 
-        name.includes('101-f');
+      const isPinIndex = isCylinderPinIndex(combo);
 
       // Search matching
       if (searchTerm.trim()) {
@@ -140,88 +171,88 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
       {/* ========================================================================= */}
       {/* ENTERPRISE TELEMETRY CONTROL BAR & LIFECYCLE KPI DASHBOARD                 */}
       {/* ========================================================================= */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-3 sm:p-5 shadow-xs space-y-3 sm:space-y-4">
         
         {/* ROW 1: SEARCH, LABELED FILTERS & UNIFIED VIEW SWITCHER */}
-        <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-2.5 sm:gap-4">
           
           {/* Search Box */}
-          <div className="relative flex-1 min-w-[260px] max-w-xl">
+          <div className="relative flex-1 min-w-0 max-w-xl">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder={isMs ? "Cari jenis silinder (cth. P101, 101-N, Bullnose, PI)..." : "Search cylinder type (e.g. P101, 101-N, Bullnose, PI)..."}
+              placeholder={isMs ? "Cari jenis silinder (cth. P101, PI)..." : "Search cylinder type (e.g. P101, PI)..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-slate-50/80 border border-slate-200 rounded-xl pl-10 pr-9 py-2 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all"
+              className="w-full bg-slate-50/80 border border-slate-200 rounded-xl pl-10 pr-9 py-2 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white transition-all"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm('')}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-200/80 transition-colors"
-                title={isMs ? "Padam carian" : "Clear search"}
+                title={isMs ? "Clear search" : "Clear search"}
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          {/* Labeled Filter Groups & Cohesive View Switcher */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            
-            {/* Valve Type Filter Group */}
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 p-1 rounded-xl">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-2 select-none">
-                {isMs ? 'Injap' : 'Valve'}
-              </span>
-              <div className="flex items-center gap-0.5 text-xs">
-                <button
-                  type="button"
-                  onClick={() => setConnectionFilter('all')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                    connectionFilter === 'all'
-                      ? 'bg-white text-slate-900 shadow-xs border border-slate-200/70 font-bold'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  {isMs ? 'Semua' : 'All'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setConnectionFilter('pi')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                    connectionFilter === 'pi'
-                      ? 'bg-white text-blue-700 shadow-xs border border-blue-200 font-bold ring-1 ring-blue-500/20'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  Pin Index (PI)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setConnectionFilter('bn')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                    connectionFilter === 'bn'
-                      ? 'bg-white text-indigo-700 shadow-xs border border-indigo-200 font-bold ring-1 ring-indigo-500/20'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  Bullnose (BN)
-                </button>
+          {/* Filter Controls Row (Responsive wrapping, zero forced horizontal scrolling) */}
+          <div className="flex flex-wrap items-center justify-between gap-2 py-0.5 w-full">
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Valve Type Filter Group */}
+              <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/80 p-1 rounded-xl shrink-0">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-1.5 select-none hidden sm:inline">
+                  {isMs ? 'Injap' : 'Valve'}
+                </span>
+                <div className="flex items-center gap-0.5 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setConnectionFilter('all')}
+                    className={`px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
+                      connectionFilter === 'all'
+                        ? 'bg-white text-slate-900 shadow-xs border border-slate-200/70 font-bold'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    {isMs ? 'Semua' : 'All'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConnectionFilter('pi')}
+                    className={`px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
+                      connectionFilter === 'pi'
+                        ? 'bg-white text-teal-700 shadow-xs border border-teal-200 font-bold ring-1 ring-teal-500/20'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    PI
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConnectionFilter('bn')}
+                    className={`px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
+                      connectionFilter === 'bn'
+                        ? 'bg-white text-indigo-700 shadow-xs border border-indigo-200 font-bold ring-1 ring-indigo-500/20'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    BN
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Ownership Filter Group */}
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 p-1 rounded-xl">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-2 select-none">
-                {isMs ? 'Kontrak' : 'Contract'}
-              </span>
+              {/* Ownership Filter Group */}
+              <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/80 p-1 rounded-xl shrink-0">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-1.5 select-none hidden sm:inline">
+                  {isMs ? 'Kontrak' : 'Contract'}
+                </span>
               <div className="flex items-center gap-0.5 text-xs">
                 <button
                   type="button"
                   onClick={() => setOwnershipFilter('all')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  className={`px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
                     ownershipFilter === 'all'
                       ? 'bg-white text-slate-900 shadow-xs border border-slate-200/70 font-bold'
                       : 'text-slate-500 hover:text-slate-800'
@@ -232,71 +263,69 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                 <button
                   type="button"
                   onClick={() => setOwnershipFilter('loan')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  className={`px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
                     ownershipFilter === 'loan'
                       ? 'bg-white text-amber-700 shadow-xs border border-amber-200 font-bold ring-1 ring-amber-500/20'
                       : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
-                  {isMs ? 'Pinjaman' : 'Loan'}
+                  {isMs ? 'Pinjam' : 'Loan'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setOwnershipFilter('private')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  className={`px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
                     ownershipFilter === 'private'
                       ? 'bg-white text-emerald-700 shadow-xs border border-emerald-200 font-bold ring-1 ring-emerald-500/20'
                       : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
-                  {isMs ? 'Hak Milik' : 'Private'}
+                  {isMs ? 'Milik' : 'Private'}
                 </button>
               </div>
             </div>
-
-            {/* Subtle Divider */}
-            <div className="hidden 2xl:block h-6 w-px bg-slate-200 mx-1" />
+          </div>
 
             {/* Unified View Mode Switcher */}
-            <div className="flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 text-xs">
+            <div className="flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 text-xs shrink-0">
               <button
                 type="button"
                 onClick={() => setViewMode('pipeline')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                   viewMode === 'pipeline'
-                    ? 'bg-white text-blue-700 shadow-xs border border-slate-200/70 font-bold'
+                    ? 'bg-white text-teal-700 shadow-xs border border-slate-200/70 font-bold'
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
-                title={isMs ? "Paparan Aliran Kitaran Hayat (Pipeline Flow)" : "Movement Pipeline Telemetry Flow"}
+                title={isMs ? "Paparan Aliran (Pipeline)" : "Pipeline Flow"}
               >
-                <GitCommit className="w-3.5 h-3.5 text-blue-600" />
-                <span>{isMs ? 'Aliran' : 'Pipeline'}</span>
+                <GitCommit className="w-3.5 h-3.5 text-teal-600" />
+                <span className="hidden sm:inline">{isMs ? 'Aliran' : 'Pipeline'}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                   viewMode === 'grid'
-                    ? 'bg-white text-blue-700 shadow-xs border border-slate-200/70 font-bold'
+                    ? 'bg-white text-teal-700 shadow-xs border border-slate-200/70 font-bold'
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
-                title={isMs ? "Paparan Kad Telemetri" : "Telemetry Grid Cards"}
+                title={isMs ? "Paparan Kad" : "Cards Grid"}
               >
                 <LayoutGrid className="w-3.5 h-3.5 text-slate-600" />
-                <span>{isMs ? 'Kad' : 'Cards'}</span>
+                <span className="hidden sm:inline">{isMs ? 'Kad' : 'Cards'}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setViewMode('table')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                   viewMode === 'table'
-                    ? 'bg-white text-blue-700 shadow-xs border border-slate-200/70 font-bold'
+                    ? 'bg-white text-teal-700 shadow-xs border border-slate-200/70 font-bold'
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
-                title={isMs ? "Paparan Jadual Padat" : "Dense Data Matrix Table"}
+                title={isMs ? "Paparan Jadual" : "Data Table"}
               >
                 <List className="w-3.5 h-3.5 text-slate-600" />
-                <span>{isMs ? 'Jadual' : 'Table'}</span>
+                <span className="hidden sm:inline">{isMs ? 'Jadual' : 'Table'}</span>
               </button>
             </div>
 
@@ -304,18 +333,18 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
         </div>
 
         {/* ROW 2: EXECUTIVE FLEET TELEMETRY STATUS DASHBOARD (5 INTERACTIVE CARDS) */}
-        <div className="pt-3 border-t border-slate-100 space-y-3">
+        <div className="pt-2.5 border-t border-slate-100 space-y-2.5">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                {isMs ? 'Status Armada Silinder Semasa' : 'Current Cylinder Fleet Status'}
+              <span className="text-xs font-bold text-slate-800">
+                {isMs ? 'Status Armada Silinder' : 'Fleet Status'}
               </span>
               <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
-                {filteredData.length} {isMs ? 'Jenis Silinder' : 'Cylinder Types'}
+                {filteredData.length} {isMs ? 'Jenis' : 'Types'}
               </span>
               {statusFilter !== 'all' && (
-                <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 animate-pulse">
-                  {isMs ? 'Ditapis mengikut status' : 'Filtered by status'}
+                <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200 animate-pulse">
+                  {isMs ? 'Ditapis' : 'Filtered'}
                 </span>
               )}
             </div>
@@ -324,22 +353,22 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
               <button
                 type="button"
                 onClick={handleResetAll}
-                className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 px-2.5 py-1 rounded-lg transition-colors cursor-pointer border border-slate-200"
+                className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 px-2 py-0.5 rounded-lg transition-colors cursor-pointer border border-slate-200"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>{isMs ? 'Set Semula Semua Tapisan' : 'Reset All Filters'}</span>
+                <span className="text-[11px]">{isMs ? 'Set Semula' : 'Reset'}</span>
               </button>
             )}
           </div>
 
-          {/* 5-Card Responsive Metric Grid (Compact High-Density) */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5">
+          {/* 5-Card Responsive Metric Grid (Clean Responsive Grid on Mobile, 5-Col on Desktop - Zero Horizontal Cutoff) */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 py-0.5">
             
-            {/* Card 1: Total Fleet */}
+            {/* Card 1: Total Fleet (Full Width on Mobile, 1-Col on Desktop) */}
             <button
               type="button"
               onClick={() => setStatusFilter('all')}
-              className={`px-3 py-2 rounded-xl border text-left transition-all relative group cursor-pointer ${
+              className={`col-span-2 sm:col-span-1 min-w-0 px-3.5 py-2.5 rounded-xl border text-left transition-all relative group cursor-pointer ${
                 statusFilter === 'all'
                   ? 'bg-slate-900 text-white border-slate-800 shadow-xs ring-2 ring-slate-900/20'
                   : 'bg-slate-50/70 border-slate-200/80 text-slate-800 hover:bg-slate-100 hover:border-slate-300'
@@ -349,10 +378,10 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                 <div className="flex items-center gap-1.5 min-w-0">
                   <Layers className={`w-3.5 h-3.5 shrink-0 ${statusFilter === 'all' ? 'text-slate-300' : 'text-slate-500'}`} />
                   <span className={`text-[11px] font-bold truncate ${statusFilter === 'all' ? 'text-slate-200' : 'text-slate-700'}`}>
-                    {isMs ? 'Jumlah Armada' : 'Total Fleet'}
+                    {isMs ? 'Total Fleet' : 'Total Fleet'}
                   </span>
                 </div>
-                <span className={`text-[9px] font-extrabold uppercase px-1 py-0.2 rounded shrink-0 ${
+                <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded shrink-0 ${
                   statusFilter === 'all' ? 'bg-slate-800 text-slate-300' : 'bg-slate-200 text-slate-600'
                 }`}>
                   100%
@@ -364,7 +393,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
               <div className={`text-[10px] font-medium truncate ${
                 statusFilter === 'all' ? 'text-slate-400' : 'text-slate-500'
               }`}>
-                {isMs ? 'Semua Silinder' : 'All Cylinders'}
+                {isMs ? 'Semua Silinder Berdaftar' : 'All Registered Cylinders'}
               </div>
             </button>
 
@@ -372,7 +401,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
             <button
               type="button"
               onClick={() => setStatusFilter(statusFilter === 'available' ? 'all' : 'available')}
-              className={`px-3 py-2 rounded-xl border text-left transition-all relative group cursor-pointer ${
+              className={`col-span-1 min-w-0 px-3 py-2 rounded-xl border text-left transition-all relative group cursor-pointer ${
                 statusFilter === 'available'
                   ? 'bg-emerald-600 text-white border-emerald-700 shadow-xs ring-2 ring-emerald-600/30'
                   : 'bg-emerald-50/50 border-emerald-200/80 text-emerald-950 hover:bg-emerald-100/60 hover:border-emerald-300'
@@ -382,7 +411,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                 <div className="flex items-center gap-1.5 min-w-0">
                   <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 ${statusFilter === 'available' ? 'text-emerald-200' : 'text-emerald-600'}`} />
                   <span className={`text-[11px] font-bold truncate ${statusFilter === 'available' ? 'text-emerald-100' : 'text-emerald-900'}`}>
-                    {isMs ? 'Stok Stor' : 'Store Available'}
+                    {isMs ? 'Stok Stor' : 'Store Stock'}
                   </span>
                 </div>
                 <span className={`text-[9px] font-extrabold uppercase px-1 py-0.2 rounded shrink-0 ${
@@ -407,7 +436,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
             <button
               type="button"
               onClick={() => setStatusFilter(statusFilter === 'in_use' ? 'all' : 'in_use')}
-              className={`px-3 py-2 rounded-xl border text-left transition-all relative group cursor-pointer ${
+              className={`col-span-1 min-w-0 px-3 py-2 rounded-xl border text-left transition-all relative group cursor-pointer ${
                 statusFilter === 'in_use'
                   ? 'bg-blue-600 text-white border-blue-700 shadow-xs ring-2 ring-blue-600/30'
                   : 'bg-blue-50/50 border-blue-200/80 text-blue-950 hover:bg-blue-100/60 hover:border-blue-300'
@@ -442,7 +471,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
             <button
               type="button"
               onClick={() => setStatusFilter(statusFilter === 'empty' ? 'all' : 'empty')}
-              className={`px-3 py-2 rounded-xl border text-left transition-all relative group cursor-pointer ${
+              className={`col-span-1 min-w-0 px-3 py-2 rounded-xl border text-left transition-all relative group cursor-pointer ${
                 statusFilter === 'empty'
                   ? 'bg-amber-600 text-white border-amber-700 shadow-xs ring-2 ring-amber-600/30'
                   : 'bg-amber-50/50 border-amber-200/80 text-amber-950 hover:bg-amber-100/60 hover:border-amber-300'
@@ -452,7 +481,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                 <div className="flex items-center gap-1.5 min-w-0">
                   <AlertTriangle className={`w-3.5 h-3.5 shrink-0 ${statusFilter === 'empty' ? 'text-amber-200' : 'text-amber-600'}`} />
                   <span className={`text-[11px] font-bold truncate ${statusFilter === 'empty' ? 'text-amber-100' : 'text-amber-900'}`}>
-                    {isMs ? 'Silinder Kosong' : 'Depleted Empty'}
+                    {isMs ? 'Kosong' : 'Depleted'}
                   </span>
                 </div>
                 <span className={`text-[9px] font-extrabold uppercase px-1 py-0.2 rounded shrink-0 ${
@@ -477,7 +506,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
             <button
               type="button"
               onClick={() => setStatusFilter(statusFilter === 'returned' ? 'all' : 'returned')}
-              className={`px-3 py-2 rounded-xl border text-left transition-all relative group cursor-pointer ${
+              className={`col-span-1 min-w-0 px-3 py-2 rounded-xl border text-left transition-all relative group cursor-pointer ${
                 statusFilter === 'returned'
                   ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs ring-2 ring-indigo-600/30'
                   : 'bg-indigo-50/50 border-indigo-200/80 text-indigo-950 hover:bg-indigo-100/60 hover:border-indigo-300'
@@ -487,7 +516,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                 <div className="flex items-center gap-1.5 min-w-0">
                   <Truck className={`w-3.5 h-3.5 shrink-0 ${statusFilter === 'returned' ? 'text-indigo-200' : 'text-indigo-600'}`} />
                   <span className={`text-[11px] font-bold truncate ${statusFilter === 'returned' ? 'text-indigo-100' : 'text-indigo-900'}`}>
-                    {isMs ? 'Pulang Pembekal' : 'Supplier Returned'}
+                    {isMs ? 'Pembekal' : 'Supplier'}
                   </span>
                 </div>
                 <span className={`text-[9px] font-extrabold uppercase px-1 py-0.2 rounded shrink-0 ${
@@ -521,11 +550,11 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
             <Database className="w-6 h-6" />
           </div>
           <h3 className="text-base font-bold text-slate-800">
-            {isMs ? 'Tiada Rekod Silinder Dijumpai' : 'No Cylinder Records Found'}
+            {isMs ? 'No Cylinder Records Found' : 'No Cylinder Records Found'}
           </h3>
           <p className="text-xs text-slate-500 max-w-md mx-auto">
             {isMs 
-              ? 'Tiada rekod silinder yang sepadan dengan carian atau tapisan status semasa.' 
+              ? 'No cylinder records match current search or status filter.' 
               : 'No cylinder assets match the selected search or active status filters.'}
           </p>
           <div className="pt-2">
@@ -548,14 +577,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
         <div className="space-y-2">
           {filteredData.map((combo) => {
             const isLoan = combo.display_name.toLowerCase().includes('loan');
-            const isPinIndex = 
-              combo.type_code === 'PI' || 
-              combo.type_name?.toLowerCase().includes('pin') || 
-              combo.display_name.toLowerCase().includes('pi') || 
-              combo.display_name.toLowerCase().includes('- d') || 
-              combo.display_name.toLowerCase().includes('- e') || 
-              combo.display_name.toLowerCase().includes('101 - f') || 
-              combo.display_name.toLowerCase().includes('101-f');
+            const isPinIndex = isCylinderPinIndex(combo);
             const connectionType = isPinIndex ? 'Pin Index (PI)' : 'Bullnose (BN)';
             
             const comboTotal = combo.total > 0 ? combo.total : 1;
@@ -676,13 +698,13 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                   </div>
 
                   {/* Compact Actions */}
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     {onQuickIssue && (
                       <button
                         type="button"
                         onClick={() => onQuickIssue(combo)}
                         disabled={combo.available <= 0}
-                        className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-25 text-white rounded-md text-[11px] font-bold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center gap-1"
+                        className="px-2.5 py-1 bg-[#008f76] hover:bg-[#007a65] disabled:opacity-30 text-white rounded-md text-[11px] font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center gap-1"
                         title={isMs ? "Bekal ke Wad" : "Issue to Ward"}
                       >
                         <Zap className="w-3 h-3" />
@@ -694,10 +716,10 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                         type="button"
                         onClick={() => onQuickScanEmpty(combo)}
                         disabled={combo.in_use <= 0}
-                        className="px-2 py-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-25 text-white rounded-md text-[11px] font-bold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center gap-1"
+                        className="px-2.5 py-1 bg-white hover:bg-slate-50 disabled:opacity-30 text-slate-700 border border-slate-200/90 rounded-md text-[11px] font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center gap-1"
                         title={isMs ? "Rekod Kosong" : "Mark Depleted"}
                       >
-                        <AlertTriangle className="w-3 h-3" />
+                        <AlertTriangle className="w-3 h-3 text-amber-600" />
                         <span>{isMs ? 'Kosong' : 'Deplete'}</span>
                       </button>
                     )}
@@ -706,10 +728,10 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                         type="button"
                         onClick={() => onQuickCreateReturn(combo)}
                         disabled={combo.empty <= 0}
-                        className="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-25 text-white rounded-md text-[11px] font-bold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center gap-1"
-                        title={isMs ? "Borang Pulang ke Pembekal" : "Create Return Doc"}
+                        className="px-2.5 py-1 bg-white hover:bg-slate-50 disabled:opacity-30 text-slate-700 border border-slate-200/90 rounded-md text-[11px] font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center gap-1"
+                        title={isMs ? "Supplier Return Form" : "Create Return Doc"}
                       >
-                        <Truck className="w-3 h-3" />
+                        <Truck className="w-3 h-3 text-indigo-600" />
                         <span>{isMs ? 'Pulang' : 'Return'}</span>
                       </button>
                     )}
@@ -728,14 +750,7 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4">
           {filteredData.map((combo) => {
             const isLoan = combo.display_name.toLowerCase().includes('loan');
-            const isPinIndex = 
-              combo.type_code === 'PI' || 
-              combo.type_name?.toLowerCase().includes('pin') || 
-              combo.display_name.toLowerCase().includes('pi') || 
-              combo.display_name.toLowerCase().includes('- d') || 
-              combo.display_name.toLowerCase().includes('- e') || 
-              combo.display_name.toLowerCase().includes('101 - f') || 
-              combo.display_name.toLowerCase().includes('101-f');
+            const isPinIndex = isCylinderPinIndex(combo);
             const connectionType = isPinIndex ? 'Pin Index (PI)' : 'Bullnose (BN)';
 
             const comboTotal = combo.total > 0 ? combo.total : 1;
@@ -836,9 +851,9 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                       type="button"
                       onClick={() => onQuickIssue(combo)}
                       disabled={combo.available <= 0}
-                      className="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 text-white rounded-lg text-[11px] font-bold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1"
+                      className="flex-1 py-1.5 px-2 bg-[#008f76] hover:bg-[#007a65] disabled:opacity-30 text-white rounded-lg text-xs font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1"
                     >
-                      <Zap className="w-3 h-3" />
+                      <Zap className="w-3.5 h-3.5" />
                       <span>{isMs ? 'Bekal' : 'Issue'}</span>
                     </button>
                   )}
@@ -847,9 +862,9 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                       type="button"
                       onClick={() => onQuickScanEmpty(combo)}
                       disabled={combo.in_use <= 0}
-                      className="flex-1 py-1.5 px-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white rounded-lg text-[11px] font-bold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1"
+                      className="flex-1 py-1.5 px-2 bg-white hover:bg-slate-50 disabled:opacity-30 text-slate-700 border border-slate-200/90 rounded-lg text-xs font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1"
                     >
-                      <AlertTriangle className="w-3 h-3" />
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
                       <span>{isMs ? 'Kosong' : 'Deplete'}</span>
                     </button>
                   )}
@@ -858,9 +873,9 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
                       type="button"
                       onClick={() => onQuickCreateReturn(combo)}
                       disabled={combo.empty <= 0}
-                      className="flex-1 py-1.5 px-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-30 text-white rounded-lg text-[11px] font-bold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1"
+                      className="flex-1 py-1.5 px-2 bg-white hover:bg-slate-50 disabled:opacity-30 text-slate-700 border border-slate-200/90 rounded-lg text-xs font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1"
                     >
-                      <Truck className="w-3 h-3" />
+                      <Truck className="w-3.5 h-3.5 text-indigo-600" />
                       <span>{isMs ? 'Pulang' : 'Return'}</span>
                     </button>
                   )}
@@ -872,93 +887,189 @@ export const StoreBalanceGrid: React.FC<StoreBalanceGridProps> = ({
       )}
 
       {/* ========================================================================= */}
-      {/* VIEW 3: DENSE DATA MATRIX TABLE (SPACE-EFFICIENT)                         */}
+      {/* ========================================================================= */}
+      {/* VIEW 3: DENSE DATA MATRIX TABLE & ADAPTIVE MOBILE CARDS                   */}
       {/* ========================================================================= */}
       {viewMode === 'table' && filteredData.length > 0 && (
-        <div className="bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-700">
-              <thead className="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
-                <tr>
-                  <th className="px-4 py-2.5 font-bold">{isMs ? 'Jenis Silinder' : 'Cylinder SKU'}</th>
-                  <th className="px-4 py-2.5 font-bold">{isMs ? 'Injap' : 'Valve'}</th>
-                  <th className="px-4 py-2.5 font-bold">{isMs ? 'Kontrak' : 'Contract'}</th>
-                  <th className="px-4 py-2.5 font-bold text-emerald-700 text-center">{isMs ? 'Stor' : 'Store'}</th>
-                  <th className="px-4 py-2.5 font-bold text-blue-700 text-center">{isMs ? 'Di Wad' : 'In Use'}</th>
-                  <th className="px-4 py-2.5 font-bold text-amber-700 text-center">{isMs ? 'Kosong' : 'Empty'}</th>
-                  <th className="px-4 py-2.5 font-bold text-indigo-700 text-center">{isMs ? 'Pulang' : 'Returned'}</th>
-                  <th className="px-4 py-2.5 font-bold text-center">{isMs ? 'Armada' : 'Fleet Total'}</th>
-                  <th className="px-4 py-2.5 font-bold text-right">{isMs ? 'Tindakan' : 'Actions'}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredData.map((combo) => {
-                  const isLoan = combo.display_name.toLowerCase().includes('loan');
-                  const isPinIndex = 
-                    combo.type_code === 'PI' || 
-                    combo.type_name?.toLowerCase().includes('pin') || 
-                    combo.display_name.toLowerCase().includes('pi') || 
-                    combo.display_name.toLowerCase().includes('- d') || 
-                    combo.display_name.toLowerCase().includes('- e') || 
-                    combo.display_name.toLowerCase().includes('101 - f') || 
-                    combo.display_name.toLowerCase().includes('101-f');
-                  const connectionType = isPinIndex ? 'Pin Index (PI)' : 'Bullnose (BN)';
+        <div className="space-y-3">
+          {/* Mobile-Friendly Adaptive Cards (Zero Horizontal Scroll on Mobile Screens) */}
+          <div className="md:hidden space-y-2.5">
+            {filteredData.map((combo) => {
+              const isLoan = combo.display_name.toLowerCase().includes('loan');
+              const isPinIndex = isCylinderPinIndex(combo);
+              const connectionType = isPinIndex ? 'Pin Index (PI)' : 'Bullnose (BN)';
 
-                  return (
-                    <tr key={combo.combo_id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="px-4 py-2.5 font-bold text-slate-900">{combo.display_name}</td>
-                      <td className="px-4 py-2.5 font-mono text-[11px] text-slate-600">{connectionType}</td>
-                      <td className="px-4 py-2.5">
-                        <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold uppercase border ${
+              return (
+                <div 
+                  key={combo.combo_id}
+                  className="bg-white border border-slate-200/90 rounded-xl p-3.5 shadow-2xs space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-slate-900 tracking-tight truncate">
+                        {combo.display_name}
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span className="text-[10px] font-mono font-medium text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+                          {connectionType}
+                        </span>
+                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border ${
                           isLoan ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                         }`}>
                           {isLoan ? (isMs ? 'Pinjaman' : 'Loan') : (isMs ? 'Hak Milik' : 'Private')}
                         </span>
-                      </td>
-                      <td className="px-4 py-2.5 font-black text-emerald-700 text-xs tabular-nums font-mono text-center">{combo.available}</td>
-                      <td className="px-4 py-2.5 font-black text-blue-700 text-xs tabular-nums font-mono text-center">{combo.in_use}</td>
-                      <td className="px-4 py-2.5 font-black text-amber-700 text-xs tabular-nums font-mono text-center">{combo.empty}</td>
-                      <td className="px-4 py-2.5 font-black text-indigo-700 text-xs tabular-nums font-mono text-center">{combo.returned}</td>
-                      <td className="px-4 py-2.5 font-black text-slate-900 text-xs tabular-nums font-mono text-center">{combo.total}</td>
-                      <td className="px-4 py-2.5 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          {onQuickIssue && (
-                            <button
-                              type="button"
-                              onClick={() => onQuickIssue(combo)}
-                              disabled={combo.available <= 0}
-                              className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-25 text-white rounded text-[10px] font-bold cursor-pointer disabled:cursor-not-allowed"
-                            >
-                              {isMs ? 'Bekal' : 'Issue'}
-                            </button>
-                          )}
-                          {onQuickScanEmpty && (
-                            <button
-                              type="button"
-                              onClick={() => onQuickScanEmpty(combo)}
-                              disabled={combo.in_use <= 0}
-                              className="px-2 py-0.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-25 text-white rounded text-[10px] font-bold cursor-pointer disabled:cursor-not-allowed"
-                            >
-                              {isMs ? 'Kosong' : 'Deplete'}
-                            </button>
-                          )}
-                          {onQuickCreateReturn && (
-                            <button
-                              type="button"
-                              onClick={() => onQuickCreateReturn(combo)}
-                              disabled={combo.empty <= 0}
-                              className="px-2 py-0.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-25 text-white rounded text-[10px] font-bold cursor-pointer disabled:cursor-not-allowed"
-                            >
-                              {isMs ? 'Pulang' : 'Return'}
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-[10px] text-slate-400 uppercase font-semibold">
+                        {isMs ? 'Armada' : 'Fleet Total'}
+                      </div>
+                      <div className="text-sm font-bold font-mono text-slate-900 tabular-nums">
+                        {combo.total}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 4-Stage Metric Grid */}
+                  <div className="grid grid-cols-4 gap-1.5 py-2 px-2.5 bg-slate-50/80 rounded-lg border border-slate-100 text-center">
+                    <div>
+                      <div className="text-[10px] font-semibold text-emerald-800">{isMs ? 'Stor' : 'Store'}</div>
+                      <div className="text-xs font-bold font-mono text-emerald-950 tabular-nums mt-0.5">{combo.available}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-semibold text-blue-800">{isMs ? 'Di Wad' : 'In Use'}</div>
+                      <div className="text-xs font-bold font-mono text-blue-950 tabular-nums mt-0.5">{combo.in_use}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-semibold text-amber-800">{isMs ? 'Kosong' : 'Empty'}</div>
+                      <div className="text-xs font-bold font-mono text-amber-950 tabular-nums mt-0.5">{combo.empty}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-semibold text-indigo-800">{isMs ? 'Pulang' : 'Supplier'}</div>
+                      <div className="text-xs font-bold font-mono text-indigo-950 tabular-nums mt-0.5">{combo.returned}</div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-1.5 pt-0.5">
+                    {onQuickIssue && (
+                      <button
+                        type="button"
+                        onClick={() => onQuickIssue(combo)}
+                        disabled={combo.available <= 0}
+                        className="flex-1 py-1.5 px-2 bg-[#008f76] hover:bg-[#007a65] disabled:opacity-30 text-white rounded-lg text-xs font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1"
+                      >
+                        <Zap className="w-3.5 h-3.5" />
+                        <span>{isMs ? 'Bekal' : 'Issue'}</span>
+                      </button>
+                    )}
+                    {onQuickScanEmpty && (
+                      <button
+                        type="button"
+                        onClick={() => onQuickScanEmpty(combo)}
+                        disabled={combo.in_use <= 0}
+                        className="flex-1 py-1.5 px-2 bg-white hover:bg-slate-50 disabled:opacity-30 text-slate-700 border border-slate-200/90 rounded-lg text-xs font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1"
+                      >
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                        <span>{isMs ? 'Kosong' : 'Deplete'}</span>
+                      </button>
+                    )}
+                    {onQuickCreateReturn && (
+                      <button
+                        type="button"
+                        onClick={() => onQuickCreateReturn(combo)}
+                        disabled={combo.empty <= 0}
+                        className="flex-1 py-1.5 px-2 bg-white hover:bg-slate-50 disabled:opacity-30 text-slate-700 border border-slate-200/90 rounded-lg text-xs font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1"
+                      >
+                        <Truck className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>{isMs ? 'Pulang' : 'Return'}</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View (Sticky First Column for Effortless Readability) */}
+          <div className="hidden md:block bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-700">
+                <thead className="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                  <tr>
+                    <th className="sticky left-0 z-20 bg-slate-50 px-4 py-2.5 font-bold shadow-[2px_0_4px_-1px_rgba(0,0,0,0.06)] border-r border-slate-200">{isMs ? 'Jenis Silinder' : 'Cylinder SKU'}</th>
+                    <th className="px-4 py-2.5 font-bold">{isMs ? 'Injap' : 'Valve'}</th>
+                    <th className="px-4 py-2.5 font-bold">{isMs ? 'Kontrak' : 'Contract'}</th>
+                    <th className="px-4 py-2.5 font-bold text-emerald-700 text-center">{isMs ? 'Stor' : 'Store'}</th>
+                    <th className="px-4 py-2.5 font-bold text-blue-700 text-center">{isMs ? 'Di Wad' : 'In Use'}</th>
+                    <th className="px-4 py-2.5 font-bold text-amber-700 text-center">{isMs ? 'Kosong' : 'Empty'}</th>
+                    <th className="px-4 py-2.5 font-bold text-indigo-700 text-center">{isMs ? 'Pulang' : 'Returned'}</th>
+                    <th className="px-4 py-2.5 font-bold text-center">{isMs ? 'Armada' : 'Fleet Total'}</th>
+                    <th className="px-4 py-2.5 font-bold text-right">{isMs ? 'Tindakan' : 'Actions'}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredData.map((combo) => {
+                    const isLoan = combo.display_name.toLowerCase().includes('loan');
+                    const isPinIndex = isCylinderPinIndex(combo);
+                    const connectionType = isPinIndex ? 'Pin Index (PI)' : 'Bullnose (BN)';
+
+                    return (
+                      <tr key={combo.combo_id} className="hover:bg-slate-50/70 transition-colors group">
+                        <td className="sticky left-0 z-10 bg-white group-hover:bg-slate-50 px-4 py-2.5 font-bold text-slate-900 shadow-[2px_0_4px_-1px_rgba(0,0,0,0.06)] border-r border-slate-200">{combo.display_name}</td>
+                        <td className="px-4 py-2.5 font-mono text-[11px] text-slate-600">{connectionType}</td>
+                        <td className="px-4 py-2.5">
+                          <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold uppercase border ${
+                            isLoan ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                          }`}>
+                            {isLoan ? (isMs ? 'Pinjaman' : 'Loan') : (isMs ? 'Hak Milik' : 'Private')}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2.5 font-bold text-emerald-700 text-xs tabular-nums font-mono text-center">{combo.available}</td>
+                        <td className="px-4 py-2.5 font-bold text-blue-700 text-xs tabular-nums font-mono text-center">{combo.in_use}</td>
+                        <td className="px-4 py-2.5 font-bold text-amber-700 text-xs tabular-nums font-mono text-center">{combo.empty}</td>
+                        <td className="px-4 py-2.5 font-bold text-indigo-700 text-xs tabular-nums font-mono text-center">{combo.returned}</td>
+                        <td className="px-4 py-2.5 font-bold text-slate-900 text-xs tabular-nums font-mono text-center">{combo.total}</td>
+                        <td className="px-4 py-2.5 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            {onQuickIssue && (
+                              <button
+                                type="button"
+                                onClick={() => onQuickIssue(combo)}
+                                disabled={combo.available <= 0}
+                                className="px-2.5 py-1 bg-[#008f76] hover:bg-[#007a65] disabled:opacity-25 text-white rounded-md text-[11px] font-semibold transition-all shadow-2xs cursor-pointer disabled:cursor-not-allowed"
+                              >
+                                {isMs ? 'Bekal' : 'Issue'}
+                              </button>
+                            )}
+                            {onQuickScanEmpty && (
+                              <button
+                                type="button"
+                                onClick={() => onQuickScanEmpty(combo)}
+                                disabled={combo.in_use <= 0}
+                                className="px-2.5 py-1 bg-white hover:bg-slate-50 disabled:opacity-25 text-slate-700 border border-slate-200/90 rounded-md text-[11px] font-semibold transition-all shadow-2xs cursor-pointer disabled:cursor-not-allowed"
+                              >
+                                {isMs ? 'Kosong' : 'Deplete'}
+                              </button>
+                            )}
+                            {onQuickCreateReturn && (
+                              <button
+                                type="button"
+                                onClick={() => onQuickCreateReturn(combo)}
+                                disabled={combo.empty <= 0}
+                                className="px-2.5 py-1 bg-white hover:bg-slate-50 disabled:opacity-25 text-slate-700 border border-slate-200/90 rounded-md text-[11px] font-semibold transition-all shadow-2xs cursor-pointer disabled:cursor-not-allowed"
+                              >
+                                {isMs ? 'Pulang' : 'Return'}
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

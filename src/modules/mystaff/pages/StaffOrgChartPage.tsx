@@ -1267,10 +1267,10 @@ export function StaffOrgChartPage() {
               <button
                 onClick={() => window.print()}
                 className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 shadow-lg shadow-indigo-500/20 transition-all duration-150 hover:scale-[1.02] active:scale-[0.98]"
-                title={isMs ? "Cetak Carta Organisasi Rasmi (PDF Landscape)" : "Print Official Org Chart (PDF Landscape)"}
+                title={isMs ? "Print Official Organization Chart (PDF Landscape)" : "Print Official Org Chart (PDF Landscape)"}
               >
                 <Printer className="w-4 h-4 text-white" />
-                <span>{isMs ? 'Cetak PDF' : 'Print PDF'}</span>
+                <span>{isMs ? 'Print PDF' : 'Print PDF'}</span>
               </button>
             )}
           </div>
@@ -1279,7 +1279,7 @@ export function StaffOrgChartPage() {
         {/* ── STATS ROW ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: isMs ? 'Jumlah Posisi' : 'Total Positions', value: stats.total, color: '#6366f1', icon: Users },
+            { label: isMs ? 'Total Positions' : 'Total Positions', value: stats.total, color: '#6366f1', icon: Users },
             { label: isMs ? 'Hadir Bertugas' : 'Present On Duty', value: stats.active, color: '#22c55e', icon: CheckCircle2 },
             { label: isMs ? 'Jawatan Kosong' : 'Vacant Positions', value: stats.vacant, color: '#f59e0b', icon: UserX },
             { label: isMs ? 'Cuti / Tugas Luar' : 'Leave / Outstation', value: stats.leave + stats.movement, color: '#ef4444', icon: Palmtree },
@@ -1726,7 +1726,7 @@ export function StaffOrgChartPage() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white">
-                      {isAddingNew ? 'Tambah Posisi Baharu' : 'Kemaskini Posisi'}
+                      {isAddingNew ? 'Tambah Posisi Baharu' : 'Update Position'}
                     </h3>
                     <p className="text-xs text-slate-300 mt-0.5">Pilih pegawai, kemaskini peranan, dan tetapkan pelaporan</p>
                   </div>
@@ -1916,7 +1916,7 @@ export function StaffOrgChartPage() {
               <span className="font-mono font-bold text-slate-900">HLWS/FARM/ORG/2026-V2</span>
             </div>
             <div className="flex justify-between gap-2 border-b border-slate-200 pb-1">
-              <span className="text-slate-500 font-semibold">Tarikh Cetakan:</span>
+              <span className="text-slate-500 font-semibold">Print Date:</span>
               <span className="font-bold text-slate-900">{currentDateStr}</span>
             </div>
             <div className="flex justify-between gap-2 border-b border-slate-200 pb-1">

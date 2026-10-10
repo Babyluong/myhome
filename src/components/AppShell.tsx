@@ -139,8 +139,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 			<div className={`h-screen overflow-y-auto transition-all duration-300 lg:ml-72`} suppressHydrationWarning>
 				{/* Top Header */}
-				<header className={`sticky top-0 right-0 left-0 h-16 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-xl flex items-center px-4 md:px-6 z-40 shadow-xl ${mounted ? 'animate-slide-in-top' : ''}`}>
-					<div className="flex items-center justify-between w-full">
+				<header className={`sticky top-0 right-0 left-0 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-xl z-40 shadow-xl header-safe-pt ${mounted ? 'animate-slide-in-top' : ''}`}>
+					<div className="flex items-center justify-between w-full h-16 px-4 md:px-6">
 						<div className="flex items-center gap-4">
 							<button 
 								onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

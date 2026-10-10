@@ -52,7 +52,9 @@ import {
   Truck,
   FileCheck,
   PackageCheck,
-  RotateCcw
+  RotateCcw,
+  Receipt,
+  Pencil
 } from 'lucide-react'
 import { ROUTES } from '@/shared/constants/routes'
 import { useAuthStore } from '@/stores/authStore'
@@ -84,6 +86,9 @@ import { DispatchRequestDetailModal } from '@/components/oxygen/DispatchRequestD
 import { CylinderDispatchPrintView } from '@/components/oxygen/CylinderDispatchPrintView'
 import { DeleteDispatchConfirmModal } from '@/components/oxygen/DeleteDispatchConfirmModal'
 import { DeleteCylinderModal } from '@/components/oxygen/DeleteCylinderModal'
+import { EditCylinderModal } from '@/components/oxygen/EditCylinderModal'
+import { CylinderOfflineBanner } from '@/components/oxygen/CylinderOfflineBanner'
+import { cylinderSyncEngine } from '../../services/cylinderSyncEngine'
 import { CylinderQrTag } from '../../components/CylinderQrTag'
 import {
   getCylinderDispatchRequests,
@@ -133,6 +138,7 @@ import {
   updateOxygenReceptionArrival,
   deleteOxygenCylinder,
   deleteOxygenCylindersBatch,
+  updateCylinderValveType,
 } from '@/services/pharmacy/oxygenService'
 import { 
   generateOxygenPoPdf, 
@@ -400,6 +406,7 @@ export const OxygenDashboardPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [ledgerViewMode, setLedgerViewMode] = useState<'detailed' | 'monthly'>('detailed')
   const [monthlyCurrentPage, setMonthlyCurrentPage] = useState(1)
+  const [entriesPerPage, setEntriesPerPage] = useState<number>(10)
   const [isMonthlyModalOpen, setIsMonthlyModalOpen] = useState(false)
   const [selectedConsolidateMonthKey, setSelectedConsolidateMonthKey] = useState<string>('')
   const [selectedPricingSupplier, setSelectedPricingSupplier] = useState<string>('All Suppliers')
@@ -408,6 +415,7 @@ export const OxygenDashboardPage: React.FC = () => {
   const [isAddingNewSupplier, setIsAddingNewSupplier] = useState<boolean>(false)
   const [editedLoanRates, setEditedLoanRates] = useState<Record<string, string>>({})
   const [selectedReceiveSupplier, setSelectedReceiveSupplier] = useState<string>('BORNEO INDAH SDN BHD')
+  const [receiveSupplyMode, setReceiveSupplyMode] = useState<'cyl' | 'vie'>('cyl')
 
   // Helper to group and consolidate reception entries by month (with vote code segregation)
   const getMonthlyConsolidatedReceptions = (receptions: OxygenReceptionRecord[], filterVote?: string) => {
@@ -452,7 +460,13 @@ export const OxygenDashboardPage: React.FC = () => {
       // VIE Tank receptions MUST be kept in a separate monthly group from cylinder receptions.
       // Use the is_vie_tank flag (derived at fetch time from reception items) as a discriminator
       // so they are never merged together regardless of vote code or date.
-      const supplyType = rec.is_vie_tank ? 'vie' : 'cyl'
+      const isVieRec = rec.is_vie_tank === true || (
+        Array.isArray((rec as any).items) && (rec as any).items.some((itm: any) => {
+          const code = (itm.size_info?.code || itm.size_code || itm.code || '').toLowerCase()
+          return code.includes('vie') || code.includes('liquid')
+        })
+      )
+      const supplyType = isVieRec ? 'vie' : 'cyl'
       const monthKey = `${baseMonth}_${recVote}_${supplyType}`
       const monthLabel = monthDateLabel
 
@@ -479,7 +493,7 @@ export const OxygenDashboardPage: React.FC = () => {
           monthLabel,
           entryCount: 1,
           records: [rec],
-          is_vie_tank: rec.is_vie_tank ?? false,
+          is_vie_tank: isVieRec,
           created_at: rec.created_at || ''
         }
       } else {
@@ -535,6 +549,22 @@ export const OxygenDashboardPage: React.FC = () => {
   const [arrivalDate, setArrivalDate] = useState(() => new Date().toISOString().split('T')[0])
   const [isSubmittingArrival, setIsSubmittingArrival] = useState(false)
 
+  // Pay Loan Charges (No Delivery / Standalone Rental Fee) Modal states
+  const [isPayLoanModalOpen, setIsPayLoanModalOpen] = useState(false)
+  const [loanInvoiceNo, setLoanInvoiceNo] = useState('')
+  const [loanBillingRef, setLoanBillingRef] = useState('')
+  const [loanBillingDate, setLoanBillingDate] = useState(() => new Date().toISOString().split('T')[0])
+  const [loanSupplier, setLoanSupplier] = useState('LINDE EOX SDN BHD (CAW. MIRI)')
+  const [loanVoteCode, setLoanVoteCode] = useState('24000')
+  const [loanVoteActivity, setLoanVoteActivity] = useState('020200')
+  const [loanStatus, setLoanStatus] = useState<'completed' | 'outstanding_po' | 'pending_invoice'>('completed')
+  const [loanItemQuantities, setLoanItemQuantities] = useState<Record<string, number>>({})
+  const [loanCustomRates, setLoanCustomRates] = useState<Record<string, number>>({})
+  const [loanRemarks, setLoanRemarks] = useState('')
+  const [isSubmittingLoanPayment, setIsSubmittingLoanPayment] = useState(false)
+  const [activeLoanCustody, setActiveLoanCustody] = useState<{ sizeCode: string; sizeObj: any; activeCount: number; rate: number }[]>([])
+  const [isLoadingCustody, setIsLoadingCustody] = useState(false)
+
   // Officer Signatures state
   const [signatures, setSignatures] = useState<PharmacyPOSignatures>({
     applicantName: 'KAMRIAH BT HAJI MAIL',
@@ -559,6 +589,8 @@ export const OxygenDashboardPage: React.FC = () => {
   const [previewVoteCode, setPreviewVoteCode] = useState<string>('080702')
   const [previewVoteActivity, setPreviewVoteActivity] = useState<string>('27402')
   const [previewTotalAmount, setPreviewTotalAmount] = useState<number>(0)
+  const [previewRefillAmount, setPreviewRefillAmount] = useState<number>(0)
+  const [previewLoanAmount, setPreviewLoanAmount] = useState<number>(0)
   const [dashboardVoteFilter, setDashboardVoteFilter] = useState<string>('all')
   const [availableVoteCodes, setAvailableVoteCodes] = useState<string[]>(['080702', '080600'])
   const [isSavingVoteCode, setIsSavingVoteCode] = useState<boolean>(false)
@@ -612,6 +644,7 @@ export const OxygenDashboardPage: React.FC = () => {
   const [deleteTargetRequest, setDeleteTargetRequest] = useState<CylinderDispatchRequestWithRelations | null>(null)
   const [deleteCylinderTarget, setDeleteCylinderTarget] = useState<OxygenCylinderWithRelations[] | null>(null)
   const [isDeletingCylinder, setIsDeletingCylinder] = useState(false)
+  const [editingCylinderTarget, setEditingCylinderTarget] = useState<OxygenCylinderWithRelations | null>(null)
 
   // Check if current user belongs to an "other unit" (wards, clinics, ICU, etc.) rather than Pharmacy / Administration
   const isOtherUnit = useMemo(() => {
@@ -749,7 +782,14 @@ export const OxygenDashboardPage: React.FC = () => {
     targetRecord: OxygenReceptionRecord | any,
     targetSupplierName: string
   ): Promise<OxygenPdfItem[]> => {
-    // 1. Gather all reception IDs for this record or month
+    // Check if target record or consolidated group represents a VIE Tank consolidation
+    const isVieConsolidation = Boolean(
+      targetRecord.is_vie_tank ||
+      (typeof targetRecord.monthKey === 'string' && targetRecord.monthKey.endsWith('_vie')) ||
+      (Array.isArray(targetRecord.records) && targetRecord.records.some((r: any) => r.is_vie_tank))
+    )
+
+    // 1. Gather all reception IDs for this record or month (matching supply type strictly)
     const idSet = new Set<string>()
 
     // Add direct targetRecord id if not a synthetic monthly key
@@ -772,10 +812,10 @@ export const OxygenDashboardPage: React.FC = () => {
       })
     }
 
-    // If monthKey is present, query ALL reception IDs for this month directly from DB for 100% completeness
+    // If idSet is empty but monthKey is present, query matching reception IDs for this month from DB
     const monthKey: string | undefined = targetRecord.monthKey
     const targetHospitalId = targetRecord.hospital_id || hospitalId
-    if (monthKey && targetHospitalId) {
+    if (idSet.size === 0 && monthKey && targetHospitalId) {
       const cleanMonth = monthKey.split('_')[0]
       const [yrStr, moStr] = cleanMonth.split('-')
       const year = parseInt(yrStr, 10)
@@ -829,8 +869,8 @@ export const OxygenDashboardPage: React.FC = () => {
     //    This is necessary because the schema stores 101-N cylinder type as is_loan=true
     //    but it also receives actual refill gas (at RM 250) plus a separate loan fee (at RM 15).
     const resolveIsLoan = (itm: any): boolean => {
-      const sizeCode = (itm.size_info?.code || '').toLowerCase()
-      if (sizeCode.includes('liquid') || sizeCode.includes('vie') || itm.size_info?.unit === 'm3') {
+      const sizeCode = (itm.size_info?.code || itm.size_code || '').toLowerCase()
+      if (sizeCode.includes('liquid') || sizeCode.includes('vie')) {
         return false
       }
       const sizeIsLoan: boolean = itm.size_info?.is_loan === true
@@ -839,7 +879,7 @@ export const OxygenDashboardPage: React.FC = () => {
       // For 101-N and 101-F (marked as loan sizes):
       // A loan FEE row has a very low unit_price (e.g. RM 15 for cylinder hire)
       // A refill row has the full gas price (e.g. RM 250 for 101-N refill)
-      const rawCode = itm.size_info?.code || ''
+      const rawCode = itm.size_info?.code || itm.size_code || ''
       const unitPrice = Number(itm.unit_price || 0)
       const knownLoanRate = supplierLoanRates[rawCode] ?? 0
 
@@ -852,10 +892,19 @@ export const OxygenDashboardPage: React.FC = () => {
     }
 
     // 5. Consolidated aggregation: key → { size_code, is_loan, qty, price }
+    // STRICT ZERO-CROSSOVER: VIE Tank items can ONLY be included in VIE Tank consolidation,
+    // and standard cylinder items can ONLY be included in cylinder consolidation.
     const groupMap: Record<string, { size_code: string; is_loan: boolean; qty: number; price: number }> = {}
 
     ;(rawItems || []).forEach((itm: any) => {
-      const sizeCode = itm.size_info?.code || 'Standard'
+      const sizeCode = itm.size_info?.code || itm.size_code || 'Standard'
+      const codeLower = sizeCode.toLowerCase()
+      const isVieItem = codeLower.includes('vie') || codeLower.includes('liquid')
+
+      // Enforce absolute segregation:
+      if (isVieConsolidation && !isVieItem) return // VIE consolidation excludes cylinders
+      if (!isVieConsolidation && isVieItem) return // Cylinder consolidation excludes VIE
+
       const unitPrice = Number(itm.unit_price || 0)
       const isLoan = resolveIsLoan(itm)
       const key = `${sizeCode}-${isLoan ? 'loan' : 'refill'}`
@@ -893,6 +942,61 @@ export const OxygenDashboardPage: React.FC = () => {
         total_price: val.qty * cleanPrice
       })
     })
+
+    // Loan Charges Integration:
+    // Ensure any recorded loan_amount on targetRecord is represented in formattedItems as is_loan: true items,
+    // so PO preview calculation, budget deductions, and PO PDF generation correctly include cylinder loan charges.
+    const totalRecordLoan = Number(targetRecord.loan_amount || 0)
+    const existingLoanTotal = formattedItems.filter(i => i.is_loan).reduce((sum, i) => sum + i.total_price, 0)
+    const remainingLoan = Number((totalRecordLoan - existingLoanTotal).toFixed(2))
+
+    if (remainingLoan > 0) {
+      // 1. Check if any refill cylinder sizes in formattedItems are loanable sizes (e.g. 101-N, 101-F)
+      const loanableSizes = ['101-N', '101-F', 'P101-F']
+      let allocatedLoan = 0
+
+      for (const itm of formattedItems.filter(i => !i.is_loan)) {
+        const rawSize = itm.size_code || ''
+        const isMatch = loanableSizes.some(s => rawSize === s || rawSize.startsWith('101-'))
+        if (isMatch && allocatedLoan < remainingLoan) {
+          const lRate = getActiveLoanRate(rawSize, targetSupplierName) || (isLindeSupplier(targetSupplierName) ? 18.36 : 15.00)
+          const maxPossibleQty = Math.floor((remainingLoan - allocatedLoan) / lRate)
+          const qtyToLoan = Math.min(itm.quantity, maxPossibleQty > 0 ? maxPossibleQty : 1)
+          const loanCost = Number((qtyToLoan * lRate).toFixed(2))
+
+          if (loanCost > 0 && allocatedLoan + loanCost <= remainingLoan + 0.05) {
+            formattedItems.push({
+              size_code: rawSize === '101-F' ? 'P101-F' : rawSize,
+              is_loan: true,
+              quantity: qtyToLoan,
+              unit_price: lRate,
+              total_price: loanCost
+            })
+            allocatedLoan = Number((allocatedLoan + loanCost).toFixed(2))
+          }
+        }
+      }
+
+      // 2. If unallocated remainder exists or no refill match was made (e.g. pure loan invoice or rate mismatch),
+      // add consolidated loan charge line for the remaining balance.
+      const unallocatedRemainder = Number((remainingLoan - allocatedLoan).toFixed(2))
+      if (unallocatedRemainder > 0) {
+        const isLinde = isLindeSupplier(targetSupplierName)
+        const defaultRate = isLinde ? 18.36 : 15.00
+        const qtyEstimate = unallocatedRemainder >= defaultRate && unallocatedRemainder % defaultRate === 0
+          ? Math.round(unallocatedRemainder / defaultRate)
+          : 1
+        const unitPriceEstimate = qtyEstimate > 1 ? defaultRate : unallocatedRemainder
+
+        formattedItems.push({
+          size_code: '101-N / 101-F (Pinjaman)',
+          is_loan: true,
+          quantity: qtyEstimate,
+          unit_price: unitPriceEstimate,
+          total_price: unallocatedRemainder
+        })
+      }
+    }
 
     return formattedItems
   }
@@ -952,10 +1056,14 @@ export const OxygenDashboardPage: React.FC = () => {
         const formattedItems = await fetchAndConsolidateReceptionItems(previewRecord, targetSupName)
 
         const totalAmount = formattedItems.reduce((sum, item) => sum + item.total_price, 0)
+        const refillTotalAmount = formattedItems.filter(i => !i.is_loan).reduce((sum, item) => sum + item.total_price, 0)
+        const loanTotalAmount = formattedItems.filter(i => i.is_loan).reduce((sum, item) => sum + item.total_price, 0)
         setPreviewTotalAmount(totalAmount)
+        setPreviewRefillAmount(refillTotalAmount)
+        setPreviewLoanAmount(loanTotalAmount)
         
-        // Use the balance specific to previewVoteCode!
-        const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, totalAmount)
+        // Use the balance specific to previewVoteCode! Pharmacy budget only pays for refill; loan charges fall under admin budget
+        const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, refillTotalAmount)
 
         const dynamicReception: OxygenReceptionRecord = {
           ...previewRecord,
@@ -975,7 +1083,9 @@ export const OxygenDashboardPage: React.FC = () => {
           supplierName: matchedSup?.company_name || targetSupName,
           supplierAddress: matchedSup?.address || (isLindeSupplier(targetSupName) ? lindeSupplier?.address : '') || '',
           supplierPhone: matchedSup?.phone || (isLindeSupplier(targetSupName) ? lindeSupplier?.phone : '') || '',
-          loanRates: supplierLoanRates
+          loanRates: supplierLoanRates,
+          loanVoteCode: previewRecord.loan_vote_code || (previewRecord.vote_code && !previewRecord.vote_code.startsWith('080') ? previewRecord.vote_code : (previewVoteCode.startsWith('24') || previewVoteCode.startsWith('0202') ? previewVoteCode : '24000')),
+          loanVoteActivity: previewRecord.loan_vote_activity || (previewRecord.vote_activity && previewRecord.vote_activity !== '27402' ? previewRecord.vote_activity : (previewVoteActivity === '020200' ? previewVoteActivity : '020200'))
         })
 
         if (active) {
@@ -1062,13 +1172,16 @@ export const OxygenDashboardPage: React.FC = () => {
         getOxygenCylinderTypes()
       ])
 
-      if (summaryRes.error) {
+      const isOnline = typeof navigator === 'undefined' ? true : navigator.onLine
+
+      if (summaryRes.error && isOnline) {
         setError(summaryRes.error)
       } else {
+        setError(null)
         setSummary(summaryRes.data || null)
       }
 
-      if (listRes.error) {
+      if (listRes.error && isOnline) {
         setError((prev) => prev ?? listRes.error)
       } else {
         setCylinders(listRes.data?.data || [])
@@ -1193,6 +1306,9 @@ export const OxygenDashboardPage: React.FC = () => {
   }
 
   useEffect(() => {
+    if (hospitalId) {
+      void cylinderSyncEngine.initialize(hospitalId)
+    }
     void loadData()
     if (currentPath === '/pharmacy/oxygen/cylinders' && hospitalId) {
       const loadInventoryDashboardData = async () => {
@@ -1217,26 +1333,32 @@ export const OxygenDashboardPage: React.FC = () => {
 
   const handleRefreshInventoryData = async () => {
     if (!hospitalId) return
-    setCylinderAggregates([])
-    setDeptDistribution([])
-    setReturnDocs([])
-    setRequestDocs([])
-    setReceiveDocs([])
-    setLedgerData([])
-    const [aggRes, deptRes, docsRes, reqsRes, recRes, ledgerRes] = await Promise.all([
-      getCylinderInventoryByType(hospitalId),
-      getCylindersByDepartment(hospitalId),
-      getReturnDocuments(hospitalId),
-      getRequestDocuments(hospitalId),
-      getReceiveDocuments(hospitalId),
-      getStoreUsageBalance(hospitalId, ledgerStartDate, ledgerEndDate),
-    ])
-    if (aggRes.data) setCylinderAggregates(aggRes.data)
-    if (deptRes.data) setDeptDistribution(deptRes.data)
-    if (docsRes.data) setReturnDocs(docsRes.data)
-    if (reqsRes.data) setRequestDocs(reqsRes.data)
-    if (recRes.data) setReceiveDocs(recRes.data)
-    if (ledgerRes.data) setLedgerData(ledgerRes.data)
+    setIsLoading(true)
+    try {
+      await loadData()
+      setCylinderAggregates([])
+      setDeptDistribution([])
+      setReturnDocs([])
+      setRequestDocs([])
+      setReceiveDocs([])
+      setLedgerData([])
+      const [aggRes, deptRes, docsRes, reqsRes, recRes, ledgerRes] = await Promise.all([
+        getCylinderInventoryByType(hospitalId),
+        getCylindersByDepartment(hospitalId),
+        getReturnDocuments(hospitalId),
+        getRequestDocuments(hospitalId),
+        getReceiveDocuments(hospitalId),
+        getStoreUsageBalance(hospitalId, ledgerStartDate, ledgerEndDate),
+      ])
+      if (aggRes.data) setCylinderAggregates(aggRes.data)
+      if (deptRes.data) setDeptDistribution(deptRes.data)
+      if (docsRes.data) setReturnDocs(docsRes.data)
+      if (reqsRes.data) setRequestDocs(reqsRes.data)
+      if (recRes.data) setReceiveDocs(recRes.data)
+      if (ledgerRes.data) setLedgerData(ledgerRes.data)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleOpenClearModal = () => {
@@ -1327,7 +1449,7 @@ export const OxygenDashboardPage: React.FC = () => {
       key: 'current_location',
       label: 'Storage Location',
       className: 'text-sm text-gray-600',
-      render: (_, row) => row.current_location?.location_name || 'Central Pharmacy Store',
+      render: (_, row) => typeof row.current_location === 'object' ? (row.current_location?.location_name || 'Central Pharmacy Store') : (row.current_location || 'Central Pharmacy Store'),
     },
     {
       key: 'assigned_ward',
@@ -1591,9 +1713,10 @@ export const OxygenDashboardPage: React.FC = () => {
 
   const handleOpenPoPreview = (record: OxygenReceptionRecord) => {
     setPreviewRecord(record)
-    const initialVote = record.vote_code || '080702'
+    const isPureLoan = (Number(record.refill_amount) || 0) === 0 && (Number(record.loan_amount) || 0) > 0
+    const initialVote = record.vote_code || (isPureLoan ? '24000' : '080702')
     setPreviewVoteCode(initialVote)
-    setPreviewVoteActivity(record.vote_activity || financials?.by_vote_code?.[initialVote]?.vote_activity || '27402')
+    setPreviewVoteActivity(record.vote_activity || (isPureLoan ? '020200' : financials?.by_vote_code?.[initialVote]?.vote_activity || '27402'))
     setPreviewSignatures({
       applicantName: signatures.applicantName,
       applicantPosition: signatures.applicantPosition,
@@ -1759,7 +1882,8 @@ export const OxygenDashboardPage: React.FC = () => {
       const formattedItems = await fetchAndConsolidateReceptionItems(previewRecord, poSupplierName)
 
       const totalAmount = formattedItems.reduce((sum, item) => sum + item.total_price, 0)
-      const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, totalAmount)
+      const refillTotalAmount = formattedItems.filter(i => !i.is_loan).reduce((sum, item) => sum + item.total_price, 0)
+      const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, refillTotalAmount)
 
       const dynamicReception: OxygenReceptionRecord = {
         ...previewRecord,
@@ -1789,7 +1913,9 @@ export const OxygenDashboardPage: React.FC = () => {
         supplierName: poMatchedSup?.company_name || poSupplierName,
         supplierAddress: poMatchedSup?.address || (isLindeSupplier(poSupplierName) ? lindeSupplier?.address : '') || '',
         supplierPhone: poMatchedSup?.phone || (isLindeSupplier(poSupplierName) ? lindeSupplier?.phone : '') || '',
-        loanRates: poLoanRates
+        loanRates: poLoanRates,
+        loanVoteCode: previewRecord.loan_vote_code || (previewRecord.vote_code && !previewRecord.vote_code.startsWith('080') ? previewRecord.vote_code : (previewVoteCode.startsWith('24') || previewVoteCode.startsWith('0202') ? previewVoteCode : '24000')),
+        loanVoteActivity: previewRecord.loan_vote_activity || (previewRecord.vote_activity && previewRecord.vote_activity !== '27402' ? previewRecord.vote_activity : (previewVoteActivity === '020200' ? previewVoteActivity : '020200'))
       })
 
       const url = URL.createObjectURL(blob)
@@ -1873,6 +1999,14 @@ export const OxygenDashboardPage: React.FC = () => {
     if (!hospitalId || !user?.id) return
 
     const isLiquidOrder = (receiveQuantities['Liquid Medical Oxygen (VIE Tank)'] || 0) > 0
+    const hasCylinderOrder = Object.entries(receiveQuantities).some(([k, v]) => !k.toLowerCase().includes('vie') && !k.toLowerCase().includes('liquid') && (v as number) > 0)
+    if (isLiquidOrder && hasCylinderOrder) {
+      alert(language === 'ms'
+        ? 'Tangki VIE adalah perolehan khas oksigen cecair pukal dan TIDAK BOLEH digabungkan bersama silinder gas. Sila rekodkan Tangki VIE dan Silinder dalam transaksi berasingan.'
+        : 'VIE Tank is a special bulk liquid oxygen procurement and CANNOT be combined with gas cylinders. Please record VIE Tank and Cylinders in separate transactions.')
+      return
+    }
+
     const isPendingOrder = isLiquidOrder && (!doNumber || !doNumber.trim() || doNumber.trim().toUpperCase() === 'PENDING')
 
     if (!isPendingOrder && (!doNumber || !soNumber)) {
@@ -1976,6 +2110,7 @@ export const OxygenDashboardPage: React.FC = () => {
         setSoNumber('')
         setReceiveQuantities({})
         setReceiveLoans({})
+        setReceiveSupplyMode('cyl')
         
         await loadData()
       }
@@ -1984,6 +2119,165 @@ export const OxygenDashboardPage: React.FC = () => {
       alert('Failed to log oxygen reception.')
     } finally {
       setIsSubmittingReception(false)
+    }
+  }
+
+  const handleOpenPayLoanModal = async () => {
+    setIsPayLoanModalOpen(true)
+    setIsLoadingCustody(true)
+    const initialSup = lindeDisplayName || 'LINDE EOX SDN BHD (CAW. MIRI)'
+    setLoanSupplier(initialSup)
+    setLoanVoteCode('24000')
+    setLoanVoteActivity('020200')
+    setLoanStatus('completed')
+    setLoanRemarks(language === 'ms' ? 'Bayaran sewaan bulanan silinder pinjaman aktif di bawah Akaun Pentadbiran.' : 'Monthly rental fee for active cylinders under Administration Account.')
+    setLoanInvoiceNo('')
+    setLoanBillingRef('')
+    setLoanBillingDate(new Date().toISOString().split('T')[0])
+
+    try {
+      if (isSupabaseConfigured() && hospitalId) {
+        // Fetch loan sizes (101-F, 101-N, etc.)
+        const { data: sizes } = await supabase
+          .from('pharmacy_oxygen_cylinder_sizes')
+          .select('*')
+          .or('is_loan.eq.true,code.ilike.101-%')
+          .order('code')
+
+        // Fetch active cylinders in hospital custody
+        const { data: invRows } = await supabase
+          .from('pharmacy_oxygen_cylinder_inventory')
+          .select('cylinder_size_id, status')
+          .eq('hospital_id', hospitalId)
+          .not('status', 'in', '("returned_to_supplier","deactivated")')
+
+        const custodyMap: Record<string, number> = {}
+        ;(invRows || []).forEach(row => {
+          if (row.cylinder_size_id) {
+            custodyMap[row.cylinder_size_id] = (custodyMap[row.cylinder_size_id] || 0) + 1
+          }
+        })
+
+        const custodyList = (sizes || []).map(s => {
+          const count = custodyMap[s.id] || 0
+          const rate = getActiveLoanRate(s.code, initialSup) || (isLindeSupplier(initialSup) ? 18.36 : 15.00)
+          return {
+            sizeCode: s.code,
+            sizeObj: s,
+            activeCount: count,
+            rate: rate
+          }
+        }).filter(item => !item.sizeCode.toLowerCase().includes('vie') && !item.sizeCode.toLowerCase().includes('liquid'))
+
+        setActiveLoanCustody(custodyList)
+
+        // Pre-populate loan quantities with active custody count
+        const initQtys: Record<string, number> = {}
+        const initRates: Record<string, number> = {}
+        custodyList.forEach(c => {
+          initQtys[c.sizeCode] = c.activeCount
+          initRates[c.sizeCode] = c.rate
+        })
+        setLoanItemQuantities(initQtys)
+        setLoanCustomRates(initRates)
+      }
+    } catch (err) {
+      console.error('Error fetching loan custody:', err)
+    } finally {
+      setIsLoadingCustody(false)
+    }
+  }
+
+  // Update rates when supplier changes inside the loan payment modal
+  const handleLoanSupplierChange = (newSupplier: string) => {
+    setLoanSupplier(newSupplier)
+    setActiveLoanCustody(prev => prev.map(c => {
+      const newRate = getActiveLoanRate(c.sizeCode, newSupplier) || (isLindeSupplier(newSupplier) ? 18.36 : 15.00)
+      return { ...c, rate: newRate }
+    }))
+    setLoanCustomRates(prev => {
+      const next = { ...prev }
+      activeLoanCustody.forEach(c => {
+        next[c.sizeCode] = getActiveLoanRate(c.sizeCode, newSupplier) || (isLindeSupplier(newSupplier) ? 18.36 : 15.00)
+      })
+      return next
+    })
+  }
+
+  const handleCreateLoanPayment = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!hospitalId || !user?.id) return
+
+    if (!loanInvoiceNo || !loanInvoiceNo.trim()) {
+      alert(language === 'ms' ? 'Please enter Supplier Invoice / Payment Claim No.' : 'Please enter the Supplier Invoice / Claim Reference Number.')
+      return
+    }
+
+    setIsSubmittingLoanPayment(true)
+    try {
+      let grandLoanTotal = 0
+      const itemsToCreate: Omit<OxygenReceptionItem, 'id' | 'reception_id' | 'created_at'>[] = []
+
+      // Fetch default cylinder type
+      const { data: typesList } = await supabase.from('pharmacy_oxygen_cylinder_types').select('*')
+      const defaultType = typesList?.[0]?.id || ''
+
+      activeLoanCustody.forEach(c => {
+        const qty = loanItemQuantities[c.sizeCode] || 0
+        const rate = loanCustomRates[c.sizeCode] !== undefined ? loanCustomRates[c.sizeCode] : c.rate
+        if (qty > 0 && rate > 0) {
+          grandLoanTotal += qty * rate
+          itemsToCreate.push({
+            cylinder_size_id: c.sizeObj.id,
+            cylinder_type_id: defaultType,
+            unit_price: rate,
+            quantity: qty,
+          })
+        }
+      })
+
+      if (grandLoanTotal <= 0) {
+        alert(language === 'ms' ? 'Jumlah bayaran mestilah melebihi RM 0.00. Sila masukkan kuantiti silinder pinjaman.' : 'Total loan charges must be greater than RM 0.00. Please enter cylinder quantities.')
+        setIsSubmittingLoanPayment(false)
+        return
+      }
+
+      const res = await createOxygenReceptionRecord(
+        hospitalId,
+        {
+          reception_date: loanBillingDate,
+          delivery_order_no: loanInvoiceNo.trim(),
+          sales_order_no: loanBillingRef.trim() || '-',
+          refill_amount: 0,
+          loan_amount: grandLoanTotal,
+          total_amount: grandLoanTotal,
+          vote_code: loanVoteCode,
+          vote_activity: loanVoteActivity,
+          status: loanStatus,
+          supplier_name: loanSupplier
+        },
+        itemsToCreate,
+        user.id
+      )
+
+      if (res.error) {
+        alert(res.error)
+      } else {
+        setIsPayLoanModalOpen(false)
+        setJustCreatedReception(res.data)
+        
+        // Directly trigger PO preview modal for immediate verification and download
+        if (res.data) {
+          handleOpenPoPreview(res.data)
+        }
+        
+        await loadData()
+      }
+    } catch (err) {
+      console.error('Error recording standalone loan payment:', err)
+      alert(language === 'ms' ? 'Ralat semasa merekodkan bayaran caj pinjaman.' : 'Failed to record loan payment.')
+    } finally {
+      setIsSubmittingLoanPayment(false)
     }
   }
 
@@ -2000,7 +2294,7 @@ export const OxygenDashboardPage: React.FC = () => {
     e.preventDefault()
     if (!hospitalId || !arrivalRecord) return
     if (!arrivalDoNo.trim()) {
-      alert(language === 'ms' ? 'Sila masukkan Nombor Delivery Order (DO).' : 'Please enter the Delivery Order (DO) number.')
+      alert(language === 'ms' ? 'Please enter Delivery Order (DO) Number.' : 'Please enter the Delivery Order (DO) number.')
       return
     }
 
@@ -2041,8 +2335,9 @@ export const OxygenDashboardPage: React.FC = () => {
       const formattedItems = await fetchAndConsolidateReceptionItems(record, poSupplierName)
 
       const totalAmount = formattedItems.reduce((sum, item) => sum + item.total_price, 0)
+      const refillTotalAmount = formattedItems.filter(i => !i.is_loan).reduce((sum, item) => sum + item.total_price, 0)
       const targetVote = record.vote_code || '080702'
-      const { balanceBefore, balanceAfter } = computePoBalances(record, targetVote, totalAmount)
+      const { balanceBefore, balanceAfter } = computePoBalances(record, targetVote, refillTotalAmount)
 
       const poLoanRates: Record<string, number> = {}
       pricingConfigs
@@ -2061,7 +2356,9 @@ export const OxygenDashboardPage: React.FC = () => {
         supplierName: matchedSup?.company_name || poSupplierName,
         supplierAddress: matchedSup?.address || (isLindeSupplier(poSupplierName) ? lindeSupplier?.address : '') || '',
         supplierPhone: matchedSup?.phone || (isLindeSupplier(poSupplierName) ? lindeSupplier?.phone : '') || '',
-        loanRates: poLoanRates
+        loanRates: poLoanRates,
+        loanVoteCode: record.loan_vote_code || (record.vote_code && !record.vote_code.startsWith('080') ? record.vote_code : '24000'),
+        loanVoteActivity: record.loan_vote_activity || (record.vote_activity && record.vote_activity !== '27402' ? record.vote_activity : '020200')
       })
 
       const url = URL.createObjectURL(blob)
@@ -2287,6 +2584,55 @@ export const OxygenDashboardPage: React.FC = () => {
     }
   }
 
+  // Cylinder edit handlers for stock reconciliation & inventory audit
+  const handleOpenEditModal = (cyl: OxygenCylinderWithRelations) => {
+    setEditingCylinderTarget(cyl)
+  }
+
+  const handleEditCylinderSuccess = (updatedCylinder: OxygenCylinderWithRelations) => {
+    // 1. Update cylinders state across the dashboard
+    setCylinders(prev => prev.map(c => c.id === updatedCylinder.id ? updatedCylinder : c))
+
+    // 2. Sync physical count state if needed
+    if (physicalCounts[updatedCylinder.id] === undefined) {
+      const expected = getExpectedStateForCylinder(updatedCylinder)
+      setPhysicalCounts(prev => ({ ...prev, [updatedCylinder.id]: expected }))
+    }
+
+    // 3. Highlight and focus group
+    const newGroupName = updatedCylinder.type_info?.type_name || 'Standard Cylinder'
+    setSelectedReconciliationGroup(newGroupName)
+    setHighlightedCylinderId(updatedCylinder.id)
+    setTimeout(() => setHighlightedCylinderId(null), 5000)
+
+    // 4. Audit activity log entry
+    const newLogEntry = {
+      id: `audit-edit-${Date.now()}`,
+      action: 'UPDATE_CYLINDER_PROFILE',
+      created_at: new Date().toISOString(),
+      user: {
+        full_name: user?.full_name || 'Staff Auditor',
+        email: user?.email
+      },
+      new_values: {
+        serial_number: updatedCylinder.serial_number,
+        type: newGroupName,
+        status: updatedCylinder.status
+      }
+    }
+    setReconciliationLogs(prev => [newLogEntry, ...prev])
+
+    // 5. Success toast banner
+    setAuditSuccessMsg(
+      language === 'ms'
+        ? `✅ Silinder [${updatedCylinder.serial_number}] berjaya dikemaskini (${newGroupName})!`
+        : `✅ Cylinder [${updatedCylinder.serial_number}] successfully updated (${newGroupName})!`
+    )
+    setTimeout(() => setAuditSuccessMsg(null), 5000)
+
+    setEditingCylinderTarget(null)
+  }
+
   const renderActiveView = () => {
     // 1. CYLINDER INVENTORY VIEW (Implementation Plan Dashboard)
     if (currentPath === '/pharmacy/oxygen/cylinders') {
@@ -2304,72 +2650,75 @@ export const OxygenDashboardPage: React.FC = () => {
       return (
         <div className="space-y-8">
           {/* Executive Segmented Navigation Bar & Operational Controls */}
-          <div className="space-y-4">
-            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
-              {/* Primary Segmented Tab Navigation */}
-              <div className="inline-flex flex-wrap sm:flex-nowrap items-center bg-white border border-slate-200/90 p-1.5 rounded-2xl shadow-xs gap-1.5 w-full lg:w-auto">
-                {[
-                  { 
-                    id: 'overview', 
-                    label: language === 'ms' ? 'Gambaran Stor' : 'Overview Store Grid',
-                    icon: LayoutGrid 
-                  },
-                  { 
-                    id: 'unit_monitor', 
-                    label: language === 'ms' ? 'Agihan Unit' : 'Unit Distribution',
-                    icon: Building2 
-                  },
-                  { 
-                    id: 'store_balance', 
-                    label: language === 'ms' ? 'Lejar Penggunaan Stor' : 'Store Usage Ledger',
-                    icon: ScrollText 
-                  },
-                  { 
-                    id: 'supplier_returns', 
-                    label: language === 'ms' ? 'Logistik Pembekal' : 'Supplier Logistics',
-                    icon: Truck,
-                    count: returnDocs.length + requestDocs.length + receiveDocs.length
-                  },
-                ].map((tab) => {
-                  const Icon = tab.icon
-                  const isActive = cylinderActiveTab === tab.id
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setCylinderActiveTab(tab.id as any)}
-                      className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+            {/* Primary Segmented Tab Navigation: 2x2 Grid on Mobile (Zero Cutoff), Flex on Desktop */}
+            <div className="grid grid-cols-2 sm:flex sm:items-center gap-1.5 bg-white border border-slate-200/90 p-1.5 rounded-2xl shadow-xs w-full sm:w-auto">
+              {[
+                { 
+                  id: 'overview', 
+                  label: language === 'ms' ? 'Stor' : 'Store Grid',
+                  fullLabel: language === 'ms' ? 'Gambaran Stor' : 'Overview Store Grid',
+                  icon: LayoutGrid 
+                },
+                { 
+                  id: 'unit_monitor', 
+                  label: language === 'ms' ? 'Agihan Wad' : 'Unit Distribution',
+                  fullLabel: language === 'ms' ? 'Agihan Unit' : 'Unit Distribution',
+                  icon: Building2 
+                },
+                { 
+                  id: 'store_balance', 
+                  label: language === 'ms' ? 'Lejar' : 'Usage Ledger',
+                  fullLabel: language === 'ms' ? 'Lejar Penggunaan' : 'Store Usage Ledger',
+                  icon: ScrollText 
+                },
+                { 
+                  id: 'supplier_returns', 
+                  label: language === 'ms' ? 'Logistik' : 'Logistics',
+                  fullLabel: language === 'ms' ? 'Logistik Pembekal' : 'Supplier Logistics',
+                  icon: Truck,
+                  count: returnDocs.length + requestDocs.length + receiveDocs.length
+                },
+              ].map((tab) => {
+                const Icon = tab.icon
+                const isActive = cylinderActiveTab === tab.id
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setCylinderActiveTab(tab.id as any)}
+                    className={`w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                      isActive
+                        ? 'bg-[#008f76] text-white shadow-xs font-bold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 active:scale-[0.98]'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                    <span className="sm:hidden text-center truncate">{tab.label}</span>
+                    <span className="hidden sm:inline">{tab.fullLabel || tab.label}</span>
+                    {tab.count !== undefined && (
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
                         isActive
-                          ? 'bg-[#008f76] text-white shadow-sm shadow-teal-900/15'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 active:scale-[0.98]'
-                      }`}
-                    >
-                      <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
-                      <span>{tab.label}</span>
-                      {tab.count !== undefined && (
-                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${
-                          isActive
-                            ? 'bg-white/20 text-white'
-                            : 'bg-slate-100 text-slate-600 border border-slate-200'
-                        }`}>
-                          {tab.count}
-                        </span>
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
+                          ? 'bg-white/20 text-white'
+                          : 'bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}>
+                        {tab.count}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
 
-              {/* Administrative Protected Action - Sleek & Discreet */}
-              <div className="flex items-center gap-2 self-end sm:self-auto">
-                <button
-                  onClick={handleOpenClearModal}
-                  className="px-3 py-2 bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200/80 hover:border-rose-200/80 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs hover:shadow-xs active:scale-95 shrink-0 cursor-pointer"
-                  title={language === 'ms' ? 'Pilihan Pentadbir: Kosongkan data stok (Memerlukan kata laluan)' : 'Admin: Clear stock data (Password protected)'}
-                >
-                  <Lock className="w-3.5 h-3.5 text-slate-400" />
-                  <span className="text-[11px] font-medium">{language === 'ms' ? 'Pilihan Pentadbir' : 'Admin Reset'}</span>
-                </button>
-              </div>
+            {/* Administrative Protected Action - Sleek & Discreet */}
+            <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+              <button
+                onClick={handleOpenClearModal}
+                className="px-3 py-1.5 sm:py-2 bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200/80 hover:border-rose-200/80 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs hover:shadow-xs active:scale-95 shrink-0 cursor-pointer"
+                title={language === 'ms' ? 'Pilihan Pentadbir: Kosongkan data stok (Memerlukan kata laluan)' : 'Admin: Clear stock data (Password protected)'}
+              >
+                <Lock className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-[11px] font-medium">{language === 'ms' ? 'Pilihan Pentadbir' : 'Admin Reset'}</span>
+              </button>
             </div>
           </div>
  
@@ -2914,14 +3263,14 @@ export const OxygenDashboardPage: React.FC = () => {
                 
                 <div>
                   <h3 className="text-base font-extrabold text-slate-800">{language === 'ms' ? 'Pendaftaran Label QR Baharu' : 'New QR Label Registration'}</h3>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{language === 'ms' ? 'Pilih jenis silinder dan kuantiti untuk menjana aset baharu.' : 'Choose cylinder type and quantity to generate new assets.'}</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">{language === 'ms' ? 'Select cylinder type and quantity to generate new inventory.' : 'Choose cylinder type and quantity to generate new assets.'}</p>
                 </div>
 
                 <div className="space-y-4">
                   {/* Cylinder Type Selection */}
                   <div>
                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-wide block mb-2">
-                      {language === 'ms' ? 'Pilih Jenis Silinder' : 'Select Cylinder Type'}
+                      {language === 'ms' ? 'Select Cylinder Type' : 'Select Cylinder Type'}
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {cylinderTypes.map(type => {
@@ -3644,7 +3993,9 @@ export const OxygenDashboardPage: React.FC = () => {
       const groupNames = Object.keys(groupedCylinders);
       const activeGroup = selectedReconciliationGroup === '__ALL__'
         ? '__ALL__'
-        : (selectedReconciliationGroup || groupNames[0] || null);
+        : (selectedReconciliationGroup && groupedCylinders[selectedReconciliationGroup]
+            ? selectedReconciliationGroup
+            : groupNames[0] || null);
       const activeCylinders = activeGroup === '__ALL__'
         ? cylinders
         : (activeGroup ? (groupedCylinders[activeGroup] || []) : []);
@@ -3791,6 +4142,52 @@ export const OxygenDashboardPage: React.FC = () => {
           setReconciliationTab('system');
         } catch (err) {
           console.error('Error verifying all:', err);
+        }
+      };
+
+      // Toggle valve type (BN <-> PI) directly from the stock reconciliation audit table
+      const handleToggleCylinderValveType = async (e: React.MouseEvent, cyl: any) => {
+        e.stopPropagation();
+        const currentCode = (cyl.type_info?.code || (cyl.type_info?.type_name?.includes('PI') ? 'PI' : 'BN')).toUpperCase();
+        const nextCode: 'BN' | 'PI' = currentCode === 'BN' ? 'PI' : 'BN';
+        
+        try {
+          const res = await updateCylinderValveType(hospitalId, cyl.id, nextCode, user?.id);
+          if (res.error) {
+            setAuditSuccessMsg(`❌ ${res.error}`);
+            setTimeout(() => setAuditSuccessMsg(null), 4000);
+            return;
+          }
+
+          const sizeCode = cyl.size_info?.code || '';
+          const capStr = cyl.size_info?.capacity ? String(cyl.size_info.capacity) : '1.4';
+          const isLoan = Boolean(cyl.is_loan || cyl.size_info?.is_loan || sizeCode.startsWith('101-'));
+          const newTypeName = cyl.size_info
+            ? (isLoan ? `Loan ${sizeCode} (${capStr}M³)` : `Standard ${sizeCode} ${nextCode} (${capStr}M³)`).replace(/\s+/g, ' ')
+            : (nextCode === 'BN' ? 'Bullnose Cylinder' : 'Pin Index Cylinder');
+
+          setCylinders(prev => prev.map(c => {
+            if (c.id !== cyl.id) return c;
+            return {
+              ...c,
+              cylinder_type_id: res.data?.cylinder_type_id || c.cylinder_type_id,
+              type_info: {
+                ...c.type_info,
+                code: nextCode,
+                name: nextCode === 'BN' ? 'Bullnose' : 'Pin Index',
+                type_name: newTypeName
+              }
+            };
+          }));
+
+          setAuditSuccessMsg(
+            language === 'ms'
+              ? `✅ Injap silinder ${cyl.serial_number} berjaya ditukar kepada ${nextCode === 'BN' ? 'Bullnose (BN)' : 'Pin Index (PI)'}!`
+              : `✅ Valve for cylinder ${cyl.serial_number} successfully updated to ${nextCode === 'BN' ? 'Bullnose (BN)' : 'Pin Index (PI)'}!`
+          );
+          setTimeout(() => setAuditSuccessMsg(null), 4000);
+        } catch (err: any) {
+          console.error('Error toggling valve type:', err);
         }
       };
 
@@ -4322,7 +4719,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             }`}
                           >
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 flex-wrap">
                                 <input
                                   type="checkbox"
                                   checked={isSelected}
@@ -4330,12 +4727,44 @@ export const OxygenDashboardPage: React.FC = () => {
                                   className="w-4 h-4 rounded text-[#00a68a] focus:ring-[#00a68a] border-gray-300 cursor-pointer"
                                 />
                                 <span className="font-mono font-bold text-gray-900 text-sm">{cyl.serial_number}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditModal(cyl)}
+                                  className="p-1 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all cursor-pointer"
+                                  title={language === 'ms' ? 'Kemaskini No. Siri & Saiz Silinder' : 'Edit Serial & Size'}
+                                >
+                                  <Pencil className="w-3.5 h-3.5" />
+                                </button>
                                 {isScanned && (
                                   <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded text-[9px] font-bold inline-flex items-center gap-1">
                                     <CheckCircle className="w-2.5 h-2.5 text-emerald-600" />
                                     {language === 'ms' ? 'Di-Imbas' : 'Scanned'}
                                   </span>
                                 )}
+                                {/* Interactive Valve Type Badge */}
+                                {(() => {
+                                  const code = cyl.type_info?.code || (cyl.type_info?.type_name?.includes('PI') ? 'PI' : (cyl.type_info?.type_name?.includes('BN') ? 'BN' : null));
+                                  const isBN = code === 'BN';
+                                  const isPI = code === 'PI';
+                                  return (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => handleToggleCylinderValveType(e, cyl)}
+                                      title={isBN ? (language === 'ms' ? 'Klik untuk tukar ke Pin Index (PI)' : 'Click to switch to Pin Index (PI)') : isPI ? (language === 'ms' ? 'Klik untuk tukar ke Bullnose (BN)' : 'Click to switch to Bullnose (BN)') : (language === 'ms' ? 'Klik untuk tetapkan injap ke Bullnose (BN)' : 'Click to assign valve (BN)')}
+                                      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-black border transition-all cursor-pointer active:scale-95 shadow-2xs ${
+                                        isBN
+                                          ? 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100'
+                                          : isPI
+                                          ? 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100'
+                                          : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100 animate-pulse'
+                                      }`}
+                                    >
+                                      <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
+                                      <span>{isBN ? 'BN' : isPI ? 'PI' : 'Injap?'}</span>
+                                      <RotateCcw className="w-2.5 h-2.5 opacity-50" />
+                                    </button>
+                                  );
+                                })()}
                               </div>
                               {isMatched ? (
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md">
@@ -4404,6 +4833,15 @@ export const OxygenDashboardPage: React.FC = () => {
                               </select>
                             </div>
                             <div className="flex items-center gap-2 pt-1">
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEditModal(cyl)}
+                                className="py-2 px-3 border border-slate-200 hover:bg-slate-50 text-slate-700 active:scale-95 font-bold text-xs rounded-xl flex items-center justify-center gap-1 transition-all cursor-pointer shrink-0 shadow-xs"
+                                title={language === 'ms' ? `Update Cylinder ${cyl.serial_number}` : `Edit Cylinder ${cyl.serial_number}`}
+                              >
+                                <Pencil className="w-3.5 h-3.5 text-teal-600" />
+                                <span>{language === 'ms' ? 'Kemaskini' : 'Edit'}</span>
+                              </button>
                               {reconciliationTab === 'scanned' ? (
                                 <button
                                   type="button"
@@ -4504,14 +4942,48 @@ export const OxygenDashboardPage: React.FC = () => {
                                   />
                                 </td>
                                 <td className="px-4 py-4 font-mono font-bold text-gray-900">
-                                  <div className="flex items-center gap-2">
-                                    <span>{cyl.serial_number}</span>
-                                    {isScanned && (
-                                      <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded text-[9px] font-bold inline-flex items-center gap-1">
-                                        <CheckCircle className="w-2.5 h-2.5 text-emerald-600" />
-                                        {language === 'ms' ? 'Di-Imbas' : 'Scanned'}
-                                      </span>
-                                    )}
+                                  <div className="flex flex-col gap-1 items-start">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm font-black text-slate-800">{cyl.serial_number}</span>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleOpenEditModal(cyl)}
+                                        className="p-1 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all cursor-pointer"
+                                        title={language === 'ms' ? 'Kemaskini No. Siri & Saiz Silinder' : 'Edit Serial & Size'}
+                                      >
+                                        <Pencil className="w-3.5 h-3.5" />
+                                      </button>
+                                      {isScanned && (
+                                        <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded text-[9px] font-bold inline-flex items-center gap-1">
+                                          <CheckCircle className="w-2.5 h-2.5 text-emerald-600" />
+                                          {language === 'ms' ? 'Di-Imbas' : 'Scanned'}
+                                        </span>
+                                      )}
+                                    </div>
+                                    {/* Valve Type Toggle Badge */}
+                                    {(() => {
+                                      const code = cyl.type_info?.code || (cyl.type_info?.type_name?.includes('PI') ? 'PI' : (cyl.type_info?.type_name?.includes('BN') ? 'BN' : null));
+                                      const isBN = code === 'BN';
+                                      const isPI = code === 'PI';
+                                      return (
+                                        <button
+                                          type="button"
+                                          onClick={(e) => handleToggleCylinderValveType(e, cyl)}
+                                          title={isBN ? (language === 'ms' ? 'Klik untuk tukar ke Pin Index (PI)' : 'Click to switch to Pin Index (PI)') : isPI ? (language === 'ms' ? 'Klik untuk tukar ke Bullnose (BN)' : 'Click to switch to Bullnose (BN)') : (language === 'ms' ? 'Klik untuk tetapkan injap ke Bullnose (BN)' : 'Click to assign valve (BN)')}
+                                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black border transition-all cursor-pointer active:scale-95 shadow-2xs ${
+                                            isBN
+                                              ? 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100 hover:border-amber-300'
+                                              : isPI
+                                              ? 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100 hover:border-purple-300'
+                                              : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100 animate-pulse'
+                                          }`}
+                                        >
+                                          <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
+                                          <span>{isBN ? 'Bullnose (BN)' : isPI ? 'Pin Index (PI)' : '⚠️ Injap Tiada (Set BN)'}</span>
+                                          <RotateCcw className="w-2.5 h-2.5 opacity-50 hover:opacity-100 ml-0.5" />
+                                        </button>
+                                      );
+                                    })()}
                                   </div>
                                 </td>
                                 {activeGroup === '__ALL__' && (
@@ -4589,6 +5061,14 @@ export const OxygenDashboardPage: React.FC = () => {
                                 </td>
                                 <td className="px-4 py-4 text-right">
                                   <div className="flex items-center justify-end gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleOpenEditModal(cyl)}
+                                      className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all cursor-pointer border border-transparent hover:border-teal-200 active:scale-90"
+                                      title={language === 'ms' ? `Update Cylinder ${cyl.serial_number}` : `Edit Cylinder ${cyl.serial_number}`}
+                                    >
+                                      <Pencil className="w-4 h-4" />
+                                    </button>
                                     {reconciliationTab === 'scanned' ? (
                                       <button
                                         type="button"
@@ -4801,8 +5281,11 @@ export const OxygenDashboardPage: React.FC = () => {
               const nowFormatted = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
               setCylinders(prev => [newCyl, ...prev.filter(c => c.id !== newCyl.id)]);
               setPhysicalCounts(prev => ({ ...prev, [newCyl.id]: newCyl.status || 'available' }));
-              if (newCyl.current_location?.location_name || newCyl.current_location) {
-                setPhysicalLocations(prev => ({ ...prev, [newCyl.id]: (newCyl.current_location?.location_name || newCyl.current_location) as string }));
+              if (newCyl.current_location) {
+                const locStr = typeof newCyl.current_location === 'object'
+                  ? (newCyl.current_location?.location_name || 'Pharmacy Store')
+                  : String(newCyl.current_location || 'Pharmacy Store');
+                setPhysicalLocations(prev => ({ ...prev, [newCyl.id]: locStr }));
               }
               setPhysicalScannedBy(prev => ({ ...prev, [newCyl.id]: { user: currentAuditor, timestamp: nowFormatted } }));
               const groupKey = newCyl.type_info?.type_name || 'Standard Cylinder';
@@ -4811,6 +5294,7 @@ export const OxygenDashboardPage: React.FC = () => {
               setSelectedReconciliationIds(prev => new Set(prev).add(newCyl.id));
             }}
             existingCylinders={cylinders}
+            onCylinderUpdated={handleEditCylinderSuccess}
           />
 
           <AuditReconciliationSummaryModal
@@ -4835,57 +5319,67 @@ export const OxygenDashboardPage: React.FC = () => {
         {/* ========================================================
             VOTE CODE SELECTOR / FILTER BAR & SEGREGATED FINANCIAL METRICS
            ======================================================== */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white border border-slate-200/80 rounded-[24px] px-6 py-4 shadow-sm">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-teal-50 border border-teal-100 rounded-xl text-teal-600">
-              <Database className="w-4 h-4" />
+        <div className="bg-white border border-slate-200/90 rounded-xl p-3 sm:p-4 shadow-2xs">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            {/* Left Header info */}
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-700 shrink-0">
+                <Database className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                  {language === 'ms' ? 'SUMBER PERUNTUKAN (KOD UNDI)' : 'BUDGET ALLOCATION (VOTE CODE)'}
+                </div>
+                <div className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                  {dashboardVoteFilter === 'all' 
+                    ? (language === 'ms' ? 'Semua Vot Digabungkan (Konsolidasi)' : 'All Registered Votes Combined')
+                    : `Kod Vot ${dashboardVoteFilter} ${dashboardVoteFilter === '080702' ? '(Kontrak Pusat / CC)' : dashboardVoteFilter === '080600' ? '(Duit Khas / Khas)' : ''}`}
+                </div>
+              </div>
             </div>
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block">
-                {language === 'ms' ? 'SUMBER PERUNTUKAN (KOD UNDI)' : 'BUDGET ALLOCATION (VOTE CODE)'}
-              </span>
-              <span className="text-xs font-extrabold text-slate-800">
-                {dashboardVoteFilter === 'all' 
-                  ? (language === 'ms' ? 'Semua Vot Digabungkan' : 'All Registered Votes Combined')
-                  : `Kod Vot ${dashboardVoteFilter} ${dashboardVoteFilter === '080702' ? '(Kontrak Pusat / CC)' : dashboardVoteFilter === '080600' ? '(Duit Khas / Khas)' : ''}`}
-              </span>
-            </div>
-          </div>
 
-          <div className="flex items-center flex-wrap gap-1.5 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/60">
-            <button
-              type="button"
-              onClick={() => {
-                setDashboardVoteFilter('all')
-                setCurrentPage(1)
-                setMonthlyCurrentPage(1)
-              }}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                dashboardVoteFilter === 'all'
-                  ? 'bg-teal-600 text-white shadow-sm shadow-teal-600/20'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-              }`}
-            >
-              {language === 'ms' ? 'Semua Vot' : 'All Votes'}
-            </button>
-            {availableVoteCodes.map(code => (
+            {/* Right: Segmented Filter Chips (Clean wrap, zero horizontal scrollbar) */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
               <button
-                key={code}
                 type="button"
                 onClick={() => {
-                  setDashboardVoteFilter(code)
+                  setDashboardVoteFilter('all')
                   setCurrentPage(1)
                   setMonthlyCurrentPage(1)
                 }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all whitespace-nowrap ${
-                  dashboardVoteFilter === code
-                    ? 'bg-teal-600 text-white shadow-sm shadow-teal-600/20'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  dashboardVoteFilter === 'all'
+                    ? 'bg-[#008f76] text-white shadow-2xs font-bold'
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 active:scale-95'
                 }`}
               >
-                Vot {code} {code === '080702' ? '(CC)' : code === '080600' ? '(Duit Khas)' : ''}
+                {language === 'ms' ? 'Semua Vot' : 'All Votes'}
               </button>
-            ))}
+              {availableVoteCodes.map(code => {
+                const isCc = code === '080702';
+                const isKhas = code === '080600';
+                const label = isCc ? `Vot ${code} (CC)` : isKhas ? `Vot ${code} (Khas)` : `Vot ${code}`;
+                const isActive = dashboardVoteFilter === code;
+                return (
+                  <button
+                    key={code}
+                    type="button"
+                    onClick={() => {
+                      setDashboardVoteFilter(code)
+                      setCurrentPage(1)
+                      setMonthlyCurrentPage(1)
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[#008f76] text-white shadow-2xs font-bold'
+                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 active:scale-95'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -4903,116 +5397,155 @@ export const OxygenDashboardPage: React.FC = () => {
             ? `${availableVoteCodes.length} KOD VOT BERDAFTAR`
             : `VOTE: ${dashboardVoteFilter} / ${activeFin?.vote_activity || '27402'}`
           const isOverBudget = displayBalance < 0
+          const totalCommitted = displayExpenses + displayLiabilities
+          const utilizationPct = displayAllocation > 0
+            ? Math.min(100, Math.round((totalCommitted / displayAllocation) * 1000) / 10)
+            : 0
 
           return (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
+              {/* Card 4 on Mobile (Order First as Full-Width Hero) / Card 4 on Desktop */}
+              <div className={`col-span-2 order-first lg:order-4 lg:col-span-1 border rounded-xl p-3.5 sm:p-4 shadow-2xs transition-all ${
+                isOverBudget
+                  ? 'bg-rose-50/60 border-rose-200'
+                  : 'bg-emerald-50/40 border-emerald-200/90'
+              }`}>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 block">
+                      {language === 'ms' ? 'CURRENT BALANCE BERSIH' : 'NET CURRENT BALANCE'}
+                    </span>
+                    <h4 className={`text-xl sm:text-2xl font-bold font-mono tabular-nums tracking-tight mt-1 ${
+                      isOverBudget ? 'text-rose-700' : 'text-slate-900'
+                    }`}>
+                      {fmt(displayBalance)}
+                    </h4>
+                  </div>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
+                    isOverBudget ? 'bg-rose-100/80 border-rose-200 text-rose-700' : 'bg-emerald-100/80 border-emerald-200 text-emerald-700'
+                  }`}>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </div>
+                </div>
+
+                {/* Health Badge & Utilization Progress */}
+                <div className="mt-2.5 pt-2 border-t border-slate-200/60 space-y-1.5">
+                  <div className="flex items-center justify-between gap-1 text-[10px]">
+                    <span className={`inline-flex items-center gap-1 font-bold ${
+                      isOverBudget ? 'text-rose-700' : 'text-emerald-700'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${isOverBudget ? 'bg-rose-500' : 'bg-emerald-500'}`}></span>
+                      {isOverBudget ? (language === 'ms' ? 'Defisit Melebihi Had' : 'Deficit Overdraft') : (language === 'ms' ? 'Peruntukan Sihat' : 'Healthy Allocation')}
+                    </span>
+                    <span className="font-mono font-semibold text-slate-500">
+                      {utilizationPct}% {language === 'ms' ? 'digunakan' : 'used'}
+                    </span>
+                  </div>
+                  {/* Utilization Progress Bar */}
+                  <div className="h-1.5 w-full bg-slate-200/70 rounded-full overflow-hidden flex">
+                    <div 
+                      className="bg-[#008f76] h-full transition-all" 
+                      style={{ width: `${Math.min(100, displayAllocation > 0 ? (displayExpenses / displayAllocation) * 100 : 0)}%` }} 
+                      title={`Belanja: ${fmt(displayExpenses)}`}
+                    />
+                    <div 
+                      className="bg-sky-500 h-full transition-all" 
+                      style={{ width: `${Math.min(100 - (displayAllocation > 0 ? (displayExpenses / displayAllocation) * 100 : 0), displayAllocation > 0 ? (displayLiabilities / displayAllocation) * 100 : 0)}%` }} 
+                      title={`Tanggungan: ${fmt(displayLiabilities)}`}
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* Card 1: Total Allocation */}
-              <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
+              <div className="col-span-1 order-2 lg:order-1 bg-white border border-slate-200/90 rounded-xl p-3.5 sm:p-4 shadow-2xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
                       {language === 'ms' ? 'JUMLAH PERUNTUKAN' : 'TOTAL ALLOCATION'}
                     </span>
-                    <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
+                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-slate-900 tracking-tight mt-1 truncate">
                       {fmt(displayAllocation)}
                     </h4>
-                    <div className="flex items-center gap-1.5 mt-3 text-[10px] font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg w-max border border-slate-200/60">
-                      <Database className="w-3.5 h-3.5 text-teal-600" />
-                      <span>{displayVoteBadge}</span>
-                    </div>
                   </div>
-                  <div className="w-11 h-11 bg-teal-50 border border-teal-100 rounded-2xl flex items-center justify-center shadow-sm shadow-teal-500/5">
-                    <DollarSign className="w-5 h-5 text-teal-600" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-teal-50 border border-teal-100 rounded-lg flex items-center justify-center text-teal-700 shrink-0">
+                    <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[10px] font-semibold text-slate-600 truncate">
+                  <Database className="w-3 h-3 text-teal-600 shrink-0" />
+                  <span className="truncate">{displayVoteBadge}</span>
                 </div>
               </div>
 
               {/* Card 2: Total Expenses */}
-              <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
-                      {language === 'ms' ? 'JUMLAH PERBELANJAAN' : 'TOTAL EXPENSES'}
+              <div className="col-span-1 order-3 lg:order-2 bg-white border border-slate-200/90 rounded-xl p-3.5 sm:p-4 shadow-2xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
+                      {language === 'ms' ? 'PERBELANJAAN SEBENAR' : 'ACTUAL EXPENSES'}
                     </span>
-                    <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
+                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-slate-900 tracking-tight mt-1 truncate">
                       {fmt(displayExpenses)}
                     </h4>
-                    <div className="flex items-center gap-1.5 mt-3 text-[10px] font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg w-max border border-rose-100">
-                      <TrendingUp className="w-3.5 h-3.5" />
-                      <span>{language === 'ms' ? 'Isian Semula:' : 'Refills:'} {fmt(displayExpenses)}</span>
-                    </div>
                   </div>
-                  <div className="w-11 h-11 bg-rose-50 border border-rose-100 rounded-2xl flex items-center justify-center shadow-sm shadow-rose-500/5">
-                    <TrendingUp className="w-5 h-5 text-rose-600" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-rose-50 border border-rose-100 rounded-lg flex items-center justify-center text-rose-700 shrink-0">
+                    <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1 text-[10px] font-semibold text-rose-700 truncate">
+                  <TrendingUp className="w-3 h-3 shrink-0" />
+                  <span className="truncate">{language === 'ms' ? 'Isian Semula Gas' : 'Gas Refills'}</span>
                 </div>
               </div>
 
               {/* Card 3: Liabilities */}
-              <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
-                      {language === 'ms' ? 'LIABILITI / TANGGUNGAN' : 'LIABILITIES'}
+              <div className="col-span-1 order-4 lg:order-3 bg-white border border-slate-200/90 rounded-xl p-3.5 sm:p-4 shadow-2xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
+                      {language === 'ms' ? 'TANGGUNGAN PO/SO' : 'LIABILITIES'}
                     </span>
-                    <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
+                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-slate-900 tracking-tight mt-1 truncate">
                       {fmt(displayLiabilities)}
                     </h4>
-                    <span className="text-[10px] font-bold text-slate-600 mt-3.5 block italic">
-                      {language === 'ms' ? 'PO / SO Komited' : 'Committed PO / SO'}
-                    </span>
                   </div>
-                  <div className="w-11 h-11 bg-sky-50 border border-sky-100 rounded-2xl flex items-center justify-center shadow-sm shadow-sky-500/5">
-                    <Layers className="w-5 h-5 text-sky-600" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-sky-50 border border-sky-100 rounded-lg flex items-center justify-center text-sky-700 shrink-0">
+                    <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
                 </div>
-              </div>
-
-              {/* Card 4: Current Balance */}
-              <div className={`relative border rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300
-                ${isOverBudget 
-                  ? 'bg-rose-50/80 border-rose-200 shadow-[0_8px_30px_rgba(244,63,94,0.03)]' 
-                  : 'bg-white border-slate-200/80'}`}
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
-                      {language === 'ms' ? 'BAKI SEMASA' : 'CURRENT BALANCE'}
-                    </span>
-                    <h4 className={`text-2xl lg:text-3xl font-extrabold tracking-tight mt-2.5 ${isOverBudget ? 'text-rose-600' : 'text-slate-900'}`}>
-                      {fmt(displayBalance)}
-                    </h4>
-                    <span className={`inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider mt-3 px-2 py-0.5 rounded-full
-                      ${isOverBudget ? 'bg-rose-100 text-[#e11d48] animate-pulse' : 'bg-emerald-50 text-[#10b981]'}`}
-                    >
-                      <span className={`w-1.5 h-1.5 rounded-full ${isOverBudget ? 'bg-rose-500' : 'bg-emerald-500'}`}></span>
-                      {isOverBudget ? (language === 'ms' ? 'LEBIHAN DEFISIT' : 'Deficit Overdraft') : (language === 'ms' ? 'PERUNTUKAN SIHAT' : 'Healthy Allocation')}
-                    </span>
-                  </div>
-                  <div className={`w-11 h-11 border rounded-2xl flex items-center justify-center shadow-sm
-                    ${isOverBudget ? 'bg-rose-100 border-rose-200 text-rose-500' : 'bg-emerald-50 border-emerald-100 text-emerald-600'}`}>
-                    <ArrowUpRight className="w-5 h-5" />
-                  </div>
+                <div className="mt-2.5 pt-2 border-t border-slate-100 text-[10px] font-semibold text-slate-500 truncate">
+                  {language === 'ms' ? 'Pesanan Belum Selesai' : 'Committed PO / SO'}
                 </div>
               </div>
 
               {/* Card 5: Loan Charges */}
-              <div className="relative bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase">
-                      {language === 'ms' ? 'CAJ PINJAMAN SILINDER' : 'LOAN CHARGES'}
+              <div className="col-span-1 order-5 lg:order-5 bg-white border border-slate-200/90 rounded-xl p-3.5 sm:p-4 shadow-2xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
+                      {language === 'ms' ? 'CAJ PINJAMAN' : 'LOAN CHARGES'}
                     </span>
-                    <h4 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
+                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-slate-900 tracking-tight mt-1 truncate">
                       {fmt(displayLoanCharges)}
                     </h4>
-                    <span className="text-[10px] font-bold text-purple-700 mt-3.5 block bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-lg w-max">
-                      {language === 'ms' ? 'Kadar:' : 'Rate:'} {fmt(systemSettings?.loan_cylinder_rate || 18.36)} / {language === 'ms' ? 'silinder' : 'cyl'}
-                    </span>
                   </div>
-                  <div className="w-11 h-11 bg-purple-50 border border-purple-100 rounded-2xl flex items-center justify-center shadow-sm shadow-purple-500/5">
-                    <Percent className="w-5 h-5 text-purple-600" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-purple-50 border border-purple-100 rounded-lg flex items-center justify-center text-purple-700 shrink-0">
+                    <Percent className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between gap-1 flex-wrap">
+                  <span className="text-[10px] font-mono text-purple-700 font-semibold truncate">
+                    {fmt(systemSettings?.loan_cylinder_rate || 18.36)}/sil
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenPayLoanModal()}
+                    className="text-[9px] font-bold uppercase tracking-wider text-purple-700 hover:text-white bg-purple-50 hover:bg-purple-700 px-1.5 py-0.5 rounded border border-purple-200 transition-colors cursor-pointer"
+                    title={language === 'ms' ? 'Bayar caj pinjaman silinder' : 'Pay cylinder loan charges'}
+                  >
+                    {language === 'ms' ? '+ Bayar' : '+ Pay'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -5022,58 +5555,73 @@ export const OxygenDashboardPage: React.FC = () => {
         {/* ========================================================
             MODERN ACTION BAR
            ======================================================== */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white border border-slate-200/80 p-6 rounded-[28px] shadow-sm">
-          <div>
-            <h3 className="text-lg font-bold text-slate-900 tracking-tight">
-              {language === 'ms' ? 'Operasi Oksigen Perubatan' : 'Medical Oxygen Operations'}
-            </h3>
-            <p className="text-xs text-slate-700 mt-1 flex items-center gap-2 font-semibold">
-              {language === 'ms'
-                ? 'Pantau agihan silinder masa-nyata, daftarkan penerimaan, dan uruskan waran kerajaan.'
-                : 'Monitor real-time cylinder distribution, key in deliveries, and manage government warrants.'}
-              <span className="inline-block w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-              <span className="text-[10px] font-bold text-slate-600 uppercase">
-                {language === 'ms' ? 'Penyelarasan Terakhir' : 'LAST SYNC'}: {new Date().toLocaleTimeString()}
-              </span>
-            </p>
-          </div>
+        <div className="bg-white border border-slate-200/90 p-4 sm:p-5 rounded-xl shadow-2xs">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                {language === 'ms' ? 'Operasi Oksigen Perubatan' : 'Medical Oxygen Operations'}
+              </h3>
+              <p className="text-xs text-slate-500 font-medium mt-0.5 flex flex-wrap items-center gap-2">
+                <span>
+                  {language === 'ms'
+                    ? 'Pantau agihan silinder masa-nyata, daftarkan penerimaan, dan uruskan waran kerajaan.'
+                    : 'Monitor real-time cylinder distribution, key in deliveries, and manage government warrants.'}
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                  {language === 'ms' ? 'Diselaras' : 'SYNC'}: {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </p>
+            </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button 
-              onClick={() => navigate(ROUTES.PHARMACY_OXYGEN_LEDGER)}
-              className="px-5 py-3.5 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white rounded-2xl text-xs font-black tracking-wider uppercase shadow-md active:scale-95 transition-all flex items-center gap-2 border border-slate-700 cursor-pointer"
-            >
-              <ScrollText className="w-4 h-4 text-teal-400" />
-              {language === 'ms' ? 'Buka Lejar KEW.PS-4' : 'Open KEW.PS-4 Ledger'}
-            </button>
-            <button 
-              onClick={() => setIsReceiveModalOpen(true)}
-              className="px-6 py-3.5 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-2xl text-xs font-black tracking-wider uppercase shadow-md shadow-emerald-500/10 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              {language === 'ms' ? 'Daftar Penerimaan Oksigen' : 'Key In Received Oxygen'}
-            </button>
+            <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 sm:gap-2.5">
+              <button 
+                type="button"
+                onClick={() => setIsReceiveModalOpen(true)}
+                className="px-4 py-2.5 bg-[#008f76] hover:bg-[#007a65] active:bg-[#006e5b] text-white rounded-xl text-xs font-semibold shadow-2xs active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>{language === 'ms' ? 'Daftar Penerimaan Oksigen' : 'Key In Received Oxygen'}</span>
+              </button>
+              <button 
+                type="button"
+                onClick={() => navigate(ROUTES.PHARMACY_OXYGEN_LEDGER)}
+                className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white rounded-xl text-xs font-semibold shadow-2xs active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <ScrollText className="w-4 h-4 text-teal-400" />
+                <span>{language === 'ms' ? 'Buka Lejar KEW.PS-4' : 'Open KEW.PS-4 Ledger'}</span>
+              </button>
+              <button 
+                type="button"
+                onClick={() => handleOpenPayLoanModal()}
+                className="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 active:bg-purple-200 text-purple-700 border border-purple-200/80 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
+                title={language === 'ms' ? 'Bayar caj pinjaman silinder sahaja tanpa penerimaan bekalan gas' : 'Pay cylinder loan charges only without gas delivery'}
+              >
+                <Receipt className="w-4 h-4 text-purple-600" />
+                <span>{language === 'ms' ? 'Bayar Caj Pinjaman Silinder' : 'Pay Loan Charges Only'}</span>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* ========================================================
-            TWO COLUMN LAYOUT GRID
+            TWO COLUMN LAYOUT: EXPANDED TABLE & COMPACT SIDEBAR
            ======================================================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
           
-          {/* LEFT SIDE: TRANSACTION LEDGER TABLE (2/3 width) */}
-          <div className="lg:col-span-2 bg-white border border-slate-200/80 rounded-[28px] shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/80">
+          {/* LEFT SIDE: TRANSACTION LEDGER TABLE (Expands to fill available space) */}
+          <div className="flex-1 min-w-0 bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden">
+            <div className="px-4 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/80">
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-sm font-bold text-slate-900">
                     {language === 'ms' ? 'Log Penerimaan Oksigen' : 'Recent Oxygen Deliveries (Received Log)'}
                   </h2>
-                  <span className="px-2.5 py-0.5 bg-teal-50 text-teal-700 border border-teal-100 rounded-full text-[9px] font-black tracking-wider uppercase">
+                  <span className="px-2 py-0.5 bg-teal-50 text-teal-700 border border-teal-100 rounded-full text-[9px] font-bold uppercase tracking-wider">
                     KKM Audit Ledger
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-600 font-semibold mt-0.5">
+                <p className="text-[11px] text-slate-500 font-medium mt-0.5">
                   {language === 'ms'
                     ? 'Transaksi rasmi direkodkan di bawah peruntukan bajet kerajaan.'
                     : 'Official transactions recorded under governmental budget allocation.'}
@@ -5082,21 +5630,21 @@ export const OxygenDashboardPage: React.FC = () => {
 
               {/* View Switcher Controls & Quick Monthly Action */}
               <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center bg-slate-200/80 p-1 rounded-xl border border-slate-300/50 shadow-inner">
+                <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/80">
                   <button
                     type="button"
                     onClick={() => {
                       setLedgerViewMode('detailed')
                       setCurrentPage(1)
                     }}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-wider uppercase transition-all duration-200 flex items-center gap-1.5 ${
+                    className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                       ledgerViewMode === 'detailed'
-                        ? 'bg-white text-slate-900 shadow-sm'
+                        ? 'bg-white text-slate-900 shadow-2xs font-bold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    <List className="w-3 h-3 text-slate-500" />
-                    {language === 'ms' ? 'Semua Entri' : 'All Entries'}
+                    <List className="w-3.5 h-3.5 text-slate-500" />
+                    <span>{language === 'ms' ? 'Semua Entri' : 'All Entries'}</span>
                   </button>
                   <button
                     type="button"
@@ -5104,14 +5652,14 @@ export const OxygenDashboardPage: React.FC = () => {
                       setLedgerViewMode('monthly')
                       setMonthlyCurrentPage(1)
                     }}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-wider uppercase transition-all duration-200 flex items-center gap-1.5 ${
+                    className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                       ledgerViewMode === 'monthly'
-                        ? 'bg-teal-700 text-white shadow-sm'
+                        ? 'bg-[#008f76] text-white shadow-2xs font-bold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    <Layers className="w-3 h-3" />
-                    {language === 'ms' ? 'Gabungan Bulanan' : 'Monthly Consolidated'}
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>{language === 'ms' ? 'Bulanan' : 'Monthly'}</span>
                   </button>
                 </div>
 
@@ -5124,11 +5672,11 @@ export const OxygenDashboardPage: React.FC = () => {
                     }
                     setIsMonthlyModalOpen(true)
                   }}
-                  className="px-3 py-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-1.5 shadow-sm active:scale-95 border border-teal-600"
+                  className="px-3 py-1.5 bg-[#008f76] hover:bg-[#007a65] text-white rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
                   title={language === 'ms' ? 'Gabung Semua Silinder Mengikut Bulan' : 'Consolidate Cylinders by Month'}
                 >
-                  <Sparkles className="w-3 h-3 text-teal-200" />
-                  {language === 'ms' ? 'Gabung Bulan' : 'Combine Month'}
+                  <Sparkles className="w-3.5 h-3.5 text-teal-200" />
+                  <span>{language === 'ms' ? 'Gabung Bulan' : 'Combine Month'}</span>
                 </button>
               </div>
             </div>
@@ -5141,14 +5689,14 @@ export const OxygenDashboardPage: React.FC = () => {
                   <table className="w-full border-collapse text-left text-xs text-gray-700">
                     <thead className="bg-slate-100 text-[10px] font-black text-slate-700 uppercase tracking-widest border-b border-slate-200">
                       <tr>
-                        <th className="px-6 py-4">{language === 'ms' ? 'TARIKH TERIMA' : 'RECEPTION DATE'}</th>
-                        <th className="px-6 py-4">{language === 'ms' ? 'PESANAN PENGHANTARAN' : 'DELIVERY ORDER'}</th>
-                        <th className="px-6 py-4 text-center">{language === 'ms' ? 'KOD VOT' : 'VOTE CODE'}</th>
-                        <th className="px-6 py-4">{language === 'ms' ? 'KOS ISIAN SEMULA' : 'REFILL COST'}</th>
-                        <th className="px-6 py-4">{language === 'ms' ? 'CAJ PINJAMAN' : 'LOAN CHARGES'}</th>
-                        <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH' : 'TOTAL COST'}</th>
-                        <th className="px-6 py-4 text-center">{language === 'ms' ? 'STATUS' : 'STATUS'}</th>
-                        <th className="px-6 py-4 text-right">{language === 'ms' ? 'DOKUMEN' : 'DOCUMENTS'}</th>
+                        <th className="px-3.5 py-3.5 whitespace-nowrap">{language === 'ms' ? 'TARIKH TERIMA' : 'RECEPTION DATE'}</th>
+                        <th className="px-3.5 py-3.5 whitespace-nowrap">{language === 'ms' ? 'PESANAN PENGHANTARAN' : 'DELIVERY ORDER'}</th>
+                        <th className="px-2.5 py-3.5 text-center whitespace-nowrap">{language === 'ms' ? 'KOD VOT' : 'VOTE CODE'}</th>
+                        <th className="px-3 py-3.5 whitespace-nowrap">{language === 'ms' ? 'KOS ISIAN' : 'REFILL COST'}</th>
+                        <th className="px-3 py-3.5 whitespace-nowrap">{language === 'ms' ? 'CAJ PINJAMAN' : 'LOAN CHARGES'}</th>
+                        <th className="px-3 py-3.5 whitespace-nowrap">{language === 'ms' ? 'JUMLAH' : 'TOTAL COST'}</th>
+                        <th className="px-2.5 py-3.5 text-center whitespace-nowrap">{language === 'ms' ? 'STATUS' : 'STATUS'}</th>
+                        <th className="px-3.5 py-3.5 text-right whitespace-nowrap">{language === 'ms' ? 'DOKUMEN' : 'DOCUMENTS'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -5160,7 +5708,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         if (filteredReceptions.length === 0) {
                           return (
                             <tr>
-                              <td colSpan={8} className="px-6 py-10 text-center text-slate-600 font-semibold italic">
+                              <td colSpan={8} className="px-4 py-8 text-center text-slate-600 font-semibold italic">
                                 {language === 'ms' 
                                   ? (dashboardVoteFilter !== 'all' ? `Tiada penghantaran di bawah Kod Vot ${dashboardVoteFilter}.` : 'Tiada penghantaran log.') 
                                   : (dashboardVoteFilter !== 'all' ? `No deliveries under Vote Code ${dashboardVoteFilter}.` : 'No oxygen deliveries logged yet.')}
@@ -5169,7 +5717,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           )
                         }
 
-                        const itemsPerPage = 5
+                        const itemsPerPage = entriesPerPage
                         const paginatedList = filteredReceptions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                         return paginatedList.map((rec) => {
                           const isPending = rec.status === 'pending' || 
@@ -5179,24 +5727,36 @@ export const OxygenDashboardPage: React.FC = () => {
 
                           return (
                           <tr key={rec.id} className="hover:bg-slate-50 transition-colors">
-                            <td className="px-6 py-4 text-slate-900 font-semibold">
+                            <td className="px-3.5 py-3 text-slate-900 font-semibold whitespace-nowrap">
                               {new Date(rec.reception_date).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </td>
-                            <td className="px-6 py-4 font-mono font-bold">
-                              {isPending ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                                  <Clock className="w-2.5 h-2.5 text-amber-600" />
-                                  {language === 'ms' ? 'Menunggu DO' : 'Pending DO'}
-                                </span>
-                              ) : (
-                                <span className="text-teal-600">{rec.delivery_order_no}</span>
-                              )}
+                            <td className="px-3.5 py-3 font-mono font-bold">
+                              {(() => {
+                                const isLoanOnly = Number(rec.refill_amount || 0) === 0 && Number(rec.loan_amount || 0) > 0
+                                return (
+                                  <div className="flex flex-col gap-0.5 max-w-[160px]">
+                                    {isPending ? (
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 w-max">
+                                        <Clock className="w-2.5 h-2.5 text-amber-600" />
+                                        {language === 'ms' ? 'Menunggu DO' : 'Pending DO'}
+                                      </span>
+                                    ) : (
+                                      <span className={`truncate block ${isLoanOnly ? "text-purple-700" : "text-teal-600"}`} title={rec.delivery_order_no}>{rec.delivery_order_no}</span>
+                                    )}
+                                    {isLoanOnly && (
+                                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[8.5px] font-black tracking-wider uppercase w-max">
+                                        {language === 'ms' ? 'Caj Pinjaman' : 'Loan Only'}
+                                      </span>
+                                    )}
+                                  </div>
+                                )
+                              })()}
                             </td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-2.5 py-3 text-center whitespace-nowrap">
                               <button
                                 type="button"
                                 onClick={() => handleOpenVoteOverrideModal(rec)}
-                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] font-mono font-bold transition-all hover:scale-105 active:scale-95 shadow-2xs ${
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[10px] font-mono font-bold transition-all hover:scale-105 active:scale-95 shadow-2xs ${
                                   (rec.vote_code || '080702').startsWith('080600')
                                     ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 hover:border-purple-300'
                                     : 'bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100 hover:border-teal-300'
@@ -5207,56 +5767,63 @@ export const OxygenDashboardPage: React.FC = () => {
                                 <span>{rec.vote_code || '080702'}</span>
                               </button>
                             </td>
-                            <td className="px-6 py-4 text-slate-800 font-semibold">{fmt(rec.refill_amount)}</td>
-                            <td className="px-6 py-4 text-purple-700 font-semibold">{fmt(rec.loan_amount)}</td>
-                            <td className="px-6 py-4 text-slate-950 font-black">{fmt(rec.total_amount)}</td>
-                            <td className="px-6 py-4 text-center">
-                              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border
+                            <td className="px-3 py-3 text-slate-800 font-semibold whitespace-nowrap text-xs">{fmt(rec.refill_amount)}</td>
+                            <td className="px-3 py-3 text-purple-700 font-semibold whitespace-nowrap text-xs">{fmt(rec.loan_amount)}</td>
+                            <td className="px-3 py-3 text-slate-950 font-black whitespace-nowrap text-xs">{fmt(rec.total_amount)}</td>
+                            <td className="px-2.5 py-3 text-center whitespace-nowrap">
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border
                                 ${isPending 
                                   ? 'bg-amber-50 text-amber-800 border-amber-300' 
                                   : rec.status === 'completed' 
                                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
                                     : 'bg-amber-50 text-amber-700 border-amber-200'}`}
                               >
-                                {isPending ? (language === 'ms' ? 'Menunggu Penghantaran' : 'Pending Delivery') : rec.status.replace('_', ' ')}
+                                {isPending ? (language === 'ms' ? 'Menunggu DO' : 'Pending Delivery') : rec.status.replace('_', ' ')}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-right">
+                            <td className="px-3.5 py-3 text-right whitespace-nowrap">
                               <div className="flex items-center justify-end gap-1.5">
                                 {isPending && (
                                   <button 
                                     onClick={() => handleOpenArrivalModal(rec)}
-                                    className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 shadow-xs"
+                                    className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 shadow-xs"
                                     title={language === 'ms' ? 'Daftar No. DO dan Tarikh Ketibaan' : 'Key in DO Number and Arrival Date'}
                                   >
-                                    <CheckCircle className="w-3.5 h-3.5 text-emerald-200" />
+                                    <CheckCircle className="w-3 h-3 text-emerald-200" />
                                     {language === 'ms' ? 'Kemas Kini DO' : 'Key In DO'}
                                   </button>
                                 )}
                                 <button 
                                   onClick={() => handleOpenPoPreview(rec)}
-                                  className="px-2.5 py-1.5 hover:bg-slate-100 text-slate-700 hover:text-slate-900 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-slate-200"
+                                  className="px-2 py-1 hover:bg-slate-100 text-slate-700 hover:text-slate-900 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-slate-200"
                                   title="Generate KKM PO PDF"
                                 >
-                                  <FileText className="w-3.5 h-3.5 text-slate-500" />
+                                  <FileText className="w-3 h-3 text-slate-500" />
                                   PO
                                 </button>
-                                {isPending ? (
+                                {Number(rec.refill_amount || 0) === 0 && Number(rec.loan_amount || 0) > 0 ? (
+                                  <span 
+                                    className="px-2 py-1 bg-slate-50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-slate-200 cursor-not-allowed opacity-60"
+                                    title={language === 'ms' ? 'Tiada KEW.PS-3 bagi bayaran caj pinjaman tanpa penerimaan fizikal' : 'KEW.PS-3 not applicable for loan fees without physical delivery'}
+                                  >
+                                    N/A
+                                  </span>
+                                ) : isPending ? (
                                   <button 
                                     disabled
-                                    className="px-2.5 py-1.5 bg-slate-50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-slate-200 cursor-not-allowed opacity-50"
+                                    className="px-2 py-1 bg-slate-50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-slate-200 cursor-not-allowed opacity-50"
                                     title={language === 'ms' ? 'Laporan Penerimaan (KEW.PS-3) dikunci sehingga No. DO didaftarkan' : 'Report locked until DO is registered'}
                                   >
-                                    <Lock className="w-3.5 h-3.5 text-slate-400" />
+                                    <Lock className="w-3 h-3 text-slate-400" />
                                     {language === 'ms' ? 'Laporan' : 'Report'}
                                   </button>
                                 ) : (
                                   <button 
                                     onClick={() => handleDownloadReport(rec)}
-                                    className="px-2.5 py-1.5 hover:bg-teal-50 text-slate-700 hover:text-teal-700 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-slate-200"
+                                    className="px-2 py-1 hover:bg-teal-50 text-slate-700 hover:text-teal-700 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-slate-200"
                                     title="Generate Reception Report PDF"
                                   >
-                                    <Download className="w-3.5 h-3.5 text-slate-500" />
+                                    <Download className="w-3 h-3 text-slate-500" />
                                     {language === 'ms' ? 'Laporan' : 'Report'}
                                   </button>
                                 )}
@@ -5287,7 +5854,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       )
                     }
 
-                    const itemsPerPage = 5
+                    const itemsPerPage = entriesPerPage
                     const paginatedList = filteredReceptions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                     return paginatedList.map((rec) => {
                       const isPending = rec.status === 'pending' || 
@@ -5317,7 +5884,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
                             <div>
                               <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
-                                {language === 'ms' ? 'Pesanan Penghantaran (DO)' : 'Delivery Order'}
+                                {language === 'ms' ? 'Pesanan Penghantaran / Invois' : 'Delivery Order / Invoice'}
                               </span>
                               {isPending ? (
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 mt-0.5">
@@ -5325,9 +5892,16 @@ export const OxygenDashboardPage: React.FC = () => {
                                   {language === 'ms' ? 'Menunggu DO' : 'Pending DO'}
                                 </span>
                               ) : (
-                                <span className="font-mono font-bold text-teal-600 text-xs break-all">
-                                  {rec.delivery_order_no}
-                                </span>
+                                <div className="flex flex-col gap-0.5">
+                                  <span className={`font-mono font-bold text-xs break-all ${Number(rec.refill_amount || 0) === 0 && Number(rec.loan_amount || 0) > 0 ? 'text-purple-700' : 'text-teal-600'}`}>
+                                    {rec.delivery_order_no}
+                                  </span>
+                                  {Number(rec.refill_amount || 0) === 0 && Number(rec.loan_amount || 0) > 0 && (
+                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[9px] font-black tracking-wider uppercase w-max">
+                                      {language === 'ms' ? 'Caj Pinjaman Sahaja' : 'Loan Only'}
+                                    </span>
+                                  )}
+                                </div>
                               )}
                             </div>
 
@@ -5392,7 +5966,14 @@ export const OxygenDashboardPage: React.FC = () => {
                               <FileText className="w-3.5 h-3.5 text-slate-500" />
                               PO
                             </button>
-                            {isPending ? (
+                            {Number(rec.refill_amount || 0) === 0 && Number(rec.loan_amount || 0) > 0 ? (
+                              <span 
+                                className="px-3 py-2 bg-slate-50 text-slate-400 rounded-xl font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 border border-slate-200 opacity-60 cursor-not-allowed"
+                                title={language === 'ms' ? 'Tiada KEW.PS-3 bagi bayaran caj pinjaman tanpa penerimaan fizikal' : 'KEW.PS-3 not applicable for loan fees without physical delivery'}
+                              >
+                                N/A
+                              </span>
+                            ) : isPending ? (
                               <button 
                                 disabled
                                 className="px-3 py-2 bg-slate-50 text-slate-400 rounded-xl font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 border border-slate-200 opacity-50 cursor-not-allowed"
@@ -5424,14 +6005,14 @@ export const OxygenDashboardPage: React.FC = () => {
                   <table className="w-full border-collapse text-left text-xs text-gray-700">
                     <thead className="bg-teal-50/70 text-[10px] font-black text-teal-900 uppercase tracking-widest border-b border-teal-100">
                       <tr>
-                        <th className="px-6 py-4">{language === 'ms' ? 'BULAN & REKOD' : 'MONTH & ENTRIES'}</th>
-                        <th className="px-6 py-4">{language === 'ms' ? 'PESANAN PENGHANTARAN GABUNGAN' : 'CONSOLIDATED DELIVERY ORDERS'}</th>
-                        <th className="px-6 py-4 text-center">{language === 'ms' ? 'KOD VOT' : 'VOTE CODE'}</th>
-                        <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH ISIAN SEMULA' : 'TOTAL REFILL'}</th>
-                        <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH PINJAMAN' : 'TOTAL LOAN'}</th>
-                        <th className="px-6 py-4">{language === 'ms' ? 'JUMLAH KOS' : 'TOTAL COST'}</th>
-                        <th className="px-6 py-4 text-center">{language === 'ms' ? 'STATUS' : 'STATUS'}</th>
-                        <th className="px-6 py-4 text-right">{language === 'ms' ? 'DOKUMEN GABUNGAN' : 'CONSOLIDATED DOCS'}</th>
+                        <th className="px-3.5 py-3.5 whitespace-nowrap">{language === 'ms' ? 'BULAN & REKOD' : 'MONTH & ENTRIES'}</th>
+                        <th className="px-3.5 py-3.5 whitespace-nowrap">{language === 'ms' ? 'PESANAN GABUNGAN' : 'CONSOLIDATED DOs'}</th>
+                        <th className="px-2.5 py-3.5 text-center whitespace-nowrap">{language === 'ms' ? 'KOD VOT' : 'VOTE CODE'}</th>
+                        <th className="px-3 py-3.5 whitespace-nowrap">{language === 'ms' ? 'JUMLAH ISIAN' : 'TOTAL REFILL'}</th>
+                        <th className="px-3 py-3.5 whitespace-nowrap">{language === 'ms' ? 'JUMLAH PINJAMAN' : 'TOTAL LOAN'}</th>
+                        <th className="px-3 py-3.5 whitespace-nowrap">{language === 'ms' ? 'JUMLAH KOS' : 'TOTAL COST'}</th>
+                        <th className="px-2.5 py-3.5 text-center whitespace-nowrap">{language === 'ms' ? 'STATUS' : 'STATUS'}</th>
+                        <th className="px-3.5 py-3.5 text-right whitespace-nowrap">{language === 'ms' ? 'DOKUMEN GABUNGAN' : 'CONSOLIDATED DOCS'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -5440,17 +6021,17 @@ export const OxygenDashboardPage: React.FC = () => {
                         if (monthlyList.length === 0) {
                           return (
                             <tr>
-                              <td colSpan={8} className="px-6 py-10 text-center text-slate-600 font-semibold italic">
+                              <td colSpan={8} className="px-4 py-8 text-center text-slate-600 font-semibold italic">
                                 {language === 'ms' ? 'Tiada rekod bulanan dijumpai.' : 'No monthly records found.'}
                               </td>
                             </tr>
                           )
                         }
-                        const itemsPerPage = 5
+                        const itemsPerPage = entriesPerPage
                         const paginatedMonthly = monthlyList.slice((monthlyCurrentPage - 1) * itemsPerPage, monthlyCurrentPage * itemsPerPage)
                         return paginatedMonthly.map((mRec) => (
                           <tr key={mRec.id} className="hover:bg-teal-50/30 transition-colors">
-                            <td className="px-6 py-4">
+                            <td className="px-3.5 py-3 whitespace-nowrap">
                               <div className="flex flex-col gap-1">
                                 <span className="text-slate-900 font-extrabold text-sm capitalize">
                                   {mRec.monthLabel}
@@ -5459,10 +6040,14 @@ export const OxygenDashboardPage: React.FC = () => {
                                   <Layers className="w-2.5 h-2.5" />
                                   {mRec.entryCount} {mRec.entryCount === 1 ? (language === 'ms' ? 'Entri' : 'Delivery') : (language === 'ms' ? 'Entri Digabung' : 'Combined Deliveries')}
                                 </span>
-                                {/* Supply-type badge: VIE Tank vs Cylinder — clearly shown so staff know what type is consolidated */}
+                                {/* Supply-type badge: VIE Tank vs Loan Only vs Cylinder */}
                                 {mRec.is_vie_tank ? (
                                   <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200/80">
                                     💧 {language === 'ms' ? 'Tangki VIE (Cecair)' : 'VIE Bulk Liquid'}
+                                  </span>
+                                ) : (Number(mRec.refill_amount || 0) === 0 && Number(mRec.loan_amount || 0) > 0) ? (
+                                  <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200/80">
+                                    🟣 {language === 'ms' ? 'Caj Pinjaman Sahaja' : 'Loan Charges Only'}
                                   </span>
                                 ) : (
                                   <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-50 text-slate-600 border border-slate-200/80">
@@ -5472,18 +6057,18 @@ export const OxygenDashboardPage: React.FC = () => {
                               </div>
                             </td>
 
-                            <td className="px-6 py-4">
-                              <div className="flex flex-col gap-1 max-w-[280px]">
-                                <span className="font-mono font-bold text-teal-700 text-xs truncate" title={mRec.delivery_order_no}>
+                            <td className="px-3.5 py-3">
+                              <div className="flex flex-col gap-0.5 max-w-[170px] xl:max-w-[220px]">
+                                <span className={`font-mono font-bold text-xs truncate ${Number(mRec.refill_amount || 0) === 0 && Number(mRec.loan_amount || 0) > 0 ? 'text-purple-700' : 'text-teal-700'}`} title={mRec.delivery_order_no}>
                                   {mRec.delivery_order_no}
                                 </span>
-                                <span className="text-[10px] text-slate-500 font-semibold">
-                                  {language === 'ms' ? `Menggabungkan ${mRec.entryCount} nota serahan` : `Aggregates ${mRec.entryCount} delivery orders`}
+                                <span className="text-[10px] text-slate-500 font-semibold truncate" title={language === 'ms' ? `Menggabungkan ${mRec.entryCount} nota serahan / tuntutan` : `Aggregates ${mRec.entryCount} delivery orders / claims`}>
+                                  {language === 'ms' ? `Menggabungkan ${mRec.entryCount} nota serahan / tuntutan` : `Aggregates ${mRec.entryCount} delivery orders / claims`}
                                 </span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-center">
-                              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-black uppercase tracking-wider border ${
+                            <td className="px-2.5 py-3 text-center whitespace-nowrap">
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-black uppercase tracking-wider border ${
                                 (mRec.vote_code || '080702').startsWith('080600')
                                   ? 'bg-purple-50 text-purple-700 border-purple-200'
                                   : 'bg-teal-50 text-teal-700 border-teal-200'
@@ -5491,38 +6076,47 @@ export const OxygenDashboardPage: React.FC = () => {
                                 Vot {mRec.vote_code || '080702'}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-slate-800 font-semibold">{fmt(mRec.refill_amount)}</td>
-                            <td className="px-6 py-4 text-purple-700 font-semibold">{fmt(mRec.loan_amount)}</td>
-                            <td className="px-6 py-4 text-slate-950 font-black text-sm">{fmt(mRec.total_amount)}</td>
-                            <td className="px-6 py-4 text-center">
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border bg-emerald-50 text-emerald-700 border-emerald-200">
+                            <td className="px-3 py-3 text-slate-800 font-semibold whitespace-nowrap text-xs">{fmt(mRec.refill_amount)}</td>
+                            <td className="px-3 py-3 text-purple-700 font-semibold whitespace-nowrap text-xs">{fmt(mRec.loan_amount)}</td>
+                            <td className="px-3 py-3 text-slate-950 font-black text-sm whitespace-nowrap">{fmt(mRec.total_amount)}</td>
+                            <td className="px-2.5 py-3 text-center whitespace-nowrap">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border bg-emerald-50 text-emerald-700 border-emerald-200">
                                 {language === 'ms' ? 'DIKONSOLIDASI' : 'CONSOLIDATED'}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-right">
+                            <td className="px-3.5 py-3 text-right whitespace-nowrap">
                               <div className="flex items-center justify-end gap-1.5">
                                 <button 
                                   onClick={() => handleOpenPoPreview(mRec as any)}
-                                  className="px-2.5 py-1.5 bg-white hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-teal-300 shadow-sm"
+                                  className="px-2 py-1 bg-white hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-teal-300 shadow-sm"
                                   title={language === 'ms' ? 'Jana PO Gabungan Bulanan' : 'Generate Consolidated Monthly PO PDF'}
                                 >
-                                  <FileText className="w-3.5 h-3.5" />
+                                  <FileText className="w-3 h-3" />
                                   {language === 'ms' ? 'PO Bulan' : 'Monthly PO'}
                                 </button>
-                                <button 
-                                  onClick={() => handleDownloadReport(mRec as any)}
-                                  className="px-2.5 py-1.5 bg-teal-50 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-teal-200 shadow-sm"
-                                  title={language === 'ms' ? 'Jana Laporan Pemeriksaan Bulanan (KEW.PS-3)' : 'Generate Consolidated Monthly Inspection Report'}
-                                >
-                                  <Download className="w-3.5 h-3.5" />
-                                  {language === 'ms' ? 'Laporan' : 'Report'}
-                                </button>
+                                {(Number(mRec.refill_amount || 0) === 0 && Number(mRec.loan_amount || 0) > 0) ? (
+                                  <span 
+                                    className="px-2 py-1 bg-slate-50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-slate-200 cursor-not-allowed opacity-60"
+                                    title={language === 'ms' ? 'Tiada KEW.PS-3 bagi bayaran caj pinjaman tanpa penerimaan fizikal' : 'KEW.PS-3 not applicable for loan fees without physical delivery'}
+                                  >
+                                    N/A
+                                  </span>
+                                ) : (
+                                  <button 
+                                    onClick={() => handleDownloadReport(mRec as any)}
+                                    className="px-2 py-1 bg-teal-50 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-teal-200 shadow-sm"
+                                    title={language === 'ms' ? 'Jana Laporan Pemeriksaan Bulanan (KEW.PS-3)' : 'Generate Consolidated Monthly Inspection Report'}
+                                  >
+                                    <Download className="w-3 h-3" />
+                                    {language === 'ms' ? 'Laporan' : 'Report'}
+                                  </button>
+                                )}
                                 <button 
                                   onClick={() => {
                                     setSelectedConsolidateMonthKey(mRec.monthKey)
                                     setIsMonthlyModalOpen(true)
                                   }}
-                                  className="p-1.5 hover:bg-slate-100 text-slate-500 hover:text-slate-800 rounded-xl transition-all border border-slate-200"
+                                  className="p-1 hover:bg-slate-100 text-slate-500 hover:text-slate-800 rounded-xl transition-all border border-slate-200"
                                   title={language === 'ms' ? 'Lihat Perincian Entri' : 'View Delivery Breakdown'}
                                 >
                                   <Eye className="w-3.5 h-3.5" />
@@ -5547,7 +6141,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         </div>
                       )
                     }
-                    const itemsPerPage = 5
+                    const itemsPerPage = entriesPerPage
                     const paginatedMonthly = monthlyList.slice((monthlyCurrentPage - 1) * itemsPerPage, monthlyCurrentPage * itemsPerPage)
                     return paginatedMonthly.map((mRec) => (
                       <div key={mRec.id} className="bg-white border border-teal-200/80 rounded-2xl p-4 space-y-3 shadow-xs">
@@ -5556,8 +6150,12 @@ export const OxygenDashboardPage: React.FC = () => {
                             <span className="text-slate-900 font-extrabold text-sm capitalize">
                               {mRec.monthLabel}
                             </span>
-                            {/* Supply-type badge */}
-                            {mRec.is_vie_tank ? (
+                            {/* Supply-type badge: VIE Tank vs Loan Only vs Cylinder */}
+                            {(Number(mRec.refill_amount || 0) === 0 && Number(mRec.loan_amount || 0) > 0) ? (
+                              <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200/80">
+                                🟣 {language === 'ms' ? 'Caj Pinjaman Sahaja' : 'Loan Charges Only'}
+                              </span>
+                            ) : mRec.is_vie_tank ? (
                               <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200/80">
                                 💧 {language === 'ms' ? 'Tangki VIE (Cecair)' : 'VIE Bulk Liquid'}
                               </span>
@@ -5627,13 +6225,22 @@ export const OxygenDashboardPage: React.FC = () => {
                             <FileText className="w-3.5 h-3.5" />
                             {language === 'ms' ? 'PO Bulan' : 'Monthly PO'}
                           </button>
-                          <button 
-                            onClick={() => handleDownloadReport(mRec as any)}
-                            className="px-3 py-2 bg-teal-50 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center gap-1 active:scale-95 border border-teal-200"
-                          >
-                            <Download className="w-3.5 h-3.5" />
-                            {language === 'ms' ? 'Laporan' : 'Report'}
-                          </button>
+                          {(Number(mRec.refill_amount || 0) === 0 && Number(mRec.loan_amount || 0) > 0) ? (
+                            <span 
+                              className="px-3 py-2 bg-slate-50 text-slate-400 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 border border-slate-200 cursor-not-allowed opacity-60"
+                              title={language === 'ms' ? 'Tiada KEW.PS-3 bagi bayaran caj pinjaman tanpa penerimaan fizikal' : 'KEW.PS-3 not applicable for loan fees without physical delivery'}
+                            >
+                              N/A
+                            </span>
+                          ) : (
+                            <button 
+                              onClick={() => handleDownloadReport(mRec as any)}
+                              className="px-3 py-2 bg-teal-50 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center gap-1 active:scale-95 border border-teal-200"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              {language === 'ms' ? 'Laporan' : 'Report'}
+                            </button>
+                          )}
                           <button 
                             onClick={() => {
                               setSelectedConsolidateMonthKey(mRec.monthKey)
@@ -5658,23 +6265,66 @@ export const OxygenDashboardPage: React.FC = () => {
                 const filteredReceptions = dashboardVoteFilter === 'all' 
                   ? receptionsList 
                   : receptionsList.filter(r => (r.vote_code || '080702').startsWith(dashboardVoteFilter))
-                return filteredReceptions.length > 5 && (
-                  <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs">
-                    <span className="text-slate-600 font-bold">
-                      {language === 'ms' ? 'Menunjukkan' : 'Showing'} <span className="text-slate-900 font-black">{((currentPage - 1) * 5) + 1}</span> {language === 'ms' ? 'hingga' : 'to'} <span className="text-slate-900 font-black">{Math.min(currentPage * 5, filteredReceptions.length)}</span> {language === 'ms' ? 'daripada' : 'of'} <span className="text-slate-900 font-black">{filteredReceptions.length}</span> {language === 'ms' ? 'entri' : 'entries'}
-                    </span>
+                const totalPages = Math.ceil(filteredReceptions.length / entriesPerPage) || 1
+                return filteredReceptions.length > 0 && (
+                  <div className="px-5 py-3.5 border-t border-slate-100 bg-slate-50/90 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    {/* Left: Entries Info & Show [10, 20, 50] Selector */}
+                    <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center sm:justify-start">
+                      <span className="text-slate-600 font-bold">
+                        {language === 'ms' ? 'Menunjukkan' : 'Showing'}{' '}
+                        <span className="text-slate-900 font-black">{((currentPage - 1) * entriesPerPage) + 1}</span>{' '}
+                        {language === 'ms' ? 'hingga' : 'to'}{' '}
+                        <span className="text-slate-900 font-black">{Math.min(currentPage * entriesPerPage, filteredReceptions.length)}</span>{' '}
+                        {language === 'ms' ? 'daripada' : 'of'}{' '}
+                        <span className="text-slate-900 font-black">{filteredReceptions.length}</span>{' '}
+                        {language === 'ms' ? 'entri' : 'entries'}
+                      </span>
+
+                      <div className="flex items-center gap-1.5 pl-2 sm:border-l sm:border-slate-200">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                          {language === 'ms' ? 'Papar:' : 'Show:'}
+                        </span>
+                        <div className="flex items-center bg-slate-200/70 p-0.5 rounded-lg border border-slate-300/50">
+                          {[10, 20, 50].map((size) => (
+                            <button
+                              key={size}
+                              type="button"
+                              onClick={() => {
+                                setEntriesPerPage(size)
+                                setCurrentPage(1)
+                              }}
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-black transition-all ${
+                                entriesPerPage === size
+                                  ? 'bg-white text-teal-800 shadow-xs'
+                                  : 'text-slate-600 hover:text-slate-900'
+                              }`}
+                            >
+                              {size}
+                            </button>
+                          ))}
+                        </div>
+                        <span className="text-[10px] font-semibold text-slate-500">
+                          {language === 'ms' ? '/ hlm' : '/ page'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Right: Page Indicator & Prev/Next Buttons */}
                     <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-bold text-slate-500 mr-1">
+                        {language === 'ms' ? 'Hlm' : 'Page'} <span className="text-slate-900 font-black">{currentPage}</span> / <span className="text-slate-900 font-black">{totalPages}</span>
+                      </span>
                       <button 
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
                       >
                         {language === 'ms' ? 'SEBELUM' : 'PREV'}
                       </button>
                       <button 
-                        disabled={currentPage * 5 >= filteredReceptions.length}
+                        disabled={currentPage * entriesPerPage >= filteredReceptions.length}
                         onClick={() => setCurrentPage(prev => prev + 1)}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
                       >
                         {language === 'ms' ? 'SETERUS' : 'NEXT'}
                       </button>
@@ -5685,23 +6335,66 @@ export const OxygenDashboardPage: React.FC = () => {
             ) : (
               (() => {
                 const monthlyList = getMonthlyConsolidatedReceptions(receptionsList)
-                return monthlyList.length > 5 && (
-                  <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs">
-                    <span className="text-slate-600 font-bold">
-                      {language === 'ms' ? 'Menunjukkan' : 'Showing'} <span className="text-slate-900 font-black">{((monthlyCurrentPage - 1) * 5) + 1}</span> {language === 'ms' ? 'hingga' : 'to'} <span className="text-slate-900 font-black">{Math.min(monthlyCurrentPage * 5, monthlyList.length)}</span> {language === 'ms' ? 'daripada' : 'of'} <span className="text-slate-900 font-black">{monthlyList.length}</span> {language === 'ms' ? 'bulan' : 'months'}
-                    </span>
+                const totalPages = Math.ceil(monthlyList.length / entriesPerPage) || 1
+                return monthlyList.length > 0 && (
+                  <div className="px-5 py-3.5 border-t border-slate-100 bg-slate-50/90 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    {/* Left: Entries Info & Show [10, 20, 50] Selector */}
+                    <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center sm:justify-start">
+                      <span className="text-slate-600 font-bold">
+                        {language === 'ms' ? 'Menunjukkan' : 'Showing'}{' '}
+                        <span className="text-slate-900 font-black">{((monthlyCurrentPage - 1) * entriesPerPage) + 1}</span>{' '}
+                        {language === 'ms' ? 'hingga' : 'to'}{' '}
+                        <span className="text-slate-900 font-black">{Math.min(monthlyCurrentPage * entriesPerPage, monthlyList.length)}</span>{' '}
+                        {language === 'ms' ? 'daripada' : 'of'}{' '}
+                        <span className="text-slate-900 font-black">{monthlyList.length}</span>{' '}
+                        {language === 'ms' ? 'bulan' : 'months'}
+                      </span>
+
+                      <div className="flex items-center gap-1.5 pl-2 sm:border-l sm:border-slate-200">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                          {language === 'ms' ? 'Papar:' : 'Show:'}
+                        </span>
+                        <div className="flex items-center bg-slate-200/70 p-0.5 rounded-lg border border-slate-300/50">
+                          {[10, 20, 50].map((size) => (
+                            <button
+                              key={size}
+                              type="button"
+                              onClick={() => {
+                                setEntriesPerPage(size)
+                                setMonthlyCurrentPage(1)
+                              }}
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-black transition-all ${
+                                entriesPerPage === size
+                                  ? 'bg-white text-teal-800 shadow-xs'
+                                  : 'text-slate-600 hover:text-slate-900'
+                              }`}
+                            >
+                              {size}
+                            </button>
+                          ))}
+                        </div>
+                        <span className="text-[10px] font-semibold text-slate-500">
+                          {language === 'ms' ? '/ hlm' : '/ page'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Right: Page Indicator & Prev/Next Buttons */}
                     <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-bold text-slate-500 mr-1">
+                        {language === 'ms' ? 'Hlm' : 'Page'} <span className="text-slate-900 font-black">{monthlyCurrentPage}</span> / <span className="text-slate-900 font-black">{totalPages}</span>
+                      </span>
                       <button 
                         disabled={monthlyCurrentPage === 1}
                         onClick={() => setMonthlyCurrentPage(prev => Math.max(1, prev - 1))}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
                       >
                         {language === 'ms' ? 'SEBELUM' : 'PREV'}
                       </button>
                       <button 
-                        disabled={monthlyCurrentPage * 5 >= monthlyList.length}
+                        disabled={monthlyCurrentPage * entriesPerPage >= monthlyList.length}
                         onClick={() => setMonthlyCurrentPage(prev => prev + 1)}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
                       >
                         {language === 'ms' ? 'SETERUS' : 'NEXT'}
                       </button>
@@ -5712,19 +6405,19 @@ export const OxygenDashboardPage: React.FC = () => {
             )}
           </div>
 
-          {/* RIGHT SIDE: SIDEBAR WIDGETS (1/3 width) */}
-          <div className="space-y-6">
+          {/* RIGHT SIDE: SIDEBAR WIDGETS (Compact width so table doesn't need horizontal scroll) */}
+          <div className="w-full lg:w-[260px] xl:w-[280px] shrink-0 space-y-6">
             
             {/* Widget A: Active Pricing Matrix config list */}
-            <div className="bg-white border border-slate-200/80 rounded-[28px] p-6 shadow-sm">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3.5 mb-4">
-                <div>
-                  <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest">{language === 'ms' ? 'Harga Silinder' : 'Active Cylinder Prices'}</h4>
-                  <p className="text-[10px] text-slate-600 font-semibold">{language === 'ms' ? 'Kos isian semula standard' : 'Standard refill costs per supplier'}</p>
+            <div className="bg-white border border-slate-200/90 rounded-xl p-4 sm:p-5 shadow-2xs">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3.5 gap-2">
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider truncate">{language === 'ms' ? 'Harga Silinder' : 'Active Cylinder Prices'}</h4>
+                  <p className="text-[10px] text-slate-500 font-medium truncate">{language === 'ms' ? 'Kos isian standard' : 'Standard refill costs'}</p>
                 </div>
                 <button 
                   onClick={() => setIsPricingModalOpen(true)}
-                  className="px-3.5 py-1.5 bg-sky-50 hover:bg-sky-100 text-[#0284c7] rounded-xl text-[10px] font-black tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-sky-100"
+                  className="px-2.5 py-1 bg-sky-50 hover:bg-sky-100 text-[#0284c7] rounded-lg text-[10px] font-bold tracking-wider transition-all flex items-center gap-1 active:scale-95 border border-sky-100 shrink-0 cursor-pointer"
                 >
                   <DollarSign className="w-3.5 h-3.5" />
                   {language === 'ms' ? 'LARAS' : 'ADJUST'}
@@ -5736,7 +6429,7 @@ export const OxygenDashboardPage: React.FC = () => {
                 <select
                   value={selectedPricingSupplier}
                   onChange={(e) => setSelectedPricingSupplier(e.target.value)}
-                  className="w-full text-[11px] font-semibold bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 outline-none focus:border-sky-500 transition-all"
+                  className="w-full text-[11px] font-semibold bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 outline-none focus:border-sky-500 transition-all cursor-pointer"
                 >
                   <option value="All Suppliers">{language === 'ms' ? 'Semua Pembekal' : 'All Suppliers'}</option>
                   {realSupplierOptions.map((sup) => (
@@ -5745,7 +6438,7 @@ export const OxygenDashboardPage: React.FC = () => {
                 </select>
               </div>
               
-              <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
                 {pricingConfigs
                   .filter((config) => isSupplierMatch(config.supplier_name, selectedPricingSupplier))
                   .sort((a, b) => {
@@ -5763,19 +6456,19 @@ export const OxygenDashboardPage: React.FC = () => {
                                     config.cylinder_size_code.toLowerCase().includes('m3') ||
                                     config.cylinder_size_code.toLowerCase().includes('m³')
                     return (
-                      <div key={config.id} className="flex items-center justify-between py-2.5 border-b border-slate-100 hover:bg-slate-50 px-2 rounded-lg transition-colors">
-                        <div>
-                          <div className="flex items-center gap-1.5">
+                      <div key={config.id} className="flex items-center justify-between py-2 border-b border-slate-100 hover:bg-slate-50 px-2 rounded-lg transition-colors gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="text-xs font-bold text-slate-800 tracking-tight block">{config.cylinder_size_code}</span>
                             {isPerM3 && (
-                              <span className="px-1.5 py-0.5 bg-teal-50 border border-teal-200 text-teal-700 text-[8.5px] font-black rounded uppercase">
+                              <span className="px-1.5 py-0.5 bg-teal-50 border border-teal-200 text-teal-700 text-[8px] font-black rounded uppercase">
                                 VIE Tank
                               </span>
                             )}
                           </div>
-                          <span className="text-[9px] text-slate-600 font-bold">{config.supplier_name || lindeDisplayName}</span>
+                          <span className="text-[9px] text-slate-500 font-bold truncate block" title={config.supplier_name || lindeDisplayName}>{config.supplier_name || lindeDisplayName}</span>
                         </div>
-                        <span className="font-mono text-xs font-extrabold text-slate-900">
+                        <span className="font-mono text-xs font-extrabold text-slate-900 shrink-0 whitespace-nowrap">
                           RM {config.refill_price.toFixed(2)}{isPerM3 ? ' / m³' : ''}
                         </span>
                       </div>
@@ -5789,9 +6482,9 @@ export const OxygenDashboardPage: React.FC = () => {
 
                   if (loanConfigs.length > 0) {
                     return loanConfigs.map((config) => (
-                      <div key={`loan-${config.id}`} className="flex items-center justify-between py-2 border-t border-purple-100 hover:bg-purple-50 px-2 rounded-lg transition-colors mt-1 bg-purple-50/60">
-                        <span className="text-xs font-black text-purple-700 tracking-tight uppercase">{config.cylinder_size_code} {language === 'ms' ? 'Kadar Pinjaman' : 'Loan Rate'}</span>
-                        <span className="font-mono text-xs font-black text-purple-700">
+                      <div key={`loan-${config.id}`} className="flex items-center justify-between py-2 border-t border-purple-100 hover:bg-purple-50 px-2 rounded-lg transition-colors mt-1 bg-purple-50/60 gap-2">
+                        <span className="text-[11px] font-black text-purple-700 tracking-tight uppercase truncate">{config.cylinder_size_code} {language === 'ms' ? 'Kadar Pinjam' : 'Loan Rate'}</span>
+                        <span className="font-mono text-xs font-black text-purple-700 shrink-0 whitespace-nowrap">
                           RM {Number(config.loan_rate).toFixed(2)}
                         </span>
                       </div>
@@ -5799,9 +6492,9 @@ export const OxygenDashboardPage: React.FC = () => {
                   }
 
                   return (
-                    <div className="flex items-center justify-between py-2.5 border-t border-slate-100 hover:bg-slate-50 px-2 rounded-lg transition-colors mt-1 bg-slate-50">
-                      <span className="text-xs font-black text-purple-700 tracking-tight uppercase">{language === 'ms' ? 'Kadar Pinjaman Silinder' : 'Cylinder Loan Rate'}</span>
-                      <span className="font-mono text-xs font-black text-purple-700">
+                    <div className="flex items-center justify-between py-2 border-t border-slate-100 hover:bg-slate-50 px-2 rounded-lg transition-colors mt-1 bg-slate-50 gap-2">
+                      <span className="text-[11px] font-black text-purple-700 tracking-tight uppercase truncate">{language === 'ms' ? 'Kadar Pinjam Silinder' : 'Cylinder Loan Rate'}</span>
+                      <span className="font-mono text-xs font-black text-purple-700 shrink-0 whitespace-nowrap">
                         RM {(systemSettings?.loan_cylinder_rate || 18.36).toFixed(2)}
                       </span>
                     </div>
@@ -5820,13 +6513,12 @@ export const OxygenDashboardPage: React.FC = () => {
               const isOverBudget = totalSpending > allocation
 
               return (
-                <div className={`border rounded-[28px] p-6 shadow-sm relative overflow-hidden transition-all duration-300
+                <div className={`border rounded-xl p-4 sm:p-5 shadow-2xs relative overflow-hidden transition-all duration-300
                   ${isOverBudget 
-                    ? 'bg-rose-50 border-rose-200 shadow-[0_8px_30px_rgba(244,63,94,0.03)]' 
-                    : 'bg-emerald-50 border-emerald-200 shadow-[0_8px_30px_rgba(16,185,129,0.03)]'}`}
+                    ? 'bg-rose-50/60 border-rose-200' 
+                    : 'bg-emerald-50/50 border-emerald-200/90'}`}
                 >
-                  <div className="absolute right-0 top-0 w-24 h-24 bg-teal-500/5 rounded-full blur-xl pointer-events-none"></div>
-                  <div className={`flex items-center gap-2 font-black text-xs uppercase tracking-wider mb-3
+                  <div className={`flex items-center gap-2 font-bold text-xs uppercase tracking-wider mb-2.5
                     ${isOverBudget ? 'text-rose-700' : 'text-emerald-700'}`}
                   >
                     {isOverBudget ? (
@@ -5841,7 +6533,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       </>
                     )}
                   </div>
-                  <p className={`text-[11px] font-semibold leading-relaxed ${isOverBudget ? 'text-rose-700' : 'text-emerald-800'}`}>
+                  <p className={`text-[10.5px] font-semibold leading-relaxed ${isOverBudget ? 'text-rose-700' : 'text-emerald-800'}`}>
                     {isOverBudget ? (
                       <>
                         {language === 'ms' 
@@ -5858,7 +6550,7 @@ export const OxygenDashboardPage: React.FC = () => {
                   </p>
                   
                   {/* Progress Indicator */}
-                  <div className="mt-4">
+                  <div className="mt-3.5">
                     <div className={`flex justify-between text-[10px] font-bold mb-1 ${isOverBudget ? 'text-rose-600' : 'text-emerald-700'}`}>
                       <span>{isOverBudget ? (language === 'ms' ? 'HAD WARAN MELEBIHI' : 'WARRANT CAP EXCEEDED') : (language === 'ms' ? 'PENGGUNAAN BAJET SELAMAT' : 'SAFE BUDGET UTILIZATION')}</span>
                       <span>{percentage.toFixed(1)}%</span>
@@ -5880,7 +6572,7 @@ export const OxygenDashboardPage: React.FC = () => {
         </div>
 
         {/* Real Cylinder Live List Table (Audited mini list) */}
-        <div className="bg-white border border-slate-200/80 rounded-[28px] shadow-sm overflow-hidden mt-6">
+        <div className="bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden mt-6">
           <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
             <div>
               <h2 className="text-sm font-bold text-slate-900">{language === 'ms' ? 'Daftar Silinder' : 'Cylinder Registry (Top 10 Live Inventory)'}</h2>
@@ -5899,25 +6591,33 @@ export const OxygenDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6 md:space-y-8 bg-slate-50 min-h-screen relative font-sans w-full max-w-full overflow-x-hidden">
+    <div className="w-full space-y-6">
       {/* Title Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-[10px] font-black text-teal-600 uppercase tracking-widest">
-            <span>{language === 'ms' ? 'Farmasi' : 'Pharmacy'}</span>
-            <span>&gt;</span>
-            <span>{language === 'ms' ? 'Inventori' : 'Inventory'}</span>
-            <span>&gt;</span>
-            <span className="text-slate-600 font-bold">{language === 'ms' ? 'Agihan' : 'Distribution'}</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-2 border-b border-border-default">
+        <div className="min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-text-primary tracking-tight flex items-center gap-2">
+              <Wind className="w-6 h-6 text-accent-base shrink-0" />
+              <span className="truncate">{language === 'ms' ? 'Pengagihan Oksigen Perubatan' : 'Medical Oxygen Distribution'}</span>
+            </h1>
+
+            {/* Mobile inline refresh button */}
+            {currentPath === '/pharmacy/oxygen/cylinders' && (
+              <button
+                type="button"
+                onClick={handleRefreshInventoryData}
+                className="sm:hidden px-2.5 py-1.5 text-xs font-semibold bg-surface border border-border-default text-text-primary rounded-lg hover:bg-subtle transition-all flex items-center gap-1.5 shadow-sm shrink-0"
+                title={language === 'ms' ? 'Segar Semula' : 'Refresh'}
+              >
+                <RefreshCw className="w-3.5 h-3.5 text-text-muted" />
+                <span className="text-[11px] font-bold">{language === 'ms' ? 'Segar' : 'Refresh'}</span>
+              </button>
+            )}
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mt-1 flex items-center gap-2.5">
-            <Wind className="w-8 h-8 text-teal-600" />
-            {language === 'ms' ? 'Pengagihan Oksigen Perubatan' : 'Medical Oxygen Distribution'}
-          </h1>
-          <p className="text-sm text-slate-700 font-semibold mt-1">
+          <p className="text-xs sm:text-sm text-text-muted font-medium mt-1 leading-normal">
             {language === 'ms' 
-              ? 'Gambaran keseluruhan kapasiti silinder oksigen, penggunaan, dan status yang dipantau melalui Supabase.' 
-              : 'Overview of live oxygen cylinder capacity, utilization, and status tracked via Supabase.'}
+              ? 'Gambaran kapasiti silinder oksigen, penggunaan wad, dan logistik pembekal masa nyata.' 
+              : 'Overview of live oxygen cylinder fleet capacity, ward utilization, and status.'}
           </p>
         </div>
 
@@ -6132,30 +6832,31 @@ export const OxygenDashboardPage: React.FC = () => {
         {currentPath === '/pharmacy/oxygen/cylinders' && (
           <button
             onClick={handleRefreshInventoryData}
-            className="flex-1 sm:flex-none px-4 py-2.5 text-xs sm:text-sm font-semibold bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-1.5 shadow-sm focus:outline-none"
+            className="hidden sm:flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold bg-surface border border-border-default text-text-primary rounded-lg hover:bg-subtle transition-all shadow-sm focus:outline-none shrink-0 cursor-pointer"
           >
-            <RefreshCw className="w-4 h-4" /> Refresh
+            <RefreshCw className="w-4 h-4 text-text-muted" />
+            <span>{language === 'ms' ? 'Segar Semula' : 'Refresh'}</span>
           </button>
         )}
 
         {currentPath === '/pharmacy/oxygen/qr' && (
-          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/80 shadow-xs">
+          <div className="flex bg-subtle p-1 rounded-xl border border-border-default shadow-xs">
             <button
               onClick={() => setQrActiveTab('generate')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 qrActiveTab === 'generate'
-                  ? 'bg-white text-slate-800 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-surface text-text-primary shadow-sm'
+                  : 'text-text-muted hover:text-text-primary'
               }`}
             >
               🏷️ Batch Generator
             </button>
             <button
               onClick={() => setQrActiveTab('monitor')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 qrActiveTab === 'monitor'
-                  ? 'bg-white text-slate-800 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-surface text-text-primary shadow-sm'
+                  : 'text-text-muted hover:text-text-primary'
               }`}
             >
               📊 Active Monitor ({cylinders.filter(c => c.qr_code_value).length})
@@ -6167,15 +6868,15 @@ export const OxygenDashboardPage: React.FC = () => {
           <div className="flex gap-2">
             <button 
               onClick={() => setIsAuditScanOpen(true)}
-              className="px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 focus:outline-none"
+              className="px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5 focus:outline-none"
             >
-              <QrCode className="w-4 h-4 text-slate-500" />
+              <QrCode className="w-4 h-4 text-text-muted" />
               Scan QR Code
             </button>
             <button 
               onClick={handleOpenAuditReview}
               disabled={isSavingReconciliation}
-              className="px-4 py-2.5 bg-[#00a68a] hover:bg-[#008f76] disabled:bg-slate-400 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 focus:outline-none cursor-pointer"
+              className="px-3.5 py-2 bg-accent-base hover:bg-accent-hover disabled:bg-subtle text-white disabled:text-text-muted rounded-lg text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5 focus:outline-none cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${isSavingReconciliation ? 'animate-spin' : ''}`} />
               {isSavingReconciliation ? 'Saving Audit...' : 'Save Reconciliation Audit'}
@@ -6184,12 +6885,14 @@ export const OxygenDashboardPage: React.FC = () => {
         )}
       </div>
 
+      {/* Offline Status & Auto-Sync Banner */}
+      <CylinderOfflineBanner hospitalId={hospitalId} />
 
       {isLoading ? (
         <div className="flex items-center justify-center py-24">
           <Spinner size="lg" />
         </div>
-      ) : error ? (
+      ) : (error && (typeof navigator === 'undefined' || navigator.onLine)) ? (
         <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700 shadow-sm">
           <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500" />
           <div>
@@ -6563,10 +7266,57 @@ export const OxygenDashboardPage: React.FC = () => {
                 {/* Left Side: Cyber-styled Cylinder Inventory list of gorgeous Glass Cards */}
                 <div className="flex-1 overflow-y-auto pr-2 space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">CYLINDERS RECEIVED CATALOG</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      {receiveSupplyMode === 'vie' ? 'VIE BULK LIQUID CATALOG' : 'CYLINDERS RECEIVED CATALOG'}
+                    </span>
                     <span className="flex items-center gap-1 text-[9px] text-teal-700 font-extrabold bg-teal-50 px-2 py-0.5 border border-teal-200 rounded-md">
                       Live Warrant Rates
                     </span>
+                  </div>
+
+                  {/* Mode Selector Tab: Compressed Gas Cylinders vs VIE Bulk Liquid */}
+                  <div className="flex items-center gap-2 p-1 bg-slate-100/80 rounded-xl border border-slate-200">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReceiveSupplyMode('cyl')
+                        setReceiveQuantities(prev => {
+                          const next = { ...prev }
+                          Object.keys(next).forEach(k => {
+                            if (k.toLowerCase().includes('vie') || k.toLowerCase().includes('liquid')) delete next[k]
+                          })
+                          return next
+                        })
+                      }}
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                        receiveSupplyMode === 'cyl'
+                          ? 'bg-white text-teal-800 shadow-xs border border-slate-200'
+                          : 'text-slate-500 hover:text-slate-800'
+                      }`}
+                    >
+                      🔵 {language === 'ms' ? 'Silinder Gas Termampat' : 'Compressed Gas Cylinders'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReceiveSupplyMode('vie')
+                        setReceiveQuantities(prev => {
+                          const next = { ...prev }
+                          Object.keys(next).forEach(k => {
+                            if (!k.toLowerCase().includes('vie') && !k.toLowerCase().includes('liquid')) delete next[k]
+                          })
+                          return next
+                        })
+                        setReceiveLoans({})
+                      }}
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                        receiveSupplyMode === 'vie'
+                          ? 'bg-white text-blue-800 shadow-xs border border-slate-200'
+                          : 'text-slate-500 hover:text-slate-800'
+                      }`}
+                    >
+                      💧 {language === 'ms' ? 'Tangki VIE (Cecair Pukal)' : 'VIE Tank (Bulk Liquid)'}
+                    </button>
                   </div>
                   
                   <div className="space-y-4">
@@ -6580,9 +7330,12 @@ export const OxygenDashboardPage: React.FC = () => {
                       return filteredReceiveConfigs.map((config) => {
                         const isLoanSize = config.cylinder_size_code.startsWith('101-')
                         const isPerM3 = config.cylinder_size_code.toLowerCase().includes('vie') || 
-                                        config.cylinder_size_code.toLowerCase().includes('liquid') || 
-                                        config.cylinder_size_code.toLowerCase().includes('m3') ||
-                                        config.cylinder_size_code.toLowerCase().includes('m³')
+                                        config.cylinder_size_code.toLowerCase().includes('liquid')
+                        
+                        // Strict segregation: never show VIE in cylinder mode or cylinders in VIE mode
+                        if (receiveSupplyMode === 'cyl' && isPerM3) return null
+                        if (receiveSupplyMode === 'vie' && !isPerM3) return null
+
                         const basePrice = config.refill_price
                         const loanRate = config.loan_rate ?? systemSettings?.loan_cylinder_rate ?? 18.36
                         const priceToDisplay = basePrice
@@ -6908,6 +7661,424 @@ export const OxygenDashboardPage: React.FC = () => {
                     })()}
                   </div>
                 </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          MODAL 2B: PAY STANDALONE CYLINDER LOAN CHARGES (NO DELIVERY)
+         ======================================================== */}
+      {isPayLoanModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-all duration-300"
+          onClick={() => setIsPayLoanModalOpen(false)}
+        >
+          <style>{`
+            @keyframes slideInRight {
+              from { transform: translateX(100%); }
+              to { transform: translateX(0); }
+            }
+          `}</style>
+          
+          <div 
+            className="bg-white text-slate-800 w-full max-w-4xl lg:max-w-5xl h-full shadow-2xl border-l border-slate-200 flex flex-col p-6 overflow-hidden relative"
+            style={{ animation: 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4 flex-shrink-0">
+              <div>
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <span className="text-[10px] font-black text-purple-700 uppercase tracking-widest block">
+                    {language === 'ms' ? 'Kementerian Kesihatan Malaysia (KKM) • Unit Pentadbiran / Bahagian Pengurusan' : 'Ministry of Health Malaysia • Hospital Administration Division'}
+                  </span>
+                  <span className="text-[9px] font-black bg-purple-100 text-purple-800 border border-purple-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    {language === 'ms' ? 'Akaun Pentadbiran (Bukan Bajet Farmasi)' : 'Admin Account (Not Pharmacy Budget)'}
+                  </span>
+                </div>
+                <h3 className="text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                  <Receipt className="w-5 h-5 text-purple-600" />
+                  {language === 'ms' ? 'Bayar Caj Pinjaman Silinder Sahaja (Tanpa Penghantaran)' : 'Pay Standalone Cylinder Loan Charges (No Gas Delivery)'}
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {language === 'ms' 
+                    ? 'Bayaran sewaan bulanan silinder pembekal yang masih berada dalam simpanan fasiliti. Dibayar melalui Peruntukan Akaun Pentadbiran Hospital (Program 020200 / Objek 24000) tanpa menjejaskan peruntukan Unit Farmasi mahupun lejar KEW.PS-4.' 
+                    : 'Monthly cylinder loan rental fee for cylinders held in hospital custody. Funded under Hospital Administration Budget (Program 020200 / Object 24000) without deducting Pharmacy funds or affecting KEW.PS-4 store ledger.'}
+                </p>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setIsPayLoanModalOpen(false)}
+                className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg transition-all cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateLoanPayment} className="flex flex-col flex-grow overflow-hidden min-h-0">
+              <div className="flex flex-col md:flex-row gap-6 flex-grow overflow-hidden min-h-0">
+                
+                {/* LEFT COLUMN: ACTIVE CUSTODY BREAKDOWN */}
+                <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+                  {/* Custody Info Banner */}
+                  <div className="bg-purple-50/70 border border-purple-200/80 rounded-2xl p-4 flex items-start gap-3 shadow-2xs">
+                    <div className="p-2 bg-purple-100 text-purple-700 rounded-xl mt-0.5">
+                      <Wind className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black uppercase tracking-wider text-purple-900">
+                        {language === 'ms' ? 'Status Kustodi Silinder Aktif (Akaun Pentadbiran)' : 'Active Cylinder Custody Status (Admin Account)'}
+                      </h4>
+                      <p className="text-[11px] text-purple-700/90 font-medium mt-1 leading-relaxed">
+                        {language === 'ms'
+                          ? 'Sistem menyemak baki silinder pinjaman dalam simpanan fasiliti (tanpa pemulangan). Kuantiti dan kadar sewa dipra-isi secara automatik. Bayaran sewaan ini dipertanggungjawabkan di bawah Peruntukan Pentadbiran (Bukan Bajet Farmasi).'
+                          : 'Live count of unreturned supplier cylinders currently in hospital possession. Quantities and contract loan rates are pre-calculated automatically and billed under Hospital Administration Budget (Not Pharmacy Budget).'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      {language === 'ms' ? 'PERINCIAN SILINDER PINJAMAN' : 'LOAN CYLINDER BILLING BREAKDOWN'}
+                    </span>
+                    <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                      {activeLoanCustody.length} {language === 'ms' ? 'Kategori Saiz' : 'Size Categories'}
+                    </span>
+                  </div>
+
+                  {isLoadingCustody ? (
+                    <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200 flex flex-col items-center justify-center gap-2">
+                      <Spinner size="md" />
+                      <span className="text-xs text-slate-500 font-bold">{language === 'ms' ? 'Mengimbas rekod kustodi silinder...' : 'Scanning cylinder custody records...'}</span>
+                    </div>
+                  ) : activeLoanCustody.length === 0 ? (
+                    <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-500 font-semibold italic">
+                      {language === 'ms' ? 'Tiada silinder pinjaman dijumpai dalam inventori aktif.' : 'No loan cylinders found in active inventory.'}
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {activeLoanCustody.map((c) => {
+                        const billedQty = loanItemQuantities[c.sizeCode] !== undefined ? loanItemQuantities[c.sizeCode] : c.activeCount
+                        const billedRate = loanCustomRates[c.sizeCode] !== undefined ? loanCustomRates[c.sizeCode] : c.rate
+                        const subtotal = (Number(billedQty) || 0) * (Number(billedRate) || 0)
+
+                        return (
+                          <div 
+                            key={c.sizeCode}
+                            className="bg-white border border-slate-200/90 hover:border-purple-300 rounded-2xl p-4 transition-all shadow-2xs space-y-3"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono font-black text-sm text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                                  {c.sizeCode}
+                                </span>
+                                <span className="text-[11px] font-bold text-slate-600">
+                                  {c.sizeCode.includes('101-F') 
+                                    ? (language === 'ms' ? 'Silinder Sederhana (1.4m³)' : 'Medium Cylinder (1.4m³)')
+                                    : (language === 'ms' ? 'Silinder Besar (8.0m³)' : 'Large Cylinder (8.0m³)')}
+                                </span>
+                              </div>
+                              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                                {c.activeCount} {language === 'ms' ? 'dalam simpanan' : 'in custody'}
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-slate-100 items-end">
+                              {/* Billed Quantity */}
+                              <div>
+                                <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                                  {language === 'ms' ? 'Kuantiti Dibilkan' : 'Billed Qty'}
+                                </label>
+                                <input 
+                                  type="number"
+                                  min="0"
+                                  value={billedQty}
+                                  onChange={(e) => {
+                                    const val = Math.max(0, parseInt(e.target.value, 10) || 0)
+                                    setLoanItemQuantities(prev => ({ ...prev, [c.sizeCode]: val }))
+                                  }}
+                                  className="w-full px-3 py-2 text-xs font-black text-slate-950 bg-white border-2 border-slate-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-200 rounded-xl outline-none shadow-xs"
+                                />
+                              </div>
+
+                              {/* Rate per Cylinder */}
+                              <div>
+                                <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                                  {language === 'ms' ? 'Kadar (RM / cyl)' : 'Rate (RM / cyl)'}
+                                </label>
+                                <input 
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={billedRate}
+                                  onChange={(e) => {
+                                    const val = Math.max(0, parseFloat(e.target.value) || 0)
+                                    setLoanCustomRates(prev => ({ ...prev, [c.sizeCode]: val }))
+                                  }}
+                                  className="w-full px-3 py-2 text-xs font-black text-slate-950 bg-white border-2 border-slate-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-200 rounded-xl outline-none shadow-xs"
+                                />
+                              </div>
+
+                              {/* Subtotal */}
+                              <div className="text-right pb-1">
+                                <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 block">
+                                  {language === 'ms' ? 'Subjumlah' : 'Subtotal'}
+                                </span>
+                                <span className="text-sm font-extrabold text-purple-700">
+                                  {fmt(subtotal)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+
+                  {/* Custody Summary Pill Box */}
+                  {(() => {
+                    const totalQty = activeLoanCustody.reduce((sum, c) => {
+                      const q = loanItemQuantities[c.sizeCode] !== undefined ? loanItemQuantities[c.sizeCode] : c.activeCount
+                      return sum + (Number(q) || 0)
+                    }, 0)
+                    const totalCost = activeLoanCustody.reduce((sum, c) => {
+                      const q = loanItemQuantities[c.sizeCode] !== undefined ? loanItemQuantities[c.sizeCode] : c.activeCount
+                      const r = loanCustomRates[c.sizeCode] !== undefined ? loanCustomRates[c.sizeCode] : c.rate
+                      return sum + ((Number(q) || 0) * (Number(r) || 0))
+                    }, 0)
+
+                    return (
+                      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between text-xs">
+                        <span className="font-bold text-slate-600">
+                          {language === 'ms' ? 'Jumlah Silinder Dibilkan:' : 'Total Billed Cylinders:'} <strong className="text-slate-900 font-extrabold">{totalQty} silinder</strong>
+                        </span>
+                        <span className="font-black text-purple-900 text-sm">
+                          {fmt(totalCost)}
+                        </span>
+                      </div>
+                    )
+                  })()}
+                </div>
+
+                {/* RIGHT COLUMN: SUPPLIER, INVOICE & VOTE CODE CONFIG */}
+                <div className="w-full md:w-80 lg:w-96 flex flex-col justify-between border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6 space-y-4 overflow-y-auto">
+                  <div className="space-y-3.5">
+                    {/* Supplier Selector */}
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                        {language === 'ms' ? 'Pembekal Gas / Silinder' : 'Supplier'}
+                      </label>
+                      <select 
+                        value={loanSupplier}
+                        onChange={(e) => handleLoanSupplierChange(e.target.value)}
+                        className="w-full px-3 py-2.5 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white shadow-2xs outline-none cursor-pointer"
+                      >
+                        {realSupplierOptions.map(s => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Invoice / Claim Reference */}
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                        {language === 'ms' ? 'No. Invois / Tuntutan Bayaran *' : 'Invoice / Claim Reference *'}
+                      </label>
+                      <input 
+                        type="text"
+                        required
+                        placeholder="e.g. INV-2026/09-LOAN"
+                        value={loanInvoiceNo}
+                        onChange={(e) => setLoanInvoiceNo(e.target.value)}
+                        className="w-full px-3 py-2.5 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl bg-white shadow-2xs outline-none uppercase font-mono"
+                      />
+                    </div>
+
+                    {/* Sales Order / Billing Ref */}
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                        {language === 'ms' ? 'No. Rujukan Bil / SO Pembekal (Pilihan)' : 'Supplier SO / Billing Ref (Optional)'}
+                      </label>
+                      <input 
+                        type="text"
+                        placeholder="e.g. 011045"
+                        value={loanBillingRef}
+                        onChange={(e) => setLoanBillingRef(e.target.value)}
+                        className="w-full px-3 py-2 text-xs font-medium text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none font-mono"
+                      />
+                    </div>
+
+                    {/* Billing Date */}
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                        {language === 'ms' ? 'Tarikh Invois / Bil' : 'Billing / Invoice Date'}
+                      </label>
+                      <input 
+                        type="date"
+                        required
+                        value={loanBillingDate}
+                        onChange={(e) => setLoanBillingDate(e.target.value)}
+                        className="w-full px-3 py-2 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none"
+                      />
+                    </div>
+
+                    {/* Vote Code & Activity Selection (Admin Account Budget) */}
+                    <div className="space-y-2 p-3 bg-purple-50/50 border border-purple-150 rounded-2xl">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-black uppercase text-purple-900 tracking-wider">
+                          {language === 'ms' ? 'Kod Vot Pentadbiran (Bukan Farmasi)' : 'Admin Vote Code (Not Pharmacy)'}
+                        </label>
+                        <span className="text-[8.5px] font-black uppercase text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded border border-purple-200">
+                          {language === 'ms' ? 'Akaun Pentadbiran' : 'Admin Account'}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div>
+                          <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                            {language === 'ms' ? 'Pilihan Vot' : 'Vote Code'}
+                          </label>
+                          <select 
+                            value={['24000', '24999', '020200'].includes(loanVoteCode) ? loanVoteCode : 'manual'}
+                            onChange={(e) => {
+                              const val = e.target.value
+                              if (val === 'manual') {
+                                setLoanVoteCode('')
+                              } else {
+                                setLoanVoteCode(val)
+                                setLoanVoteActivity('020200')
+                              }
+                            }}
+                            className="w-full px-3 py-2 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none cursor-pointer"
+                          >
+                            <option value="24000">24000 (Sewaan - Pentadbiran)</option>
+                            <option value="24999">24999 (Sewaan Gas - Pentadbiran)</option>
+                            <option value="020200">020200 (Pengurusan Hospital)</option>
+                            <option value="manual">{language === 'ms' ? 'Vot Lain (Manual)' : 'Other Vote (Manual)'}</option>
+                          </select>
+                          {!['24000', '24999', '020200'].includes(loanVoteCode) && (
+                            <input 
+                              type="text"
+                              required
+                              placeholder="e.g. 24000"
+                              value={loanVoteCode}
+                              onChange={(e) => setLoanVoteCode(e.target.value.trim())}
+                              className="mt-1.5 w-full px-2.5 py-1.5 text-xs font-mono font-bold text-slate-900 border border-purple-300 focus:border-purple-500 rounded-xl bg-white outline-none"
+                            />
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                            {language === 'ms' ? 'Aktiviti / Program' : 'Activity / Program'}
+                          </label>
+                          <input 
+                            type="text"
+                            required
+                            placeholder="020200"
+                            value={loanVoteActivity}
+                            onChange={(e) => setLoanVoteActivity(e.target.value.trim())}
+                            className="w-full px-3 py-2 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none font-mono"
+                          />
+                          <span className="text-[8px] text-purple-700 block mt-0.5 font-bold">
+                            {language === 'ms' ? '020200 Pengurusan Hospital' : '020200 Hospital Management'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Status */}
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                        {language === 'ms' ? 'Status Bayaran / PO' : 'Payment / PO Status'}
+                      </label>
+                      <select 
+                        value={loanStatus}
+                        onChange={(e) => setLoanStatus(e.target.value as any)}
+                        className="w-full px-3 py-2 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none cursor-pointer"
+                      >
+                        <option value="completed">{language === 'ms' ? 'Diluluskan / Selesai (Completed)' : 'Completed / Approved'}</option>
+                        <option value="outstanding_po">{language === 'ms' ? 'PO Komited (Outstanding PO)' : 'Committed PO (Outstanding)'}</option>
+                        <option value="pending_invoice">{language === 'ms' ? 'Menunggu Baucar (Pending Invoice)' : 'Pending Voucher / Invoice'}</option>
+                      </select>
+                    </div>
+
+                    {/* Remarks */}
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                        {language === 'ms' ? 'Catatan / Justifikasi' : 'Remarks / Justification'}
+                      </label>
+                      <textarea 
+                        rows={2}
+                        placeholder={language === 'ms' ? 'Contoh: Bayaran sewaan silinder pinjaman bagi bulan semasa tanpa bekalan gas.' : 'E.g. Monthly rental fee for active cylinders.'}
+                        value={loanRemarks}
+                        onChange={(e) => setLoanRemarks(e.target.value)}
+                        className="w-full px-3 py-2 text-xs font-medium text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Bottom: Grand Total & Submit Actions */}
+                  <div className="pt-3 border-t border-slate-100 space-y-3">
+                    {(() => {
+                      const totalCost = activeLoanCustody.reduce((sum, c) => {
+                        const q = loanItemQuantities[c.sizeCode] !== undefined ? loanItemQuantities[c.sizeCode] : c.activeCount
+                        const r = loanCustomRates[c.sizeCode] !== undefined ? loanCustomRates[c.sizeCode] : c.rate
+                        return sum + ((Number(q) || 0) * (Number(r) || 0))
+                      }, 0)
+
+                      return (
+                        <div className="bg-gradient-to-br from-purple-700 to-indigo-800 rounded-2xl p-4 text-white shadow-md">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-purple-200 block">
+                              {language === 'ms' ? 'JUMLAH CAJ PINJAMAN PERLU DIBAYAR' : 'TOTAL PAYABLE LOAN CHARGES'}
+                            </span>
+                            <span className="text-[9px] font-black bg-white/20 px-2 py-0.5 rounded-full text-white">
+                              {language === 'ms' ? 'Akaun Pentadbiran' : 'Admin Account'}
+                            </span>
+                          </div>
+                          <h4 className="text-2xl font-extrabold tracking-tight mt-1">
+                            {fmt(totalCost)}
+                          </h4>
+                          <span className="text-[10px] text-purple-200 font-semibold block mt-1">
+                            {language === 'ms' ? 'Diperuntukkan di bawah Vot Pentadbiran' : 'Allocated under Admin Vote'}: <strong>{loanVoteCode || '24000'}</strong> ({loanVoteActivity || '020200'})
+                          </span>
+                          <span className="text-[9px] text-purple-300 font-medium block mt-1.5 pt-1.5 border-t border-purple-500/30">
+                            {language === 'ms' 
+                              ? '✓ Dibiayai daripada peruntukan Akaun Pentadbiran (Bukan bajet / duit khas farmasi)' 
+                              : '✓ Paid under Hospital Admin Account Budget (Zero deduction from pharmacy budget / duit khas)'}
+                          </span>
+                        </div>
+                      )
+                    })()}
+
+                    <div className="flex items-center gap-2">
+                      <button 
+                        type="button"
+                        onClick={() => setIsPayLoanModalOpen(false)}
+                        className="w-1/3 py-3 border border-slate-200 hover:bg-slate-50 text-slate-650 hover:text-slate-800 rounded-xl text-xs font-bold transition-all active:scale-98 cursor-pointer"
+                      >
+                        {language === 'ms' ? 'Batal' : 'Cancel'}
+                      </button>
+                      <button 
+                        type="submit"
+                        disabled={isSubmittingLoanPayment}
+                        className="w-2/3 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-black tracking-wider uppercase shadow-md shadow-purple-500/20 transition-all active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        {isSubmittingLoanPayment ? (
+                          <Spinner size="sm" />
+                        ) : (
+                          <>
+                            <Receipt className="w-4 h-4 text-purple-200" />
+                            <span>{language === 'ms' ? 'Sahkan & Jana PO' : 'Confirm & Generate PO'}</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </form>
           </div>
@@ -7289,9 +8460,13 @@ export const OxygenDashboardPage: React.FC = () => {
                         <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
                         1. Kod Undi & Peruntukan
                       </h4>
-                      <span className="inline-flex items-center gap-1 text-[9px] font-mono font-extrabold bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-full">
+                      <span className={`inline-flex items-center gap-1 text-[9px] font-mono font-extrabold px-2 py-0.5 rounded-full border ${
+                        previewVoteCode.startsWith('24') || previewVoteCode === '020200'
+                          ? 'bg-purple-100 text-purple-800 border-purple-200'
+                          : 'bg-slate-100 text-slate-700 border-slate-200'
+                      }`}>
                         <Lock className="w-2.5 h-2.5 text-amber-600" />
-                        VOT {previewVoteCode} (READ-ONLY)
+                        VOT {previewVoteCode} {previewVoteCode.startsWith('24') || previewVoteCode === '020200' ? '(AKAUN PENTADBIRAN)' : '(READ-ONLY)'}
                       </span>
                     </div>
 
@@ -7311,10 +8486,19 @@ export const OxygenDashboardPage: React.FC = () => {
                           </div>
                           <div className="min-w-0">
                             <span className="text-xs font-mono font-black text-slate-900 block truncate">
-                              Vot {previewVoteCode} {previewVoteCode === '080702' ? '(CC)' : previewVoteCode === '080600' ? '(Duit Khas)' : ''}
+                              Vot {previewVoteCode} {
+                                previewVoteCode === '24000' ? '(Sewaan - Pentadbiran)' :
+                                previewVoteCode === '24999' ? '(Sewaan Gas - Pentadbiran)' :
+                                previewVoteCode === '020200' ? '(Pengurusan Hospital)' :
+                                previewVoteCode === '080702' ? '(CC)' :
+                                previewVoteCode === '080600' ? '(Duit Khas)' : ''
+                              }
                             </span>
                             <span className="text-[10px] text-slate-500 font-semibold block truncate">
-                              Baki: {fmt(financials?.by_vote_code?.[previewVoteCode]?.current_balance ?? (previewVoteCode === '080702' ? (financials?.current_balance ?? 0) : 0))}
+                              {previewVoteCode.startsWith('24') || previewVoteCode === '020200'
+                                ? (language === 'ms' ? 'Akaun Pentadbiran Hospital' : 'Hospital Administration Account')
+                                : `Baki: ${fmt(financials?.by_vote_code?.[previewVoteCode]?.current_balance ?? (previewVoteCode === '080702' ? (financials?.current_balance ?? 0) : 0))}`
+                              }
                             </span>
                           </div>
                         </div>
@@ -7353,23 +8537,54 @@ export const OxygenDashboardPage: React.FC = () => {
 
                     {/* Live Budget Health & Breakdown */}
                     {(() => {
-                      const totalAmt = previewTotalAmount || previewRecord?.total_amount || 0
-                      const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, totalAmt)
+                      const isAdminVote = previewVoteCode.startsWith('24') || previewVoteCode === '020200'
+                      if (isAdminVote) {
+                        return (
+                          <div className="p-3 rounded-2xl border bg-purple-50/70 border-purple-200 text-purple-900 text-[10px] space-y-1.5 shadow-2xs">
+                            <div className="flex justify-between items-center font-bold">
+                              <span className="text-[10px] uppercase tracking-wider text-purple-800">
+                                {language === 'ms' ? 'Status Peruntukan:' : 'Budget Allocation Status:'}
+                              </span>
+                              <span className="font-mono text-[9px] font-black bg-purple-200/80 text-purple-900 px-2 py-0.5 rounded-full uppercase">
+                                {language === 'ms' ? 'Akaun Pentadbiran' : 'Hospital Admin Budget'}
+                              </span>
+                            </div>
+                            <p className="text-[9.5px] text-purple-800/90 leading-relaxed">
+                              {language === 'ms'
+                                ? '✓ Pesanan Kerajaan (PO) ini dipertanggungjawabkan di bawah Peruntukan Pentadbiran (Objek 24000 / Program 020200). Sifar potongan terhadap baki Vot Farmasi mahupun Duit Khas.'
+                                : '✓ This Government PO is charged against Hospital Administration Budget (Object 24000 / Program 020200). Zero deduction from Pharmacy Vote or Duit Khas allocations.'}
+                            </p>
+                            <div className="pt-1.5 border-t border-purple-200/80 flex justify-between text-[10px] font-mono">
+                              <span className="text-purple-700 font-semibold">{language === 'ms' ? 'Caj Pinjaman / Sewaan:' : 'Loan / Rental Charges:'}</span>
+                              <span className="font-extrabold text-purple-950">{fmt(previewLoanAmount || previewRecord.total_amount)}</span>
+                            </div>
+                          </div>
+                        )
+                      }
+
+                      const refillAmt = previewRefillAmount || Number(previewRecord?.refill_amount || 0) || (previewRecord ? (previewRecord.total_amount - (previewRecord.loan_amount || 0)) : 0) || previewTotalAmount || 0
+                      const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, refillAmt)
                       const isDeficit = balanceAfter < 0
                       return (
                         <div className={`p-2.5 rounded-xl border text-[10px] space-y-1.5 ${isDeficit ? 'bg-rose-50/80 border-rose-200 text-rose-800' : 'bg-teal-50/70 border-teal-200 text-teal-900'}`}>
                           <div className="flex justify-between font-bold">
-                            <span>Status Baki Vot {previewVoteCode}:</span>
+                            <span>Status Baki Vot {previewVoteCode} (Unit Farmasi):</span>
                             <span className="font-mono">{isDeficit ? 'PERUNTUKAN DEFISIT' : 'PERUNTUKAN SIHAT'}</span>
                           </div>
                           <div className="grid grid-cols-2 gap-1 pt-1 border-t border-slate-200/60 font-mono text-[9px]">
                             <span className="text-slate-500">Baki Sebelum PO:</span>
                             <span className="font-bold text-right text-slate-800">{fmt(balanceBefore)}</span>
-                            <span className="text-slate-500">Tolak PO Ini:</span>
-                            <span className="font-bold text-right text-slate-800">-{fmt(totalAmt)}</span>
+                            <span className="text-slate-500">Tolak PO Refill Gas:</span>
+                            <span className="font-bold text-right text-slate-800">-{fmt(refillAmt)}</span>
                             <span className="text-slate-500">Baki Selepas PO:</span>
                             <span className={`font-bold text-right ${isDeficit ? 'text-rose-600' : 'text-teal-700'}`}>{fmt(balanceAfter)}</span>
                           </div>
+                          {previewLoanAmount > 0 && (
+                            <div className="pt-1 border-t border-slate-200/60 flex justify-between text-[9px] text-purple-700 font-semibold">
+                              <span>Caj Pinjaman (Bajet Pentadbiran):</span>
+                              <span className="font-mono font-bold">{fmt(previewLoanAmount)}</span>
+                            </div>
+                          )}
                         </div>
                       )
                     })()}
@@ -7507,32 +8722,55 @@ export const OxygenDashboardPage: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-teal-500/10 via-emerald-500/10 to-teal-500/10 border-b border-teal-100 p-6 flex items-start gap-4 flex-shrink-0">
-              <div className="p-3 bg-teal-600 text-white rounded-2xl shadow-lg shadow-teal-600/20 shrink-0">
-                <Layers className="w-6 h-6" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-teal-700 bg-teal-100/80 px-2.5 py-0.5 rounded-full border border-teal-200">
-                    {language === 'ms' ? 'Modul Konsolidasi Dokumen' : 'Document Consolidation Workspace'}
-                  </span>
-                  <button
-                    onClick={() => setIsMonthlyModalOpen(false)}
-                    className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-xl hover:bg-white/80"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+            {(() => {
+              const monthlyList = getMonthlyConsolidatedReceptions(receptionsList)
+              const activeMonthKey = selectedConsolidateMonthKey || (monthlyList[0]?.monthKey || '')
+              const currentMonthRec = monthlyList.find(m => m.monthKey === activeMonthKey) || monthlyList[0]
+
+              return (
+                <div className="bg-gradient-to-r from-teal-500/10 via-emerald-500/10 to-teal-500/10 border-b border-teal-100 p-6 flex items-start gap-4 flex-shrink-0">
+                  <div className={`p-3 text-white rounded-2xl shadow-lg shrink-0 ${currentMonthRec?.is_vie_tank ? 'bg-blue-600 shadow-blue-600/20' : 'bg-teal-600 shadow-teal-600/20'}`}>
+                    <Layers className="w-6 h-6" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border ${currentMonthRec?.is_vie_tank ? 'text-blue-700 bg-blue-100/80 border-blue-200' : 'text-teal-700 bg-teal-100/80 border-teal-200'}`}>
+                        {language === 'ms' ? 'Modul Konsolidasi Dokumen' : 'Document Consolidation Workspace'}
+                      </span>
+                      <button
+                        onClick={() => setIsMonthlyModalOpen(false)}
+                        className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-xl hover:bg-white/80"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <h3 className="text-lg font-extrabold text-slate-900 mt-1 flex items-center gap-2">
+                      {currentMonthRec?.is_vie_tank
+                        ? (language === 'ms' ? 'Gabungan Tangki VIE & Dokumen Bulanan' : 'Monthly VIE Tank & Document Consolidation')
+                        : (language === 'ms' ? 'Gabungan Silinder & Dokumen Bulanan' : 'Monthly Cylinder & Document Consolidation')}
+                      {currentMonthRec?.is_vie_tank ? (
+                        <span className="px-2 py-0.5 text-[9px] font-black bg-blue-100 text-blue-700 border border-blue-200 rounded-full">
+                          💧 TANGKI VIE
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 text-[9px] font-black bg-slate-100 text-slate-700 border border-slate-200 rounded-full">
+                          🔵 SILINDER
+                        </span>
+                      )}
+                    </h3>
+                    <p className="text-xs text-slate-600 font-medium mt-0.5 leading-relaxed">
+                      {currentMonthRec?.is_vie_tank
+                        ? (language === 'ms'
+                            ? 'Gabungkan semua entri penerimaan Tangki VIE cecair pukal (m³) bagi bulan pilihan menjadi satu PO dan Laporan Audit KEW.PS-3 rasmi.'
+                            : 'Combine all bulk liquid VIE Tank receipts (m³) for a chosen month into one official PO and KEW.PS-3 Audit Report.')
+                        : (language === 'ms'
+                            ? 'Gabungkan semua entri penerimaan silinder bagi bulan pilihan menjadi satu PO dan Laporan Audit KEW.PS-3 rasmi.'
+                            : 'Combine all cylinder delivery receipts for a chosen month into one official PO and KEW.PS-3 Audit Report.')}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-lg font-extrabold text-slate-900 mt-1">
-                  {language === 'ms' ? 'Gabungan Silinder & Dokumen Bulanan' : 'Monthly Cylinder & Document Consolidation'}
-                </h3>
-                <p className="text-xs text-slate-600 font-medium mt-0.5 leading-relaxed">
-                  {language === 'ms'
-                    ? 'Gabungkan semua entri penerimaan silinder bagi bulan pilihan menjadi satu PO dan Laporan Audit KEW.PS-3 rasmi.'
-                    : 'Combine all cylinder delivery receipts for a chosen month into one official PO and KEW.PS-3 Audit Report.'}
-                </p>
-              </div>
-            </div>
+              )
+            })()}
 
             {/* Modal Body */}
             {(() => {
@@ -7689,9 +8927,15 @@ export const OxygenDashboardPage: React.FC = () => {
                   <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-3.5 flex items-start gap-2.5">
                     <span className="text-amber-600 text-sm">💡</span>
                     <p className="text-[11px] text-amber-900 leading-relaxed font-medium">
-                      {language === 'ms'
-                        ? 'Semua silinder daripada setiap entri di atas dijumlahkan mengikut saiz silinder (cth: Entri 1 (4 HS) + Entri 2 (2 HS) + Entri 4 (10 HS) = 16 HS Silinder). Satu PO dan satu Laporan KEW.PS-3 rasmi akan dijana bagi keseluruhan bulan ini.'
-                        : 'All cylinders across the entries above will be combined by cylinder size (e.g. Entry 1 (4 HS) + Entry 2 (2 HS) + Entry 4 (10 HS) = 16 HS Cylinders). A single PO and KEW.PS-3 Audit Report will be produced for this entire month.'}
+                      {currentMonthRec.is_vie_tank ? (
+                        language === 'ms'
+                          ? 'Semua bekalan cecair pukal Tangki VIE (m³) dijumlahkan secara berasingan bagi bulan ini. Tangki VIE dikendalikan khas dan tidak bercampur dengan silinder gas termampat.'
+                          : 'All bulk liquid VIE Tank receipts (m³) are consolidated separately for this month. VIE Tank is handled specially and never mixed with compressed gas cylinders.'
+                      ) : (
+                        language === 'ms'
+                          ? 'Semua silinder daripada setiap entri di atas dijumlahkan mengikut saiz silinder (cth: Entri 1 (4 HS) + Entri 2 (2 HS) + Entri 4 (10 HS) = 16 HS Silinder). Satu PO dan satu Laporan KEW.PS-3 rasmi akan dijana bagi keseluruhan bulan ini.'
+                          : 'All cylinders across the entries above will be combined by cylinder size (e.g. Entry 1 (4 HS) + Entry 2 (2 HS) + Entry 4 (10 HS) = 16 HS Cylinders). A single PO and KEW.PS-3 Audit Report will be produced for this entire month.'
+                      )}
                     </p>
                   </div>
                 </div>
@@ -8007,6 +9251,19 @@ export const OxygenDashboardPage: React.FC = () => {
           onClose={() => setDeleteCylinderTarget(null)}
           onConfirm={handleConfirmDeleteCylinders}
           isDeleting={isDeletingCylinder}
+        />
+      )}
+
+      {/* ========================================================
+          MODAL: EDIT CYLINDER DETAILS (SERIAL, SIZE, VALVE)
+         ======================================================== */}
+      {editingCylinderTarget && (
+        <EditCylinderModal
+          isOpen={!!editingCylinderTarget}
+          cylinder={editingCylinderTarget}
+          onClose={() => setEditingCylinderTarget(null)}
+          onSuccess={handleEditCylinderSuccess}
+          hospitalId={hospitalId}
         />
       )}
     </div>

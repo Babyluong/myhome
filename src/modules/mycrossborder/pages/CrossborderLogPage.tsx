@@ -121,7 +121,7 @@ export const CrossborderLogPage: React.FC = () => {
           {/* Search Input */}
           <div className="relative">
             <label className="text-xs font-semibold text-slate-500 block mb-1">
-              {language === 'ms' ? 'Cari Permohonan' : 'Search Applications'}
+              {language === 'ms' ? 'Search Requisitions' : 'Search Applications'}
             </label>
             <div className="relative">
               <input
@@ -157,7 +157,7 @@ export const CrossborderLogPage: React.FC = () => {
           {/* Start Date */}
           <div>
             <label className="text-xs font-semibold text-slate-500 block mb-1">
-              {language === 'ms' ? 'Dari Tarikh' : 'From Date'}
+              {language === 'ms' ? 'From Date' : 'From Date'}
             </label>
             <input
               type="date"
@@ -170,7 +170,7 @@ export const CrossborderLogPage: React.FC = () => {
           {/* End Date */}
           <div>
             <label className="text-xs font-semibold text-slate-500 block mb-1">
-              {language === 'ms' ? 'Hingga Tarikh' : 'To Date'}
+              {language === 'ms' ? 'To Date' : 'To Date'}
             </label>
             <input
               type="date"
@@ -190,7 +190,7 @@ export const CrossborderLogPage: React.FC = () => {
           </div>
         ) : filteredTransfers.length === 0 ? (
           <div className="py-12 text-center text-slate-400">
-            {language === 'ms' ? 'Tiada rekod log padan dengan carian.' : 'No transfer records match your search criteria.'}
+            {language === 'ms' ? 'No log records match the search.' : 'No transfer records match your search criteria.'}
           </div>
         ) : (
           <div className="overflow-x-auto border border-slate-100 rounded-xl">

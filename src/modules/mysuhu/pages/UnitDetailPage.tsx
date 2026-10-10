@@ -299,14 +299,14 @@ export const UnitDetailPage: React.FC = () => {
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-[#00a68a] to-emerald-500" />
         
         <div className="flex items-start gap-4">
-          {/* Equipment Photo */}
+          {/* Equipment Photo in Portrait Ratio (3:4) */}
           {uploadingPhoto ? (
-            <div className="w-20 h-20 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 flex-shrink-0 mt-1">
+            <div className="w-20 h-[106px] sm:w-24 sm:h-[128px] rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 flex-shrink-0 mt-1" style={{ aspectRatio: '3/4' }}>
               <Spinner size="sm" />
               <span className="text-[8px] font-bold text-slate-400">Saving...</span>
             </div>
           ) : unit.photo_url ? (
-            <div className="relative group/unitphoto w-20 h-20 rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0 bg-slate-50 mt-1">
+            <div className="relative group/unitphoto w-20 h-[106px] sm:w-24 sm:h-[128px] rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0 bg-slate-50 mt-1" style={{ aspectRatio: '3/4' }}>
               <img 
                 src={unit.photo_url} 
                 alt={unit.nama_unit} 
@@ -348,7 +348,8 @@ export const UnitDetailPage: React.FC = () => {
             </div>
           ) : (
             <label 
-              className="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50 hover:bg-emerald-50/40 flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 text-slate-400 hover:text-[#00a68a] transition-colors mt-1 p-1 text-center"
+              className="w-20 h-[106px] sm:w-24 sm:h-[128px] rounded-2xl border-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50 hover:bg-emerald-50/40 flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 text-slate-400 hover:text-[#00a68a] transition-colors mt-1 p-1 text-center"
+              style={{ aspectRatio: '3/4' }}
               title="Attach photo of this freezer or room"
             >
               <Camera className="w-5 h-5 text-slate-300" />
@@ -911,7 +912,7 @@ export const UnitDetailPage: React.FC = () => {
             <div className="flex justify-between items-center px-5 py-3 border-b border-slate-800 text-white">
               <div className="flex items-center gap-2">
                 <ImageIcon className="w-4 h-4 text-[#00a68a]" />
-                <span className="text-xs font-bold tracking-wide text-slate-200">Foto Peralatan / Bilik</span>
+                <span className="text-xs font-bold tracking-wide text-slate-200">Equipment / Room Photo</span>
               </div>
               <button
                 onClick={() => setPreviewPhotoUrl(null)}

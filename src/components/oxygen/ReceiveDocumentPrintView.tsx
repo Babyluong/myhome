@@ -64,7 +64,7 @@ export const ReceiveDocumentPrintView: React.FC<ReceiveDocumentPrintViewProps> =
     if (!doc) return;
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
-      alert('Sila benarkan pop-up untuk mencetak dokumen.');
+      alert('Please allow pop-ups to print the document.');
       return;
     }
 

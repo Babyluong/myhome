@@ -40,9 +40,9 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
           <Layers className="w-8 h-8 opacity-60" />
         </div>
         <div>
-          <h3 className="text-base font-bold text-slate-700">Pilih Garis Panduan Klinikal</h3>
+          <h3 className="text-base font-bold text-slate-700">Select Clinical Guideline</h3>
           <p className="text-xs text-slate-400 mt-1 max-w-sm">
-            Sila pilih salah satu kategori sistem organ atau taip carian di menu sebelah kiri untuk melihat pelan rawatan terperinci.
+            Please select an organ system category or search in the menu on the left to view detailed treatment plans.
           </p>
         </div>
       </div>
@@ -53,11 +53,11 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
 
   const handleCopyPrescription = () => {
     const textToCopy = `[NAG 2024 KKM] ${guideline.conditionName}
-- Lini Pertama: ${guideline.firstLineTherapy.regimen}
-- Dos & Cara Pemberian: ${guideline.firstLineTherapy.routeAndDose}
-- Tempoh Rawatan: ${guideline.firstLineTherapy.durationDays}
-- Pilihan Alahan Penisilin: ${guideline.penicillinAllergyOption?.regimen || 'Rujuk Pakar Perubatan / ID'}
-- Pertukaran Oral (Oral Step-Down): ${guideline.oralStepDownOption?.regimen || 'Sesuai dengan kestabilan klinikal'}
+- First-Line: ${guideline.firstLineTherapy.regimen}
+- Dosage & Route: ${guideline.firstLineTherapy.routeAndDose}
+- Treatment Duration: ${guideline.firstLineTherapy.durationDays}
+- Penicillin Allergy Option: ${guideline.penicillinAllergyOption?.regimen || 'Refer to Physician / ID Specialist'}
+- Oral Step-Down: ${guideline.oralStepDownOption?.regimen || 'Subject to clinical stability'}
 (Rujukan: National Antimicrobial Guideline Malaysia 4th Edition 2024)`
 
     navigator.clipboard.writeText(textToCopy)
@@ -91,12 +91,12 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
             {isPaediatric ? (
               <span className="text-[11px] font-black uppercase tracking-wider bg-cyan-400/20 text-cyan-200 border border-cyan-300/30 px-3 py-1 rounded-full flex items-center gap-1.5">
                 <Baby className="w-3.5 h-3.5" />
-                <span>Pediatrik &amp; Neonat</span>
+                <span>Paediatric &amp; Neonatal</span>
               </span>
             ) : (
               <span className="text-[11px] font-black uppercase tracking-wider bg-emerald-400/20 text-emerald-200 border border-emerald-300/30 px-3 py-1 rounded-full flex items-center gap-1.5">
                 <User className="w-3.5 h-3.5" />
-                <span>Dewasa (Adult)</span>
+                <span>Adult</span>
               </span>
             )}
 
@@ -112,7 +112,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
 
             {/* Evidence Level */}
             <span className="text-[11px] font-bold bg-white/10 text-emerald-200 px-3 py-1 rounded-lg border border-white/15 ml-auto">
-              Tahap Bukti: <strong className="text-white">{guideline.evidenceLevel}</strong>
+              Evidence Level: <strong className="text-white">{guideline.evidenceLevel}</strong>
             </span>
           </div>
 
@@ -143,12 +143,12 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
               {copied ? (
                 <>
                   <Check className="w-4 h-4 text-emerald-200" />
-                  <span>Rejimen Disalin ke HIS!</span>
+                  <span>Regimen Copied to Clipboard!</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-4 h-4 text-slate-600" />
-                  <span>Salin Preskripsi</span>
+                  <span>Copy Prescription</span>
                 </>
               )}
             </button>
@@ -161,7 +161,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
                 className="px-4 py-2 bg-cyan-600/90 hover:bg-cyan-600 text-white rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-2 border border-cyan-400/40 shadow-xs"
               >
                 <Calculator className="w-4 h-4 text-cyan-200" />
-                <span>Kira Dos (mg/kg)</span>
+                <span>Calculate Dose (mg/kg)</span>
               </button>
             )}
 
@@ -186,7 +186,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
               }`}
             >
               <Bookmark className="w-4 h-4" />
-              <span>{isBookmarked ? 'Ditanda Buku' : 'Simpan'}</span>
+              <span>{isBookmarked ? 'Bookmarked' : 'Bookmark'}</span>
             </button>
           </div>
         </div>
@@ -203,7 +203,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
               </div>
               <div>
                 <span className="font-black text-cyan-950 uppercase tracking-wider text-[11px] block">
-                  Formula Dos Berat Badan Pediatrik KKM (mg/kg):
+                  MOH Paediatric Weight-Based Dosage Formula (mg/kg):
                 </span>
                 <span className="font-bold text-cyan-900 text-xs sm:text-sm">
                   {guideline.pediatricWeightDoseHint}
@@ -217,7 +217,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
                 className="px-3.5 py-2 bg-cyan-700 hover:bg-cyan-800 text-white rounded-xl font-black text-xs shadow-2xs self-start sm:self-auto cursor-pointer flex items-center gap-1.5 flex-shrink-0"
               >
                 <Calculator className="w-3.5 h-3.5" />
-                <span>Buka Kalkulator Dos</span>
+                <span>Open Dose Calculator</span>
               </button>
             )}
           </div>
@@ -227,7 +227,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
         <div className="text-xs text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-200/90 flex flex-wrap items-center gap-2">
           <span className="font-black text-slate-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
-            <span>Mikroorganisma / Patogen Utama:</span>
+            <span>Primary Microorganisms / Pathogens:</span>
           </span>
           {guideline.primaryPathogens.map((p, idx) => (
             <span
@@ -242,7 +242,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
         {/* 3. THERAPY REGIMENS MATRIX */}
         <div className="space-y-4">
           <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
-            <span>Matriks Pelan Rawatan Antimikrobial (NAG 2024)</span>
+            <span>Antimicrobial Treatment Plan Matrix (NAG 2024)</span>
           </h3>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -255,7 +255,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
                       <CheckCircle2 className="w-3.5 h-3.5" />
                     </span>
                     <h4 className="text-xs font-black text-emerald-950 uppercase tracking-wider">
-                      Rawatan Lini Pertama
+                      First-Line Treatment
                     </h4>
                   </div>
                   <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-200 text-emerald-900">
@@ -269,7 +269,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
 
                 <div className="text-xs text-emerald-950 leading-relaxed bg-white/90 p-3.5 rounded-2xl border border-emerald-200 font-medium space-y-1">
                   <strong className="text-emerald-950 block text-[11px] uppercase tracking-wider">
-                    Dos &amp; Cara Pemberian:
+                    Dosage &amp; Route:
                   </strong>
                   <span className="text-slate-800">{guideline.firstLineTherapy.routeAndDose}</span>
                 </div>
@@ -278,7 +278,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
               <div className="space-y-2 pt-3 border-t border-emerald-200">
                 <div className="flex items-center gap-2 text-xs font-bold text-emerald-950">
                   <Clock className="w-4 h-4 text-emerald-700 flex-shrink-0" />
-                  <span>Tempoh Rawatan: {guideline.firstLineTherapy.durationDays}</span>
+                  <span>Treatment Duration: {guideline.firstLineTherapy.durationDays}</span>
                 </div>
                 {guideline.firstLineTherapy.remarks && (
                   <p className="text-[11px] text-emerald-800 italic leading-relaxed">
@@ -297,11 +297,11 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
                       <FileText className="w-3.5 h-3.5" />
                     </span>
                     <h4 className="text-xs font-black text-blue-950 uppercase tracking-wider">
-                      Rawatan Lini Kedua
+                      Second-Line Treatment
                     </h4>
                   </div>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-200 text-blue-900">
-                    Alternatif
+                    Alternative
                   </span>
                 </div>
 
@@ -311,7 +311,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
 
                 <div className="text-xs text-blue-950 leading-relaxed bg-white/90 p-3.5 rounded-2xl border border-blue-200 font-medium space-y-1">
                   <strong className="text-blue-950 block text-[11px] uppercase tracking-wider">
-                    Dos &amp; Cara Pemberian:
+                    Dosage &amp; Route:
                   </strong>
                   <span className="text-slate-800">{guideline.secondLineTherapy.routeAndDose}</span>
                 </div>
@@ -320,7 +320,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
               <div className="space-y-2 pt-3 border-t border-blue-200">
                 <div className="flex items-center gap-2 text-xs font-bold text-blue-950">
                   <Clock className="w-4 h-4 text-blue-700 flex-shrink-0" />
-                  <span>Tempoh Rawatan: {guideline.secondLineTherapy.durationDays}</span>
+                  <span>Treatment Duration: {guideline.secondLineTherapy.durationDays}</span>
                 </div>
                 {guideline.secondLineTherapy.remarks && (
                   <p className="text-[11px] text-blue-800 italic leading-relaxed">
@@ -340,11 +340,11 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
                         <AlertTriangle className="w-3.5 h-3.5" />
                       </span>
                       <h4 className="text-xs font-black text-amber-950 uppercase tracking-wider">
-                        Jika Alahan Penisilin
+                        If Penicillin Allergy
                       </h4>
                     </div>
                     <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-200 text-amber-900">
-                      Amaran Keselamatan
+                      Safety Warning
                     </span>
                   </div>
 
@@ -354,7 +354,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
 
                   <div className="text-xs text-amber-950 leading-relaxed bg-white/90 p-3.5 rounded-2xl border border-amber-200 font-medium space-y-1">
                     <strong className="text-amber-950 block text-[11px] uppercase tracking-wider">
-                      Dos &amp; Cara Pemberian:
+                      Dosage &amp; Route:
                     </strong>
                     <span className="text-slate-800">{guideline.penicillinAllergyOption.routeAndDose}</span>
                   </div>
@@ -372,9 +372,9 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
               <div className="p-5 rounded-3xl bg-slate-50 border-2 border-slate-200 text-xs text-slate-600 flex flex-col items-center justify-center text-center space-y-2.5">
                 <AlertCircle className="w-8 h-8 text-slate-400" />
                 <div>
-                  <p className="font-bold text-slate-800">Tiada Data Alahan Khusus</p>
+                  <p className="font-bold text-slate-800">No Specific Allergy Data</p>
                   <p className="text-[11px] text-slate-500 mt-1 max-w-xs">
-                    Rujuk Pakar Perubatan / Pakar Penyakit Berjangkit (ID) bagi kes alahan penisilin teruk.
+                    Refer to Physician / Infectious Disease (ID) Specialist for severe penicillin allergy cases.
                   </p>
                 </div>
               </div>
@@ -388,10 +388,10 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <span className="font-black text-indigo-950 flex items-center gap-2 text-xs sm:text-sm">
                 <ArrowRightLeft className="w-4 h-4 text-indigo-600 flex-shrink-0" />
-                <span>Protokol Penukaran Rawatan Oral KKM (Oral Step-Down):</span>
+                <span>MOH Oral Step-Down Protocol:</span>
               </span>
               <span className="text-[10px] bg-indigo-200 text-indigo-950 px-3 py-1 rounded-full font-black self-start sm:self-auto">
-                Klinikal Stabil &amp; Afebrile &gt;24-48 Jam
+                Clinically Stable &amp; Afebrile &gt;24-48 Hours
               </span>
             </div>
             <div className="p-4 bg-white/90 rounded-2xl border border-indigo-100 space-y-1.5">
@@ -399,7 +399,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
                 {guideline.oralStepDownOption.regimen}
               </p>
               <p className="text-indigo-900 text-[11px] leading-relaxed">
-                <strong className="text-indigo-950">Kriteria Penukaran: </strong>
+                <strong className="text-indigo-950">Switch Criteria: </strong>
                 {guideline.oralStepDownOption.criteria}
               </p>
             </div>
@@ -411,7 +411,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
           <div className="bg-slate-50 p-5 sm:p-6 rounded-3xl border border-slate-200 text-xs text-slate-700 space-y-2.5">
             <h5 className="font-black text-slate-900 uppercase tracking-wider flex items-center gap-2 text-xs">
               <ShieldCheck className="w-4 h-4 text-emerald-700" />
-              <span>Nota Kawalan Rintangan Antimikrob (AMS Policy KKM):</span>
+              <span>Antimicrobial Stewardship Notes (MOH AMS Policy):</span>
             </h5>
             <ul className="space-y-1.5 list-disc list-inside text-slate-700">
               {guideline.amsNotes.map((note, idx) => (

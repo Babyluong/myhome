@@ -30,9 +30,10 @@ export const formatCylinderSizeLabel = (sizeCode?: string, usageNotes?: string):
   if (norm.includes('101-D') || norm.includes('101D')) return 'P101-D — Pin Index (0.5m³)';
 
   if (norm.includes('101-F') || norm.includes('101F')) {
+    const isP = norm.startsWith('P') || norm.includes('P101');
     if (isBN) return 'P101-F — Bull Nose (1.4m³)';
-    if (isPI) return '101-F — Pin Index (1.4m³)';
-    if (norm.startsWith('P') || norm.includes('P101')) return 'P101-F — Bull Nose (1.4m³)';
+    if (isPI) return isP ? 'P101-F — Pin Index (1.4m³)' : '101-F — Pin Index (1.4m³)';
+    if (isP) return 'P101-F — Bull Nose (1.4m³)';
     return '101-F — Pin Index (1.4m³)';
   }
 
@@ -48,6 +49,26 @@ export function getRequestedCylinderSpec(item: any): {
   const normCode = rawCode.replace(/\s+/g, '').replace(/–|—/g, '-');
   const notes = (item?.usage_notes || '').toUpperCase();
   const sizeId = item?.cylinder_size_id;
+
+  // 1. Direct explicit valve_type or selectedKey
+  if (item?.selectedKey) {
+    const opt = CYLINDER_CATALOG_OPTIONS.find((o) => o.key === item.selectedKey);
+    if (opt) {
+      return {
+        sizeCode: opt.size_code,
+        sizeId: opt.size_id,
+        valveType: opt.valve_type,
+      };
+    }
+  }
+
+  if (item?.valve_type === 'BN' || item?.valve_type === 'PI') {
+    return {
+      sizeCode: normCode.includes('P101-F') ? 'P101-F' : (normCode.includes('101-F') ? '101-F' : (normCode || '101-N')),
+      sizeId,
+      valveType: item.valve_type,
+    };
+  }
 
   const isBN = normCode.includes('BN') || normCode.includes('BULLNOSE') || notes.includes('BULLNOSE') || notes.includes('BULL NOSE') || notes.includes('BN');
   const isPI = normCode.includes('PI') || normCode.includes('PININDEX') || notes.includes('PIN INDEX') || notes.includes('PININDEX') || notes.includes('PI');
@@ -73,7 +94,7 @@ export function getRequestedCylinderSpec(item: any): {
       normSizeCode = 'P101-F';
     } else if (isPI) {
       valveType = 'PI';
-      normSizeCode = '101-F';
+      normSizeCode = (normCode.startsWith('P') || normCode.includes('P101')) ? 'P101-F' : '101-F';
     } else if (normCode.startsWith('P') || normCode.includes('P101')) {
       valveType = 'BN';
       normSizeCode = 'P101-F';
@@ -129,6 +150,15 @@ export const CYLINDER_CATALOG_OPTIONS: CylinderCatalogOption[] = [
     usage_tag: '[Bullnose BN]'
   },
   {
+    key: 'P101-F_PI',
+    size_id: '1f04245e-de6a-4598-bab2-5b5a421e606a',
+    size_code: 'P101-F',
+    valve_type: 'PI',
+    label: 'P101-F — Pin Index (1.4m³)',
+    capacity: '1.4m³',
+    usage_tag: '[Pin Index PI]'
+  },
+  {
     key: 'P101-HS_BN',
     size_id: '0b3d30f9-d4fc-4d94-b624-d993d1f8098d',
     size_code: 'P101-HS',
@@ -159,21 +189,27 @@ export const CYLINDER_CATALOG_OPTIONS: CylinderCatalogOption[] = [
 
 export const getCatalogOptionForItem = (item: any): CylinderCatalogOption => {
   const spec = getRequestedCylinderSpec(item);
+  if (item?.selectedKey) {
+    const byKey = CYLINDER_CATALOG_OPTIONS.find((o) => o.key === item.selectedKey);
+    if (byKey) return byKey;
+  }
   if (item?.cylinder_size_id) {
-    const byId = CYLINDER_CATALOG_OPTIONS.find(
+    const byIdAndValve = CYLINDER_CATALOG_OPTIONS.find(
       (o) => o.size_id === item.cylinder_size_id && o.valve_type === spec.valveType
     );
-    if (byId) return byId;
+    if (byIdAndValve) return byIdAndValve;
+  }
+  const byCodeAndValve = CYLINDER_CATALOG_OPTIONS.find(
+    (o) => o.size_code === spec.sizeCode && o.valve_type === spec.valveType
+  );
+  if (byCodeAndValve) return byCodeAndValve;
 
+  if (item?.cylinder_size_id) {
     const byIdDirect = CYLINDER_CATALOG_OPTIONS.find(
       (o) => o.size_id === item.cylinder_size_id
     );
     if (byIdDirect) return byIdDirect;
   }
-  const byCode = CYLINDER_CATALOG_OPTIONS.find(
-    (o) => o.size_code === spec.sizeCode && o.valve_type === spec.valveType
-  );
-  if (byCode) return byCode;
 
   const bySize = CYLINDER_CATALOG_OPTIONS.find((o) => o.size_code === spec.sizeCode);
   if (bySize) return bySize;
@@ -190,64 +226,64 @@ export const isCylinderMatchingItem = (cylinder: any, item: any): boolean => {
   const cylTypeName = (cylinder.type_info?.name || '').toUpperCase().trim();
   const serialUpper = (cylinder.serial_number || cylinder.qr_code || '').toUpperCase().trim();
 
-  // 1. Strict Valve / Connection Type Check (Bullnose vs Pin Index)
-  const isCylBN = 
-    cylTypeCode === 'BN' || 
-    cylTypeName.includes('BULL') || 
-    cylSizeCode.includes('BN') || 
-    cylSizeCode === '101-N' || 
-    cylSizeCode === 'P101-HS' ||
-    cylSizeCode === 'P101-F' ||
-    serialUpper.includes('-BN-') ||
-    serialUpper.includes('P101-F') ||
-    serialUpper.includes('P101-HS') ||
-    serialUpper.includes('101-N');
+  // 1. Determine the cylinder's actual valve type
+  let cylinderValve: 'BN' | 'PI' | null = null;
+  if (cylTypeCode === 'BN' || cylTypeCode === 'PI') {
+    cylinderValve = cylTypeCode as 'BN' | 'PI';
+  } else if (cylinder.cylinder_type_id === '3edfc0fe-98fb-4592-9ce1-4229718871a2') {
+    cylinderValve = 'BN';
+  } else if (cylinder.cylinder_type_id === '1874961b-a46d-4cf6-8a47-90b18a1e0fb7') {
+    cylinderValve = 'PI';
+  } else if (cylTypeName.includes('BULL')) {
+    cylinderValve = 'BN';
+  } else if (cylTypeName.includes('PIN')) {
+    cylinderValve = 'PI';
+  } else if (serialUpper.includes('-BN-')) {
+    cylinderValve = 'BN';
+  } else if (serialUpper.includes('-PI-')) {
+    cylinderValve = 'PI';
+  } else if (cylSizeCode === '101-N' || cylSizeCode === 'P101-HS') {
+    cylinderValve = 'BN';
+  } else if (cylSizeCode === 'P101-E' || cylSizeCode === 'P101-D' || cylSizeCode === '101-F') {
+    cylinderValve = 'PI';
+  }
 
-  const isCylPI = 
-    cylTypeCode === 'PI' || 
-    cylTypeName.includes('PIN') || 
-    cylSizeCode.includes('PI') || 
-    cylSizeCode === 'P101-E' || 
-    cylSizeCode === 'P101-D' ||
-    cylSizeCode === '101-F' ||
-    serialUpper.includes('-PI-') ||
-    serialUpper.includes('101-F') ||
-    serialUpper.includes('P101-E') ||
-    serialUpper.includes('P101-D');
+  // Strict Valve Check: If cylinder valve is determined, it MUST match requested valve type
+  if (cylinderValve && cylinderValve !== spec.valveType) {
+    return false;
+  }
 
-  if (spec.valveType === 'BN' && !isCylBN) return false;
-  if (spec.valveType === 'PI' && !isCylPI) return false;
-
-  // 2. Direct cylinder_size_id match if both have it
-  if (item.cylinder_size_id && cylinder.cylinder_size_id) {
-    if (cylinder.cylinder_size_id === item.cylinder_size_id) {
+  // 2. Size Check
+  const cylSizeId = cylinder.cylinder_size_id || cylinder.size_info?.id;
+  const itemSizeId = item.cylinder_size_id || spec.sizeId;
+  if (cylSizeId && itemSizeId) {
+    if (cylSizeId === itemSizeId) {
       return true;
     }
-  }
-  if (item.cylinder_size_id && cylinder.size_info?.id) {
-    if (cylinder.size_info.id === item.cylinder_size_id) {
-      return true;
-    }
+    return false;
   }
 
-  // 3. Match by normalized size code
-  if (spec.sizeCode === 'P101-F') {
-    return (cylSizeCode === 'P101-F' || cylSizeCode.includes('101F') || serialUpper.includes('P101-F') || serialUpper.includes('P101F')) && isCylBN;
+  // Fallback to normalized size code match
+  const normCyl = cylSizeCode.replace(/\s+/g, '').replace(/–|—/g, '-');
+  const normSpec = spec.sizeCode.toUpperCase().replace(/\s+/g, '').replace(/–|—/g, '-');
+
+  if (normSpec === 'P101-F') {
+    return (normCyl === 'P101-F' || normCyl.includes('101F') || serialUpper.includes('P101-F') || serialUpper.includes('P101F'));
   }
-  if (spec.sizeCode === '101-F') {
-    return (cylSizeCode === '101-F' || cylSizeCode.includes('101F') || serialUpper.includes('101-F') || serialUpper.includes('101F')) && isCylPI;
+  if (normSpec === '101-F') {
+    return (normCyl === '101-F' || normCyl.includes('101F') || serialUpper.includes('101-F') || serialUpper.includes('101F'));
   }
-  if (spec.sizeCode === '101-N') {
-    return (cylSizeCode === '101-N' || cylSizeCode.includes('101N') || serialUpper.includes('101-N') || serialUpper.includes('101N')) && isCylBN;
+  if (normSpec === '101-N') {
+    return (normCyl === '101-N' || normCyl.includes('101N') || serialUpper.includes('101-N') || serialUpper.includes('101N'));
   }
-  if (spec.sizeCode === 'P101-HS') {
-    return (cylSizeCode === 'P101-HS' || cylSizeCode.includes('101HS') || serialUpper.includes('P101-HS') || serialUpper.includes('101HS')) && isCylBN;
+  if (normSpec === 'P101-HS') {
+    return (normCyl === 'P101-HS' || normCyl.includes('101HS') || serialUpper.includes('P101-HS') || serialUpper.includes('101HS'));
   }
-  if (spec.sizeCode === 'P101-E') {
-    return (cylSizeCode === 'P101-E' || cylSizeCode.includes('101E') || serialUpper.includes('P101-E') || serialUpper.includes('101E')) && isCylPI;
+  if (normSpec === 'P101-E') {
+    return (normCyl === 'P101-E' || normCyl.includes('101E') || serialUpper.includes('P101-E') || serialUpper.includes('101E'));
   }
-  if (spec.sizeCode === 'P101-D') {
-    return (cylSizeCode === 'P101-D' || cylSizeCode.includes('101D') || serialUpper.includes('P101-D') || serialUpper.includes('101D')) && isCylPI;
+  if (normSpec === 'P101-D') {
+    return (normCyl === 'P101-D' || normCyl.includes('101D') || serialUpper.includes('P101-D') || serialUpper.includes('101D'));
   }
 
   return false;
@@ -391,6 +427,8 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
         size_code: opt.size_code,
         usage_notes: opt.usage_tag,
         cylinder_size_id: opt.size_id,
+        valve_type: opt.valve_type,
+        selectedKey: opt.key,
       })
     ).length;
   };
@@ -458,7 +496,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
   const handleSaveItemEdits = async () => {
     if (!request) return;
     if (editingItems.length === 0) {
-      setError('Sila pastikan sekurang-kurangnya satu item silinder wujud dalam permohonan.');
+      setError('Please ensure at least one cylinder item exists in the request.');
       return;
     }
     setIsSavingEdit(true);
@@ -499,7 +537,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
       setEditReason('');
       playBeep('success');
     } catch (err: any) {
-      setError(err?.message || 'Gagal mengemas kini item permohonan');
+      setError(err?.message || 'Failed to update requisition items');
       playBeep('error');
     } finally {
       setIsSavingEdit(false);
@@ -540,13 +578,13 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
     }
   };
 
-  // Fetch all available store inventory cylinders
+  // Fetch all genuinely available store inventory cylinders
   useEffect(() => {
     if (isOpen && request && isSupabaseConfigured()) {
       const fetchAvailable = async () => {
         setIsLoadingCylinders(true);
         try {
-          const { data, error: err } = await supabase
+          let query = supabase
             .from('pharmacy_oxygen_cylinder_inventory')
             .select(`
               id,
@@ -560,12 +598,26 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
               size_info:pharmacy_oxygen_cylinder_sizes(id, code),
               type_info:pharmacy_oxygen_cylinder_types(id, name, code)
             `)
+            .in('status', ['available', 'full', 'in_stock'])
             .neq('status', 'deactivated')
-            .eq('is_active', true)
-            .or('status.in.(available,full,in_stock),current_location.ilike.%store%,current_location.ilike.%farmasi%');
+            .eq('is_active', true);
+
+          const targetHospitalId = request.hospital_id || currentUser?.hospital_id;
+          if (targetHospitalId) {
+            query = query.eq('hospital_id', targetHospitalId);
+          }
+
+          const { data, error: err } = await query;
 
           if (!err && data) {
-            setAllAvailableCylinders(data.filter((c: any) => c.status !== 'deactivated' && c.is_active !== false));
+            const storeAvailable = data.filter((c: any) => {
+              if (c.status !== 'available' && c.status !== 'full' && c.status !== 'in_stock') return false;
+              if (c.status === 'deactivated' || c.is_active === false) return false;
+              const loc = (typeof c.current_location === 'object' ? (c.current_location as any)?.location_name || '' : c.current_location || '').toLowerCase();
+              if (loc.includes('supplier') || loc === 'archived' || loc === 'disposed') return false;
+              return true;
+            });
+            setAllAvailableCylinders(storeAvailable);
           }
 
           // Initialize issue quantity data
@@ -598,7 +650,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
       }
     } catch (err) {
       console.warn("Camera access failed:", err);
-      setItemErrors(prev => ({ ...prev, [itemId]: 'Tidak dapat mengakses kamera. Sila masukkan atau pilih silinder secara manual.' }));
+      setItemErrors(prev => ({ ...prev, [itemId]: 'Camera inaccessible. Please enter or select cylinder manually.' }));
       setCameraActiveItemId(null);
     }
   };
@@ -733,7 +785,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
     if (isAssignedGlobally) {
       setItemErrors((prev) => ({
         ...prev,
-        [itemId]: `Silinder "${cylinder.serial_number || cylinder.qr_code}" telah pun diimbas/dipilih dalam permohonan ini.`
+        [itemId]: `Silinder "${cylinder.serial_number || cylinder.qr_code}" already scanned/selected in this requisition.`
       }));
       playBeep('error');
       return;
@@ -834,7 +886,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
     if (isAlreadyAssignedGlobal) {
       setItemErrors((prev) => ({
         ...prev,
-        [itemId]: `Silinder "${clean}" telah pun diimbas/dipilih dalam permohonan ini.`
+        [itemId]: `Silinder "${clean}" already scanned/selected in this requisition.`
       }));
       playBeep('error');
       return;
@@ -2081,7 +2133,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                       <span className="text-[9px] text-blue-600 font-semibold">Tersedia di Stor</span>
                                     </div>
                                     {suggestions.map((sug) => {
-                                      const isBN = (sug.type_info?.code || '').toUpperCase() === 'BN' || (sug.type_info?.name || '').toUpperCase().includes('BULL') || (sug.size_info?.code || '').toUpperCase().includes('P101-F') || (sug.serial_number || '').toUpperCase().includes('P101-F');
+                                      const isBN = (sug.type_info?.code || '').toUpperCase() === 'BN' || (sug.type_info?.name || '').toUpperCase().includes('BULL');
                                       return (
                                         <button
                                           key={sug.id}
@@ -2354,7 +2406,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                     <button
                                       type="button"
                                       onClick={() =>
-                                        setOpenStoreBrowsers((prev) => ({
+                                        setShowInventoryBrowser((prev) => ({
                                           ...prev,
                                           [itm.id]: true,
                                         }))
@@ -2388,7 +2440,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                   <button
                                     type="button"
                                     onClick={() =>
-                                      setOpenStoreBrowsers((prev) => ({
+                                      setShowInventoryBrowser((prev) => ({
                                         ...prev,
                                         [itm.id]: true,
                                       }))

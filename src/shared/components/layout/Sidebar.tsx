@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useMemo, useState, useEffect, useRef } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -15,6 +15,7 @@ import {
   ShoppingCart,
   ClipboardList,
   Truck,
+  PersonStanding,
   BarChart3,
   ChevronLeft,
   ChevronRight,
@@ -56,16 +57,28 @@ import {
   Award,
   ShieldAlert,
   QrCode,
+  PackageCheck,
+  Boxes,
+  Baby,
+  ArrowRightLeft,
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
 import { useSidebar } from '@/stores/uiStore'
 import { Avatar } from '@/components/ui'
+import { PendingSyncBadge } from '@/shared/components/ui/PendingSyncBadge'
 import { APP_NAME, ROUTES, SYSTEM_ROLES } from '@/lib/constants'
 import { logout } from '@/services/authService'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { useRbacStore } from '@/stores/rbacStore'
+import {
+  getCurrentModuleInfo,
+  normalizeSidebarModuleCode,
+  getLastActiveModule,
+  type SidebarModuleCode,
+} from '@/shared/utils/moduleNavigation'
+import { isPharmacyLogisticsUser } from '@/shared/utils/inventoryRbac'
 
 interface NavItem {
   label: string
@@ -73,7 +86,8 @@ interface NavItem {
   icon: React.ElementType
   roles?: string[]
   children?: NavItem[]
-  module?: 'admin' | 'pharmacy' | 'oxygen' | 'suhu' | 'myphis' | 'mymsds' | 'kunci' | 'transporter' | 'crossborder' | 'inventory' | 'staff' | 'perolehan' | 'formulari' | 'porter' | 'priviledging' | 'tempahan' | 'timeoff'
+  module?: SidebarModuleCode
+  departmentCheck?: (user: any) => boolean
 }
 
 // Helper to check if user has access to nav item
@@ -124,76 +138,62 @@ const hasAccess = (item: NavItem, userRole?: string): boolean => {
   })
 }
 
-const getActiveModule = (pathname: string, userRole?: string, locationState?: any): 'admin' | 'pharmacy' | 'oxygen' | 'suhu' | 'myphis' | 'mymsds' | 'kunci' | 'transporter' | 'crossborder' | 'inventory' | 'staff' | 'perolehan' | 'formulari' | 'porter' | 'priviledging' | 'tempahan' | 'timeoff' => {
-  if (pathname.startsWith('/timeoff') || pathname.startsWith('/hub/time-off')) return 'timeoff'
-  if (pathname.startsWith('/tempahan') || pathname.startsWith('/hub/tempahan')) return 'tempahan'
-  if (pathname.startsWith('/priviledging') || pathname.startsWith('/hub/priviledging')) return 'priviledging'
-  if (pathname.startsWith('/porter') || pathname.startsWith('/hub/porter')) return 'porter'
-  if (pathname.startsWith('/formulari') || pathname.startsWith('/hub/formulari')) return 'formulari'
-  if (pathname.startsWith('/perolehan') || pathname.startsWith('/hub/perolehan')) return 'perolehan'
-  if (pathname.startsWith('/crossborder')) return 'crossborder'
-  if (pathname.startsWith('/transporter')) return 'transporter'
-  if (pathname.startsWith('/kunci')) return 'kunci'
-  if (pathname.startsWith('/staff') || pathname.startsWith('/hub/staff')) return 'staff'
-  if (pathname.startsWith('/hub/mymsds') || pathname.includes('/mymsds')) return 'mymsds'
-  if (pathname.startsWith('/hub/myphis') || pathname.includes('/myphis')) return 'myphis'
-  if (pathname.startsWith('/suhu')) return 'suhu'
-  if (
-    pathname.startsWith('/pharmacy/oxygen') ||
-    pathname.startsWith('/oxygen') ||
-    pathname.startsWith('/cylinder') ||
-    pathname.startsWith('/mycylinder') ||
-    pathname.startsWith('/hub/cylinder')
-  ) {
-    return 'oxygen'
+const getActiveModule = (pathname: string, userRole?: string, locationState?: any): SidebarModuleCode => {
+  // 1. Direct path matching
+  const routeModule = getCurrentModuleInfo(pathname)
+  if (routeModule) {
+    const normalized = normalizeSidebarModuleCode(routeModule.code)
+    if (normalized) return normalized
   }
-  if (pathname.startsWith('/pharmacy/inventory') || pathname.startsWith('/inventory') || pathname.startsWith('/myinventory')) return 'inventory'
-  if (pathname.startsWith('/pharmacy') || pathname.startsWith('/mywarrant')) return 'pharmacy'
-  if (pathname.startsWith('/admin')) return 'admin'
 
-  // Check navigation state fallback (useful on shared pages like Profile)
-  if (locationState && typeof locationState === 'object' && locationState.fromModule) {
-    const fromModuleCode = locationState.fromModule.code
-    if (fromModuleCode === 'timeoff' || fromModuleCode === 'mytimeoff') return 'timeoff'
-    if (fromModuleCode === 'tempahan' || fromModuleCode === 'mytempahan' || fromModuleCode === 'system_tempahan') return 'tempahan'
-    if (fromModuleCode === 'priviledging' || fromModuleCode === 'mypriviledging' || fromModuleCode === 'system_priviledging') return 'priviledging'
-    if (fromModuleCode === 'porter' || fromModuleCode === 'myporter' || fromModuleCode === 'system_porter') return 'porter'
-    if (fromModuleCode === 'formulari' || fromModuleCode === 'myformulari' || fromModuleCode === 'pharmacy_formulari') return 'formulari'
-    if (fromModuleCode === 'perolehan') return 'perolehan'
-    if (fromModuleCode === 'suhu') return 'suhu'
-    if (fromModuleCode === 'oxygen' || fromModuleCode === 'cylinder' || fromModuleCode === 'mycylinder') return 'oxygen'
-    if (fromModuleCode === 'pharmacy_logistics' || fromModuleCode === 'pharmacy') return 'pharmacy'
-    if (fromModuleCode === 'inventory') return 'inventory'
-    if (fromModuleCode === 'system_admin' || fromModuleCode === 'hospital_admin' || fromModuleCode === 'admin') return 'admin'
-    if (fromModuleCode === 'myphis') return 'myphis'
-    if (fromModuleCode === 'system_kunci' || fromModuleCode === 'kunci') return 'kunci'
-    if (fromModuleCode === 'transporter') return 'transporter'
-    if (fromModuleCode === 'crossborder') return 'crossborder'
-    if (fromModuleCode === 'staff' || fromModuleCode === 'mystaff') return 'staff'
+  // 2. Navigation state fallback (passed from Profile / shared nav on desktop or mobile)
+  if (locationState && typeof locationState === 'object' && locationState.fromModule?.code) {
+    const normalized = normalizeSidebarModuleCode(locationState.fromModule.code)
+    if (normalized) return normalized
   }
-  
-  // Fallback based on user role
-  if (userRole && [
+
+  // 3. Stored last active module (persisted in session/local storage)
+  const lastActive = getLastActiveModule()
+  if (lastActive?.code) {
+    const normalized = normalizeSidebarModuleCode(lastActive.code)
+    if (normalized) return normalized
+  }
+
+  // 4. Role-based fallback
+  const cleanRole = (userRole || '').toLowerCase()
+  if ([
     SYSTEM_ROLES.SYSTEM_ADMIN,
     SYSTEM_ROLES.HOSPITAL_ADMIN,
-    SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR
-  ].includes(userRole as any)) {
+    SYSTEM_ROLES.HOSPITAL_ADMINISTRATOR,
+  ].some((r) => cleanRole.includes(r.toLowerCase()))) {
     return 'admin'
   }
-  
-  return 'pharmacy'
+
+  if (PHARMACY_ROLES.some((r) => cleanRole.includes(r.toLowerCase()))) {
+    return 'pharmacy'
+  }
+
+  return 'staff'
 }
 
 
-// Filter navigation based on user role
-const filterNavigation = (items: NavItem[], userRole?: string): NavItem[] => {
+// Filter navigation based on user role and department authorization
+const filterNavigation = (items: NavItem[], userRole?: string, user?: any): NavItem[] => {
   return items
-    .filter((item) => hasAccess(item, userRole))
+    .filter((item) => {
+      if (!hasAccess(item, userRole)) return false
+      if (item.departmentCheck && !item.departmentCheck(user)) return false
+      return true
+    })
     .map((item) => {
       if (item.children) {
         return {
           ...item,
-          children: item.children.filter((child) => hasAccess(child, userRole)),
+          children: item.children.filter((child) => {
+            if (!hasAccess(child, userRole)) return false
+            if (child.departmentCheck && !child.departmentCheck(user)) return false
+            return true
+          }),
         }
       }
       return item
@@ -242,8 +242,8 @@ const PRIVILEDGING_STAFF_CHILDREN: NavItem[] = [
 ]
 
 const PRIVILEDGING_ADMIN_CHILDREN: NavItem[] = [
-  { label: 'Dashboard (JKCP)', href: '/priviledging', icon: LayoutDashboard },
-  { label: 'JKCP Review & Approvals', href: '/priviledging/review-queue', icon: ShieldCheck },
+  { label: 'Committee Dashboard', href: '/priviledging', icon: LayoutDashboard },
+  { label: 'Committee Review & Approvals', href: '/priviledging/review-queue', icon: ShieldCheck },
   { label: 'Staff Progress', href: '/priviledging/staff-progress', icon: Users },
   { label: 'Credentialing Criteria', href: '/priviledging/criteria', icon: Award },
   { label: 'MOH Procedure Catalog', href: '/priviledging/catalog', icon: BookOpen },
@@ -423,9 +423,10 @@ const navigation: NavItem[] = [
     icon: Package,
     roles: PHARMACY_ROLES,
     module: 'inventory',
+    departmentCheck: (u) => isPharmacyLogisticsUser(u),
     children: [
-      { label: 'Drug Inventory', href: ROUTES.PHARMACY_DRUGS, icon: Package },
-      { label: 'Non-Drug Inventory', href: ROUTES.PHARMACY_NON_DRUGS, icon: ClipboardList },
+      { label: 'Drug Inventory', href: ROUTES.PHARMACY_DRUGS, icon: Package, departmentCheck: (u) => isPharmacyLogisticsUser(u) },
+      { label: 'Non-Drug Inventory', href: ROUTES.PHARMACY_NON_DRUGS, icon: ClipboardList, departmentCheck: (u) => isPharmacyLogisticsUser(u) },
     ],
   },
   {
@@ -506,6 +507,21 @@ const navigation: NavItem[] = [
       { label: 'Dashboard', href: '/hub/mymsds', icon: LayoutDashboard },
       { label: 'MSDS Directory', href: '/hub/mymsds', icon: ClipboardList },
       { label: 'Emergency Procedures', href: '/hub/mymsds', icon: Shield },
+    ],
+  },
+  {
+    label: 'MyPrepacking',
+    href: '/prepacking/dashboard',
+    icon: PackageCheck,
+    module: 'prepacking',
+    children: [
+      { label: 'Dashboard', href: '/prepacking/dashboard', icon: LayoutDashboard },
+      { label: 'Formulation Catalog', href: '/prepacking/catalog', icon: Boxes },
+      { label: 'Packaging Batches', href: '/prepacking/batches', icon: PackageCheck },
+      { label: 'KEW.PS-4 Bin Card Ledger', href: '/prepacking/kewps4', icon: FileText },
+      { label: 'Store-to-Counter Transfer', href: '/prepacking/movement', icon: ArrowRightLeft },
+      { label: 'Label Print Studio', href: '/prepacking/labels', icon: Printer },
+      { label: 'Reports & Analytics', href: '/prepacking/reports', icon: BarChart3 },
     ],
   },
   {
@@ -621,6 +637,7 @@ const navigation: NavItem[] = [
     children: [
       { label: 'Hospital Lawas Formulary', href: '/formulari/hospital-lawas', icon: Building2 },
       { label: 'Drug Search & Catalog', href: '/formulari/dashboard', icon: Search },
+      { label: 'Paediatric Catalogue', href: '/formulari/paediatric-catalogue', icon: Baby },
       { label: 'High Alert Medications (HAM)', href: '/formulari/ham', icon: Flame },
       { label: 'LASA & TALL-Man Register', href: '/formulari/lasa', icon: AlertTriangle },
       { label: 'IV Dilution Protocols', href: '/formulari/dilution', icon: Droplets },
@@ -633,7 +650,7 @@ const navigation: NavItem[] = [
   {
     label: 'MyPorter',
     href: '/porter/dashboard',
-    icon: Truck,
+    icon: PersonStanding,
     module: 'porter',
     children: [
       { label: 'Dashboard', href: '/porter/dashboard', icon: LayoutDashboard },
@@ -677,7 +694,7 @@ export const Sidebar: React.FC = () => {
   const { user, logout: storeLogout } = useAuthStore()
   const { sidebarOpen, sidebarCollapsed, setSidebarOpen } = useSidebar()
   const { language, t } = useLanguage()
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 1024 : false))
 
   const userRole = (
     user?.role?.role_code ||
@@ -812,10 +829,22 @@ export const Sidebar: React.FC = () => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  const prevPathnameRef = useRef(location.pathname)
+
+  // Auto-close sidebar on mobile ONLY when navigating to a new route
+  useEffect(() => {
+    if (prevPathnameRef.current !== location.pathname) {
+      prevPathnameRef.current = location.pathname
+      if (isMobile) {
+        setSidebarOpen(false)
+      }
+    }
+  }, [location.pathname, isMobile, setSidebarOpen])
   
   // Memoize filtered navigation to prevent unnecessary recalculations
   const filteredNavigation = useMemo(() => {
-    const roleFiltered = filterNavigation(navigation, userRole)
+    const roleFiltered = filterNavigation(navigation, userRole, user)
     const activeModule = getActiveModule(location.pathname, userRole, location.state)
     return roleFiltered
       .filter((item) => item.module === activeModule)
@@ -828,7 +857,11 @@ export const Sidebar: React.FC = () => {
         }
         return item
       })
-  }, [userRole, location.pathname, location.state, priviledgingMode])
+  }, [userRole, user, location.pathname, location.state, priviledgingMode])
+
+  const currentModuleInfo = useMemo(() => {
+    return getCurrentModuleInfo(location.pathname) || getLastActiveModule()
+  }, [location.pathname])
 
   const handleLogout = async () => {
     await logout()
@@ -945,130 +978,7 @@ export const Sidebar: React.FC = () => {
       totalChildBadgeCount = tempahanPendingCount
     }
 
-    const getTranslatedLabel = (label: string): string => {
-      const map: Record<string, string> = {
-        'Dashboard': t('nav.dashboard', 'Dashboard'),
-        'Administration': t('nav.administration', 'Administration'),
-        'Monitoring': t('nav.search', 'Monitoring'),
-        'Financial': t('sidebar.mywarrant', 'Financial'),
-        'Medical Oxygen': language === 'ms' ? 'Oksigen Perubatan' : 'Medical Oxygen',
-        'Oxygen Dashboard': language === 'ms' ? 'Dashboard Oksigen' : 'Oxygen Dashboard',
-        'Cylinder Inventory': language === 'ms' ? 'Inventori Silinder' : 'Cylinder Inventory',
-        'Cylinder Request': language === 'ms' ? 'Permohonan Silinder' : 'Cylinder Request',
-        'QR Generator': language === 'ms' ? 'Jana Kod QR' : 'QR Generator',
-        'KEW.PS-4 Cylinder Ledger': language === 'ms' ? 'Lejar KEW.PS-4 Silinder' : 'KEW.PS-4 Cylinder Ledger',
-        'Stock Reconciliation': language === 'ms' ? 'Penyelarasan Stok' : 'Stock Reconciliation',
-        'Cylinder Report': language === 'ms' ? 'Laporan Silinder' : 'Cylinder Report',
-        'Cylinder Maintenance': language === 'ms' ? 'Penyelenggaraan Silinder' : 'Cylinder Maintenance',
-        'Supplier Catalog': language === 'ms' ? 'Katalog Pembekal' : 'Supplier Catalog',
-        'Hospital Facilities': language === 'ms' ? 'Fasiliti Hospital' : 'Hospital Facilities',
-        'Clinic Facilities': language === 'ms' ? 'Fasiliti Klinik' : 'Clinic Facilities',
-        'Procurement Reports': language === 'ms' ? 'Laporan Perolehan' : 'Procurement Reports',
-        'Financial Reports': language === 'ms' ? 'Laporan Kewangan' : 'Financial Reports',
-        'Drug Inventory': language === 'ms' ? 'Inventori Ubat' : 'Drug Inventory',
-        'Non-Drug Inventory': language === 'ms' ? 'Inventori Bukan Ubat' : 'Non-Drug Inventory',
-        'Drug': language === 'ms' ? 'Ubat' : 'Drug',
-        'Non-Drug': language === 'ms' ? 'Bukan Ubat' : 'Non-Drug',
-        'Near Expiry': language === 'ms' ? 'Hampir Luput' : 'Near Expiry',
-        'Slow-Moving Items': language === 'ms' ? 'Barangan Lambat Bergerak' : 'Slow-Moving Items',
-        'Inventory Report': language === 'ms' ? 'Laporan Inventori' : 'Inventory Report',
-        'Stock Analysis': language === 'ms' ? 'Analisis Stok' : 'Stock Analysis',
-        'Distribution': language === 'ms' ? 'Pengedaran (Inden Store)' : 'Distribution (Store Indent)',
-        'Indent Requests': language === 'ms' ? 'Permohonan Inden' : 'Indent Requests',
-        'Issue Counter': language === 'ms' ? 'Kaunter Pengeluaran' : 'Issue Counter',
-        'Indent Entitlement': language === 'ms' ? 'Kelayakan Inden Jabatan' : 'Indent Entitlement',
-        'Warrant': language === 'ms' ? 'Waran' : 'Warrant',
-        'APPL Allocation': language === 'ms' ? 'Peruntukan APPL' : 'APPL Allocation',
-        'CC Allocation': language === 'ms' ? 'Peruntukan CC' : 'CC Allocation',
-        'LP Allocation': language === 'ms' ? 'Peruntukan LP' : 'LP Allocation',
-        'Budget Forecasting': language === 'ms' ? 'Ramalan Belanjawan' : 'Budget Forecasting',
-        'Purchase Orders': language === 'ms' ? 'Pesanan Pembelian' : 'Purchase Orders',
-        'LPO': language === 'ms' ? 'LPO' : 'LPO',
-        'Order Tracking': language === 'ms' ? 'Penjejakan Pesanan' : 'Order Tracking',
-        'Received Item': language === 'ms' ? 'Penerimaan Barangan' : 'Received Item',
-        'Payment': language === 'ms' ? 'Pembayaran' : 'Payment',
-        'Credit Notes': language === 'ms' ? 'Nota Kredit' : 'Credit Notes',
-        'Penalty': language === 'ms' ? 'Denda & Penalti' : 'Penalty',
-        'LOU': language === 'ms' ? 'Surat Aku Janji (LOU)' : 'LOU',
-        'Supplier Performance': language === 'ms' ? 'Prestasi Pembekal' : 'Supplier Performance',
-        'Breach Log': language === 'ms' ? 'Log Pelanggaran Suhu' : 'Breach Log',
-        'Admin Setup': language === 'ms' ? 'Tetapan Pentadbir' : 'Admin Setup',
-        'Users': language === 'ms' ? 'Pengguna' : 'Users',
-        'Access Requests': language === 'ms' ? 'Permohonan Akses' : 'Access Requests',
-        'Memo Approval': language === 'ms' ? 'Kelulusan Memo' : 'Memo Approval',
-        'Sensitive Data Requests': language === 'ms' ? 'Permohonan Data Sensitif' : 'Sensitive Data Requests',
-        'Hospitals': language === 'ms' ? 'Hospital' : 'Hospitals',
-        'Clinics': language === 'ms' ? 'Klinik' : 'Clinics',
-        'Departments': language === 'ms' ? 'Jabatan' : 'Departments',
-        'Roles & Permissions': language === 'ms' ? 'Peranan & Kebenaran' : 'Roles & Permissions',
-        'System Health': language === 'ms' ? 'Kesihatan Sistem' : 'System Health',
-        'Backup Status': language === 'ms' ? 'Status Sandaran' : 'Backup Status',
-        'Backups': language === 'ms' ? 'Sandaran' : 'Backups',
-        'Alerts': language === 'ms' ? 'Amaran' : 'Alerts',
-        'Audit Logs': language === 'ms' ? 'Log Audit' : 'Audit Logs',
-        'Settings': language === 'ms' ? 'Tetapan' : 'Settings',
-        'Movement Log': language === 'ms' ? 'Log Pergerakan' : 'Movement Log',
-        'Event Log': language === 'ms' ? 'Log Event' : 'Event Log',
-        'Department Calendar': language === 'ms' ? 'Kalendar Jabatan' : 'Department Calendar',
-        'Organizational Chart': language === 'ms' ? 'Carta Organisasi' : 'Organizational Chart',
-        'Management Budget': language === 'ms' ? 'Bajet Pengurusan' : 'Management Budget',
-        'Development Budget': language === 'ms' ? 'Bajet Pembangunan' : 'Development Budget',
-        'Orders & LPO': language === 'ms' ? 'Pesanan & LPO' : 'Orders & LPO',
-        'Receiving & Payments': language === 'ms' ? 'Terimaan & Bayaran' : 'Receiving & Payments',
-        'Catalog & Suppliers': language === 'ms' ? 'Katalog & Pembekal' : 'Catalog & Suppliers',
-        'Hospital Lawas Formulary': language === 'ms' ? 'Formulari Hospital Lawas' : 'Hospital Lawas Formulary',
-        'Drug Search & Catalog': language === 'ms' ? 'Carian & Katalog Ubat' : 'Drug Search & Catalog',
-        'High Alert Medications (HAM)': language === 'ms' ? 'Ubat Berisiko Tinggi (HAM)' : 'High Alert Medications (HAM)',
-        'LASA & TALL-Man Register': language === 'ms' ? 'Daftar LASA & TALL-Man' : 'LASA & TALL-Man Register',
-        'IV Dilution Protocols': language === 'ms' ? 'Protokol Pelarutan IV' : 'IV Dilution Protocols',
-        'National Antimicrobial Guideline 2024': language === 'ms' ? 'Garis Panduan NAG 2024' : 'National Antimicrobial Guideline 2024',
-        'Stock Quota & Alerts': language === 'ms' ? 'Kuota & Amaran Stok' : 'Stock Quota & Alerts',
-        'Alternative Drugs': language === 'ms' ? 'Ubat Alternatif' : 'Alternative Drugs',
-        'Antidote Protocols': language === 'ms' ? 'Daftar & Protokol Antidot' : 'Antidote Protocols',
-        'New Porter Request': language === 'ms' ? 'Pesan Porter Baharu' : 'New Porter Request',
-        'My Requests & Live Tracking': language === 'ms' ? 'Pesanan & Jejak Terkini' : 'My Requests & Live Tracking',
-        'Porter Panel (Driver/Rider)': language === 'ms' ? 'Panel PPK (Driver Rider)' : 'Porter Panel (Driver/Rider)',
-        'Cargo Receiving (Ward)': language === 'ms' ? 'Penerimaan Kargo (Wad)' : 'Cargo Receiving (Ward)',
-        'Dispatch Control Center': language === 'ms' ? 'Pusat Kawalan Dispatch' : 'Dispatch Control Center',
-        'Porter Duty Roster': language === 'ms' ? 'Jadual Bertugas PPK' : 'Porter Duty Roster',
-        'Performance & KPI Reports': language === 'ms' ? 'Laporan Prestasi & KPI' : 'Performance & KPI Reports',
-        'Role Assignments': language === 'ms' ? 'Tetapan Peranan' : 'Role Assignments',
-        'Credentialing Criteria': language === 'ms' ? 'Kriteria Credentialing' : 'Credentialing Criteria',
-        'Procedure Catalog (500+)': language === 'ms' ? 'Katalog Prosedur (500+)' : 'Procedure Catalog (500+)',
-        'MOH Procedure Catalog': language === 'ms' ? 'Katalog Prosedur KKM' : 'MOH Procedure Catalog',
-        'My Log & Submissions': language === 'ms' ? 'Log & Permohonan Saya' : 'My Log & Submissions',
-        'Print Privileging Certificate': language === 'ms' ? 'Cetak Sijil Privileging' : 'Print Privileging Certificate',
-        'Dashboard (JKCP)': language === 'ms' ? 'Papan Pemuka (JKCP)' : 'Dashboard (JKCP)',
-        'JKCP Review & Approvals': language === 'ms' ? 'Semakan JKCP / Kelulusan' : 'JKCP Review & Approvals',
-        'Staff Progress': language === 'ms' ? 'Kemajuan Staf' : 'Staff Progress',
-        'Certificate Verification & Print': language === 'ms' ? 'Cetak & Perakuan Sijil' : 'Certificate Verification & Print',
-        'Interactive Calendar': language === 'ms' ? 'Kalendar Interaktif' : 'Interactive Calendar',
-        'New Booking': language === 'ms' ? 'Tempahan Baharu' : 'New Booking',
-        'My Bookings': language === 'ms' ? 'Permohonan Saya' : 'My Bookings',
-        'Approval Review Queue': language === 'ms' ? 'Semakan Kelulusan' : 'Approval Review Queue',
-        'Facility & Room Directory': language === 'ms' ? 'Direktori Fasiliti & Bilik' : 'Facility & Room Directory',
-        'Reports & Analytics': language === 'ms' ? 'Laporan & Analisis' : 'Reports & Analytics',
-        'New Request': language === 'ms' ? 'Permohonan Baru' : 'New Request',
-        'Check SG Slot': language === 'ms' ? 'Semak Slot SG' : 'Check SG Slot',
-        'My Requests': language === 'ms' ? 'Permohonan Saya' : 'My Requests',
-        'Driver Panel': language === 'ms' ? 'Panel Pemandu' : 'Driver Panel',
-        'Admin Approvals': language === 'ms' ? 'Kelulusan Pentadbir' : 'Admin Approvals',
-        'Fleet Vehicles': language === 'ms' ? 'Kenderaan Fleet' : 'Fleet Vehicles',
-        'Driver Issues': language === 'ms' ? 'Aduan Pemandu' : 'Driver Issues',
-        'Mileage & Claims': language === 'ms' ? 'Batu & Tuntutan' : 'Mileage & Claims',
-        'New Permit Request': language === 'ms' ? 'Permohonan Baru' : 'New Permit Request',
-        'Store Location Management': language === 'ms' ? 'Pengurusan Lokasi Stor' : 'Store Location Management',
-        'KEW.PS-4 Ledger': language === 'ms' ? 'Lejar KEW.PS-4' : 'KEW.PS-4 Ledger',
-        'MSDS Directory': language === 'ms' ? 'Direktori MSDS' : 'MSDS Directory',
-        'Emergency Procedures': language === 'ms' ? 'Prosedur Kecemasan' : 'Emergency Procedures',
-        'Key Register': language === 'ms' ? 'Daftar Kunci' : 'Key Register',
-        'Monthly Verification': language === 'ms' ? 'Verifikasi Bulanan' : 'Monthly Verification',
-        'MOH Key Policy': language === 'ms' ? 'Polisi Kunci KKM' : 'MOH Key Policy',
-      }
-      return map[label] || label
-    }
-
-    const itemLabel = getTranslatedLabel(item.label)
+    const itemLabel = item.label
 
     if (depth > 0) {
       // Sub-item rendering with sleek tree dots & micro styling
@@ -1089,8 +999,8 @@ export const Sidebar: React.FC = () => {
               cn(
                 'flex items-center gap-2.5 px-3 py-2.5 min-h-[42px] rounded-lg text-xs font-medium transition-all duration-200 group relative',
                 isActive
-                  ? 'text-teal-300 font-semibold bg-teal-500/10 border border-teal-500/20 shadow-[0_0_12px_rgba(20,184,166,0.12)]'
-                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/40 border border-transparent'
+                  ? 'text-accent-base font-semibold bg-accent-subtle border border-accent-base/30 shadow-2xs'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-subtle border border-transparent'
               )
             }
           >
@@ -1099,8 +1009,8 @@ export const Sidebar: React.FC = () => {
                 <span className={cn(
                   "w-1.5 h-1.5 rounded-full transition-all duration-200 flex-shrink-0",
                   isActive 
-                    ? "bg-teal-400 shadow-[0_0_6px_rgba(45,212,191,0.8)] scale-125" 
-                    : "bg-slate-600 group-hover:bg-slate-400"
+                    ? "bg-accent-base scale-125" 
+                    : "bg-text-muted/60 group-hover:bg-text-secondary"
                 )} />
                 <span className="flex-1 truncate">{itemLabel}</span>
                 {badgeCount > 0 && (
@@ -1126,19 +1036,19 @@ export const Sidebar: React.FC = () => {
             className={cn(
               'w-full flex items-center gap-3 px-3 py-2.5 min-h-[46px] rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 group relative',
               activeState
-                ? 'text-emerald-400 bg-slate-800/80 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.08)]'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800/50 border border-transparent'
+                ? 'text-accent-base bg-accent-subtle/50 border border-accent-base/30 shadow-2xs'
+                : 'text-text-secondary hover:text-text-primary hover:bg-subtle border border-transparent'
             )}
           >
             {activeState && (
-              <span className="absolute left-0 top-2 bottom-2 w-1 bg-emerald-400 rounded-r-full shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              <span className="absolute left-0 top-2 bottom-2 w-1 bg-accent-base rounded-r-full" />
             )}
             
             <div className={cn(
               "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 flex-shrink-0",
               activeState 
-                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-sm" 
-                : "bg-slate-800/60 text-slate-400 group-hover:bg-slate-700/60 group-hover:text-slate-200"
+                ? "bg-accent-subtle text-accent-base border border-accent-base/30 shadow-xs" 
+                : "bg-subtle text-text-muted group-hover:bg-muted-surface group-hover:text-text-primary"
             )}>
               <Icon className="w-4 h-4 flex-shrink-0" />
             </div>
@@ -1156,7 +1066,7 @@ export const Sidebar: React.FC = () => {
               animate={{ rotate: expanded ? 180 : 0 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
             >
-              <ChevronDown className="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-slate-200" />
+              <ChevronDown className="w-4 h-4 flex-shrink-0 text-text-muted group-hover:text-text-primary" />
             </motion.div>
           </motion.button>
           
@@ -1169,7 +1079,7 @@ export const Sidebar: React.FC = () => {
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
                 className="overflow-hidden"
               >
-                <div className="ml-5 mt-1 space-y-1 border-l border-slate-800/90 pl-3">
+                <div className="ml-5 mt-1 space-y-1 border-l border-border-default pl-3">
                   {item.children?.map((child) => renderNavItem(child, depth + 1))}
                 </div>
               </motion.div>
@@ -1195,34 +1105,37 @@ export const Sidebar: React.FC = () => {
           }}
           className={({ isActive }) =>
             cn(
-              'flex items-center gap-3 px-3 py-2.5 min-h-[46px] rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 group relative',
+              'flex items-center gap-3 px-3 py-2 min-h-[42px] rounded-lg text-xs font-medium tracking-wide transition-colors duration-150 group relative select-none',
               isActive
-                ? 'text-emerald-400 bg-slate-800/80 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.08)]'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800/50 border border-transparent'
+                ? 'text-accent-base font-semibold bg-accent-subtle border border-accent-base/30'
+                : 'text-text-secondary hover:text-text-primary hover:bg-subtle border border-transparent'
             )
           }
         >
           {({ isActive }) => (
             <>
               {isActive && (
-                <span className="absolute left-0 top-2 bottom-2 w-1 bg-emerald-400 rounded-r-full shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                <span className="absolute left-0 top-2 bottom-2 w-1 bg-accent-base rounded-r-full" />
               )}
               
               <div className={cn(
-                "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 flex-shrink-0",
+                "w-7 h-7 rounded-md flex items-center justify-center transition-colors duration-150 flex-shrink-0",
                 isActive 
-                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-sm" 
-                  : "bg-slate-800/60 text-slate-400 group-hover:bg-slate-700/60 group-hover:text-slate-200"
+                  ? "bg-accent-subtle text-accent-base border border-accent-base/30" 
+                  : "bg-subtle text-text-muted group-hover:bg-muted-surface group-hover:text-text-primary"
               )}>
                 <Icon className="w-4 h-4 flex-shrink-0" />
               </div>
               <span className="flex-1 flex justify-between items-center">
                 <span>{itemLabel}</span>
-                {badgeCount > 0 && (
-                  <span className="px-2 py-0.5 bg-rose-500/15 text-rose-400 border border-rose-500/30 rounded-full text-[10px] font-bold">
-                    {badgeCount}
-                  </span>
-                )}
+                <span className="flex items-center gap-1.5">
+                  {item.module && <PendingSyncBadge module={item.module} />}
+                  {badgeCount > 0 && (
+                    <span className="px-1.5 py-0.5 bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 rounded-md text-[10px] font-semibold">
+                      {badgeCount}
+                    </span>
+                  )}
+                </span>
               </span>
             </>
           )}
@@ -1241,7 +1154,7 @@ export const Sidebar: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-slate-950/75 backdrop-blur-md z-[24] lg:hidden"
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[28] lg:hidden"
           />
         )}
       </AnimatePresence>
@@ -1249,14 +1162,14 @@ export const Sidebar: React.FC = () => {
       <motion.aside
         initial={false}
         animate={{ 
-          x: isMobile ? (sidebarOpen ? 0 : -300) : 0,
+          x: isMobile ? (sidebarOpen ? 0 : -320) : 0,
           width: isMobile ? 270 : 280,
         }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        transition={{ duration: 0.2, ease: 'easeInOut' }}
         className={cn(
-          'fixed left-0 bg-slate-950/98 backdrop-blur-2xl border-r border-slate-800/80',
-          'flex flex-col z-[25] shadow-2xl shadow-slate-950/60',
-          'top-16 sm:top-20 lg:top-24 h-[calc(100vh-64px)] sm:h-[calc(100vh-80px)] lg:h-[calc(100vh-96px)]',
+          'fixed left-0 bg-surface/95 backdrop-blur-md border-r border-border-default',
+          'flex flex-col z-[35] transition-colors duration-150',
+          'sidebar-top-offset',
           'w-[270px] max-w-[85vw] lg:translate-x-0 lg:w-[280px]'
         )}
       >
@@ -1264,27 +1177,43 @@ export const Sidebar: React.FC = () => {
         <nav className="flex-1 overflow-y-auto pt-5 px-3.5 pb-24 lg:pb-4 space-y-1.5 custom-scrollbar overscroll-contain touch-pan-y">
           <div className="flex items-center justify-between mb-3.5 px-3">
             <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                NAVIGATION PANEL
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <p className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] truncate max-w-[190px]">
+                {currentModuleInfo?.name ? `MENU: ${currentModuleInfo.name}` : 'NAVIGATION MENU'}
               </p>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/80 active:scale-95 rounded-lg transition-all"
-              aria-label="Tutup Panel Navigasi"
+              className="lg:hidden w-8 h-8 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:scale-95 rounded-lg transition-all"
+              aria-label="Close Navigation Panel"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
-          {filteredNavigation.map((item) => renderNavItem(item))}
+          {filteredNavigation.length === 0 ? (
+            <div className="text-center py-8 px-3">
+              <p className="text-xs text-text-muted mb-3">No submenu available for current view.</p>
+              <NavLink
+                to="/hub"
+                onClick={() => {
+                  if (isMobile) setSidebarOpen(false)
+                }}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-subtle text-accent-base border border-accent-base/30 text-xs font-semibold hover:bg-accent-subtle/80 transition-colors"
+              >
+                <LayoutDashboard className="w-3.5 h-3.5" />
+                Open Module Hub
+              </NavLink>
+            </div>
+          ) : (
+            filteredNavigation.map((item) => renderNavItem(item))
+          )}
         </nav>
 
         {/* User Profile Footer */}
-        <div className="p-3 border-t border-slate-800/80 bg-slate-950/60">
+        <div className="p-3 border-t border-border-default bg-surface/50">
           <div
             className={cn(
-              'flex items-center gap-3 p-2.5 rounded-xl bg-slate-900/90 border border-slate-800/90 shadow-lg group hover:border-slate-700/80 transition-all duration-200'
+              'flex items-center gap-3 p-2.5 rounded-xl bg-surface border border-border-default shadow-2xs group hover:border-border-strong transition-all duration-200'
             )}
           >
             <div className="relative">
@@ -1292,16 +1221,16 @@ export const Sidebar: React.FC = () => {
                 src={user?.profile_photo_url}
                 name={user?.full_name}
                 size="sm"
-                className="ring-2 ring-emerald-500/30 group-hover:ring-emerald-400/60 transition-all"
+                className="ring-2 ring-accent-base/30 group-hover:ring-accent-base/60 transition-all"
               />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-slate-950" />
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 border-surface" />
             </div>
             
             <div className={cn("flex-1 min-w-0")}>
-              <p className="text-xs font-semibold text-slate-100 truncate group-hover:text-emerald-300 transition-colors">
+              <p className="text-xs font-semibold text-text-primary truncate group-hover:text-accent-base transition-colors">
                 {user?.full_name}
               </p>
-              <p className="text-[11px] text-slate-400 truncate">
+              <p className="text-[11px] text-text-muted truncate">
                 {user?.role?.role_name}
               </p>
             </div>
@@ -1310,9 +1239,9 @@ export const Sidebar: React.FC = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={handleLogout}
-              title="Logout"
+              title="Sign out"
               className={cn(
-                "p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors duration-200"
+                "p-2 text-text-muted hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-colors duration-200"
               )}
             >
               <LogOut className="w-4 h-4" />

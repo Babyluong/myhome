@@ -55,31 +55,32 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onBack }) 
         animate={{ opacity: 1, scale: 1 }}
         className="text-center py-6"
       >
-        <div className="w-16 h-16 bg-success-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <CheckCircle className="w-8 h-8 text-success-600" />
+        <div className="w-14 h-14 bg-emerald-950/60 border border-emerald-800/60 rounded-full flex items-center justify-center mx-auto mb-4">
+          <CheckCircle className="w-7 h-7 text-emerald-400" />
         </div>
         
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Check Your Email
+        <h3 className="text-lg font-semibold text-white mb-2">
+          Periksa E-mel Anda
         </h3>
         
-        <p className="text-sm text-gray-600 mb-6">
-          We've sent password reset instructions to{' '}
-          <span className="font-medium text-gray-900">{getValues('email')}</span>
+        <p className="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
+          Arahan tetapan semula kata laluan telah dihantar ke{' '}
+          <span className="font-medium text-teal-400">{getValues('email')}</span>
         </p>
         
         <div className="space-y-3">
-          <p className="text-xs text-gray-500">
-            Didn't receive the email? Check your spam folder or try again.
+          <p className="text-xs text-slate-500">
+            Tidak menerima e-mel? Sila semak folder spam atau cuba lagi.
           </p>
           
           <Button
             type="button"
             variant="ghost"
+            className="text-slate-300 hover:text-white"
             onClick={onBack}
             leftIcon={<ArrowLeft className="w-4 h-4" />}
           >
-            Back to Login
+            Kembali ke Log Masuk
           </Button>
         </div>
       </motion.div>
@@ -88,27 +89,27 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onBack }) 
 
   return (
     <motion.form
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.3 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-5"
+      className="space-y-4"
     >
-      <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Reset Password
+      <div className="text-left mb-5">
+        <h3 className="text-lg font-semibold text-white mb-1">
+          Tetapan Semula Kata Laluan
         </h3>
-        <p className="text-sm text-gray-600">
-          Enter your email address and we'll send you instructions to reset your password.
+        <p className="text-xs sm:text-sm text-slate-400">
+          Masukkan alamat e-mel berdaftar anda untuk menerima pautan tetapan semula.
         </p>
       </div>
 
       <Input
         {...register('email')}
         type="email"
-        label="Email Address"
-        placeholder="Enter your email"
-        leftIcon={<Mail className="w-5 h-5" />}
+        label="Alamat E-mel / Email"
+        placeholder="nama@moh.gov.my"
+        leftIcon={<Mail className="w-4 h-4" />}
         error={errors.email?.message}
         autoComplete="email"
         required
@@ -116,20 +117,20 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onBack }) 
 
       <Button
         type="submit"
-        className="w-full h-12 text-base"
+        className="w-full h-11 sm:h-12 text-sm font-semibold bg-teal-600 hover:bg-teal-500 text-white rounded-xl shadow-lg shadow-teal-950/60"
         isLoading={isLoading}
       >
-        {isLoading ? 'Sending...' : 'Send Reset Link'}
+        {isLoading ? 'Menghantar Pautan...' : 'Hantar Pautan Tetapan Semula'}
       </Button>
 
       <Button
         type="button"
         variant="ghost"
-        className="w-full"
+        className="w-full text-slate-400 hover:text-white text-xs"
         onClick={onBack}
-        leftIcon={<ArrowLeft className="w-4 h-4" />}
+        leftIcon={<ArrowLeft className="w-3.5 h-3.5" />}
       >
-        Back to Login
+        Kembali ke Log Masuk
       </Button>
     </motion.form>
   )

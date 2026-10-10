@@ -27,7 +27,6 @@ import {
   ArrowRight,
   ShieldCheck,
   Activity,
-  Sparkles,
   Laptop,
   Globe,
   Database,
@@ -35,7 +34,8 @@ import {
   FolderGit2,
   Code,
   Info,
-  CheckSquare
+  CheckSquare,
+  Key
 } from 'lucide-react'
 import {
   getAuditLogs,
@@ -49,26 +49,26 @@ import { useToastStore } from '@/stores/toastStore'
 import { formatDateTime } from '@/lib/utils'
 import type { AuditLogWithRelations, UserWithRelations } from '@/types'
 
-// Module metadata & friendly labels
-const MODULE_VISUALS: Record<string, { label: string; color: string; bg: string; border: string; icon: string }> = {
-  auth: { label: 'Sistem Log Masuk & Keselamatan', color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', icon: '🔐' },
-  myadmin: { label: 'MyAdmin (Pentadbiran)', color: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/20', icon: '🛡️' },
-  mystaff: { label: 'MyStaff (Pengurusan Anggota)', color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', icon: '👥' },
-  myformulari: { label: 'MyFormulari (Panduan Ubat)', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: '💊' },
-  mykunci: { label: 'MyKunci (Buku Log Kunci)', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: '🔑' },
-  mysuhu: { label: 'MySuhu (Pemantauan Peti Sejuk)', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20', icon: '🌡️' },
-  cylinder: { label: 'MyCylinder (Stok Gas Oksigen)', color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20', icon: '🫁' },
-  mycylinder: { label: 'MyCylinder (Stok Gas Oksigen)', color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20', icon: '🫁' },
-  myperolehan: { label: 'MyPerolehan (Pesanan & Pembekal)', color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20', icon: '📦' },
-  mytransporter: { label: 'MyTransporter (Penghantaran Logistik)', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', icon: '🚐' },
-  mytempahan: { label: 'MyTempahan (Tempahan Bilik & Fasiliti)', color: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/20', icon: '📅' },
-  mypriviledging: { label: 'MyPriviledging (Kompetensi Staf)', color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', icon: '🏅' },
-  crossborder: { label: 'MyCrossBorder (Rujukan Antara Fasiliti)', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: '🌐' },
-  pharmacy: { label: 'MyWarrant & Farmasi', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: '🏛️' },
-  users: { label: 'Urus Pengguna', color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', icon: '👤' },
-  roles: { label: 'Had Kuasa Pengguna', color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20', icon: '🔒' },
-  departments: { label: 'Jabatan & Unit Hospital', color: 'text-slate-300', bg: 'bg-slate-500/10', border: 'border-slate-500/20', icon: '🏢' },
-  hub: { label: 'Hub Utama Sistem', color: 'text-teal-300', bg: 'bg-teal-500/10', border: 'border-teal-500/20', icon: '⚡' },
+// Module metadata & friendly labels (no emoji slop)
+const MODULE_VISUALS: Record<string, { label: string; color: string; bg: string; border: string; icon: React.ElementType }> = {
+  auth: { label: 'Authentication & Security', color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', icon: ShieldCheck },
+  myadmin: { label: 'MyAdmin (Administration)', color: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/20', icon: Shield },
+  mystaff: { label: 'MyStaff (Personnel Operations)', color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', icon: User },
+  myformulari: { label: 'MyFormulari (Drug Formulary)', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: FileText },
+  mykunci: { label: 'MyKunci (Key Management)', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: Key },
+  mysuhu: { label: 'MySuhu (Cold Chain Monitoring)', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20', icon: Activity },
+  cylinder: { label: 'MyCylinder (Medical Oxygen)', color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20', icon: Layers },
+  mycylinder: { label: 'MyCylinder (Medical Oxygen)', color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20', icon: Layers },
+  myperolehan: { label: 'MyPerolehan (Procurement & Orders)', color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20', icon: FileText },
+  mytransporter: { label: 'MyTransporter (Fleet & Logistics)', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', icon: Compass },
+  mytempahan: { label: 'MyTempahan (Facility & Venue Bookings)', color: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/20', icon: Calendar },
+  mypriviledging: { label: 'MyPriviledging (Clinical Privileges)', color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', icon: ShieldCheck },
+  crossborder: { label: 'MyCrossBorder (Cross-Border Referrals)', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: Globe },
+  pharmacy: { label: 'MyWarrant & Pharmacy Logistics', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: Layers },
+  users: { label: 'User Management', color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', icon: User },
+  roles: { label: 'User Roles & Access', color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20', icon: Shield },
+  departments: { label: 'Hospital Departments & Units', color: 'text-slate-300', bg: 'bg-slate-500/10', border: 'border-slate-500/20', icon: Layers },
+  hub: { label: 'System Main Hub', color: 'text-teal-300', bg: 'bg-teal-500/10', border: 'border-teal-500/20', icon: Activity },
 }
 
 // Action styling & friendly human labels
@@ -76,63 +76,63 @@ const getActionBadgeStyle = (action: string) => {
   const act = action?.toUpperCase() || ''
   if (act.includes('LOGIN')) {
     return {
-      label: 'Log Masuk (LOGIN)',
+      label: 'User Login (LOGIN)',
       badgeBg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
       icon: LogIn,
     }
   }
   if (act.includes('LOGOUT')) {
     return {
-      label: 'Log Keluar (LOGOUT)',
+      label: 'User Logout (LOGOUT)',
       badgeBg: 'bg-slate-500/15 text-slate-400 border-slate-500/30',
       icon: LogOut,
     }
   }
   if (act.includes('NAVIGATE') || act.includes('PAGE') || act.includes('VIEW')) {
     return {
-      label: 'Buka Halaman (VIEW)',
+      label: 'View Page (VIEW)',
       badgeBg: 'bg-sky-500/15 text-sky-400 border-sky-500/30',
       icon: Compass,
     }
   }
   if (act.includes('CREATE') || act.includes('INSERT') || act.includes('ADD')) {
     return {
-      label: 'Cipta Rekod Baru (CREATE)',
+      label: 'Create Record (CREATE)',
       badgeBg: 'bg-teal-500/15 text-teal-400 border-teal-500/30',
       icon: CheckCircle,
     }
   }
   if (act.includes('UPDATE') || act.includes('EDIT') || act.includes('MODIFY') || act.includes('RESET')) {
     return {
-      label: 'Kemaskini Data (UPDATE)',
+      label: 'Update Data (UPDATE)',
       badgeBg: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
       icon: SlidersHorizontal,
     }
   }
   if (act.includes('DELETE') || act.includes('REMOVE')) {
     return {
-      label: 'Padam Rekod (DELETE)',
+      label: 'Delete Record (DELETE)',
       badgeBg: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
       icon: XCircle,
     }
   }
   if (act.includes('APPROVE')) {
     return {
-      label: 'Lulus Permohonan (APPROVE)',
+      label: 'Approve Request (APPROVE)',
       badgeBg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
       icon: ShieldCheck,
     }
   }
   if (act.includes('REJECT')) {
     return {
-      label: 'Tolak Permohonan (REJECT)',
+      label: 'Reject Request (REJECT)',
       badgeBg: 'bg-red-500/15 text-red-400 border-red-500/30',
       icon: AlertTriangle,
     }
   }
   if (act.includes('EXPORT') || act.includes('DOWNLOAD')) {
     return {
-      label: 'Muat Turun Laporan (EXPORT)',
+      label: 'Export Report (EXPORT)',
       badgeBg: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30',
       icon: Download,
     }
@@ -146,66 +146,66 @@ const getActionBadgeStyle = (action: string) => {
 
 // Malay Human Dictionary for database field names
 const FIELD_LABELS: Record<string, string> = {
-  delete_reason: 'Sebab Pemadaman',
-  status: 'Status Rekod',
-  remarks: 'Catatan / Nota',
-  description: 'Penerangan Tindakan',
-  full_name: 'Nama Pegawai / Staf',
-  email: 'Alamat Emel',
-  phone_number: 'No. Telefon',
-  ic_number: 'No. Kad Pengenalan',
-  employee_id: 'No. Pekerja',
-  jawatan: 'Jawatan Rasmi',
-  role_id: 'Peranan / Akses',
-  role_assigned: 'Peranan Diberikan',
-  department_id: 'Jabatan / Unit',
+  delete_reason: 'Deletion Reason',
+  status: 'Record Status',
+  remarks: 'Remarks / Notes',
+  description: 'Action Description',
+  full_name: 'Officer / Staff Name',
+  email: 'Email Address',
+  phone_number: 'Phone Number',
+  ic_number: 'NRIC Number',
+  employee_id: 'Staff ID',
+  jawatan: 'Official Designation',
+  role_id: 'Role / Access Level',
+  role_assigned: 'Assigned Role',
+  department_id: 'Department / Unit',
   hospital_id: 'Hospital',
-  approver: 'Pegawai Pelulus',
-  reviewer: 'Pegawai Pemeriksa',
-  rejection_reason: 'Sebab Penolakan',
-  temperature: 'Bacaan Suhu (°C)',
-  humidity: 'Kelembapan (%)',
-  unit_name: 'Nama Unit / Peti Sejuk',
-  unit_id: 'Kod Unit',
-  key_name: 'Nama Kunci',
-  key_id: 'Kod Kunci',
-  borrower: 'Nama Peminjam',
-  purpose: 'Tujuan Penggunaan',
-  item_name: 'Nama Item / Bekalan',
-  quantity: 'Kuantiti',
-  po_number: 'No. Pesanan Tempatan (LO/PO)',
-  total_allocated: 'Jumlah Peruntukan (RM)',
-  location: 'Lokasi / Wad',
-  pressure_psi: 'Tekanan Gas (PSI)',
-  dose: 'Dos Ubat',
-  renal_adjustment: 'Pelarasan Dos Buah Pinggang',
-  staff_name: 'Nama Kakitangan',
-  destination: 'Destinasi Penghantaran',
-  urgency: 'Tahap Keutamaan',
-  permissions_count: 'Jumlah Hak Akses',
-  added_permissions: 'Hak Akses Ditambah',
+  approver: 'Approving Officer',
+  reviewer: 'Reviewing Officer',
+  rejection_reason: 'Rejection Reason',
+  temperature: 'Temperature (°C)',
+  humidity: 'Humidity (%)',
+  unit_name: 'Unit / Refrigerator Name',
+  unit_id: 'Unit Code',
+  key_name: 'Key Name',
+  key_id: 'Key Code',
+  borrower: 'Borrower Name',
+  purpose: 'Purpose of Access',
+  item_name: 'Item / Supply Name',
+  quantity: 'Quantity',
+  po_number: 'Local Purchase Order (LPO) No.',
+  total_allocated: 'Total Allocation (RM)',
+  location: 'Location / Ward',
+  pressure_psi: 'Gas Pressure (PSI)',
+  dose: 'Medication Dose',
+  renal_adjustment: 'Renal Dose Adjustment',
+  staff_name: 'Staff Name',
+  destination: 'Delivery Destination',
+  urgency: 'Priority Level',
+  permissions_count: 'Total Permissions',
+  added_permissions: 'Added Permissions',
 }
 
 // Malay Human Dictionary for values
 const VALUE_LABELS: Record<string, string> = {
-  duplicate: 'Duplikasi Rekod (Rekod Berganda)',
-  completed: 'Selesai',
-  pending: 'Menunggu Kelulusan',
-  active: 'Aktif',
-  inactive: 'Tidak Aktif',
-  approved: 'Diluluskan',
-  rejected: 'Ditolak',
-  in_use: 'Sedang Digunakan',
-  full: 'Penuh / Sedia Guna',
-  empty: 'Kosong / Perlu Diisi',
-  routine: 'Rutin Biasa',
-  urgent: 'Segera / Kecemasan',
-  normal: 'Normal / Selamat',
-  system_admin: 'Pentadbir Sistem Utama (Super Admin)',
-  hospital_admin: 'Pentadbir Hospital',
-  pharmacist: 'Pegawai Farmasi',
-  assistant_pharmacist: 'Penolong Pegawai Farmasi',
-  storekeeper: 'Pembantu Khidmat Am Stor',
+  duplicate: 'Duplicate Record',
+  completed: 'Completed',
+  pending: 'Pending Approval',
+  active: 'Active',
+  inactive: 'Inactive',
+  approved: 'Approved',
+  rejected: 'Rejected',
+  in_use: 'In Use',
+  full: 'Full / Ready',
+  empty: 'Empty / Needs Refill',
+  routine: 'Routine',
+  urgent: 'Urgent / Emergency',
+  normal: 'Normal / Safe',
+  system_admin: 'System Administrator (Super Admin)',
+  hospital_admin: 'Hospital Administrator',
+  pharmacist: 'Pharmacist',
+  assistant_pharmacist: 'Assistant Pharmacist',
+  storekeeper: 'Storekeeper',
 }
 
 // Keys to ignore from user-facing summary (developer internals)
@@ -229,7 +229,7 @@ const formatFieldLabel = (key: string): string => {
 // Format a clean readable value
 const formatFieldValue = (key: string, val: any): string => {
   if (val === null || val === undefined || val === '') return '—'
-  if (typeof val === 'boolean') return val ? 'Ya (Aktif)' : 'Tidak (Batal)'
+  if (typeof val === 'boolean') return val ? 'Yes (Active)' : 'No (Inactive)'
   if (typeof val === 'number') {
     if (key.includes('total') || key.includes('amount')) {
       return `RM ${val.toLocaleString('ms-MY')}`
@@ -251,9 +251,9 @@ const formatFieldValue = (key: string, val: any): string => {
 
 // Generate simple plain natural language sentence explaining what happened
 const generateHumanSummary = (log: AuditLogWithRelations): string => {
-  const staffName = log.user?.full_name || 'Pegawai Sistem'
+  const staffName = log.user?.full_name || 'System Operator'
   const action = log.action?.toUpperCase() || ''
-  const moduleName = MODULE_VISUALS[log.module?.toLowerCase()]?.label || log.module?.toUpperCase() || 'Sistem'
+  const moduleName = MODULE_VISUALS[log.module?.toLowerCase()]?.label || log.module?.toUpperCase() || 'System'
 
   // Explicit description if provided
   if (log.new_values?.description) {
@@ -261,43 +261,43 @@ const generateHumanSummary = (log: AuditLogWithRelations): string => {
   }
 
   if (action.includes('LOGIN')) {
-    return `${staffName} telah log masuk ke dalam sistem portal H.O.M.E.`
+    return `${staffName} logged in to the H.O.M.E. ecosystem.`
   }
   if (action.includes('LOGOUT')) {
-    return `${staffName} telah log keluar daripada sistem.`
+    return `${staffName} logged out of the system.`
   }
   if (action.includes('NAVIGATE') || action.includes('PAGE') || action.includes('VIEW')) {
-    return `${staffName} telah membuka menu [${moduleName}].`
+    return `${staffName} accessed menu [${moduleName}].`
   }
   if (action.includes('DELETE')) {
     const reason = log.new_values?.delete_reason || log.new_values?.reason
     if (reason) {
       const reasonLabel = VALUE_LABELS[String(reason).toLowerCase()] || String(reason)
-      return `${staffName} telah MEMADAM rekod pada modul ${moduleName} kerana "${reasonLabel}".`
+      return `${staffName} DELETED a record in ${moduleName} due to "${reasonLabel}".`
     }
-    return `${staffName} telah MEMADAM satu rekod dalam modul ${moduleName}.`
+    return `${staffName} DELETED a record in ${moduleName}.`
   }
   if (action.includes('APPROVE')) {
     const approver = log.new_values?.approver || staffName
-    return `Permohonan telah disemak dan DILULUSKAN oleh ${approver}.`
+    return `Request was reviewed and APPROVED by ${approver}.`
   }
   if (action.includes('REJECT')) {
     const reason = log.new_values?.rejection_reason || log.new_values?.reason
     if (reason) {
-      return `Permohonan telah DITOLAK oleh ${staffName}. Sebab penolakan: "${reason}".`
+      return `Request was REJECTED by ${staffName}. Reason: "${reason}".`
     }
-    return `Permohonan telah DITOLAK oleh ${staffName}.`
+    return `Request was REJECTED by ${staffName}.`
   }
   if (action.includes('CREATE') || action.includes('INSERT')) {
-    return `${staffName} telah mencipta dan mendaftar satu rekod baharu dalam modul ${moduleName}.`
+    return `${staffName} created and registered a new record in ${moduleName}.`
   }
   if (action.includes('UPDATE')) {
-    return `${staffName} telah mengemaskini maklumat data dalam modul ${moduleName}.`
+    return `${staffName} updated data in ${moduleName}.`
   }
   if (action.includes('EXPORT')) {
-    return `${staffName} telah memuat turun / mengeksport fail laporan dari modul ${moduleName}.`
+    return `${staffName} downloaded / exported a report from ${moduleName}.`
   }
-  return `Aktiviti ${action} telah direkodkan pada modul ${moduleName}.`
+  return `Activity ${action} was recorded in ${moduleName}.`
 }
 
 // Relative time formatter helper in Malay
@@ -307,18 +307,18 @@ const formatRelativeTimeMalay = (dateString: string): string => {
     const now = new Date()
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
 
-    if (diffInSeconds < 60) return 'Baru sahaja'
+    if (diffInSeconds < 60) return 'Just now'
     if (diffInSeconds < 3600) {
       const mins = Math.floor(diffInSeconds / 60)
-      return `${mins} minit lepas`
+      return `${mins}m ago`
     }
     if (diffInSeconds < 86400) {
       const hours = Math.floor(diffInSeconds / 3600)
-      return `${hours} jam lepas`
+      return `${hours}h ago`
     }
     const days = Math.floor(diffInSeconds / 86400)
-    if (days === 1) return 'Semalam'
-    if (days < 7) return `${days} hari lepas`
+    if (days === 1) return 'Yesterday'
+    if (days < 7) return `${days}d ago`
     return formatDateTime(dateString)
   } catch {
     return dateString
@@ -430,7 +430,7 @@ export const AdminSystemLogsTab: React.FC = () => {
       setStats(statsRes)
     } catch (err) {
       console.error('Failed to load audit logs:', err)
-      showError('Ralat', 'Gagal memuatkan rekod audit log.')
+      showError('Error', 'Failed to load audit logs.')
     } finally {
       setIsLoading(false)
       setIsRefreshing(false)
@@ -479,10 +479,10 @@ export const AdminSystemLogsTab: React.FC = () => {
       document.body.removeChild(a)
       window.URL.revokeObjectURL(url)
 
-      showSuccess('Berjaya', 'Laporan Audit Log CSV berjaya dimuat turun.')
+      showSuccess('Success', 'Audit Log CSV report successfully downloaded.')
     } catch (err) {
       console.error('Export error:', err)
-      showError('Ralat', 'Gagal mengeksport fail CSV.')
+      showError('Error', 'Failed to export CSV file.')
     } finally {
       setIsExporting(false)
     }
@@ -493,7 +493,7 @@ export const AdminSystemLogsTab: React.FC = () => {
     navigator.clipboard.writeText(JSON.stringify(selectedLog, null, 2))
     setIsCopied(true)
     setTimeout(() => setIsCopied(false), 2000)
-    showSuccess('Disalin', 'Metadata teknikal disalin ke papan keratan (clipboard).')
+    showSuccess('Copied', 'Technical metadata copied to clipboard.')
   }
 
   // Filter out internal technical keys for clean user presentation
@@ -504,113 +504,111 @@ export const AdminSystemLogsTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* 1. Header Banner & System Transparency Mission Statement */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-teal-950/30 border border-white/5 relative overflow-hidden">
-        <div className="relative z-10 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-semibold uppercase tracking-wider mb-3">
+      {/* 1. Header Banner */}
+      <div className="p-4 sm:p-5 rounded-xl bg-slate-900/90 border border-slate-800">
+        <div className="max-w-4xl">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-semibold uppercase tracking-wider mb-2">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>REKOD AUDIT KESELAMATAN & KETELUSAN SISTEM KKM</span>
+            <span>MOH Security Audit & Transparency Trail</span>
           </div>
-          <h2 className="text-2xl font-black text-white tracking-tight">
-            Log Sistem & Jejak Aktiviti Kakitangan Hospital
+          <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+            System Logs & Staff Activity Trail
           </h2>
-          <p className="text-slate-400 text-sm mt-1 leading-relaxed">
-            Pusat pemantauan telus untuk melihat siapa kakitangan yang telah log masuk, menu apa yang dibuka, dan apa aktiviti/perubahan yang telah dilakukan dalam ekosistem hospital.
+          <p className="text-slate-400 text-xs sm:text-sm mt-1 leading-relaxed">
+            Centralized audit trail tracking staff authentication, hospital module access, and data modification across the H.O.M.E. ecosystem.
           </p>
-        </div>
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-5 hidden lg:block pointer-events-none">
-          <Database className="w-44 h-44 text-teal-400" />
         </div>
       </div>
 
-      {/* 2. Top KPI Analytics Ribbon */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 2. Top KPI Analytics Ribbon (2x2 on mobile, 4 on desktop) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Card 1: Total Logs */}
-        <div className="p-5 rounded-2xl bg-slate-900/50 border border-white/5 backdrop-blur-xl flex items-center justify-between">
+        <div className="p-3.5 sm:p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Jumlah Rekod Aktiviti</p>
-            <p className="text-3xl font-extrabold text-white mt-1 tabular-nums">
+            <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Total Records</p>
+            <p className="text-2xl sm:text-3xl font-bold text-white mt-1 tabular-nums">
               {stats.totalLogs}
             </p>
-            <p className="text-xs text-teal-400/80 mt-0.5 flex items-center gap-1 font-medium">
-              <Sparkles className="w-3 h-3" /> Rekod audit tersimpan kekal
+            <p className="text-[11px] text-slate-400 mt-0.5 font-medium truncate">
+              Permanent audit trail
             </p>
           </div>
-          <div className="p-3.5 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
-            <FileText className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20 shrink-0">
+            <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </div>
 
         {/* Card 2: Today Logins */}
-        <div className="p-5 rounded-2xl bg-slate-900/50 border border-white/5 backdrop-blur-xl flex items-center justify-between">
+        <div className="p-3.5 sm:p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Sesi Log Masuk</p>
-            <p className="text-3xl font-extrabold text-cyan-400 mt-1 tabular-nums">
+            <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Login Sessions</p>
+            <p className="text-2xl sm:text-3xl font-bold text-cyan-400 mt-1 tabular-nums">
               {stats.todayLogins}
             </p>
-            <p className="text-xs text-slate-400 mt-0.5 font-medium">
-              Kakitangan aktif dalam sistem
+            <p className="text-[11px] text-slate-400 mt-0.5 font-medium truncate">
+              Active personnel
             </p>
           </div>
-          <div className="p-3.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-            <LogIn className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shrink-0">
+            <LogIn className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </div>
 
         {/* Card 3: Navigation Events */}
-        <div className="p-5 rounded-2xl bg-slate-900/50 border border-white/5 backdrop-blur-xl flex items-center justify-between">
+        <div className="p-3.5 sm:p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Menu & Halaman Dibuka</p>
-            <p className="text-3xl font-extrabold text-indigo-400 mt-1 tabular-nums">
+            <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Modules Visited</p>
+            <p className="text-2xl sm:text-3xl font-bold text-indigo-400 mt-1 tabular-nums">
               {stats.navigationEvents}
             </p>
-            <p className="text-xs text-slate-400 mt-0.5 font-medium">
-              Capaian modul dikesan
+            <p className="text-[11px] text-slate-400 mt-0.5 font-medium truncate">
+              Module access
             </p>
           </div>
-          <div className="p-3.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            <Compass className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shrink-0">
+            <Compass className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </div>
 
         {/* Card 4: Critical Mutations */}
-        <div className="p-5 rounded-2xl bg-slate-900/50 border border-white/5 backdrop-blur-xl flex items-center justify-between">
+        <div className="p-3.5 sm:p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Tindakan Data / Mutasi</p>
-            <p className="text-3xl font-extrabold text-emerald-400 mt-1 tabular-nums">
+            <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Data Actions</p>
+            <p className="text-2xl sm:text-3xl font-bold text-emerald-400 mt-1 tabular-nums">
               {stats.criticalActions}
             </p>
-            <p className="text-xs text-slate-400 mt-0.5 font-medium">
-              Cipta, Kemaskini, Padam & Lulus
+            <p className="text-[11px] text-slate-400 mt-0.5 font-medium truncate">
+              Create, Update & Delete
             </p>
           </div>
-          <div className="p-3.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <Activity className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+            <Activity className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </div>
       </div>
 
       {/* 3. Filter & Control Toolbar */}
-      <div className="p-5 rounded-2xl bg-slate-900/40 border border-white/5 backdrop-blur-md space-y-4">
-        {/* Top Row: Search & Primary Action Buttons */}
-        <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+      <div className="p-3.5 sm:p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3.5">
+        {/* Top Row: Search & Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
           {/* Search Box */}
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Cari nama kakitangan, no. IC, jawatan, modul, atau catatan..."
+              placeholder="Search staff name, IC number, designation, module, or remarks..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value)
                 setPage(1)
               }}
-              className="w-full bg-slate-950/70 border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-teal-500/60 focus:ring-1 focus:ring-teal-500/40 transition-all font-sans"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg pl-10 pr-10 py-2.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 transition-colors font-sans"
             />
             {search && (
               <button
                 onClick={() => setSearch('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                aria-label="Clear search"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -618,34 +616,34 @@ export const AdminSystemLogsTab: React.FC = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2.5 flex-wrap self-end md:self-auto">
+          <div className="flex items-center gap-2 flex-wrap justify-end">
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="px-3.5 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-2 transition-all"
-              title="Muat semula rekod audit"
+              className="min-h-[40px] px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
+              title="Reload audit records"
             >
               <RefreshCw className={`w-3.5 h-3.5 text-teal-400 ${isRefreshing ? 'animate-spin' : ''}`} />
-              <span>Segarkan</span>
+              <span>Refresh</span>
             </button>
 
             <button
               onClick={handleExportCSV}
               disabled={isExporting}
-              className="px-4 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-teal-500/20 active:scale-95 disabled:opacity-50"
+              className="min-h-[40px] px-4 py-2 rounded-lg bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold flex items-center gap-2 transition-colors shadow-sm disabled:opacity-50"
             >
               <Download className="w-4 h-4" />
-              <span>{isExporting ? 'Mengeksport...' : 'Muat Turun CSV'}</span>
+              <span>{isExporting ? 'Exporting...' : 'Download CSV'}</span>
             </button>
           </div>
         </div>
 
         {/* Bottom Row: Multi-Dropdown Filters & Date Presets */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-white/5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-slate-800">
           {/* Module Filter */}
           <div>
             <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-              Pilihan Modul / Menu
+              Module / Menu Filter
             </label>
             <select
               value={moduleFilter}
@@ -653,9 +651,9 @@ export const AdminSystemLogsTab: React.FC = () => {
                 setModuleFilter(e.target.value)
                 setPage(1)
               }}
-              className="w-full bg-slate-950/80 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-teal-500"
             >
-              <option value="all">Semua Modul Hospital</option>
+              <option value="all">All Hospital Modules</option>
               {availableModules.map((mod) => (
                 <option key={mod} value={mod}>
                   {MODULE_VISUALS[mod]?.label || mod.toUpperCase()}
@@ -667,7 +665,7 @@ export const AdminSystemLogsTab: React.FC = () => {
           {/* Action Filter */}
           <div>
             <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-              Jenis Aktiviti / Tindakan
+              Activity / Action Type
             </label>
             <select
               value={actionFilter}
@@ -675,23 +673,23 @@ export const AdminSystemLogsTab: React.FC = () => {
                 setActionFilter(e.target.value)
                 setPage(1)
               }}
-              className="w-full bg-slate-950/80 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-teal-500"
             >
-              <option value="all">Semua Jenis Aktiviti</option>
-              <option value="LOGIN_LOGOUT">Log Masuk & Keluar (LOGIN / LOGOUT)</option>
-              <option value="NAVIGATION">Buka Halaman / Menu (VIEW)</option>
-              <option value="CREATE">Cipta Rekod Baru (CREATE)</option>
-              <option value="UPDATE">Kemaskini Maklumat (UPDATE)</option>
-              <option value="DELETE">Padam Rekod (DELETE)</option>
-              <option value="APPROVE_REJECT">Kelulusan & Penolakan (APPROVE / REJECT)</option>
-              <option value="EXPORT">Muat Turun Laporan (EXPORT)</option>
+              <option value="all">All Activity Types</option>
+              <option value="LOGIN_LOGOUT">Login & Logout (LOGIN / LOGOUT)</option>
+              <option value="NAVIGATION">Page / Menu View (VIEW)</option>
+              <option value="CREATE">Create New Record (CREATE)</option>
+              <option value="UPDATE">Update Record (UPDATE)</option>
+              <option value="DELETE">Delete Record (DELETE)</option>
+              <option value="APPROVE_REJECT">Approvals & Rejections (APPROVE / REJECT)</option>
+              <option value="EXPORT">Export Reports (EXPORT)</option>
             </select>
           </div>
 
           {/* User Filter */}
           <div>
             <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-              Kakitangan / Pengguna
+              Staff / User
             </label>
             <select
               value={userFilter}
@@ -699,9 +697,9 @@ export const AdminSystemLogsTab: React.FC = () => {
                 setUserFilter(e.target.value)
                 setPage(1)
               }}
-              className="w-full bg-slate-950/80 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-teal-500"
             >
-              <option value="all">Semua Kakitangan</option>
+              <option value="all">All Personnel</option>
               {usersList.map((u) => (
                 <option key={u.id} value={u.id}>
                   {u.full_name} ({u.jawatan || u.employee_id || u.ic_number?.slice(0, 6)})
@@ -713,12 +711,12 @@ export const AdminSystemLogsTab: React.FC = () => {
           {/* Date Presets */}
           <div>
             <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-              Tempoh Masa
+              Time Period
             </label>
-            <div className="flex items-center gap-1 bg-slate-950/80 border border-white/10 rounded-xl p-1">
+            <div className="flex items-center gap-1 bg-slate-950/80 border border-slate-800 rounded-lg p-1">
               <button
                 onClick={() => handleDatePresetChange('all')}
-                className={`flex-1 py-1 text-[11px] font-semibold rounded-lg transition-all ${
+                className={`flex-1 py-1.5 text-[11px] font-semibold rounded-md transition-colors ${
                   datePreset === 'all' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -726,7 +724,7 @@ export const AdminSystemLogsTab: React.FC = () => {
               </button>
               <button
                 onClick={() => handleDatePresetChange('today')}
-                className={`flex-1 py-1 text-[11px] font-semibold rounded-lg transition-all ${
+                className={`flex-1 py-1.5 text-[11px] font-semibold rounded-md transition-colors ${
                   datePreset === 'today' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -734,7 +732,7 @@ export const AdminSystemLogsTab: React.FC = () => {
               </button>
               <button
                 onClick={() => handleDatePresetChange('7days')}
-                className={`flex-1 py-1 text-[11px] font-semibold rounded-lg transition-all ${
+                className={`flex-1 py-1.5 text-[11px] font-semibold rounded-md transition-colors ${
                   datePreset === '7days' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -742,7 +740,7 @@ export const AdminSystemLogsTab: React.FC = () => {
               </button>
               <button
                 onClick={() => handleDatePresetChange('30days')}
-                className={`flex-1 py-1 text-[11px] font-semibold rounded-lg transition-all ${
+                className={`flex-1 py-1.5 text-[11px] font-semibold rounded-md transition-colors ${
                   datePreset === '30days' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -754,242 +752,325 @@ export const AdminSystemLogsTab: React.FC = () => {
 
         {/* Active Filter Badges & Reset trigger */}
         {(search || moduleFilter !== 'all' || actionFilter !== 'all' || userFilter !== 'all' || datePreset !== 'all') && (
-          <div className="flex items-center justify-between pt-2 text-xs">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-slate-500 font-medium">Tapisan Aktif:</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-slate-500 font-medium">Active Filters:</span>
               {search && (
-                <span className="px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20 text-xs">
-                  Carian: &quot;{search}&quot;
+                <span className="px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30 text-xs">
+                  Search: &quot;{search}&quot;
                 </span>
               )}
               {moduleFilter !== 'all' && (
-                <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs">
-                  Modul: {MODULE_VISUALS[moduleFilter]?.label || moduleFilter}
+                <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 text-xs">
+                  Module: {MODULE_VISUALS[moduleFilter]?.label || moduleFilter}
                 </span>
               )}
               {actionFilter !== 'all' && (
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs">
-                  Aktiviti: {actionFilter}
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs">
+                  Action: {actionFilter}
                 </span>
               )}
               {userFilter !== 'all' && (
-                <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs">
-                  Kakitangan Khusus
+                <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs">
+                  Specific Staff
                 </span>
               )}
               {datePreset !== 'all' && (
-                <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs">
-                  Tarikh: {datePreset}
+                <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30 text-xs">
+                  Date: {datePreset}
                 </span>
               )}
             </div>
             <button
               onClick={handleResetFilters}
-              className="text-xs text-rose-400 hover:text-rose-300 font-semibold underline underline-offset-4"
+              className="text-xs text-rose-400 hover:text-rose-300 font-semibold self-start sm:self-auto underline underline-offset-4"
             >
-              Kosongkan Semua Tapisan
+              Clear All Filters
             </button>
           </div>
         )}
       </div>
 
-      {/* 4. Main Interactive Audit Log Table */}
-      <div className="bg-slate-900/40 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-md">
-        <div className="p-4 border-b border-white/5 flex items-center justify-between">
+      {/* 4. Main Interactive Audit Log Table / Cards */}
+      <div className="bg-slate-900/90 border border-slate-800 rounded-xl overflow-hidden">
+        <div className="p-3.5 sm:p-4 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Activity className="w-4 h-4 text-teal-400" />
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-              Garis Masa Aktiviti Keseluruhan ({totalRecords} Rekod Dijumpai)
+            <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">
+              Activity Timeline ({totalRecords} Records)
             </h3>
           </div>
-          <span className="text-xs text-slate-500 font-mono">
-            Halaman {page} dari {totalPages}
+          <span className="text-xs text-slate-400 font-mono">
+            Page {page} of {totalPages}
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          {isLoading ? (
-            <div className="p-12 space-y-4">
-              <div className="h-6 bg-white/5 rounded-lg w-full animate-pulse" />
-              <div className="h-6 bg-white/5 rounded-lg w-11/12 animate-pulse" />
-              <div className="h-6 bg-white/5 rounded-lg w-10/12 animate-pulse" />
-              <div className="h-6 bg-white/5 rounded-lg w-9/12 animate-pulse" />
+        {isLoading ? (
+          <div className="p-8 sm:p-12 space-y-4">
+            <div className="h-6 bg-slate-800/60 rounded-lg w-full animate-pulse" />
+            <div className="h-6 bg-slate-800/60 rounded-lg w-11/12 animate-pulse" />
+            <div className="h-6 bg-slate-800/60 rounded-lg w-10/12 animate-pulse" />
+            <div className="h-6 bg-slate-800/60 rounded-lg w-9/12 animate-pulse" />
+          </div>
+        ) : logs.length === 0 ? (
+          <div className="text-center py-16 px-4 space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center mx-auto border border-slate-700">
+              <Search className="w-6 h-6" />
             </div>
-          ) : logs.length === 0 ? (
-            <div className="text-center py-16 px-4 space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-slate-800/80 text-slate-500 flex items-center justify-center mx-auto border border-white/5">
-                <Search className="w-6 h-6" />
-              </div>
-              <h4 className="text-base font-semibold text-slate-300">Tiada Rekod Dijumpai</h4>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Tiada aktiviti yang sepadan dengan kriteria carian atau tapisan yang dipilih. Cuba kosongkan tapisan anda.
-              </p>
-              <button
-                onClick={handleResetFilters}
-                className="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white transition-colors"
-              >
-                Tetap Semula Tapisan
-              </button>
-            </div>
-          ) : (
-            <table className="w-full text-left border-collapse min-w-[900px]">
-              <thead>
-                <tr className="bg-white/5 text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                  <th className="p-4 w-48">Masa & Tarikh</th>
-                  <th className="p-4 w-64">Nama Pegawai / Staf</th>
-                  <th className="p-4 w-44">Modul / Menu</th>
-                  <th className="p-4">Ringkasan Tindakan & Aktiviti</th>
-                  <th className="p-4 w-36">Peranti / IP</th>
-                  <th className="p-4 text-right w-24">Tindakan</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5 text-slate-300 text-sm font-medium">
-                {logs.map((log) => {
-                  const actionMeta = getActionBadgeStyle(log.action)
-                  const ActionIcon = actionMeta.icon
-                  const modMeta = MODULE_VISUALS[log.module?.toLowerCase()] || {
-                    label: log.module?.toUpperCase() || 'SISTEM',
-                    color: 'text-slate-300',
-                    bg: 'bg-slate-800',
-                    border: 'border-white/5',
-                    icon: '📦',
-                  }
-                  const humanSentence = generateHumanSummary(log)
+            <h4 className="text-base font-semibold text-slate-300">No Records Found</h4>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              No activities match the search or filter criteria.
+            </p>
+            <button
+              onClick={handleResetFilters}
+              className="mt-2 min-h-[40px] px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white transition-colors"
+            >
+              Reset Filters
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[900px]">
+                <thead>
+                  <tr className="bg-slate-950/80 text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-slate-800">
+                    <th className="p-3.5 sm:p-4 w-48">Timestamp & Date</th>
+                    <th className="p-3.5 sm:p-4 w-64">Officer / Staff Name</th>
+                    <th className="p-3.5 sm:p-4 w-44">Module / Section</th>
+                    <th className="p-3.5 sm:p-4">Action & Activity Summary</th>
+                    <th className="p-3.5 sm:p-4 w-36">Device / IP</th>
+                    <th className="p-3.5 sm:p-4 text-right w-24">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800 text-slate-300 text-sm font-medium">
+                  {logs.map((log) => {
+                    const actionMeta = getActionBadgeStyle(log.action)
+                    const ActionIcon = actionMeta.icon
+                    const modMeta = MODULE_VISUALS[log.module?.toLowerCase()] || {
+                      label: log.module?.toUpperCase() || 'SISTEM',
+                      color: 'text-slate-300',
+                      bg: 'bg-slate-800',
+                      border: 'border-slate-700',
+                      icon: Layers,
+                    }
+                    const ModIcon = modMeta.icon || Layers
+                    const humanSentence = generateHumanSummary(log)
 
-                  return (
-                    <tr
-                      key={log.id}
-                      onClick={() => {
-                        setSelectedLog(log)
-                        setShowTechnicalJson(false)
-                      }}
-                      className="hover:bg-white/5 transition-colors cursor-pointer group"
-                    >
-                      {/* 1. Date & Time */}
-                      <td className="p-4 align-top">
-                        <div className="font-mono text-xs text-slate-200">
-                          {formatDateTime(log.created_at)}
-                        </div>
-                        <div className="text-[11px] text-teal-400/80 font-sans mt-0.5 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          <span>{formatRelativeTimeMalay(log.created_at)}</span>
-                        </div>
-                      </td>
-
-                      {/* 2. Staff / User Info */}
-                      <td className="p-4 align-top">
-                        <div className="flex items-start gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-xs font-bold text-teal-400 flex-shrink-0">
-                            {log.user?.full_name?.charAt(0) || 'P'}
+                    return (
+                      <tr
+                        key={log.id}
+                        onClick={() => {
+                          setSelectedLog(log)
+                          setShowTechnicalJson(false)
+                        }}
+                        className="hover:bg-slate-800/40 transition-colors cursor-pointer group"
+                      >
+                        {/* 1. Date & Time */}
+                        <td className="p-3.5 sm:p-4 align-top">
+                          <div className="font-mono text-xs text-slate-200">
+                            {formatDateTime(log.created_at)}
                           </div>
-                          <div>
-                            <div className="text-white text-sm font-bold group-hover:text-teal-300 transition-colors">
-                              {log.user?.full_name || 'Pegawai Sistem (System/Auto)'}
+                          <div className="text-[11px] text-teal-400 font-sans mt-0.5 flex items-center gap-1">
+                            <Clock className="w-3 h-3 shrink-0" />
+                            <span>{formatRelativeTimeMalay(log.created_at)}</span>
+                          </div>
+                        </td>
+
+                        {/* 2. Staff / User Info */}
+                        <td className="p-3.5 sm:p-4 align-top">
+                          <div className="flex items-start gap-2.5">
+                            <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-teal-400 shrink-0">
+                              {log.user?.full_name?.charAt(0) || 'P'}
                             </div>
-                            <div className="text-xs text-slate-400 font-mono">
-                              IC: {log.user?.ic_number || log.user?.employee_id || 'AUTO'}
-                            </div>
-                            {log.user?.jawatan && (
-                              <div className="text-[11px] text-slate-400 truncate max-w-[200px]">
-                                {log.user.jawatan}
+                            <div>
+                              <div className="text-white text-sm font-bold group-hover:text-teal-300 transition-colors">
+                                {log.user?.full_name || 'Pegawai Sistem (System/Auto)'}
                               </div>
-                            )}
+                              <div className="text-xs text-slate-400 font-mono">
+                                IC: {log.user?.ic_number || log.user?.employee_id || 'AUTO'}
+                              </div>
+                              {log.user?.jawatan && (
+                                <div className="text-[11px] text-slate-400 truncate max-w-[200px]">
+                                  {log.user.jawatan}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* 3. Module / Menu Name */}
-                      <td className="p-4 align-top">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold ${modMeta.bg} ${modMeta.color} border ${modMeta.border}`}
-                        >
-                          <span>{modMeta.icon}</span>
-                          <span className="truncate max-w-[130px]">{modMeta.label.split('(')[0]}</span>
-                        </span>
-                      </td>
-
-                      {/* 4. Action & Human-Readable Sentence */}
-                      <td className="p-4 align-top space-y-1.5">
-                        <div className="flex items-center gap-2 flex-wrap">
+                        {/* 3. Module / Menu Name */}
+                        <td className="p-3.5 sm:p-4 align-top">
                           <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-semibold border ${actionMeta.badgeBg}`}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${modMeta.bg} ${modMeta.color} border ${modMeta.border}`}
                           >
-                            <ActionIcon className="w-3 h-3" />
-                            <span>{actionMeta.label}</span>
+                            <ModIcon className="w-3.5 h-3.5 shrink-0" />
+                            <span className="truncate max-w-[130px]">{modMeta.label.split('(')[0]}</span>
                           </span>
-                        </div>
+                        </td>
 
-                        {/* Plain Language Action Description */}
-                        <div className="text-xs text-slate-200 leading-relaxed font-sans">
-                          {humanSentence}
-                        </div>
-                      </td>
+                        {/* 4. Action & Human-Readable Sentence */}
+                        <td className="p-3.5 sm:p-4 align-top space-y-1.5">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span
+                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-semibold border ${actionMeta.badgeBg}`}
+                            >
+                              <ActionIcon className="w-3 h-3" />
+                              <span>{actionMeta.label}</span>
+                            </span>
+                          </div>
 
-                      {/* 5. IP & User Agent */}
-                      <td className="p-4 align-top">
-                        <div className="text-xs font-mono text-slate-400">
-                          {log.ip_address || '192.168.1.100'}
-                        </div>
-                        <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
-                          <Laptop className="w-3 h-3 text-slate-600" />
-                          <span className="truncate max-w-[120px]" title={log.user_agent}>
-                            {log.user_agent?.includes('Macintosh')
-                              ? 'macOS'
-                              : log.user_agent?.includes('iPhone')
-                              ? 'iPhone'
-                              : log.user_agent?.includes('Windows')
-                              ? 'Windows PC'
-                              : 'Pelayar Web'}
-                          </span>
-                        </div>
-                      </td>
+                          <div className="text-xs text-slate-300 leading-relaxed font-sans">
+                            {humanSentence}
+                          </div>
+                        </td>
 
-                      {/* 6. Action: View Details */}
-                      <td className="p-4 align-top text-right">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setSelectedLog(log)
-                            setShowTechnicalJson(false)
-                          }}
-                          className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-teal-500 hover:text-slate-950 text-slate-300 text-xs font-semibold transition-all inline-flex items-center gap-1"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>Perincian</span>
-                        </button>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          )}
-        </div>
+                        {/* 5. IP & User Agent */}
+                        <td className="p-3.5 sm:p-4 align-top">
+                          <div className="text-xs font-mono text-slate-400">
+                            {log.ip_address || '192.168.1.100'}
+                          </div>
+                          <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                            <Laptop className="w-3 h-3 text-slate-500 shrink-0" />
+                            <span className="truncate max-w-[120px]" title={log.user_agent}>
+                              {log.user_agent?.includes('Macintosh')
+                                ? 'macOS'
+                                : log.user_agent?.includes('iPhone')
+                                ? 'iPhone'
+                                : log.user_agent?.includes('Windows')
+                                ? 'Windows PC'
+                                : 'Web Browser'}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* 6. Action: View Details */}
+                        <td className="p-3.5 sm:p-4 align-top text-right">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedLog(log)
+                              setShowTechnicalJson(false)
+                            }}
+                            className="min-h-[36px] px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-teal-500 hover:text-slate-950 text-slate-300 text-xs font-semibold transition-colors inline-flex items-center gap-1"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Details</span>
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-slate-800">
+              {logs.map((log) => {
+                const actionMeta = getActionBadgeStyle(log.action)
+                const ActionIcon = actionMeta.icon
+                const modMeta = MODULE_VISUALS[log.module?.toLowerCase()] || {
+                  label: log.module?.toUpperCase() || 'SISTEM',
+                  color: 'text-slate-300',
+                  bg: 'bg-slate-800',
+                  border: 'border-slate-700',
+                  icon: Layers,
+                }
+                const ModIcon = modMeta.icon || Layers
+                const humanSentence = generateHumanSummary(log)
+
+                return (
+                  <div
+                    key={log.id}
+                    onClick={() => {
+                      setSelectedLog(log)
+                      setShowTechnicalJson(false)
+                    }}
+                    className="p-3.5 space-y-2.5 hover:bg-slate-800/40 active:bg-slate-800/60 transition-colors cursor-pointer"
+                  >
+                    {/* Top row: Module + Action + Time */}
+                    <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold ${modMeta.bg} ${modMeta.color} border ${modMeta.border}`}>
+                          <ModIcon className="w-3 h-3 shrink-0" />
+                          <span className="truncate max-w-[120px]">{modMeta.label.split('(')[0]}</span>
+                        </span>
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold border ${actionMeta.badgeBg}`}>
+                          <ActionIcon className="w-3 h-3 shrink-0" />
+                          <span>{actionMeta.label.split('(')[0]}</span>
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-teal-400 font-mono shrink-0">
+                        {formatRelativeTimeMalay(log.created_at)}
+                      </span>
+                    </div>
+
+                    {/* User row */}
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] font-bold text-teal-400 shrink-0">
+                        {log.user?.full_name?.charAt(0) || 'P'}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs font-bold text-white truncate block">
+                          {log.user?.full_name || 'Pegawai Sistem'}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono truncate block">
+                          {log.user?.jawatan ? `${log.user.jawatan} • ` : ''}IC: {log.user?.ic_number || log.user?.employee_id || 'AUTO'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Natural summary sentence */}
+                    <p className="text-xs text-slate-300 leading-relaxed font-sans line-clamp-2">
+                      {humanSentence}
+                    </p>
+
+                    {/* Bottom row: Device / IP + View button */}
+                    <div className="flex items-center justify-between pt-1 border-t border-slate-800/80 text-[11px] text-slate-400">
+                      <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                        <Laptop className="w-3 h-3 text-slate-500 shrink-0" />
+                        <span>{log.ip_address || '192.168.1.100'}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="min-h-[36px] px-3 py-1 rounded-lg bg-slate-800 text-teal-300 border border-slate-700 text-xs font-semibold flex items-center gap-1 hover:bg-slate-700 transition-colors"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Details</span>
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </>
+        )}
 
         {/* Table Pagination footer */}
         {totalPages > 1 && (
-          <div className="p-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
-            <div>
-              Menunjukkan {(page - 1) * pageSize + 1} hingga {Math.min(page * pageSize, totalRecords)} daripada {totalRecords} jumlah rekod aktiviti
+          <div className="p-3.5 sm:p-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+            <div className="text-center sm:text-left">
+              Showing {(page - 1) * pageSize + 1} - {Math.min(page * pageSize, totalRecords)} of {totalRecords} records
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white disabled:opacity-40 disabled:hover:bg-slate-800 transition-colors flex items-center gap-1"
+                className="min-h-[38px] px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white disabled:opacity-40 disabled:hover:bg-slate-800 transition-colors flex items-center gap-1"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
-                <span>Sebelumnya</span>
+                <span>Previous</span>
               </button>
-              <span className="px-3 py-1.5 rounded-lg bg-slate-950 border border-white/5 text-white font-mono">
+              <span className="min-h-[38px] px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-white font-mono flex items-center">
                 {page} / {totalPages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white disabled:opacity-40 disabled:hover:bg-slate-800 transition-colors flex items-center gap-1"
+                className="min-h-[38px] px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white disabled:opacity-40 disabled:hover:bg-slate-800 transition-colors flex items-center gap-1"
               >
-                <span>Seterusnya</span>
+                <span>Next</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -1000,85 +1081,86 @@ export const AdminSystemLogsTab: React.FC = () => {
       {/* 5. Human-Friendly Details Modal (Pemeriksaan Terperinci Log) */}
       <AnimatePresence>
         {selectedLog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.2 }}
-              className="bg-slate-900 border border-white/10 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl shadow-slate-950"
+              className="bg-slate-900 border border-slate-800 rounded-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
             >
               {/* Modal Header */}
-              <div className="p-6 border-b border-white/5 flex items-start justify-between bg-gradient-to-r from-slate-900 to-slate-950">
+              <div className="p-4 sm:p-5 border-b border-slate-800 flex items-start justify-between bg-slate-900">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="px-2.5 py-0.5 rounded-md bg-teal-500/10 text-teal-400 border border-teal-500/20 text-xs font-mono font-bold uppercase">
-                      REKOD AUDIT #{selectedLog.id}
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="px-2 py-0.5 rounded bg-teal-500/10 text-teal-400 border border-teal-500/30 text-xs font-mono font-bold uppercase">
+                      Audit Record #{selectedLog.id}
                     </span>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 text-xs font-semibold">
-                      DISAHKAN KKM
+                    <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold">
+                      MOH Verified
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-white">
-                    Perincian Tindakan & Jejak Aktiviti
+                  <h3 className="text-base sm:text-lg font-bold text-white">
+                    Action Details & Activity Trail
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Tarikh & Masa: {formatDateTime(selectedLog.created_at)} ({formatRelativeTimeMalay(selectedLog.created_at)})
+                    Timestamp: {formatDateTime(selectedLog.created_at)} ({formatRelativeTimeMalay(selectedLog.created_at)})
                   </p>
                 </div>
                 <button
                   onClick={() => setSelectedLog(null)}
-                  className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+                  aria-label="Close modal"
+                  className="min-h-[40px] min-w-[40px] p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors flex items-center justify-center"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Modal Content */}
-              <div className="p-6 overflow-y-auto space-y-6 text-sm">
+              <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 text-sm">
                 {/* 1. Human Language Narrative Summary Banner */}
-                <div className="p-4 rounded-xl bg-teal-500/10 border border-teal-500/20 space-y-1">
+                <div className="p-3.5 sm:p-4 rounded-xl bg-teal-500/10 border border-teal-500/30 space-y-1">
                   <div className="text-xs font-bold text-teal-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Info className="w-4 h-4" />
-                    <span>Ringkasan Tindakan Pegawai</span>
+                    <Info className="w-4 h-4 shrink-0" />
+                    <span>Staff Action Summary</span>
                   </div>
-                  <p className="text-white text-sm font-medium leading-relaxed">
+                  <p className="text-white text-xs sm:text-sm font-medium leading-relaxed">
                     {generateHumanSummary(selectedLog)}
                   </p>
                 </div>
 
                 {/* 2. User & Environment Profile Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {/* Staff Info Card */}
-                  <div className="p-4 rounded-xl bg-slate-950/60 border border-white/5 space-y-2.5">
+                  <div className="p-3.5 sm:p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2.5">
                     <div className="text-xs font-bold text-teal-400 uppercase tracking-wider flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5" />
-                      <span>Maklumat Pegawai / Staf</span>
+                      <User className="w-3.5 h-3.5 shrink-0" />
+                      <span>Staff / Officer Profile</span>
                     </div>
                     <div className="space-y-1.5 text-xs">
                       <div>
-                        <span className="text-slate-500 block text-[11px]">Nama Penuh:</span>
+                        <span className="text-slate-500 block text-[11px]">Full Name:</span>
                         <span className="text-white font-bold text-sm">
                           {selectedLog.user?.full_name || 'Pegawai Sistem (System/Auto)'}
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/5">
+                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800">
                         <div>
-                          <span className="text-slate-500 block text-[11px]">No. IC / Pekerja:</span>
+                          <span className="text-slate-500 block text-[11px]">IC / Staff ID:</span>
                           <span className="text-slate-300 font-mono">
                             {selectedLog.user?.ic_number || selectedLog.user?.employee_id || selectedLog.user_id}
                           </span>
                         </div>
                         <div>
-                          <span className="text-slate-500 block text-[11px]">Jawatan:</span>
+                          <span className="text-slate-500 block text-[11px]">Designation:</span>
                           <span className="text-slate-300">
-                            {selectedLog.user?.jawatan || 'Pegawai Bertugas'}
+                            {selectedLog.user?.jawatan || 'Duty Officer'}
                           </span>
                         </div>
                       </div>
                       {selectedLog.user?.email && (
                         <div>
-                          <span className="text-slate-500 block text-[11px]">Alamat Emel:</span>
+                          <span className="text-slate-500 block text-[11px]">Email Address:</span>
                           <span className="text-slate-400">{selectedLog.user.email}</span>
                         </div>
                       )}
@@ -1086,37 +1168,37 @@ export const AdminSystemLogsTab: React.FC = () => {
                   </div>
 
                   {/* Module & Access Environment Card */}
-                  <div className="p-4 rounded-xl bg-slate-950/60 border border-white/5 space-y-2.5">
+                  <div className="p-3.5 sm:p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2.5">
                     <div className="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
-                      <Globe className="w-3.5 h-3.5" />
-                      <span>Modul & Lokasi Capaian</span>
+                      <Globe className="w-3.5 h-3.5 shrink-0" />
+                      <span>Module & Access Location</span>
                     </div>
                     <div className="space-y-1.5 text-xs">
                       <div>
-                        <span className="text-slate-500 block text-[11px]">Modul / Bahagian:</span>
+                        <span className="text-slate-500 block text-[11px]">Module / Section:</span>
                         <span className="text-indigo-300 font-bold">
                           {MODULE_VISUALS[selectedLog.module?.toLowerCase()]?.label || selectedLog.module?.toUpperCase()}
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/5">
+                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800">
                         <div>
-                          <span className="text-slate-500 block text-[11px]">Jenis Tindakan:</span>
+                          <span className="text-slate-500 block text-[11px]">Action Type:</span>
                           <span className="text-slate-300 font-semibold">{selectedLog.action}</span>
                         </div>
                         <div>
-                          <span className="text-slate-500 block text-[11px]">Alamat IP:</span>
+                          <span className="text-slate-500 block text-[11px]">IP Address:</span>
                           <span className="text-slate-300 font-mono">{selectedLog.ip_address || '192.168.1.100'}</span>
                         </div>
                       </div>
                       <div>
-                        <span className="text-slate-500 block text-[11px]">Peranti Digunakan:</span>
+                        <span className="text-slate-500 block text-[11px]">Device Used:</span>
                         <span className="text-slate-400">
                           {selectedLog.user_agent?.includes('Macintosh')
-                            ? 'Komputer Apple Mac (macOS)'
+                            ? 'Apple Mac (macOS)'
                             : selectedLog.user_agent?.includes('iPhone')
-                            ? 'Telefon Pintar iPhone (iOS)'
+                            ? 'iPhone Smartphone (iOS)'
                             : selectedLog.user_agent?.includes('Windows')
-                            ? 'Komputer Windows (PC Hospital)'
+                            ? 'Windows PC (Hospital Workstation)'
                             : 'Pelayar Web'}
                         </span>
                       </div>
@@ -1124,23 +1206,23 @@ export const AdminSystemLogsTab: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 3. Human Data Changes Comparison Cards (Clean & Readable) */}
+                {/* 3. Human Data Changes Comparison Cards */}
                 {(selectedLog.old_values || selectedLog.new_values) && (
                   <div className="space-y-3">
                     <div className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <FolderGit2 className="w-4 h-4 text-teal-400" />
-                      <span>Perincian Maklumat & Perubahan Data</span>
+                      <FolderGit2 className="w-4 h-4 text-teal-400 shrink-0" />
+                      <span>Information Details & Data Mutations</span>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Old Values (Clean Human List) */}
-                      <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5 space-y-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                      {/* Old Values */}
+                      <div className="p-3.5 sm:p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
                         <span className="text-xs font-bold text-rose-400 flex items-center gap-1">
                           <span className="w-2 h-2 rounded-full bg-rose-500" />
-                          Nilai Asal / Terdahulu:
+                          Previous / Initial Value:
                         </span>
                         {getCleanObjectEntries(selectedLog.old_values).length > 0 ? (
-                          <div className="space-y-1.5 divide-y divide-white/5 text-xs">
+                          <div className="space-y-1.5 divide-y divide-slate-800 text-xs">
                             {getCleanObjectEntries(selectedLog.old_values).map(([k, v]) => (
                               <div key={k} className="pt-1.5 first:pt-0 flex items-start justify-between gap-2">
                                 <span className="text-slate-400 text-xs font-medium">{formatFieldLabel(k)}:</span>
@@ -1152,19 +1234,19 @@ export const AdminSystemLogsTab: React.FC = () => {
                           </div>
                         ) : (
                           <p className="text-xs text-slate-500 italic py-2">
-                            Tiada rekod lama (Tindakan Rekod Baharu)
+                            No prior record (New Record Creation)
                           </p>
                         )}
                       </div>
 
-                      {/* New Values (Clean Human List) */}
-                      <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5 space-y-2">
+                      {/* New Values */}
+                      <div className="p-3.5 sm:p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
                         <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
                           <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                          Nilai Terkini / Catatan Tindakan:
+                          Current Value / Action Record:
                         </span>
                         {getCleanObjectEntries(selectedLog.new_values).length > 0 ? (
-                          <div className="space-y-1.5 divide-y divide-white/5 text-xs">
+                          <div className="space-y-1.5 divide-y divide-slate-800 text-xs">
                             {getCleanObjectEntries(selectedLog.new_values).map(([k, v]) => (
                               <div key={k} className="pt-1.5 first:pt-0 flex items-start justify-between gap-2">
                                 <span className="text-slate-400 text-xs font-medium">{formatFieldLabel(k)}:</span>
@@ -1176,7 +1258,7 @@ export const AdminSystemLogsTab: React.FC = () => {
                           </div>
                         ) : (
                           <p className="text-xs text-slate-500 italic py-2">
-                            Tiada maklumat tambahan
+                            No additional details
                           </p>
                         )}
                       </div>
@@ -1185,20 +1267,20 @@ export const AdminSystemLogsTab: React.FC = () => {
                 )}
 
                 {/* 4. Optional Collapsible Raw Technical Code (For IT Specialists) */}
-                <div className="pt-2 border-t border-white/5">
+                <div className="pt-2 border-t border-slate-800">
                   <button
                     onClick={() => setShowTechnicalJson(!showTechnicalJson)}
-                    className="text-xs text-slate-500 hover:text-slate-300 flex items-center gap-1.5 transition-colors font-mono"
+                    className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1.5 transition-colors font-mono"
                   >
                     <Code className="w-3.5 h-3.5" />
                     <span>
-                      {showTechnicalJson ? 'Sembunyikan Kod Teknikal (JSON)' : 'Papar Format Kod Teknikal JSON (Untuk IT Sahaja)'}
+                      {showTechnicalJson ? 'Hide Raw JSON' : 'View Raw JSON (Technical IT)'}
                     </span>
                   </button>
 
                   {showTechnicalJson && (
-                    <div className="mt-3 p-3 rounded-xl bg-slate-950 border border-white/5 space-y-2">
-                      <pre className="text-slate-400 text-[11px] font-mono overflow-x-auto max-h-48 leading-relaxed">
+                    <div className="mt-3 p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-2">
+                      <pre className="text-slate-300 text-[11px] font-mono overflow-x-auto max-h-48 leading-relaxed">
                         {JSON.stringify(selectedLog, null, 2)}
                       </pre>
                     </div>
@@ -1207,19 +1289,19 @@ export const AdminSystemLogsTab: React.FC = () => {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-4 border-t border-white/5 bg-slate-950/80 flex items-center justify-between">
+              <div className="p-3.5 sm:p-4 border-t border-slate-800 bg-slate-900 flex items-center justify-between gap-2">
                 <button
                   onClick={handleCopyJson}
-                  className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  className="min-h-[40px] px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors"
                 >
                   {isCopied ? <Check className="w-4 h-4 text-teal-400" /> : <Copy className="w-4 h-4" />}
-                  <span>{isCopied ? 'Disalin ke Papan Keratan' : 'Salin Data Log'}</span>
+                  <span>{isCopied ? 'Copied' : 'Copy Log JSON'}</span>
                 </button>
                 <button
                   onClick={() => setSelectedLog(null)}
-                  className="px-5 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs transition-colors"
+                  className="min-h-[40px] px-5 py-2 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-bold text-xs transition-colors"
                 >
-                  Tutup Perincian
+                  Tutup
                 </button>
               </div>
             </motion.div>

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   ArrowLeft, 
@@ -13,181 +13,256 @@ import {
   BarChart3, 
   Wrench,
   ChevronRight,
-  Sparkles
+  CheckCircle2,
+  AlertTriangle,
+  Clock
 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
+import { Badge, Skeleton } from '@/components/ui'
+import { useAuthStore } from '@/stores/authStore'
+import { getOxygenCylinders } from '@/modules/mycylinder/services/oxygenService'
 
 export const CylinderSubMenu: React.FC = () => {
   const navigate = useNavigate()
   const { language } = useLanguage()
+  const user = useAuthStore((state) => state.user)
+  const hospitalId = user?.hospital_id || 'hosp-1'
+
+  const [stats, setStats] = useState({
+    totalCylinders: 0,
+    fullCylinders: 0,
+    inUseCylinders: 0,
+    emptyCylinders: 0,
+    loading: true
+  })
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await getOxygenCylinders(hospitalId, {}, 1, 1000)
+        const list = res.data?.data || []
+        const total = list.length
+        const full = list.filter((c: any) => c.status === 'full').length
+        const inUse = list.filter((c: any) => c.status === 'in_use').length
+        const empty = list.filter((c: any) => c.status === 'empty' || c.status === 'maintenance').length
+
+        setStats({
+          totalCylinders: total,
+          fullCylinders: full,
+          inUseCylinders: inUse,
+          emptyCylinders: empty,
+          loading: false
+        })
+      } catch (err) {
+        console.error('Failed to load MyCylinder submenu stats', err)
+        setStats(prev => ({ ...prev, loading: false }))
+      }
+    }
+    fetchStats()
+  }, [hospitalId])
 
   const subModules = [
     {
-      title: language === 'ms' ? 'Dashboard Oksigen' : 'Oxygen Dashboard',
-      description: language === 'ms' 
-        ? 'Ringkasan kapasiti silinder, penggunaan langsung, rekod penerimaan dan peruntukan kewangan.'
-        : 'Overview of live oxygen cylinder capacity, utilization, and supplier delivery logs.',
+      title: 'Oxygen Dashboard',
+      description: 'Overview of live oxygen cylinder capacity, utilization, and supplier delivery logs.',
       href: ROUTES.PHARMACY_OXYGEN,
       icon: Activity,
-      color: 'teal',
-      badge: language === 'ms' ? 'Utama' : 'Main'
+      color: 'text-teal-400 bg-teal-500/10 border-teal-500/20',
+      badge: 'Main',
+      badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/30'
     },
     {
-      title: language === 'ms' ? 'Inventori Silinder' : 'Cylinder Inventory',
-      description: language === 'ms'
-        ? 'Pangkalan data penuh silinder, pemilikan pinjaman (loan), dan kedudukan fizikal.'
-        : 'Full cylinder fleet registry, loan status tracking, and physical store balance.',
+      title: 'Cylinder Inventory',
+      description: 'Full cylinder fleet registry, loan status tracking, and physical store balance.',
       href: ROUTES.PHARMACY_OXYGEN_CYLINDERS,
       icon: Database,
-      color: 'indigo'
+      color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
+      badge: stats.loading ? (
+        <Skeleton className="h-5 w-16 rounded-full" />
+      ) : stats.totalCylinders > 0 ? (
+        `${stats.totalCylinders} Units`
+      ) : null,
+      badgeColor: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
     },
     {
-      title: language === 'ms' ? 'Permohonan Silinder' : 'Cylinder Request',
-      description: language === 'ms'
-        ? 'Aliran kerja permohonan bekalan silinder dari wad dan unit klinikal hospital.'
-        : 'Department oxygen request workflow, clinical approvals, and cylinder dispatch.',
+      title: 'Cylinder Request',
+      description: 'Department oxygen request workflow, clinical approvals, and cylinder dispatch.',
       href: ROUTES.PHARMACY_OXYGEN_CONSUMPTION,
       icon: ShoppingCart,
-      color: 'blue'
+      color: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+      badge: null
     },
     {
-      title: language === 'ms' ? 'Jana Kod QR' : 'QR Generator',
-      description: language === 'ms'
-        ? 'Jana dan cetak label kod QR fizikal untuk penjejakan pantas setiap tabung silinder.'
-        : 'Generate and print physical QR code tags for instant cylinder scanning and audits.',
+      title: 'QR Generator',
+      description: 'Generate and print physical QR code tags for instant cylinder scanning and audits.',
       href: '/pharmacy/oxygen/qr',
       icon: QrCode,
-      color: 'purple'
+      color: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+      badge: 'QR Code',
+      badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30'
     },
     {
-      title: language === 'ms' ? 'Lejar KEW.PS-4 Silinder' : 'KEW.PS-4 Cylinder Ledger',
-      description: language === 'ms'
-        ? 'Buku rekod daftar transaksi rasmi mengikut Tatacara Pengurusan Stor (Penerimaan, Pengeluaran & Verifikasi).'
-        : 'Official government treasury stock ledger, supplier DO records, ward dispatches, and store verifications.',
+      title: 'KEW.PS-4 Cylinder Ledger',
+      description: 'Official government treasury stock ledger, supplier DO records, ward dispatches, and store verifications.',
       href: ROUTES.PHARMACY_OXYGEN_LEDGER,
       icon: ScrollText,
-      color: 'emerald',
-      badge: language === 'ms' ? 'Pekeliling TPS' : 'Treasury Standard'
+      color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+      badge: 'Treasury Standard',
+      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
     },
     {
-      title: language === 'ms' ? 'Penyelarasan Stok' : 'Stock Reconciliation',
-      description: language === 'ms'
-        ? 'Semakan fizikal audit silinder dan penyelarasan perbezaan kiraan di lapangan.'
-        : 'Physical cylinder audit reconciliations and variance adjustments.',
+      title: 'Stock Reconciliation',
+      description: 'Physical cylinder audit reconciliations and variance adjustments.',
       href: '/pharmacy/oxygen/reconciliation',
       icon: FileText,
-      color: 'amber'
+      color: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+      badge: null
     },
     {
-      title: language === 'ms' ? 'Laporan Silinder' : 'Cylinder Report',
-      description: language === 'ms'
-        ? 'Laporan eksekutif, perbelanjaan waran, analitik penggunaan wad dan unjuran belanjawan.'
-        : 'Executive analytics, warrant expenditure, ward consumption breakdown, and forecasting.',
+      title: 'Cylinder Report',
+      description: 'Executive analytics, warrant expenditure, ward consumption breakdown, and forecasting.',
       href: ROUTES.PHARMACY_OXYGEN_REPORTS,
       icon: BarChart3,
-      color: 'cyan'
+      color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20',
+      badge: 'Analytics',
+      badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
     },
     {
-      title: language === 'ms' ? 'Penyelenggaraan Silinder' : 'Cylinder Maintenance',
-      description: language === 'ms'
-        ? 'Penjejakan ujian tekanan hidrostatik, semakan injap keselamatan, dan kepatuhan piawaian.'
-        : 'Hydrostatic pressure test logs, safety valve inspections, and maintenance tracking.',
+      title: 'Cylinder Maintenance',
+      description: 'Hydrostatic pressure test logs, safety valve inspections, and maintenance tracking.',
       href: '/pharmacy/oxygen/maintenance',
       icon: Wrench,
-      color: 'rose'
+      color: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
+      badge: null
     }
   ]
 
-  const getColorClasses = (color: string) => {
-    switch (color) {
-      case 'teal':
-        return 'bg-teal-50 text-teal-600 border-teal-100 group-hover:bg-teal-600 group-hover:text-white'
-      case 'emerald':
-        return 'bg-emerald-50 text-emerald-600 border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white'
-      case 'indigo':
-        return 'bg-indigo-50 text-indigo-600 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white'
-      case 'blue':
-        return 'bg-blue-50 text-blue-600 border-blue-100 group-hover:bg-blue-600 group-hover:text-white'
-      case 'purple':
-        return 'bg-purple-50 text-purple-600 border-purple-100 group-hover:bg-purple-600 group-hover:text-white'
-      case 'amber':
-        return 'bg-amber-50 text-amber-600 border-amber-100 group-hover:bg-amber-600 group-hover:text-white'
-      case 'cyan':
-        return 'bg-cyan-50 text-cyan-600 border-cyan-100 group-hover:bg-cyan-600 group-hover:text-white'
-      case 'rose':
-        return 'bg-rose-50 text-rose-600 border-rose-100 group-hover:bg-rose-600 group-hover:text-white'
-      default:
-        return 'bg-slate-50 text-slate-600 border-slate-100 group-hover:bg-slate-800 group-hover:text-white'
-    }
-  }
-
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
-      <div>
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto min-h-screen text-slate-100">
+      {/* Back navigation */}
+      <div className="mb-6 sm:mb-8">
         <button 
           onClick={() => navigate(ROUTES.HUB)}
-          className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-4 cursor-pointer"
+          className="min-h-[44px] flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-4 sm:mb-6 group text-sm font-medium cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{language === 'ms' ? 'Kembali ke Hub Utama' : 'Back to Main Hub'}</span>
+          <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
+          <span>Back to Main Hub</span>
         </button>
-        <div className="flex items-center gap-4">
-          <div className="p-3.5 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-2xl shadow-lg">
-            <AirVent className="w-8 h-8" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded border border-teal-500/30">
-                Medical Oxygen Hub
-              </span>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-3.5 sm:gap-4">
+            <div className="p-3 sm:p-3.5 bg-teal-500/10 text-teal-400 border border-teal-500/20 rounded-2xl shadow-inner flex-shrink-0">
+              <AirVent className="w-8 h-8 sm:w-9 sm:h-9" />
             </div>
-            <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight mt-0.5">MyCylinder</h1>
-            <p className="text-slate-400 text-xs md:text-sm mt-0.5">
-              {language === 'ms' ? 'Pusat Pengurusan Oksigen & Silinder Gas Perubatan' : 'Medical Oxygen & Cylinder Management Ecosystem'}
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">MyCylinder</h1>
+                <Badge className="border-teal-500/30 text-teal-400 bg-teal-500/5">
+                  Medical Oxygen Hub
+                </Badge>
+              </div>
+              <p className="text-slate-400 text-xs sm:text-sm mt-1">
+                Medical Oxygen & Cylinder Management Ecosystem
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        {subModules.map((mod, idx) => {
-          const Icon = mod.icon
-          return (
-            <button
-              key={idx}
-              onClick={() => navigate(mod.href)}
-              className="group text-left p-6 rounded-3xl bg-white border border-slate-200/80 hover:border-teal-300 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className={`p-3 rounded-2xl border transition-all duration-300 ${getColorClasses(mod.color)}`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  {mod.badge && (
-                    <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
-                      {mod.badge}
-                    </span>
-                  )}
-                </div>
+      {/* Quick stats panel */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
+          <div className="flex justify-between items-start text-slate-500">
+            <span className="text-xs sm:text-sm font-medium">Total Cylinders</span>
+            <AirVent className="w-4 h-4 text-slate-400 flex-shrink-0" />
+          </div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-white min-h-[36px] flex items-center">
+            {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.totalCylinders}
+          </div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Facility inventory</p>
+        </div>
 
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
+          <div className="flex justify-between items-start text-slate-500">
+            <span className="text-xs sm:text-sm font-medium">Full (Available)</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+          </div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-emerald-400 min-h-[36px] flex items-center">
+            {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.fullCylinders}
+          </div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Ready for issue</p>
+        </div>
+
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
+          <div className="flex justify-between items-start text-slate-500">
+            <span className="text-xs sm:text-sm font-medium">In Use</span>
+            <Activity className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+          </div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-cyan-400 min-h-[36px] flex items-center">
+            {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.inUseCylinders}
+          </div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">In ward / unit</p>
+        </div>
+
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
+          <div className="flex justify-between items-start text-slate-500">
+            <span className="text-xs sm:text-sm font-medium">Empty / Servicing</span>
+            <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+          </div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-amber-400 min-h-[36px] flex items-center">
+            {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.emptyCylinders}
+          </div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Requires refilling</p>
+        </div>
+      </div>
+
+      {/* Action choices list */}
+      <div className="space-y-4">
+        <h2 className="text-base sm:text-lg font-semibold text-white tracking-wide">
+          MYCYLINDER MODULES & OPERATIONS
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {subModules.map((mod, idx) => {
+            const Icon = mod.icon
+            return (
+              <button
+                key={idx}
+                onClick={() => navigate(mod.href)}
+                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 hover:bg-slate-800/40 hover:border-teal-500/40 active:scale-[0.98] transition-all duration-200 shadow-xl rounded-2xl p-4 sm:p-6 flex flex-col justify-between min-h-[170px] cursor-pointer relative overflow-hidden"
+              >
                 <div>
-                  <h3 className="font-bold text-base text-slate-900 group-hover:text-teal-700 transition-colors">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-2.5 sm:p-3 rounded-xl border ${mod.color}`}>
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    {mod.badge && (
+                      typeof mod.badge === 'string' ? (
+                        <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${mod.badgeColor || 'border-slate-800 text-slate-400 bg-slate-950'}`}>
+                          {mod.badge}
+                        </span>
+                      ) : (
+                        mod.badge
+                      )
+                    )}
+                  </div>
+
+                  <h3 className="font-bold text-sm sm:text-base text-white group-hover:text-teal-400 transition-colors mb-2">
                     {mod.title}
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed line-clamp-3">
+                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
                     {mod.description}
                   </p>
                 </div>
-              </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-teal-600 group-hover:text-teal-700">
-                <span>{language === 'ms' ? 'Buka Modul' : 'Open Module'}</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </button>
-          )
-        })}
+                <div className="pt-2 mt-auto flex items-center justify-between text-xs font-bold text-teal-400 group-hover:text-teal-300">
+                  <span>Open Module</span>
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </button>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

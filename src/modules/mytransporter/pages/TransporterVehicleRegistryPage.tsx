@@ -77,7 +77,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
       if (res.data) setVehicles(res.data)
     } catch (err: any) {
       toast.error(
-        isEn ? 'Failed to Load Vehicles' : 'Gagal Memuatkan Kenderaan', 
+        isEn ? 'Failed to Load Vehicles' : 'Failed to Load Vehicles', 
         err.message || (isEn ? 'Please try again.' : 'Sila cuba lagi.')
       )
     } finally {
@@ -120,8 +120,8 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
     if (!noKenderaan || !noChasis || !model || !cukaiJalan) {
       toast.error(
-        isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
-        isEn ? 'Please fill in all required vehicle details.' : 'Sila isi semua butiran kenderaan.'
+        isEn ? 'Incomplete Form' : 'Incomplete Form', 
+        isEn ? 'Please fill in all required vehicle details.' : 'Please fill in all vehicle specifications.'
       )
       return
     }
@@ -151,7 +151,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
         const res = await updateVehicle(editingId!, payload)
         if (res.error) throw new Error(res.error)
         toast.success(
-          isEn ? 'Update Successful' : 'Kemaskini Berjaya', 
+          isEn ? 'Update Successful' : 'Update Successful', 
           isEn ? `Vehicle ${noKenderaan} details updated successfully.` : `Butiran kenderaan ${noKenderaan} berjaya dikemaskini.`
         )
       }

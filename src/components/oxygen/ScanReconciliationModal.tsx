@@ -23,10 +23,12 @@ import {
   ExternalLink,
   Table,
   Wrench,
-  RefreshCw
+  RefreshCw,
+  Pencil
 } from 'lucide-react';
 import { getCylinderByQrOrSerial, registerScannedCylinderOnTheFly, updateCylinderValveType } from '@/services/pharmacy/oxygenService';
 import { useAuthStore } from '@/stores/authStore';
+import { EditCylinderModal } from '@/components/oxygen/EditCylinderModal';
 import type { OxygenCylinderWithRelations } from '@/types/pharmacy';
 
 export interface ScannedBatchItem {
@@ -46,11 +48,14 @@ export const isStoreUnit = (unit?: string | null) => {
 export const RECONCILIATION_UNITS = [
   { id: 'Pharmacy Store', label: 'Pharmacy Store (Central)', icon: '🏬' },
   { id: 'Emergency & Trauma', label: 'Emergency & Trauma', icon: '🚨' },
-  { id: 'General Ward', label: 'General Ward', icon: '🛏️' },
+  { id: 'Female Ward', label: 'Female Ward', icon: '🛏️' },
+  { id: 'Male Ward', label: 'Male Ward', icon: '🛏️' },
   { id: 'Paediatric Ward', label: 'Paediatric Ward', icon: '👶' },
+  { id: 'Unit Klinik Pakar', label: 'Unit Klinik Pakar', icon: '🩺' },
   { id: 'Radiology & Radiography', label: 'Radiology', icon: '🩻' },
   { id: 'Anaesthesiology / OT', label: 'Anaesthesiology (Anaes)', icon: '💉' },
   { id: 'Nephrology', label: 'Nephrology', icon: '🩺' },
+  { id: 'General Ward', label: 'General Ward (Legacy)', icon: '🛏️' },
 ];
 
 export const RECONCILIATION_STATUSES = [
@@ -67,6 +72,7 @@ interface ScanReconciliationModalProps {
   onScanMatch: (cylinderId: string, status: string, unitLocation?: string) => void;
   onBatchScanMatch?: (items: { cylinderId: string; status: string; unitLocation?: string }[]) => void;
   onNewCylinderRegistered?: (cylinder: OxygenCylinderWithRelations) => void;
+  onCylinderUpdated?: (cylinder: OxygenCylinderWithRelations) => void;
   existingCylinders: OxygenCylinderWithRelations[];
 }
 
@@ -77,9 +83,11 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
   onScanMatch,
   onBatchScanMatch,
   onNewCylinderRegistered,
+  onCylinderUpdated,
   existingCylinders,
 }) => {
   const { user } = useAuthStore();
+  const [editingCylinder, setEditingCylinder] = useState<OxygenCylinderWithRelations | null>(null);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
   
   // Scanned Batch List Queue for Multi-Cylinder audit
@@ -118,6 +126,10 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
   // fix wrong BN/PI classification immediately (QR labels do NOT encode valve type)
   const [lastScannedCylinder, setLastScannedCylinder] = useState<OxygenCylinderWithRelations | null>(null);
   const [isCorrectingValveType, setIsCorrectingValveType] = useState(false);
+
+  // Disambiguation state — shown when same serial exists as both PI and BN
+  const [ambiguousCylinders, setAmbiguousCylinders] = useState<OxygenCylinderWithRelations[]>([]);
+  const [pendingScanCode, setPendingScanCode] = useState<string>('');
 
   useEffect(() => {
     if (isOpen) {
@@ -259,19 +271,21 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
     }
 
     setStatusMessage(null);
+    setAmbiguousCylinders([]);
+    setPendingScanCode('');
 
     try {
       const q = String(cleaned || '').toLowerCase();
 
-      // 1. Exact match by serial number or QR code
-      let cyl = existingCylinders.find(
+      // 1. Collect ALL exact matches by serial number or QR code
+      let exactMatches = existingCylinders.filter(
         c => String(c.serial_number || '').toLowerCase() === q ||
              String(c.qr_code_value || c.qr_code || '').toLowerCase() === q
       );
 
-      // 2. Partial / contains match (e.g. "sabox", "saboxy", "0071", "P101")
-      if (!cyl) {
-        cyl = existingCylinders.find(c => {
+      // 2. Partial / contains match (e.g. "sabox", "0071", "P101") — only if no exact match
+      if (exactMatches.length === 0) {
+        exactMatches = existingCylinders.filter(c => {
           const sn = String(c.serial_number || '').toLowerCase();
           const qr = String(c.qr_code_value || c.qr_code || '').toLowerCase();
           const typeName = String(c.type_info?.type_name || c.type_info?.name || '').toLowerCase();
@@ -280,7 +294,32 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
         });
       }
 
-      // 3. Database lookup via service
+      // ── Disambiguation check: if multiple distinct valve-type records match, prompt user ──
+      if (exactMatches.length > 1) {
+        const valveCodes = [...new Set(exactMatches.map(c => (c.type_info?.code || '').toUpperCase()))];
+        const hasMultipleValves = valveCodes.length > 1 && valveCodes.some(v => v === 'PI' || v === 'BN');
+        if (hasMultipleValves) {
+          // Sort: BN first, then PI
+          const sorted = [...exactMatches].sort((a, b) => {
+            const aCode = (a.type_info?.code || '').toUpperCase();
+            const bCode = (b.type_info?.code || '').toUpperCase();
+            if (aCode === 'BN' && bCode !== 'BN') return -1;
+            if (bCode === 'BN' && aCode !== 'BN') return 1;
+            return 0;
+          });
+          setAmbiguousCylinders(sorted);
+          setPendingScanCode(cleaned);
+          setStatusMessage({
+            type: 'info',
+            text: `Found ${sorted.length} cylinders with serial "${cleaned}" — different valve types detected. Please select the correct one below.`
+          });
+          return; // Wait for user to pick
+        }
+      }
+
+      let cyl = exactMatches.length > 0 ? exactMatches[0] : undefined;
+
+      // 3. Database lookup via service (if not found locally)
       if (!cyl) {
         try {
           const res = await getCylinderByQrOrSerial(hospitalId, cleaned);
@@ -402,6 +441,52 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
 
   const handleRemoveBatchItem = (scanId: string) => {
     setScannedBatch(prev => prev.filter(item => item.scanId !== scanId));
+  };
+
+  // Called when user picks a specific cylinder from the disambiguation panel
+  const handleSelectAmbiguous = (chosen: OxygenCylinderWithRelations) => {
+    setAmbiguousCylinders([]);
+    setPendingScanCode('');
+    // Feed chosen cylinder directly into the scan flow
+    playBeep('success');
+    setSuccessFlash(true);
+    setTimeout(() => setSuccessFlash(false), 500);
+
+    if (onScanMatch) {
+      onScanMatch(chosen.id, batchStatus, batchUnit);
+    }
+
+    setScannedBatch(prev => {
+      const existingIdx = prev.findIndex(item => item.cylinder.id === chosen.id);
+      if (existingIdx !== -1) {
+        const updated = [...prev];
+        updated[existingIdx] = {
+          ...updated[existingIdx],
+          unitLocation: batchUnit,
+          status: batchStatus,
+          scannedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        };
+        return updated;
+      } else {
+        const newItem: ScannedBatchItem = {
+          scanId: `scan-${Date.now()}-${Math.random()}`,
+          cylinder: chosen,
+          status: batchStatus,
+          unitLocation: batchUnit,
+          scannedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        };
+        return [newItem, ...prev];
+      }
+    });
+
+    const valveLabel = chosen.type_info?.code === 'BN' ? '🔵 Bullnose (BN)'
+      : chosen.type_info?.code === 'PI' ? '🟣 Pin Index (PI)'
+      : chosen.type_info?.code || 'Standard';
+    setStatusMessage({
+      type: 'success',
+      text: `Added Cylinder: ${chosen.serial_number} [${valveLabel}] → Assigned to ${batchUnit}`
+    });
+    setLastScannedCylinder(chosen);
   };
 
   const handleApplyAllBatch = () => {
@@ -705,6 +790,57 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
 
           </div>
 
+          {/* ── VALVE DISAMBIGUATION PANEL ────────────────────────────────────
+              Shown when the same serial number maps to multiple cylinder records
+              with different valve types (e.g. P101-F-0189 has both PI and BN). */}
+          {ambiguousCylinders.length > 1 && (
+            <div className="p-4 rounded-2xl border-2 border-violet-300 bg-violet-50 space-y-3 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-violet-100 border border-violet-200 flex items-center justify-center shrink-0">
+                  <AlertCircle className="w-4 h-4 text-violet-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-black text-violet-900">Duplicate Serial — Select Valve Type</span>
+                  <p className="text-[10px] text-violet-700 font-semibold mt-0.5 leading-snug">
+                    Serial <span className="font-mono font-extrabold">{pendingScanCode}</span> is registered as <strong>{ambiguousCylinders.length} separate cylinders</strong> with different valve types.
+                    Physically check the cylinder label and select the correct one:
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setAmbiguousCylinders([]); setPendingScanCode(''); setStatusMessage(null); }}
+                  className="text-violet-400 hover:text-violet-600 p-1 rounded cursor-pointer shrink-0"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <span className="text-[9px] text-violet-600 font-bold uppercase tracking-wider shrink-0">Select →</span>
+                {ambiguousCylinders.map(c => {
+                  const code = (c.type_info?.code || '').toUpperCase();
+                  const isBN = code === 'BN';
+                  const isPI = code === 'PI';
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => handleSelectAmbiguous(c)}
+                      className={`flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer border-2 flex flex-col items-center justify-center gap-1 shadow-xs hover:scale-[1.02] active:scale-95 ${
+                        isBN ? 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50'
+                        : isPI ? 'bg-white border-purple-300 text-purple-700 hover:bg-purple-50'
+                        : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className="text-base leading-none">{isBN ? '🔵' : isPI ? '🟣' : '⚪'}</span>
+                      <span>{isBN ? 'Bullnose (BN)' : isPI ? 'Pin Index (PI)' : code || 'Standard'}</span>
+                      <span className="text-[9px] font-mono opacity-60 truncate max-w-full px-1">{c.serial_number}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Status Message Notification Banner */}
           {statusMessage && (
             <div className={`p-4 rounded-xl text-xs font-bold border flex items-start gap-3 transition-all duration-300 ${
@@ -809,6 +945,15 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                   {lastScannedCylinder.type_info?.code === 'PI' && <Check className="w-3 h-3 ml-1" />}
                 </button>
               </div>
+              <button
+                type="button"
+                onClick={() => setEditingCylinder(lastScannedCylinder)}
+                className="w-full py-2 rounded-xl text-xs font-bold border border-amber-300 bg-white hover:bg-amber-100 text-amber-900 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                title="Update Cylinder Details (Serial No., Size, Valve)"
+              >
+                <Pencil className="w-3.5 h-3.5 text-amber-700" />
+                <span>Ubah Saiz & No. Siri Silinder / Edit Details</span>
+              </button>
             </div>
           )}
 
@@ -950,6 +1095,16 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                         </select>
                       </div>
 
+                      {/* Edit Button */}
+                      <button
+                        type="button"
+                        onClick={() => setEditingCylinder(item.cylinder)}
+                        className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all cursor-pointer shrink-0"
+                        title="Edit cylinder details (serial, size, valve)"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+
                       {/* Remove Button */}
                       <button
                         type="button"
@@ -989,6 +1144,27 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
             Apply All ({scannedBatch.length}) to Audit Table
           </button>
         </div>
+
+        {/* Edit Cylinder Modal */}
+        {editingCylinder && (
+          <EditCylinderModal
+            isOpen={!!editingCylinder}
+            cylinder={editingCylinder}
+            hospitalId={hospitalId}
+            onClose={() => setEditingCylinder(null)}
+            onSuccess={(updated) => {
+              setScannedBatch(prev => prev.map(item => item.cylinder.id === updated.id ? { ...item, cylinder: updated } : item));
+              if (lastScannedCylinder?.id === updated.id) {
+                setLastScannedCylinder(updated);
+              }
+              onCylinderUpdated?.(updated);
+              setStatusMessage({
+                type: 'success',
+                text: `✓ Silinder dikemaskini → ${updated.serial_number} [${updated.type_info?.type_name || 'Standard'}]`
+              });
+            }}
+          />
+        )}
 
       </div>
     </div>

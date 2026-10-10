@@ -5,7 +5,9 @@
  */
 
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
+import { offlineAdapter } from '@/services/offlineAdapter'
 import { parseAndNormalizeDate } from '@/lib/utils'
+import { normalizeRealMdcCode, isSyntheticMockCode } from '@/shared/utils/itemCodeUtils'
 import type { ApiResponse, PaginatedResponse } from '@/types'
 import type {
   Drug,
@@ -156,6 +158,11 @@ export async function getDrugs(
 
       const rows = (data || []) as DrugWithRelations[]
 
+      // Persist to local IndexedDB cache for offline availability
+      if (rows.length > 0 && page === 1 && !filter?.search) {
+        void offlineAdapter.setCache('pharmacy_drugs', rows)
+      }
+
       return {
         data: {
           data: rows,
@@ -168,15 +175,25 @@ export async function getDrugs(
       }
     }
 
-    // Fallback to in-memory mock data when Supabase is not configured
-    let drugs = [...mockDrugs]
+    // Fallback to offline cache or in-memory mock data
+    let drugs: DrugWithRelations[] = []
+    try {
+      const cached = await offlineAdapter.getCache<DrugWithRelations>('pharmacy_drugs', 'inventory', 'pharmacy_drugs')
+      if (cached && cached.length > 0) {
+        drugs = [...cached]
+      }
+    } catch (_) {}
+
+    if (drugs.length === 0) {
+      drugs = [...mockDrugs]
+    }
 
     // Apply filters
     if (filter?.search) {
       const search = filter.search.toLowerCase()
       drugs = drugs.filter(d =>
-        d.drug_code.toLowerCase().includes(search) ||
-        d.drug_name.toLowerCase().includes(search) ||
+        d.drug_code?.toLowerCase().includes(search) ||
+        d.drug_name?.toLowerCase().includes(search) ||
         d.generic_name?.toLowerCase().includes(search)
       )
     }
@@ -218,6 +235,37 @@ export async function getDrugs(
     }
   } catch (error) {
     console.error('Error fetching drugs:', error)
+    try {
+      const cached = await offlineAdapter.getCache<DrugWithRelations>('pharmacy_drugs', 'inventory', 'pharmacy_drugs')
+      if (cached && cached.length > 0) {
+        const total = cached.length
+        const start = (page - 1) * pageSize
+        const paginated = cached.slice(start, start + pageSize)
+        return {
+          data: {
+            data: paginated,
+            total,
+            page,
+            pageSize,
+            totalPages: Math.ceil(total / pageSize),
+          },
+          error: null,
+        }
+      }
+    } catch (_) {}
+
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      return {
+        data: {
+          data: [],
+          total: 0,
+          page,
+          pageSize,
+          totalPages: 0,
+        },
+        error: null,
+      }
+    }
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Failed to fetch drugs',
@@ -815,11 +863,12 @@ async function populateBatchItems(batches: any[]): Promise<any[]> {
  */
 export async function getStockBatches(
   itemId: string,
-  itemType: 'drug' | 'non_drug'
+  itemType: 'drug' | 'non_drug',
+  storeLocationId?: string
 ): Promise<ApiResponse<StockBatchWithRelations[]>> {
   try {
     if (isSupabaseConfigured()) {
-      const { data, error } = await supabase
+      let query = supabase
         .from('pharmacy_stock_batches')
         .select(`
           *,
@@ -829,6 +878,12 @@ export async function getStockBatches(
         .eq('item_type', itemType)
         .gt('quantity_on_hand', 0)
         .order('expiry_date', { ascending: true })
+
+      if (storeLocationId) {
+        query = query.eq('location_id', storeLocationId)
+      }
+
+      const { data, error } = await query
 
       if (error) throw error
       let populated = await populateBatchItems(data || [])
@@ -1099,12 +1154,13 @@ export async function getAllBatches(
  */
 export async function getNearExpiryItems(
   hospitalId: string,
-  daysThreshold?: number
+  daysThreshold?: number,
+  storeLocationId?: string
 ): Promise<ApiResponse<ExpiryItem[]>> {
   try {
     if (isSupabaseConfigured()) {
       const validHospId = (hospitalId && isValidUUID(hospitalId)) ? hospitalId : '85bb6adc-b868-428b-83f4-e5af2f5cf904'
-      const { data: batches, error } = await supabase
+      let query = supabase
         .from('pharmacy_stock_batches')
         .select(`
           *,
@@ -1113,6 +1169,12 @@ export async function getNearExpiryItems(
         .or(`hospital_id.eq.${validHospId},hospital_id.is.null`)
         .gt('quantity_on_hand', 0)
         .not('expiry_date', 'is', null)
+
+      if (storeLocationId) {
+        query = query.eq('location_id', storeLocationId)
+      }
+
+      const { data: batches, error } = await query
 
       if (error) throw error
 
@@ -1224,22 +1286,27 @@ export async function getExpiredItems(
  */
 export async function getSlowMovingItems(
   hospitalId: string,
-  daysSinceMovement: number = 90
+  daysSinceMovement: number = 90,
+  storeLocationId?: string
 ): Promise<ApiResponse<SlowMovingItem[]>> {
   try {
     if (isSupabaseConfigured()) {
-      const summaryRes = await getStockLevelSummary(hospitalId)
+      const summaryRes = await getStockLevelSummary(hospitalId, undefined, storeLocationId)
       if (summaryRes.error) throw new Error(summaryRes.error)
       
       const itemsList = summaryRes.data || []
       
-      const { data: txns, error: txnError } = await supabase
+      let txnQuery = supabase
         .from('pharmacy_stock_transactions')
         .select('item_id, transaction_date')
         .eq('hospital_id', hospitalId)
         .order('transaction_date', { ascending: false })
+
+      if (storeLocationId) {
+        txnQuery = txnQuery.or(`from_location_id.eq.${storeLocationId},to_location_id.eq.${storeLocationId}`)
+      }
       
-      if (txnError) throw txnError
+      const { data: txns, error: txnError } = await txnQuery
 
       const lastMovementMap = new Map<string, string>()
       txns?.forEach(t => {
@@ -1652,13 +1719,16 @@ export function matchStockItem<T extends { item_id?: string; id?: string; facili
  */
 export async function getStockLevelSummary(
   hospitalId: string,
-  filter?: InventoryFilter
+  filter?: InventoryFilter,
+  storeLocationId?: string
 ): Promise<ApiResponse<StockLevelSummary[]>> {
   try {
-    // Load registered items from Facility Inventory (drugs & non-drugs)
+    const effectiveStoreLocationId = storeLocationId || filter?.store_location_id || filter?.location_id
+
+    // Load registered items from Facility Inventory (drugs & non-drugs) scoped to store if provided
     const [facilityDrugs, facilityNonDrugs] = await Promise.all([
-      loadFacilityDrugInventory(hospitalId),
-      loadFacilityNonDrugInventory(hospitalId)
+      loadFacilityDrugInventory(hospitalId, effectiveStoreLocationId),
+      loadFacilityNonDrugInventory(hospitalId, effectiveStoreLocationId)
     ])
 
     const registeredDrugIds = new Set<string>()
@@ -1704,13 +1774,14 @@ export async function getStockLevelSummary(
       const { data: rawDrugs, error: drugsError } = await drugsQuery
       if (drugsError) throw drugsError
 
-      // Only include drugs that are registered in Facility Inventory (or contract fallback if none registered yet)
+      // Only include drugs that are registered in Facility Inventory (or contract fallback if central store & none registered yet)
       const drugs = (rawDrugs || []).filter(d => {
         if (filter?.include_unregistered) return true
         if (registeredDrugIds.size > 0 || registeredDrugCodes.size > 0) {
           const normCode = normalizeItemCode(d.drug_code)
           return registeredDrugIds.has(d.id) || (normCode && registeredDrugCodes.has(normCode))
         }
+        if (effectiveStoreLocationId) return false
         return d.sheet_source === 'Lampiran B' || contractItemCodes.has(d.drug_code)
       })
 
@@ -1726,21 +1797,28 @@ export async function getStockLevelSummary(
       const { data: rawNonDrugs, error: nonDrugsError } = await nonDrugsQuery
       if (nonDrugsError) throw nonDrugsError
 
-      // Only include non-drugs registered in Facility Inventory (or contract fallback if none registered yet)
+      // Only include non-drugs registered in Facility Inventory (or contract fallback if central store & none registered yet)
       const nonDrugs = (rawNonDrugs || []).filter(n => {
         if (filter?.include_unregistered) return true
         if (registeredNonDrugIds.size > 0 || registeredNonDrugCodes.size > 0) {
           const normCode = normalizeItemCode(n.item_code)
           return registeredNonDrugIds.has(n.id) || (normCode && registeredNonDrugCodes.has(normCode))
         }
+        if (effectiveStoreLocationId) return false
         return contractItemCodes.has(n.item_code)
       })
 
-      const { data: batches, error: batchesError } = await supabase
+      let batchesQuery = supabase
         .from('pharmacy_stock_batches')
-        .select('item_id, item_type, quantity_on_hand, quantity_reserved')
+        .select('item_id, item_type, quantity_on_hand, quantity_reserved, location_id')
         .eq('hospital_id', hospitalId)
         .in('status', ['available', 'quarantine'])
+
+      if (effectiveStoreLocationId) {
+        batchesQuery = batchesQuery.eq('location_id', effectiveStoreLocationId)
+      }
+
+      const { data: batches, error: batchesError } = await batchesQuery
 
       if (batchesError) throw batchesError
 
@@ -2108,6 +2186,8 @@ export async function getStockTransactions(
     date_from?: string
     date_to?: string
     to_location_id?: string
+    location_id?: string
+    store_location_id?: string
     search_query?: string
   }
 ): Promise<ApiResponse<StockTransactionWithRelations[]>> {
@@ -2134,6 +2214,10 @@ export async function getStockTransactions(
       }
       if (filter?.to_location_id && filter.to_location_id !== 'all') {
         query = query.eq('to_location_id', filter.to_location_id)
+      }
+      const locId = filter?.store_location_id || filter?.location_id
+      if (locId && locId !== 'all') {
+        query = query.or(`from_location_id.eq.${locId},to_location_id.eq.${locId}`)
       }
       if (filter?.date_from) {
         const fromDate = filter.date_from.includes('T') ? filter.date_from : `${filter.date_from}T00:00:00`
@@ -3384,7 +3468,8 @@ export async function deleteStoreVerificationRecord(
  */
 export async function getFastMovingItems(
   hospitalId: string,
-  daysThreshold: number = 90
+  daysThreshold: number = 90,
+  storeLocationId?: string
 ): Promise<ApiResponse<any[]>> {
   try {
     if (isSupabaseConfigured()) {
@@ -3392,16 +3477,21 @@ export async function getFastMovingItems(
       const ninetyDaysAgo = new Date()
       ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - daysThreshold)
       
-      const { data: txns, error: txnError } = await supabase
+      let txnQuery = supabase
         .from('pharmacy_stock_transactions')
         .select('item_id, item_type, quantity, transaction_date')
         .eq('hospital_id', hospitalId)
         .eq('transaction_type', 'issue')
         .gte('transaction_date', ninetyDaysAgo.toISOString())
+
+      if (storeLocationId) {
+        txnQuery = txnQuery.or(`from_location_id.eq.${storeLocationId},to_location_id.eq.${storeLocationId}`)
+      }
         
+      const { data: txns, error: txnError } = await txnQuery
       if (txnError) throw txnError
       
-      const summaryRes = await getStockLevelSummary(hospitalId)
+      const summaryRes = await getStockLevelSummary(hospitalId, undefined, storeLocationId)
       if (summaryRes.error) throw new Error(summaryRes.error)
       const itemsList = summaryRes.data || []
       const itemsMap = new Map(itemsList.map(i => [i.item_id, i]))
@@ -4873,16 +4963,18 @@ export async function triggerCcSync(
         const normItemName = itemName.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
         const matched = (mdc ? drugMapByCodeSync.get(mdc.toLowerCase()) : null) || drugMapByNameSync.get(normItemName);
 
-        let finalDrugCode = mdc;
+        let finalDrugCode = '';
 
-        // If the sheet provides a valid MDC/KKM code, ALWAYS respect the uploaded code over legacy synthetic codes!
-        if (mdc && !mdc.toUpperCase().startsWith('CC-') && mdc !== '-' && mdc.toLowerCase() !== 'nil') {
-          finalDrugCode = mdc;
-        } else if (matched && matched.drug_code && !matched.drug_code.toUpperCase().startsWith('CC-')) {
+        // Zero-Mock Policy: Normalize MDC code and adhere strictly to real database codes
+        const cleanMdc = normalizeRealMdcCode(mdc, itemName);
+        if (cleanMdc && !isSyntheticMockCode(cleanMdc)) {
+          finalDrugCode = cleanMdc;
+        } else if (matched && matched.drug_code && !isSyntheticMockCode(matched.drug_code)) {
           finalDrugCode = matched.drug_code;
-        } else if (!finalDrugCode || finalDrugCode === '-' || finalDrugCode.toLowerCase() === 'nil') {
-          const nameSlug = itemName.replace(/[^a-zA-Z0-9]/g, '').substring(0, 15).toUpperCase();
-          finalDrugCode = `CC-${nameSlug || idx}`;
+        } else if (mdc && !isSyntheticMockCode(mdc) && mdc !== '-' && mdc.toLowerCase() !== 'nil') {
+          finalDrugCode = mdc.replace(/-/g, '').replace(/XXX$/, 'XX');
+        } else {
+          finalDrugCode = noKontrak || (matched?.drug_code && !isSyntheticMockCode(matched.drug_code) ? matched.drug_code : '');
         }
 
         let calculatedContractStatus = contractStatus;
@@ -5347,16 +5439,18 @@ export async function importCcSyncCsv(
           || (normSupplier ? drugMapByContract.get(`${normItemName}__${normSupplier}`) : null)
           || drugMapByName.get(normItemName);
 
-        let finalDrugCode = mdc;
+        let finalDrugCode = '';
 
-        // If the sheet provides a valid MDC/KKM code, ALWAYS respect the uploaded code over legacy synthetic codes!
-        if (mdc && !mdc.toUpperCase().startsWith('CC-') && mdc !== '-' && mdc.toLowerCase() !== 'nil') {
-          finalDrugCode = mdc;
-        } else if (matched && matched.drug_code && !matched.drug_code.toUpperCase().startsWith('CC-')) {
+        // Zero-Mock Policy: Normalize MDC code and adhere strictly to real database codes
+        const cleanMdc = normalizeRealMdcCode(mdc, itemName);
+        if (cleanMdc && !isSyntheticMockCode(cleanMdc)) {
+          finalDrugCode = cleanMdc;
+        } else if (matched && matched.drug_code && !isSyntheticMockCode(matched.drug_code)) {
           finalDrugCode = matched.drug_code;
-        } else if (!finalDrugCode || finalDrugCode === '-' || finalDrugCode.toLowerCase() === 'nil') {
-          const nameSlug = itemName.replace(/[^a-zA-Z0-9]/g, '').substring(0, 15).toUpperCase();
-          finalDrugCode = `CC-${nameSlug || idx}-${idx}`;
+        } else if (mdc && !isSyntheticMockCode(mdc) && mdc !== '-' && mdc.toLowerCase() !== 'nil') {
+          finalDrugCode = mdc.replace(/-/g, '').replace(/XXX$/, 'XX');
+        } else {
+          finalDrugCode = (matched?.drug_code && !isSyntheticMockCode(matched.drug_code) ? matched.drug_code : '');
         }
 
         const dosageForm = deriveDosageForm(itemName);

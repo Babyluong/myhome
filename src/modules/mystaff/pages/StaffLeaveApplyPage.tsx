@@ -65,7 +65,7 @@ export const StaffLeaveApplyPage: React.FC = () => {
         if (quotasRes.data) setQuotas(quotasRes.data)
       } catch (err) {
         console.error(err)
-        toast.error(isMs ? 'Ralat memuatkan borang permohonan cuti' : 'Error loading leave application form')
+        toast.error(isMs ? 'Error loading leave application form' : 'Error loading leave application form')
       } finally {
         setLoading(false)
       }
@@ -94,7 +94,7 @@ export const StaffLeaveApplyPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!startDate || !endDate || totalDays <= 0 || !reason.trim()) {
-      toast.error(isMs ? 'Sila lengkapkan maklumat tarikh dan sebab cuti.' : 'Please complete the date and reason details.')
+      toast.error(isMs ? 'Please provide the leave dates and reason.' : 'Please complete the date and reason details.')
       return
     }
 
@@ -122,10 +122,10 @@ export const StaffLeaveApplyPage: React.FC = () => {
 
       if (res.error) throw new Error(res.error)
 
-      toast.success(isMs ? 'Permohonan cuti berjaya dihantar ke HOD untuk kelulusan!' : 'Leave application submitted to HOD for approval!')
+      toast.success(isMs ? 'Leave application successfully submitted to HOD for approval!' : 'Leave application submitted to HOD for approval!')
       navigate(ROUTES.STAFF_LEAVE)
     } catch (err: any) {
-      toast.error(err.message || (isMs ? 'Gagal menghantar permohonan cuti' : 'Failed to submit leave application'))
+      toast.error(err.message || (isMs ? 'Failed to submit leave application' : 'Failed to submit leave application'))
     } finally {
       setSubmitting(false)
     }
@@ -146,7 +146,7 @@ export const StaffLeaveApplyPage: React.FC = () => {
           </button>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-              {isMs ? 'Borang Permohonan Cuti' : 'Leave Application Form'}
+              {isMs ? 'Leave Application Form' : 'Leave Application Form'}
             </h1>
             <p className="text-sm text-slate-500 mt-0.5 font-medium">
               {isMs ? 'Sistem Cuti Bersepadu Hospital (Perintah Am Bab C / HRMIS)' : 'Integrated Hospital Leave System (General Orders Chapter C / HRMIS)'}
@@ -308,7 +308,7 @@ export const StaffLeaveApplyPage: React.FC = () => {
             >
               {submitting 
                 ? (isMs ? 'Menghantar Permohonan...' : 'Submitting Application...') 
-                : (isMs ? 'Hantar Permohonan Cuti' : 'Submit Leave Application')}
+                : (isMs ? 'Submit Requisition Cuti' : 'Submit Leave Application')}
             </Button>
           </div>
         </form>

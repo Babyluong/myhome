@@ -41,7 +41,7 @@ export const DeleteDispatchConfirmModal: React.FC<DeleteDispatchConfirmModalProp
     .join(', ') || 'Tiada item';
 
   const quickReasons = [
-    'Tersalah cipta indent / permohonan',
+    'Accidental indent / request creation',
     'Ujian sistem (System Testing)',
     'Rekod bertindih / duplicate entry',
     'Dibatalkan atas permintaan fasiliti luar'
@@ -68,7 +68,7 @@ export const DeleteDispatchConfirmModal: React.FC<DeleteDispatchConfirmModalProp
       setReason('');
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Gagal memadam rekod permohonan');
+      setError(err instanceof Error ? err.message : 'Failed to delete requisition record');
     } finally {
       setIsSubmitting(false);
     }
@@ -267,7 +267,7 @@ export const DeleteDispatchConfirmModal: React.FC<DeleteDispatchConfirmModalProp
               }`}
             >
               <Trash2 className="w-4 h-4" />
-              <span>{isSubmitting ? 'Memadam & Merekod Audit...' : 'Sahkan & Padam Rekod'}</span>
+              <span>{isSubmitting ? 'Memadam & Merekod Audit...' : 'Confirm & Delete Record'}</span>
             </button>
           </div>
         </form>

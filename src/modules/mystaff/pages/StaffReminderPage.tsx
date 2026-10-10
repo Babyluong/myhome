@@ -92,7 +92,7 @@ export const StaffReminderPage: React.FC = () => {
       if (res.data) setReminders(res.data)
     } catch (e) {
       console.error(e)
-      toast.error('Ralat memuatkan senarai peringatan')
+      toast.error('Error loading reminders list')
     } finally {
       setIsLoading(false)
     }
@@ -189,12 +189,12 @@ export const StaffReminderPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formTitle.trim()) {
-      toast.error('Sila masukkan tajuk peringatan.')
+      toast.error('Please enter the reminder title.')
       return
     }
 
     if (editingReminder && !editReason.trim()) {
-      toast.error('Sila nyatakan sebab / justifikasi pindaan (Wajib untuk rekod audit).')
+      toast.error('Please state the amendment justification (Mandatory for audit trail).')
       return
     }
 
@@ -285,7 +285,7 @@ export const StaffReminderPage: React.FC = () => {
       badgeBg: 'bg-teal-100 text-teal-800 border-teal-200'
     },
     deadline: {
-      label: 'Tarikh Akhir Serahan',
+      label: 'Submission Deadline',
       desc: 'Deadlines audit, stok opname, atau data KPI',
       icon: <Clock className="w-4 h-4 text-amber-600" />,
       color: 'border-amber-500 bg-amber-50/50 text-amber-900',
@@ -337,7 +337,7 @@ export const StaffReminderPage: React.FC = () => {
     },
     critical: {
       label: 'Kritikal',
-      sub: 'Mandatori / Tindakan segera & Audit',
+      sub: 'Mandatory / Urgent Action & Audit',
       badge: 'bg-rose-100 text-rose-950 border-rose-300 font-black animate-pulse',
       border: 'border-rose-500',
       dot: 'bg-rose-600',
@@ -920,7 +920,7 @@ export const StaffReminderPage: React.FC = () => {
               {/* Quick Preset Chips for Edit Reason */}
               <div className="flex flex-wrap gap-1.5">
                 {[
-                  'Pertukaran Tarikh & Masa Sesi',
+                  'Session Date & Time Reschedule',
                   'Pembetulan Pautan / Link Sesi',
                   'Kemaskini Dokumen Slaid CME',
                   'Pembetulan Maklumat / Tajuk Acara',

@@ -33,6 +33,7 @@ import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { ROUTES } from '@/lib/constants'
 import { getStaffMovements, updateMovementStatus } from '@/modules/mystaff/services/staffService'
 import type { StaffMovement, MovementType, MovementStatus } from '@/shared/types/mystaff'
+import { SkeletonCalendar, Skeleton } from '@/components/ui'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -427,7 +428,7 @@ export const StaffCalendarPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(todayStr)
   const [typeFilter,   setTypeFilter]   = useState('ALL')
   const [movements,    setMovements]    = useState<StaffMovement[]>([])
-  const [loading,      setLoading]      = useState(true)
+  const [isLoading,    setIsLoading]    = useState(true)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
 
   const FILTERS = useMemo(() => [
@@ -458,7 +459,7 @@ export const StaffCalendarPage: React.FC = () => {
   useEffect(() => {
     let alive = true
     ;(async () => {
-      setLoading(true)
+      setIsLoading(true)
       try {
         const res = await getStaffMovements({
           hospitalId:   user?.hospital_id,
@@ -468,7 +469,7 @@ export const StaffCalendarPage: React.FC = () => {
       } catch {
         if (alive) toast.error('Ralat memuatkan data kalendar pergerakan staf')
       } finally {
-        if (alive) setLoading(false)
+        if (alive) setIsLoading(false)
       }
     })()
     return () => { alive = false }
@@ -623,7 +624,7 @@ export const StaffCalendarPage: React.FC = () => {
         <div className="flex items-center gap-3.5">
           <button
             onClick={() => navigate(ROUTES.STAFF_DASHBOARD)}
-            className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 transition-all shadow-sm"
+            className="w-11 h-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 transition-all shadow-sm"
             title={isMs ? "Kembali ke Dashboard" : "Back to Dashboard"}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -639,7 +640,7 @@ export const StaffCalendarPage: React.FC = () => {
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-              {loading 
+              {isLoading 
                 ? (isMs ? 'Memuatkan rekod...' : 'Loading records...') 
                 : isMs 
                 ? `Terdapat ${monthTotal} aktiviti dan pergerakan dijadualkan bagi ${MONTHS_MY[m]} ${y}`
@@ -648,10 +649,10 @@ export const StaffCalendarPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <button
             onClick={() => navigate(ROUTES.STAFF_MOVEMENT)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all w-full sm:w-auto"
           >
             <Plus className="w-4 h-4" />
             <span>{isMs ? 'Catat Pergerakan' : 'Record Movement'}</span>
@@ -727,20 +728,12 @@ export const StaffCalendarPage: React.FC = () => {
 
         {/* ──────────────── LEFT: COMPACT PROPORTIONAL CALENDAR ──────────────── */}
         <div className="lg:col-span-5 2xl:col-span-5 space-y-4">
-          <div className="bg-slate-100/60 border border-slate-200/90 rounded-2xl p-3 sm:p-3.5 shadow-sm relative space-y-2.5">
-            
-            {/* Loading Overlay */}
-            {loading && (
-              <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] flex items-center justify-center z-20 rounded-2xl">
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
-                  <span className="w-4 h-4 border-2 border-slate-600 border-t-transparent rounded-full animate-spin" />
-                  <span>Memuatkan rekod kalendar...</span>
-                </div>
-              </div>
-            )}
-
-            {/* Days Header (Monday to Sunday) */}
-            <div className="grid grid-cols-7 gap-2 pb-1">
+          {isLoading ? (
+            <SkeletonCalendar />
+          ) : (
+            <div className="bg-slate-100/60 border border-slate-200/90 rounded-2xl p-3 sm:p-3.5 shadow-sm relative space-y-2.5">
+              {/* Days Header (Monday to Sunday) */}
+              <div className="grid grid-cols-7 gap-2 pb-1">
               {DAYS_SHORT.map((d, i) => (
                 <div
                   key={d}
@@ -927,6 +920,7 @@ export const StaffCalendarPage: React.FC = () => {
               })}
             </div>
           </div>
+        )}
 
           {/* Color Legend Row with Public Holidays */}
           <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2.5">
@@ -987,7 +981,7 @@ export const StaffCalendarPage: React.FC = () => {
               <div className="flex items-center gap-3 bg-slate-50 border border-slate-200/80 rounded-2xl px-4 py-2 self-start sm:self-auto">
                 <div className="text-right">
                   <div className="text-2xl font-black text-slate-900 tabular-nums leading-none">
-                    {dayEvents.length}
+                    {isLoading ? <Skeleton className="h-6 w-8 bg-slate-200 dark:bg-slate-700 inline-block rounded" /> : dayEvents.length}
                   </div>
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-0.5">
                     {isMs ? 'Aktiviti' : 'Activities'}
@@ -1065,7 +1059,36 @@ export const StaffCalendarPage: React.FC = () => {
 
             {/* Event List Section */}
             <div className="space-y-4 max-h-[680px] overflow-y-auto pr-1 hide-scrollbar">
-              {dayEvents.length === 0 ? (
+              {isLoading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 space-y-3.5 shadow-2xs"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Skeleton className="h-6 w-24 rounded-lg bg-slate-200 dark:bg-slate-700" />
+                          <Skeleton className="h-5 w-20 rounded-full bg-slate-200 dark:bg-slate-700" />
+                        </div>
+                        <Skeleton className="h-6 w-28 rounded-lg bg-slate-200 dark:bg-slate-700" />
+                      </div>
+                      <Skeleton className="h-5 w-3/4 rounded bg-slate-200 dark:bg-slate-700" />
+                      <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <Skeleton variant="circular" className="w-10 h-10 shrink-0 bg-slate-200 dark:bg-slate-700" />
+                        <div className="flex-1 space-y-1.5">
+                          <Skeleton className="h-4 w-1/3 bg-slate-200 dark:bg-slate-700" />
+                          <Skeleton className="h-3 w-1/2 bg-slate-200 dark:bg-slate-700" />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2.5 pt-1">
+                        <Skeleton className="h-10 rounded-xl bg-slate-200 dark:bg-slate-700" />
+                        <Skeleton className="h-10 rounded-xl bg-slate-200 dark:bg-slate-700" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : dayEvents.length === 0 ? (
                 /* Empty State */
                 <div className="py-12 px-4 text-center rounded-2xl bg-slate-50/60 border border-dashed border-slate-200 flex flex-col items-center justify-center">
                   <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center shadow-sm mb-3">
@@ -1076,7 +1099,7 @@ export const StaffCalendarPage: React.FC = () => {
                   </h3>
                   <p className="text-xs text-slate-500 max-w-[260px] mt-1 leading-relaxed">
                     {isMs 
-                      ? 'Tiada pergerakan luar, kursus, mesyuarat atau cuti direkodkan untuk tarikh ini.' 
+                      ? 'No external duty, training, meeting, or leave scheduled for this date.' 
                       : 'No outstation movements, courses, meetings or leaves recorded for this date.'}
                   </p>
                   <button

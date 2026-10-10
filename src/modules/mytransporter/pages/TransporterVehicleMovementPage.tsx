@@ -256,7 +256,7 @@ const TransporterVehicleMovementPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <Activity className="w-8 h-8 text-emerald-600" />
-            {isEn ? 'Vehicle Movement Journal & Mileage Log' : 'Log & Jurnal Pergerakan Kenderaan'}
+            {isEn ? 'Vehicle Movement Journal & Mileage Log' : 'Vehicle Movement & Mileage Log'}
           </h1>
           <p className="text-slate-500 text-sm">
             {isEn 
@@ -270,7 +270,7 @@ const TransporterVehicleMovementPage: React.FC = () => {
           className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-2 cursor-pointer"
         >
           <Printer className="w-4 h-4" />
-          <span>{isEn ? 'Print Log Report' : 'Cetak Laporan Log'}</span>
+          <span>{isEn ? 'Print Log Report' : 'Print Mileage Report'}</span>
         </Button>
       </div>
 
@@ -281,7 +281,7 @@ const TransporterVehicleMovementPage: React.FC = () => {
           {/* Driver Dropdown */}
           <div className="space-y-1">
             <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
-              {isEn ? 'Select Driver' : 'Pilih Pemandu'}
+              {isEn ? 'Select Driver' : 'Select Driver'}
             </label>
             <select
               value={selectedDriverId}

@@ -17,7 +17,7 @@ export const TempahanSubMenu: React.FC = () => {
           className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-4 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>{language === 'ms' ? 'Kembali ke Hub Utama' : 'Back to Main Hub'}</span>
+          <span>Back to Main Hub</span>
         </button>
         <div className="flex items-center gap-4">
           <div className="p-3 bg-fuchsia-500/20 text-fuchsia-400 border border-fuchsia-500/30 rounded-xl">
@@ -25,25 +25,23 @@ export const TempahanSubMenu: React.FC = () => {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-white tracking-tight">MyTempahan</h1>
-            <p className="text-slate-400 mt-1">{language === 'ms' ? 'Sistem Tempahan Fasiliti & Sumber' : 'Facility & Resource Booking Ecosystem'}</p>
+            <p className="text-slate-400 mt-1">Facility &amp; Resource Booking Ecosystem</p>
           </div>
         </div>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
         <h2 className="text-xl font-semibold text-slate-700 mb-2">
-          {language === 'ms' ? 'Modul Sedang Dibina' : 'Module Under Development'}
+          Facility Booking Command Center
         </h2>
         <p className="text-slate-500">
-          {language === 'ms'
-            ? 'Sub-modul ini sedang dalam pembangunan. Sila rujuk Dashboard utama untuk fungsi sedia ada.'
-            : 'This sub-module is currently under development. Please refer to the main Dashboard for available features.'}
+          Book meeting rooms, conference halls, and clinical facilities directly through the interactive scheduling portal.
         </p>
         <button 
           onClick={() => navigate('/tempahan')}
           className="mt-6 px-6 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition-colors cursor-pointer"
         >
-          {language === 'ms' ? 'Pergi ke Dashboard Tempahan' : 'Go to Booking Dashboard'}
+          Go to Booking Dashboard
         </button>
       </div>
     </div>

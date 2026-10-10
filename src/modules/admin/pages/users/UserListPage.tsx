@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -23,7 +23,7 @@ import {
   Briefcase,
   Clock,
 } from 'lucide-react'
-import { Button, Table, Pagination, Input, Select, Badge, Avatar, LoadingOverlay } from '@/components/ui'
+import { Button, Table, Pagination, Input, Select, Badge, Avatar, LoadingOverlay, Skeleton, SkeletonTable, SkeletonMobileCardList } from '@/components/ui'
 import { getUsers, bulkUpdateUserStatus, bulkDeleteUsers } from '@/services/userService'
 import { getAllRoles } from '@/services/roleService'
 import { getDepartmentsByHospital } from '@/services/departmentService'
@@ -32,6 +32,7 @@ import { useToastStore } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'
 import { ROUTES, USER_STATUS, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, SYSTEM_ROLES } from '@/lib/constants'
 import { formatDate, cn } from '@/lib/utils'
+import { ModulePageHeader } from '@/shared/components/ui/ModulePageHeader'
 import type { UserWithRelations, SortConfig, Role, Department, Hospital } from '@/types'
 
 export const UserListPage: React.FC = () => {
@@ -356,47 +357,34 @@ export const UserListPage: React.FC = () => {
     <div className="space-y-6">
       {isBulkActionLoading && <LoadingOverlay message="Processing..." />}
 
-      {/* Header with Gradient */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-800 p-8 shadow-xl"
-      >
-        <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
-                <Users className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-white mb-2">User Management</h1>
-                <p className="text-indigo-100 text-sm">Manage system users and their access permissions</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                onClick={fetchUsers}
-                disabled={isLoading}
-                className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
-                leftIcon={<RefreshCw className={cn('w-4 h-4', isLoading && 'animate-spin')} />}
-              >
-                Refresh
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => navigate(`${ROUTES.ADMIN_USERS}/new`)}
-                className="bg-white text-indigo-600 hover:bg-indigo-50 shadow-lg"
-                leftIcon={<Plus className="w-5 h-5" />}
-              >
-                Add New User
-              </Button>
-            </div>
+      {/* Module Page Header */}
+      <ModulePageHeader
+        badge="CENTRAL ADMINISTRATION"
+        title="User Management"
+        description="Manage hospital system users, roles, organizational units, and access permissions."
+        icon={<Users className="w-5 h-5 text-accent-base" />}
+        actions={
+          <div className="flex items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              onClick={fetchUsers}
+              disabled={isLoading}
+              className="border-border-default text-text-secondary hover:bg-subtle text-xs"
+              leftIcon={<RefreshCw className={cn('w-3.5 h-3.5', isLoading && 'animate-spin')} />}
+            >
+              Refresh
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => navigate(`${ROUTES.ADMIN_USERS}/new`)}
+              className="bg-accent-base hover:bg-accent-dark text-white font-semibold text-xs shadow-xs"
+              leftIcon={<Plus className="w-4 h-4" />}
+            >
+              Add New User
+            </Button>
           </div>
-        </div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
-      </motion.div>
+        }
+      />
 
       {/* Statistics Cards - Smaller */}
       <motion.div
@@ -405,67 +393,87 @@ export const UserListPage: React.FC = () => {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-2 md:grid-cols-5 gap-3"
       >
-        <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <div className="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg flex items-center justify-center">
               <UserCheck className="w-5 h-5 text-success-600" />
             </div>
             <TrendingUp className="w-4 h-4 text-slate-400" />
           </div>
           <div className="space-y-0.5">
-            <p className="text-2xl font-bold text-slate-900">{stats.active}</p>
+            {isLoading ? (
+              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-slate-200" />
+            ) : (
+              <p className="text-2xl font-bold text-slate-900">{stats.active}</p>
+            )}
             <p className="text-xs font-medium text-slate-600">Active Users</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-subtle text-text-muted rounded-lg flex items-center justify-center">
               <UserX className="w-5 h-5 text-slate-600" />
             </div>
             <TrendingUp className="w-4 h-4 text-slate-400" />
           </div>
           <div className="space-y-0.5">
-            <p className="text-2xl font-bold text-slate-900">{stats.inactive}</p>
+            {isLoading ? (
+              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-slate-200" />
+            ) : (
+              <p className="text-2xl font-bold text-slate-900">{stats.inactive}</p>
+            )}
             <p className="text-xs font-medium text-slate-600">Inactive</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <div className="w-10 h-10 bg-error-100 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-lg flex items-center justify-center">
               <AlertCircle className="w-5 h-5 text-error-600" />
             </div>
             <TrendingUp className="w-4 h-4 text-slate-400" />
           </div>
           <div className="space-y-0.5">
-            <p className="text-2xl font-bold text-slate-900">{stats.suspended}</p>
+            {isLoading ? (
+              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-slate-200" />
+            ) : (
+              <p className="text-2xl font-bold text-slate-900">{stats.suspended}</p>
+            )}
             <p className="text-xs font-medium text-slate-600">Suspended</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg flex items-center justify-center">
               <Clock className="w-5 h-5 text-amber-600" />
             </div>
             <TrendingUp className="w-4 h-4 text-slate-400" />
           </div>
           <div className="space-y-0.5">
-            <p className="text-2xl font-bold text-slate-900">{stats.pending}</p>
+            {isLoading ? (
+              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-slate-200" />
+            ) : (
+              <p className="text-2xl font-bold text-slate-900">{stats.pending}</p>
+            )}
             <p className="text-xs font-medium text-slate-600">Pending</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-accent-base/10 text-accent-base rounded-lg flex items-center justify-center">
               <Users className="w-5 h-5 text-primary-600" />
             </div>
             <FileText className="w-4 h-4 text-slate-400" />
           </div>
           <div className="space-y-0.5">
-            <p className="text-2xl font-bold text-slate-900">{total}</p>
+            {isLoading ? (
+              <Skeleton className="h-8 w-16 my-0.5 rounded-lg !bg-slate-200" />
+            ) : (
+              <p className="text-2xl font-bold text-slate-900">{total}</p>
+            )}
             <p className="text-xs font-medium text-slate-600">Total Users</p>
           </div>
         </div>
@@ -476,9 +484,9 @@ export const UserListPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+        className="bg-surface rounded-xl border border-border-default shadow-xs p-5"
       >
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4">
           {/* Search Bar */}
           <div className="flex-1 relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -494,14 +502,14 @@ export const UserListPage: React.FC = () => {
           </div>
           
           {/* Filter Dropdowns */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
             <Select
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value)
                 setCurrentPage(1)
               }}
-              className="w-40 h-11 border-slate-300 focus:border-primary-500"
+              className="w-full sm:w-40 h-11 border-slate-300 focus:border-primary-500"
               options={[
                 { value: 'all', label: 'All Status' },
                 { value: USER_STATUS.ACTIVE, label: 'Active' },
@@ -518,7 +526,7 @@ export const UserListPage: React.FC = () => {
                 setCurrentPage(1)
               }}
               disabled={departments.length === 0}
-              className="w-48 h-11 border-slate-300 focus:border-primary-500"
+              className="w-full sm:w-48 h-11 border-slate-300 focus:border-primary-500"
               placeholder={departments.length === 0 ? 'No departments' : 'Select Department'}
               options={[
                 { value: 'all', label: 'All Departments' },
@@ -537,7 +545,7 @@ export const UserListPage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-primary-50 border border-primary-200 rounded-xl p-4 flex items-center justify-between shadow-sm"
+          className="bg-subtle border border-border-default rounded-xl p-4 flex items-center justify-between shadow-xs"
         >
           <span className="text-sm font-semibold text-primary-900 flex items-center gap-2">
             <UserCheck className="w-4 h-4" />
@@ -586,9 +594,9 @@ export const UserListPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+        className="bg-surface rounded-xl border border-border-default shadow-xs overflow-hidden"
       >
-        <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+        <div className="p-4 sm:p-5 border-b border-border-default bg-subtle/40">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <input
@@ -607,7 +615,17 @@ export const UserListPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="overflow-x-auto">
+        {isLoading ? (
+          <div>
+            <div className="hidden md:block">
+              <SkeletonTable columns={columns.length} rows={pageSize || 5} className="border-none shadow-none rounded-none !bg-transparent" />
+            </div>
+            <div className="md:hidden p-4">
+              <SkeletonMobileCardList count={4} />
+            </div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
           <Table
             data={users}
             columns={columns}
@@ -623,8 +641,9 @@ export const UserListPage: React.FC = () => {
             }
             onRowClick={(row) => navigate(`${ROUTES.ADMIN_USERS}/${row.id}`)}
           />
-        </div>
-        <div className="border-t border-slate-200 bg-slate-50/50">
+          </div>
+        )}
+        <div className="border-t border-border-default bg-subtle/30">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

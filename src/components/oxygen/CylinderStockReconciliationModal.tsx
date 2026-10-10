@@ -117,7 +117,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
         }
       } catch (err: any) {
         console.error('Error loading cylinders for reconciliation:', err);
-        setFeedback({ type: 'error', message: 'Gagal memuatkan senarai silinder fizikal dari pangkalan data.' });
+        setFeedback({ type: 'error', message: 'Failed to load physical cylinder list from database.' });
       } finally {
         setIsLoading(false);
       }
@@ -436,7 +436,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
             <button
               onClick={onClose}
               className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
-              title="Tutup Borang"
+              title="Close Form"
             >
               <X className="w-5 h-5" />
             </button>
@@ -832,7 +832,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tapis senarai siri / lokasi..."
+                placeholder="Filter serial / location list..."
                 className="pl-9 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 rounded-lg w-full"
               />
               {searchQuery && (
@@ -972,7 +972,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                                   : 'bg-teal-600 hover:bg-teal-700 text-white'
                               }`}
                             >
-                              {isVerified ? 'Batal Sah' : 'Sahkan'}
+                              {isVerified ? 'Cancel Verification' : 'Sahkan'}
                             </Button>
                           </td>
                         </tr>
@@ -1078,7 +1078,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
               <span>
                 {isSubmitting 
                   ? 'Menyimpan Rekod...' 
-                  : `Simpan & Sahkan Rekonsiliasi (${verifiedIds.size} Tabung)`
+                  : `Save & Confirm Reconciliation (${verifiedIds.size} Tabung)`
                 }
               </span>
             </Button>

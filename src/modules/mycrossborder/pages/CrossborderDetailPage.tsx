@@ -63,7 +63,7 @@ export const CrossborderDetailPage: React.FC = () => {
     } catch (err: any) {
       toast.error(
         language === 'ms' ? 'Ralat' : 'Error',
-        err.message || (language === 'ms' ? 'Gagal memuatkan butiran permohonan' : 'Failed to load transfer details')
+        err.message || (language === 'ms' ? 'Failed to load requisition details' : 'Failed to load transfer details')
       );
     } finally {
       setLoading(false);
@@ -80,14 +80,14 @@ export const CrossborderDetailPage: React.FC = () => {
       const res = await submitCrossborderTransfer(transfer.id);
       if (res.error) throw new Error(res.error);
       toast.success(
-        language === 'ms' ? 'Hantar Permohonan' : 'Submitted',
-        language === 'ms' ? 'Permohonan telah berjaya dihantar untuk kelulusan.' : 'Application submitted successfully for Director endorsement.'
+        language === 'ms' ? 'Submit Requisition' : 'Submitted',
+        language === 'ms' ? 'Requisition successfully submitted for approval.' : 'Application submitted successfully for Director endorsement.'
       );
       loadTransfer();
     } catch (err: any) {
       toast.error(
         language === 'ms' ? 'Ralat' : 'Error',
-        err.message || (language === 'ms' ? 'Gagal menghantar permohonan' : 'Failed to submit application')
+        err.message || (language === 'ms' ? 'Failed to submit requisition' : 'Failed to submit application')
       );
     }
   };
@@ -100,14 +100,14 @@ export const CrossborderDetailPage: React.FC = () => {
       if (res.error) throw new Error(res.error);
       toast.success(
         language === 'ms' ? 'Kelulusan Berjaya' : 'Approved',
-        language === 'ms' ? 'Permohonan rentasi sempadan telah diluluskan.' : 'Cross-border clearance approved and permission letter generated.'
+        language === 'ms' ? 'Cross-border transfer requisition has been approved.' : 'Cross-border clearance approved and permission letter generated.'
       );
       setShowApproveModal(false);
       loadTransfer();
     } catch (err: any) {
       toast.error(
         language === 'ms' ? 'Ralat' : 'Error',
-        err.message || (language === 'ms' ? 'Gagal meluluskan permohonan' : 'Failed to approve application')
+        err.message || (language === 'ms' ? 'Failed to approve requisition' : 'Failed to approve application')
       );
     }
   };
@@ -127,7 +127,7 @@ export const CrossborderDetailPage: React.FC = () => {
     } catch (err: any) {
       toast.error(
         language === 'ms' ? 'Ralat' : 'Error',
-        err.message || (language === 'ms' ? 'Gagal membatalkan permohonan' : 'Failed to cancel application')
+        err.message || (language === 'ms' ? 'Failed to cancel requisition' : 'Failed to cancel application')
       );
     }
   };
@@ -164,7 +164,7 @@ export const CrossborderDetailPage: React.FC = () => {
     } catch (err: any) {
       toast.error(
         language === 'ms' ? 'Ralat' : 'Error',
-        err.message || (language === 'ms' ? 'Gagal memadam permohonan' : 'Failed to delete application')
+        err.message || (language === 'ms' ? 'Failed to delete requisition' : 'Failed to delete application')
       );
     }
   };
@@ -196,7 +196,7 @@ export const CrossborderDetailPage: React.FC = () => {
       console.error(e);
       toast.error(
         language === 'ms' ? 'Ralat PDF' : 'PDF Error',
-        language === 'ms' ? 'Gagal menjana PDF.' : 'Failed to generate PDF.'
+        language === 'ms' ? 'Failed to generate PDF.' : 'Failed to generate PDF.'
       );
     }
   };

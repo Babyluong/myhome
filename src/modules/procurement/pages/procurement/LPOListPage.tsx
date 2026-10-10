@@ -232,11 +232,14 @@ export const LPOListPage: React.FC = () => {
       pageSize
     )
 
-    if (err) {
+    if (err && (typeof navigator === 'undefined' || navigator.onLine)) {
       setError(err)
     } else if (data) {
+      setError(null)
       setOrders(data.data)
       setTotalRecords(data.total)
+    } else {
+      setError(null)
     }
 
     setIsLoading(false)
@@ -1421,7 +1424,7 @@ export const LPOListPage: React.FC = () => {
           <div className="flex justify-center items-center p-12">
             <Spinner className="w-8 h-8 text-blue-500" />
           </div>
-        ) : error ? (
+        ) : (error && (typeof navigator === 'undefined' || navigator.onLine)) ? (
           <div className="p-8 text-center text-red-500 bg-red-50">{error}</div>
         ) : (
           <div className="overflow-x-auto rounded-[2rem] border border-slate-100 shadow-sm">

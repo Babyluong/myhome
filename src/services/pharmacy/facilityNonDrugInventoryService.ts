@@ -24,6 +24,8 @@ export interface FacilityNonDrugInventoryRow {
   notes?: string | null
   added_at: string
   updated_at: string
+  store_location_id?: string | null
+  department_id?: string | null
 }
 
 /** Full item: non_drugs catalog fields + facility-specific fields */
@@ -46,6 +48,8 @@ export interface FacilityNonDrugItem extends NonDrug {
   supplier?: any
   supplier_name?: string
   is_active?: boolean
+  store_location_id?: string | null
+  department_id?: string | null
 }
 
 const DEFAULT_HOSPITAL_UUID = '85bb6adc-b868-428b-83f4-e5af2f5cf904'
@@ -58,22 +62,22 @@ function sanitizeHospitalId(id?: string): string {
 
 // ─── Local Cache Helpers ──────────────────────────────────────────────────────
 
-function cacheKey(hospitalId: string) {
-  return `facility_nondrug_items_${hospitalId}`
+function cacheKey(hospitalId: string, storeLocationId?: string) {
+  return storeLocationId ? `facility_nondrug_items_${hospitalId}_${storeLocationId}` : `facility_nondrug_items_${hospitalId}`
 }
 
-function readCache(hospitalId: string): FacilityNonDrugItem[] {
+function readCache(hospitalId: string, storeLocationId?: string): FacilityNonDrugItem[] {
   try {
-    const raw = localStorage.getItem(cacheKey(hospitalId))
+    const raw = localStorage.getItem(cacheKey(hospitalId, storeLocationId))
     return raw ? JSON.parse(raw) : []
   } catch {
     return []
   }
 }
 
-function writeCache(hospitalId: string, items: FacilityNonDrugItem[]) {
+function writeCache(hospitalId: string, items: FacilityNonDrugItem[], storeLocationId?: string) {
   try {
-    localStorage.setItem(cacheKey(hospitalId), JSON.stringify(items))
+    localStorage.setItem(cacheKey(hospitalId, storeLocationId), JSON.stringify(items))
   } catch {}
 }
 
@@ -82,18 +86,19 @@ function writeCache(hospitalId: string, items: FacilityNonDrugItem[]) {
 /**
  * Load facility non-drug inventory.
  * - If Supabase is configured: fetch from DB (joined with non_drugs catalog),
- *   write result to local cache, return rows.
+ *   write result to local cache, return rows. Scoped by storeLocationId if provided.
  * - If Supabase is NOT configured: fall back to local cache (offline/dev mode).
  */
 export async function loadFacilityNonDrugInventory(
-  hospitalId: string
+  hospitalId: string,
+  storeLocationId?: string
 ): Promise<FacilityNonDrugItem[]> {
   if (!isSupabaseConfigured()) {
-    return readCache(hospitalId)
+    return readCache(hospitalId, storeLocationId)
   }
 
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('facility_nondrug_inventory')
       .select(`
         id,
@@ -105,6 +110,8 @@ export async function loadFacilityNonDrugInventory(
         notes,
         added_at,
         updated_at,
+        store_location_id,
+        department_id,
         nondrug:non_drugs (
           id,
           hospital_id,
@@ -127,7 +134,12 @@ export async function loadFacilityNonDrugInventory(
         )
       `)
       .eq('hospital_id', hospitalId)
-      .order('added_at', { ascending: false })
+
+    if (storeLocationId) {
+      query = query.eq('store_location_id', storeLocationId)
+    }
+
+    const { data, error } = await query.order('added_at', { ascending: false })
 
     if (error) throw error
 
@@ -141,13 +153,15 @@ export async function loadFacilityNonDrugInventory(
       location: row.location ?? '',
       notes: row.notes ?? '',
       added_at: row.added_at,
+      store_location_id: row.store_location_id,
+      department_id: row.department_id,
     }))
 
-    writeCache(hospitalId, items)
+    writeCache(hospitalId, items, storeLocationId)
     return items
   } catch (err) {
     console.error('[FacilityNonDrugInventory] Failed to load from Supabase, using cache:', err)
-    return readCache(hospitalId)
+    return readCache(hospitalId, storeLocationId)
   }
 }
 
@@ -162,10 +176,12 @@ export async function addToFacilityNonDrugInventory(
   item: NonDrug,
   facilityStock = 0,
   minBufferLevel = 10,
-  location = ''
+  location = '',
+  storeLocationId?: string,
+  departmentId?: string
 ): Promise<{ success: boolean; error?: string }> {
   const saveToLocalCache = () => {
-    const cached = readCache(hospitalId)
+    const cached = readCache(hospitalId, storeLocationId)
     if (cached.some(i => i.id === item.id)) {
       return { success: false, error: 'Item sudah wujud dalam Inventori Fasiliti.' }
     }
@@ -174,9 +190,11 @@ export async function addToFacilityNonDrugInventory(
       facility_stock: facilityStock,
       min_buffer_level: minBufferLevel,
       location,
+      store_location_id: storeLocationId,
+      department_id: departmentId,
       added_at: new Date().toISOString(),
     }
-    writeCache(hospitalId, [newItem, ...cached])
+    writeCache(hospitalId, [newItem, ...cached], storeLocationId)
     return { success: true }
   }
 
@@ -186,15 +204,19 @@ export async function addToFacilityNonDrugInventory(
 
   try {
     const cleanHospitalId = sanitizeHospitalId(hospitalId)
+    const payload: any = {
+      hospital_id: cleanHospitalId,
+      nondrug_id: item.id,
+      facility_stock: facilityStock,
+      min_buffer_level: minBufferLevel,
+      location,
+    }
+    if (storeLocationId) payload.store_location_id = storeLocationId
+    if (departmentId) payload.department_id = departmentId
+
     const { error } = await supabase
       .from('facility_nondrug_inventory')
-      .insert({
-        hospital_id: cleanHospitalId,
-        nondrug_id: item.id,
-        facility_stock: facilityStock,
-        min_buffer_level: minBufferLevel,
-        location,
-      })
+      .insert(payload)
 
     if (error) {
       if (error.code === '23505') {
@@ -226,10 +248,12 @@ export async function batchAddToFacilityNonDrugInventory(
   items: NonDrug[],
   facilityStock = 0,
   minBufferLevel = 10,
-  location = ''
+  location = '',
+  storeLocationId?: string,
+  departmentId?: string
 ): Promise<{ added: number; skipped: number; error?: string }> {
   const batchSaveToLocalCache = () => {
-    const cached = readCache(hospitalId)
+    const cached = readCache(hospitalId, storeLocationId)
     const existingIds = new Set(cached.map(i => i.id))
     const toAdd = items.filter(d => !existingIds.has(d.id))
     const newItems: FacilityNonDrugItem[] = toAdd.map(d => ({
@@ -237,9 +261,11 @@ export async function batchAddToFacilityNonDrugInventory(
       facility_stock: facilityStock,
       min_buffer_level: minBufferLevel,
       location,
+      store_location_id: storeLocationId,
+      department_id: departmentId,
       added_at: new Date().toISOString(),
     }))
-    writeCache(hospitalId, [...newItems, ...cached])
+    writeCache(hospitalId, [...newItems, ...cached], storeLocationId)
     return { added: newItems.length, skipped: items.length - newItems.length }
   }
 
@@ -255,11 +281,13 @@ export async function batchAddToFacilityNonDrugInventory(
       facility_stock: facilityStock,
       min_buffer_level: minBufferLevel,
       location,
+      store_location_id: storeLocationId || null,
+      department_id: departmentId || null,
     }))
 
     const { data, error } = await supabase
       .from('facility_nondrug_inventory')
-      .upsert(rows, { onConflict: 'hospital_id,nondrug_id', ignoreDuplicates: true })
+      .upsert(rows, { onConflict: 'hospital_id,store_location_id,nondrug_id', ignoreDuplicates: true })
       .select('id')
 
     if (error) {
@@ -363,11 +391,12 @@ export async function updateFacilityNonDrugInventoryItem(
  */
 export async function removeFromFacilityNonDrugInventory(
   hospitalId: string,
-  nonDrugId: string
+  nonDrugId: string,
+  storeLocationId?: string
 ): Promise<{ success: boolean; error?: string }> {
   const removeLocalCache = () => {
-    const cached = readCache(hospitalId)
-    writeCache(hospitalId, cached.filter(i => i.id !== nonDrugId))
+    const cached = readCache(hospitalId, storeLocationId)
+    writeCache(hospitalId, cached.filter(i => i.id !== nonDrugId), storeLocationId)
     return { success: true }
   }
 
@@ -376,11 +405,17 @@ export async function removeFromFacilityNonDrugInventory(
   }
 
   try {
-    const { error } = await supabase
+    let query = supabase
       .from('facility_nondrug_inventory')
       .delete()
       .eq('hospital_id', hospitalId)
       .eq('nondrug_id', nonDrugId)
+
+    if (storeLocationId) {
+      query = query.eq('store_location_id', storeLocationId)
+    }
+
+    const { error } = await query
 
     if (error) {
       if (error.code === '42501') {

@@ -219,7 +219,7 @@ export async function getCrossborderTransferById(id: string): Promise<ApiRespons
     return { data: data as CrossborderTransfer, error: null };
   } catch (error: any) {
     console.error('Error fetching crossborder transfer details:', error);
-    return { data: null, error: error?.message || 'Gagal memuatkan butiran permohonan' };
+    return { data: null, error: error?.message || 'Failed to load requisition details' };
   }
 }
 
@@ -463,7 +463,7 @@ export async function submitCrossborderTransfer(id: string): Promise<ApiResponse
     return { data: data as CrossborderTransfer, error: null };
   } catch (error: any) {
     console.error('Error submitting crossborder transfer:', error);
-    return { data: null, error: error?.message || 'Gagal menghantar permohonan' };
+    return { data: null, error: error?.message || 'Failed to submit requisition' };
   }
 }
 
@@ -502,7 +502,7 @@ export async function approveCrossborderTransfer(id: string, pengarahNama: strin
     return { data: data as CrossborderTransfer, error: null };
   } catch (error: any) {
     console.error('Error approving crossborder transfer:', error);
-    return { data: null, error: error?.message || 'Gagal meluluskan permohonan' };
+    return { data: null, error: error?.message || 'Failed to approve requisition' };
   }
 }
 
@@ -562,7 +562,7 @@ export async function cancelCrossborderTransfer(id: string, reason: string): Pro
     return { data: data as CrossborderTransfer, error: null };
   } catch (error: any) {
     console.error('Error cancelling crossborder transfer:', error);
-    return { data: null, error: error?.message || 'Gagal membatalkan permohonan' };
+    return { data: null, error: error?.message || 'Failed to cancel requisition' };
   }
 }
 
@@ -589,7 +589,7 @@ export async function deleteCrossborderTransfer(id: string): Promise<ApiResponse
     return { data: true, error: null };
   } catch (error: any) {
     console.error('Error deleting crossborder transfer:', error);
-    return { data: false, error: error?.message || 'Gagal memadam permohonan' };
+    return { data: false, error: error?.message || 'Failed to delete requisition' };
   }
 }
 

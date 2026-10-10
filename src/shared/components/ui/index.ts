@@ -48,6 +48,10 @@ export type { SlideOverProps } from './SlideOver'
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card'
 export { StatCard } from './StatCard'
 export type { StatCardProps } from './StatCard'
+export { ModulePageHeader } from './ModulePageHeader'
+export type { ModulePageHeaderProps } from './ModulePageHeader'
 
 export { Checkbox } from './checkbox'
 export type { CheckboxProps } from './checkbox'
+
+export * from './skeleton'

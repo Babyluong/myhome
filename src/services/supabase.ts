@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { offlineSafeFetch } from './offlineFetch'
 
 // For local development without Supabase, we'll use mock data
 // When ready to connect, add your Supabase URL and Anon Key
@@ -11,6 +12,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
+    storageKey: 'home-auth-session-v2',
+  },
+  global: {
+    fetch: offlineSafeFetch,
   },
 })
 
@@ -105,6 +110,9 @@ export const createAnonymousClient = () => {
       persistSession: false,
       detectSessionInUrl: false,
       storageKey: 'supabase.anonymous.auth.token', // Unique storage key to avoid conflicts
+    },
+    global: {
+      fetch: offlineSafeFetch,
     },
   })
   

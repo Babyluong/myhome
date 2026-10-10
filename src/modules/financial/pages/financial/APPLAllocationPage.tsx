@@ -83,18 +83,24 @@ export const APPLAllocationPage: React.FC = () => {
       setError(null)
 
       try {
+        const applVoteCodes = filterCategory === 'duit_khas'
+          ? '080600 (APPL)'
+          : filterCategory === 'all'
+            ? ['990102', '080600 (APPL)']
+            : '990102'
+
         const [summaryResult, expensesResult] = await Promise.all([
           getUnifiedBudgetSummary({
             hospitalId,
             fiscalYear: selectedYear,
-            voteCode: '990102',
+            voteCode: applVoteCodes,
             voteActivity: filterVoteActivity !== 'all' ? filterVoteActivity as any : undefined,
             category: filterCategory !== 'all' ? filterCategory as any : undefined,
           }),
           getExpenseList({
             hospitalId,
             fiscalYear: selectedYear,
-            voteCode: '990102',
+            voteCode: applVoteCodes,
             status: filterStatus !== 'all' ? filterStatus : undefined,
             voteActivity: filterVoteActivity !== 'all' ? filterVoteActivity as any : undefined,
             category: filterCategory !== 'all' ? filterCategory as any : undefined,
@@ -249,8 +255,12 @@ export const APPLAllocationPage: React.FC = () => {
   // Get status badge
   const getStatusBadge = (status: string) => {
     const map: Record<string, { color: 'success' | 'warning' | 'error' | 'info' | 'secondary'; label: string }> = {
+      draft: { color: 'secondary', label: 'Draft' },
+      pending_approval: { color: 'warning', label: 'Pending' },
       pending: { color: 'warning', label: 'Pending' },
       approved: { color: 'info', label: 'Approve' },
+      sent: { color: 'info', label: 'Sent' },
+      partial_received: { color: 'warning', label: 'Partial' },
       completed: { color: 'success', label: 'Complete' },
       cancelled: { color: 'error', label: 'Cancel' },
     }

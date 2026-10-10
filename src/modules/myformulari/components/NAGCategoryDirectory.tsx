@@ -77,11 +77,11 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
               <Layers className="w-4 h-4" />
             </span>
             <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-              Direktori Garis Panduan Rasmi NAG 2024 (KKM)
+              Official NAG 2024 Guidelines Directory (MOH)
             </h3>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Pilih domain populasi pesakit dan sistem klinikal untuk melihat indikasi serta rejimen empirik rasmi.
+            Select patient population domain and clinical system to view indications and official empiric regimens.
           </p>
         </div>
 
@@ -100,9 +100,9 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <span>Semua (A &amp; B)</span>
+            <span>All (A &amp; B)</span>
             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-700 font-bold">
-              31 Kategori
+              31 Categories
             </span>
           </button>
 
@@ -120,7 +120,7 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
             }`}
           >
             <User className="w-3.5 h-3.5" />
-            <span>Dewasa (Section A)</span>
+            <span>Adult (Section A)</span>
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
               selectedPopulation === 'Adult' ? 'bg-emerald-900/60 text-white' : 'bg-slate-200 text-slate-700'
             }`}>
@@ -142,7 +142,7 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
             }`}
           >
             <Baby className="w-3.5 h-3.5" />
-            <span>Pediatrik &amp; Neonat (Section B)</span>
+            <span>Paediatric &amp; Neonatal (Section B)</span>
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
               selectedPopulation === 'Paediatric' ? 'bg-cyan-900/60 text-white' : 'bg-slate-200 text-slate-700'
             }`}>
@@ -158,13 +158,13 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
           <div className="flex items-center gap-2">
             <h4 className="text-xs font-black uppercase tracking-wider text-slate-700">
               {selectedPopulation === 'Adult'
-                ? 'Section A: 17 Kategori Penyakit Dewasa'
+                ? 'Section A: 17 Adult Disease Categories'
                 : selectedPopulation === 'Paediatric'
-                ? 'Section B: 14 Kategori Penyakit Pediatrik & Neonat'
-                : 'Semua Kategori Klinikal (A1–A17 Dewasa & B1–B14 Pediatrik)'}
+                ? 'Section B: 14 Paediatric & Neonatal Disease Categories'
+                : 'All Clinical Categories (A1–A17 Adult & B1–B14 Paediatric)'}
             </h4>
             <span className="text-[11px] text-slate-400 font-medium">
-              ({currentCategories.length} kategori aktif)
+              ({currentCategories.length} active categories)
             </span>
           </div>
 
@@ -174,7 +174,7 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Tapis nama kategori..."
+                placeholder="Filter category name..."
                 value={categorySearchQuery}
                 onChange={e => setCategorySearchQuery(e.target.value)}
                 className="w-full pl-8 pr-6 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 font-medium"
@@ -200,7 +200,7 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
                 className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-1 flex-shrink-0"
               >
                 <X className="w-3.5 h-3.5" />
-                <span>Papar Semua</span>
+                <span>Show All</span>
               </button>
             )}
           </div>
@@ -230,7 +230,7 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
               </span>
             </div>
             <div>
-              <div className="text-xs font-black leading-tight">Semua Kategori</div>
+              <div className="text-xs font-black leading-tight">All Categories</div>
               <div className={`text-[10px] mt-0.5 ${selectedCategoryCode === 'ALL' ? 'text-slate-300' : 'text-slate-400'}`}>
                 Papar kesuluruhan NAG
               </div>
@@ -313,14 +313,14 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
                   </h3>
                 </div>
                 <p className="text-xs text-emerald-200/80 mt-0.5">
-                  Pilih sub-topik klinikal di bawah untuk menapis indikasi khusus dan dos spesifik.
+                  Select clinical sub-topic below to filter specific indications and dosing.
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 self-start sm:self-auto">
               <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/15 text-emerald-200 border border-white/10">
-                {activeCategoryMeta.topics.length} Pilihan Sub-Topik
+                {activeCategoryMeta.topics.length} Sub-Topic Options
               </span>
               <button
                 type="button"
@@ -330,7 +330,7 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
                 }}
                 className="text-xs text-emerald-300 hover:text-white underline cursor-pointer font-bold px-2 py-1"
               >
-                Tutup Pilihan &times;
+                Close Selection &times;
               </button>
             </div>
           </div>
@@ -349,12 +349,12 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black flex items-center gap-1.5">
-                  <span>★ Papar Semua Indikasi</span>
+                  <span>★ Show All Indications</span>
                 </span>
                 <ChevronRight className="w-4 h-4 opacity-70" />
               </div>
               <p className="text-[11px] text-emerald-100/70 leading-relaxed">
-                Papar kesemua pelan rawatan klinikal di bawah kategori {activeCategoryMeta.title}.
+                Show all clinical treatment plans under category {activeCategoryMeta.title}.
               </p>
             </button>
 

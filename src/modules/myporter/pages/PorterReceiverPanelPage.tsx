@@ -7,7 +7,6 @@ import {
   Search, 
   Filter, 
   ShieldCheck, 
-  Truck, 
   Package, 
   Star, 
   PenTool,

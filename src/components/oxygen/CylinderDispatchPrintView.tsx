@@ -71,12 +71,12 @@ export const CylinderDispatchPrintView: React.FC<CylinderDispatchPrintViewProps>
           setPemohonName(data.requester?.full_name || 'PEGAWAI STOR FARMASI');
           setPemohonPosition(data.requester?.jawatan || 'Unit Farmasi Logistik');
 
-          setPenerimaName(meta.driver || 'PEMANDU / PEMBAWA');
+          setPenerimaName(meta.driver || 'DRIVER / COURIER');
           setPenerimaPosition(`Pembawa ke ${data.external_facility_name || 'Fasiliti Luar'}`);
           setPenerimaDate(formattedDate);
         } else if (data.is_external_facility && data.indent_direction === 'inbound') {
           // Inbound: Pemohon is external sender/driver, Penerima is receiving officer
-          setPemohonName(meta.driver || 'PEMANDU / PENGHANTAR');
+          setPemohonName(meta.driver || 'DRIVER / DISPATCHER');
           setPemohonPosition(`Pegawai Penghantar (${data.external_facility_name || 'Hospital Luar'})`);
 
           setPenerimaName(data.requester?.full_name || 'AMRI AMIT');
@@ -105,7 +105,7 @@ export const CylinderDispatchPrintView: React.FC<CylinderDispatchPrintViewProps>
       }
     } catch (err) {
       console.error(err);
-      setError(err instanceof Error ? err.message : 'Gagal memuatkan butiran permohonan.');
+      setError(err instanceof Error ? err.message : 'Failed to load requisition details.');
     } finally {
       setIsLoading(false);
     }
@@ -395,7 +395,7 @@ export const CylinderDispatchPrintView: React.FC<CylinderDispatchPrintViewProps>
 
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
-      alert('Sila benarkan tetingkap timbul (popups) untuk mencetak borang.');
+      alert('Please allow pop-ups to print the form.');
       return;
     }
 

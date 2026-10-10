@@ -20,14 +20,21 @@ import {
   Barcode,
   Volume2,
   VolumeX,
+  Wifi,
+  WifiOff,
+  Loader2,
 } from 'lucide-react';
 import { supabase } from '@/services/supabase';
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 import {
-  createReceiveDocument,
-  searchCylindersInDatabase,
-} from '@/modules/mycylinder/services/oxygenService';
+  offlineAwareSearchCylinders,
+  offlineAwareGetCylinderByCode,
+  offlineAwareGetSuppliers,
+  offlineAwareGetCombos,
+  offlineAwareReceiveDocument,
+  isNetworkAvailable,
+} from '@/modules/mycylinder/services/cylinderOfflineService';
 import type { OxygenCylinderWithRelations } from '@/types/pharmacy';
 
 interface CreateReceiveDocumentModalProps {
@@ -50,6 +57,15 @@ interface StagedCylinder {
   typeId?: string;
 }
 
+const extractLocationName = (loc: any, fallback = 'Supplier'): string => {
+  if (!loc) return fallback;
+  if (typeof loc === 'string') return loc;
+  if (typeof loc === 'object') {
+    return loc.location_name || loc.name || loc.department_name || loc.location_code || fallback;
+  }
+  return String(loc);
+};
+
 export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProps> = ({
   hospitalId,
   isOpen,
@@ -58,6 +74,21 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
 }) => {
   const { user } = useAuthStore();
   const { language } = useLanguage();
+
+  // Network & Offline states
+  const [isOnline, setIsOnline] = useState(() => isNetworkAvailable());
+  const [isOperatingOffline, setIsOperatingOffline] = useState(false);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // Header form states
   const [suppliers, setSuppliers] = useState<{ id: string; company_name: string }[]>([]);
@@ -86,11 +117,18 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
 
   // QR / Camera scanning states
   const [cameraActive, setCameraActive] = useState(false);
+  const [isStartingCamera, setIsStartingCamera] = useState(false);
   const [manualQrInput, setManualQrInput] = useState('');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [scanSuccessFlash, setScanSuccessFlash] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const lastScannedRef = useRef<{ code: string; ts: number } | null>(null);
+  const stagedCylindersRef = useRef<StagedCylinder[]>(stagedCylinders);
+
+  useEffect(() => {
+    stagedCylindersRef.current = stagedCylinders;
+  }, [stagedCylinders]);
 
   // Submission states
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -117,7 +155,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
     }
   };
 
-  // Load suppliers and combos on open
+  // Load suppliers and combos on open (offline-aware)
   useEffect(() => {
     if (!isOpen || !hospitalId) return;
 
@@ -131,29 +169,13 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
 
     const fetchData = async () => {
       try {
-        // Fetch suppliers
-        const { data: sups } = await supabase
-          .from('suppliers')
-          .select('id, company_name')
-          .eq('status', 'active');
-
-        if (sups) {
-          const filtered = sups.filter(s => {
-            const n = (s.company_name || '').toLowerCase();
-            return n.includes('linde') || n.includes('borneo indah');
-          });
-          const list = filtered.length > 0 ? filtered : sups;
-          setSuppliers(list);
-          if (list.length > 0 && !selectedSupplier) {
-            setSelectedSupplier(list[0].id);
-          }
+        const sups = await offlineAwareGetSuppliers();
+        setSuppliers(sups);
+        if (sups.length > 0 && !selectedSupplier) {
+          setSelectedSupplier(sups[0].id);
         }
 
-        // Fetch combos
-        const { data: comboData } = await supabase
-          .from('pharmacy_oxygen_size_type_combos')
-          .select('id, size_id, type_id, display_name');
-
+        const comboData = await offlineAwareGetCombos();
         if (comboData) {
           setCombos(comboData);
           if (comboData.length > 0) {
@@ -174,7 +196,11 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
     }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
     setCameraActive(false);
+    setIsStartingCamera(false);
   };
 
   useEffect(() => {
@@ -183,7 +209,16 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
     }
   }, [isOpen, ingestMode]);
 
-  // Real-time Database Search
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+    };
+  }, []);
+
+  // Real-time Search (offline-aware)
   useEffect(() => {
     if (!isOpen || !hospitalId || ingestMode !== 'search') return;
 
@@ -193,9 +228,10 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
     const timer = setTimeout(async () => {
       try {
         const filterStatus = filterMode === 'at_supplier' ? 'returned_to_supplier' : undefined;
-        const res = await searchCylindersInDatabase(hospitalId, searchTerm, filterStatus);
+        const res = await offlineAwareSearchCylinders(hospitalId, searchTerm, filterStatus);
         if (isMounted) {
           setSearchResults(res.data || []);
+          setIsOperatingOffline(!!res.isOffline);
         }
       } catch (err) {
         console.error('Error searching cylinders:', err);
@@ -210,102 +246,204 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
     };
   }, [isOpen, hospitalId, searchTerm, filterMode, ingestMode]);
 
-  // Start Camera QR Scanner
+  // Start Camera QR Scanner with progressive constraint fallbacks
   const startCamera = async () => {
     stopCamera();
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
-      });
-      streamRef.current = mediaStream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        videoRef.current.setAttribute('playsinline', 'true');
-        await videoRef.current.play();
-        setCameraActive(true);
-        requestAnimationFrame(tickQrScan);
-      }
-    } catch (err) {
-      console.error('Failed to access camera:', err);
+    setErrorMessage(null);
+    setIsStartingCamera(true);
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setIsStartingCamera(false);
       setErrorMessage(
         language === 'ms'
-          ? 'Kamera tidak dapat diakses. Sila gunakan kemasukan kod secara manual.'
-          : 'Unable to access camera. Please enter code manually.'
+          ? 'Pelayar tidak menyokong akses kamera atau sambungan tidak selamat (HTTPS/localhost diperlukan).'
+          : 'Browser does not support camera access or connection is not secure (HTTPS/localhost required).'
+      );
+      return;
+    }
+
+    const constraintsToTry: MediaStreamConstraints[] = [
+      { video: { facingMode: { ideal: 'environment' } } },
+      { video: { facingMode: 'environment' } },
+      { video: { facingMode: 'user' } },
+      { video: true },
+    ];
+
+    let mediaStream: MediaStream | null = null;
+    let lastError: any = null;
+
+    for (const constraints of constraintsToTry) {
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        if (mediaStream) break;
+      } catch (err) {
+        lastError = err;
+      }
+    }
+
+    if (mediaStream) {
+      streamRef.current = mediaStream;
+      setCameraActive(true);
+      setIsStartingCamera(false);
+    } else {
+      console.error('Failed to access camera:', lastError);
+      setIsStartingCamera(false);
+      setErrorMessage(
+        language === 'ms'
+          ? 'Kamera tidak dapat diakses. Sila pastikan kebenaran kamera dibenarkan atau gunakan kemasukan manual.'
+          : 'Unable to access camera. Please allow camera permissions or enter code manually.'
       );
     }
   };
 
-  // QR Scanning Loop using jsQR
-  const tickQrScan = () => {
-    if (!videoRef.current || videoRef.current.readyState !== videoRef.current.HAVE_ENOUGH_DATA) {
-      if (streamRef.current) requestAnimationFrame(tickQrScan);
-      return;
-    }
+  // Safely bind video stream and run QR scanning loop
+  useEffect(() => {
+    let animFrameId: number;
+    let running = false;
 
-    const video = videoRef.current;
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-
-    if (ctx) {
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: 'dontInvert',
-      });
-
-      if (code && code.data) {
-        handleIngestCode(code.data.trim());
-        // Flash visual indicator
-        setScanSuccessFlash(true);
-        setTimeout(() => setScanSuccessFlash(false), 300);
-        // Delay before scanning next to avoid duplicate instant scans
-        setTimeout(() => {
-          if (streamRef.current) requestAnimationFrame(tickQrScan);
-        }, 1200);
-        return;
+    if (cameraActive && streamRef.current) {
+      const stream = streamRef.current;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.setAttribute('playsinline', 'true');
+        videoRef.current.play().catch(err => {
+          console.warn('Video auto-play failed or was aborted:', err);
+        });
       }
+
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+
+      const scanFrame = () => {
+        if (!running) return;
+        animFrameId = requestAnimationFrame(() => {
+          if (
+            videoRef.current &&
+            videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA &&
+            context
+          ) {
+            const video = videoRef.current;
+            const scale = Math.min(1, 640 / (video.videoWidth || 640));
+            canvas.width = Math.floor((video.videoWidth || 640) * scale);
+            canvas.height = Math.floor((video.videoHeight || 480) * scale);
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+              inversionAttempts: 'attemptBoth',
+            });
+
+            if (code && code.data) {
+              const scannedText = code.data.trim();
+              const now = Date.now();
+              const last = lastScannedRef.current;
+
+              if (!last || last.code !== scannedText || now - last.ts > 2000) {
+                lastScannedRef.current = { code: scannedText, ts: now };
+                setScanSuccessFlash(true);
+                setTimeout(() => setScanSuccessFlash(false), 300);
+                void handleIngestCode(scannedText);
+              }
+            }
+          }
+          if (running) {
+            setTimeout(scanFrame, 150);
+          }
+        });
+      };
+
+      running = true;
+      scanFrame();
     }
 
-    if (streamRef.current) {
-      requestAnimationFrame(tickQrScan);
-    }
-  };
+    return () => {
+      running = false;
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+    };
+  }, [cameraActive]);
 
   // Ingest scanned code or manual QR
   const handleIngestCode = async (rawCode: string) => {
-    const code = rawCode.trim().toUpperCase();
+    let code = rawCode.trim();
     if (!code) return;
 
-    // Check if already staged
-    if (stagedCylinders.some(c => c.serial_number.toUpperCase() === code || (c.qr_code && c.qr_code.toUpperCase() === code))) {
-      setErrorMessage(
-        language === 'ms'
-          ? `Silinder ${code} sudah berada dalam senarai penerimaan!`
-          : `Cylinder ${code} is already in the received batch!`
-      );
-      return;
+    // Support QR codes containing URLs
+    if (code.startsWith('http://') || code.startsWith('https://')) {
+      try {
+        const url = new URL(code);
+        const codeParam =
+          url.searchParams.get('code') ||
+          url.searchParams.get('qr') ||
+          url.searchParams.get('serial') ||
+          url.searchParams.get('sn');
+        if (codeParam) {
+          code = codeParam;
+        } else {
+          const parts = url.pathname.split('/').filter(Boolean);
+          if (parts.length > 0) {
+            code = parts[parts.length - 1];
+          }
+        }
+      } catch {
+        // Fallback to raw string
+      }
     }
+    code = code.trim().toUpperCase();
 
-    // Lookup in database
+    const currentStagedIds = stagedCylindersRef.current.map(c => c.id);
+
+    // Lookup via offline-aware helper passing already-staged cylinder IDs so partner twin cylinders (e.g. BN & PI) can both be staged
     try {
-      const res = await searchCylindersInDatabase(hospitalId, code);
-      const match = res.data?.find(
-        c => (c.serial_number || '').toUpperCase() === code || (c.qr_code || '').toUpperCase() === code
-      );
+      const res = await offlineAwareGetCylinderByCode(hospitalId, code, {
+        excludeIds: currentStagedIds,
+      });
+      const match = res.data;
 
       if (match) {
-        // Exists in database
+        // If this exact cylinder ID is already staged, notify user
+        if (currentStagedIds.includes(match.id)) {
+          setErrorMessage(
+            language === 'ms'
+              ? `Silinder ${match.serial_number} already exists in the receiving list!`
+              : `Cylinder ${match.serial_number} is already in the received batch!`
+          );
+          return;
+        }
+
+        // Exists in database or local offline cache
         playBeep();
         addCylinderToStaging(match);
+        const valveLabel = match.type_info?.name || (match.type_info?.code === 'PI' ? 'Pin Index' : match.type_info?.code === 'BN' ? 'Bullnose' : '');
+        const valveSuffix = valveLabel ? ` (${valveLabel})` : '';
         setSuccessMessage(
           language === 'ms'
-            ? `Silinder sedia ada ${match.serial_number} ditambah!`
-            : `Existing cylinder ${match.serial_number} added!`
+            ? `Silinder ${match.serial_number}${valveSuffix} ditambah! ${res.isOffline ? '(Mod Luar Talian)' : ''}`
+            : `Cylinder ${match.serial_number}${valveSuffix} added! ${res.isOffline ? '(Offline Mode)' : ''}`
         );
       } else {
-        // Not found in database -> prompt new registration
+        // If no more un-staged cylinders match, check if one or more variants were already staged
+        const cleanUpper = code.trim().toUpperCase();
+        const bareClean = cleanUpper
+          .replace(/^(?:O2-|02-)/i, '')
+          .replace(/^(.*?)(?:[\s_/(]+|-)(PI|PIN\s*INDEX|PIN|BN|BULLNOSE|BULL)[\s_/)]*$/i, '$1')
+          .trim();
+
+        const alreadyStaged = stagedCylindersRef.current.filter(c => {
+          const snUpper = (c.serial_number || '').toUpperCase();
+          const qrUpper = (c.qr_code || '').toUpperCase();
+          return snUpper.includes(bareClean) || qrUpper.includes(bareClean) || (bareClean.length >= 4 && (snUpper.endsWith(bareClean) || qrUpper.endsWith(bareClean)));
+        });
+
+        if (alreadyStaged.length > 0) {
+          setErrorMessage(
+            language === 'ms'
+              ? `Silinder ${code} (kesemua ${alreadyStaged.length} varian) already exists in the receiving list!`
+              : `Cylinder ${code} (all ${alreadyStaged.length} variants) is already in the received batch!`
+          );
+          return;
+        }
+
+        // Truly not found -> prompt new registration
         playBeep();
         setNewCylSerial(code);
         setShowNewCylForm(true);
@@ -317,9 +455,13 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
 
   // Add an existing database cylinder to staged list
   const addCylinderToStaging = (cyl: OxygenCylinderWithRelations) => {
-    if (stagedCylinders.some(c => c.id === cyl.id)) return;
+    if (stagedCylindersRef.current.some(c => c.id === cyl.id)) return;
 
-    const displayName = (cyl as any).combo?.display_name || cyl.type_info?.name || 'Standard Cylinder';
+    const sizeCode = cyl.size_info?.code || '';
+    const valveName = cyl.type_info?.name || (cyl.type_info?.code === 'PI' ? 'Pin Index' : cyl.type_info?.code === 'BN' ? 'Bullnose' : '');
+    const displayName = (cyl as any).combo?.display_name || 
+      (sizeCode && valveName ? `${sizeCode} (${valveName})` : valveName || sizeCode || 'Standard Cylinder');
+    const locName = extractLocationName(cyl.current_location, 'Supplier');
 
     setStagedCylinders(prev => [
       ...prev,
@@ -329,7 +471,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
         qr_code: cyl.qr_code,
         type_name: displayName,
         status: cyl.status,
-        from_location: cyl.current_location || 'Supplier',
+        from_location: locName,
       },
     ]);
   };
@@ -372,26 +514,26 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
     setShowNewCylForm(false);
     setSuccessMessage(
       language === 'ms'
-        ? `Silinder baru ${serial} ditambah ke senarai!`
+        ? `Silinder baru ${serial} added to the list!`
         : `New cylinder ${serial} staged for creation and reception!`
     );
   };
 
-  // Submit Receive Batch
+  // Submit Receive Batch (offline-aware)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
 
     if (!selectedSupplier) {
-      setErrorMessage(language === 'ms' ? 'Sila pilih pembekal.' : 'Please select a supplier.');
+      setErrorMessage(language === 'ms' ? 'Please select a supplier.' : 'Please select a supplier.');
       return;
     }
 
     if (stagedCylinders.length === 0) {
       setErrorMessage(
         language === 'ms'
-          ? 'Sila imbas atau pilih sekurang-kurangnya satu silinder untuk diterima.'
+          ? 'Please scan or select at least one cylinder to receive.'
           : 'Please scan or select at least one cylinder to receive.'
       );
       return;
@@ -411,7 +553,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
           typeId: c.typeId,
         }));
 
-      const res = await createReceiveDocument(
+      const res = await offlineAwareReceiveDocument(
         hospitalId,
         selectedSupplier,
         receiveDate,
@@ -423,15 +565,23 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
       );
 
       if (res.data) {
-        setSuccessMessage(
-          language === 'ms'
-            ? `Berjaya menerima ${stagedCylinders.length} silinder terus ke Stok Tersedia (Stor Gas Utama)! Dokumen: ${res.data.document_number}`
-            : `Successfully received ${stagedCylinders.length} cylinders directly into Available Store Stock! Doc: ${res.data.document_number}`
-        );
+        if (res.isOfflinePending) {
+          setSuccessMessage(
+            language === 'ms'
+              ? `[MOD LUAR TALIAN] Berjaya menyimpan penerimaan ${stagedCylinders.length} silinder terus ke Stor Gas! Silinder kini sedia digunakan. Sistem akan menyegerakkannya secara automatik ke Supabase sebaik sahaja internet dikesan.`
+              : `[OFFLINE MODE] Successfully received ${stagedCylinders.length} cylinders locally! Ready for immediate store use. Auto-sync to Supabase will trigger upon reconnection.`
+          );
+        } else {
+          setSuccessMessage(
+            language === 'ms'
+              ? `Berjaya menerima ${stagedCylinders.length} silinder terus ke Stok Tersedia (Stor Gas Utama)! Dokumen: ${res.data.document_number}`
+              : `Successfully received ${stagedCylinders.length} cylinders directly into Available Store Stock! Doc: ${res.data.document_number}`
+          );
+        }
         setTimeout(() => {
           onSuccess();
           onClose();
-        }, 1200);
+        }, 1600);
       } else {
         setErrorMessage(res.error || 'Failed to create receive document.');
       }
@@ -447,7 +597,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 md:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-4xl w-full flex flex-col max-h-[92vh] overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-5xl xl:max-w-6xl w-full flex flex-col max-h-[92vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-5 md:p-6 border-b border-slate-100 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-white">
           <div className="flex items-center gap-3">
@@ -460,6 +610,17 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">
                   {language === 'ms' ? 'Kredit Terus ke Stok Tersedia' : 'Direct to Available Stock'}
                 </span>
+                {!isOnline ? (
+                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 animate-pulse">
+                    <WifiOff className="w-3 h-3 text-amber-700" />
+                    <span>{language === 'ms' ? 'Mod Luar Talian (Offline)' : 'Offline Mode'}</span>
+                  </span>
+                ) : (
+                  <span className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>{language === 'ms' ? 'Atas Talian' : 'Online'}</span>
+                  </span>
+                )}
               </h2>
               <p className="text-xs font-semibold text-slate-500">
                 {language === 'ms'
@@ -544,230 +705,279 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
             </div>
           </div>
 
-          {/* Mode Switcher: Search Database vs QR Scan */}
-          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setIngestMode('search')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                  ingestMode === 'search'
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                    : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                <Search className="w-3.5 h-3.5" />
-                <span>{language === 'ms' ? 'Cari No Siri Pangkalan Data' : 'Search Database Serial'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setIngestMode('qr')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                  ingestMode === 'qr'
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                    : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                <QrCode className="w-3.5 h-3.5" />
-                <span>{language === 'ms' ? 'Imbas Kod QR / Barcode' : 'Scan QR / Barcode'}</span>
-              </button>
-            </div>
-
-            <span className="text-xs font-bold text-slate-500">
-              {language === 'ms' ? 'Dipilih:' : 'Staged:'}{' '}
-              <strong className="text-emerald-700 font-extrabold text-sm">{stagedCylinders.length}</strong>{' '}
-              {language === 'ms' ? 'silinder' : 'cylinders'}
-            </span>
-          </div>
-
-          {/* MODE 1: Database Search */}
-          {ingestMode === 'search' && (
-            <div className="space-y-4">
-              {/* Search filter controls */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <div className="relative flex-1">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    placeholder={
-                      language === 'ms'
-                        ? 'Cari no siri silinder dalam database (cth: saboxy-297, P101-F, 101-N)...'
-                        : 'Search cylinder serial no in database (e.g. saboxy-297, P101-F, 101-N)...'
-                    }
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-800 placeholder:font-sans placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-white"
-                  />
-                  {isSearching && (
-                    <RefreshCw className="w-3.5 h-3.5 text-emerald-600 animate-spin absolute right-3.5 top-1/2 -translate-y-1/2" />
-                  )}
-                </div>
-
-                <div className="flex items-center gap-1.5 shrink-0 bg-slate-100 p-1 rounded-xl">
-                  <button
-                    type="button"
-                    onClick={() => setFilterMode('at_supplier')}
-                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
-                      filterMode === 'at_supplier'
-                        ? 'bg-white text-emerald-800 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    {language === 'ms' ? 'Di Pembekal (Dipulangkan)' : 'At Supplier (Returned)'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFilterMode('all')}
-                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
-                      filterMode === 'all'
-                        ? 'bg-white text-emerald-800 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    {language === 'ms' ? 'Semua Silinder' : 'All Cylinders'}
-                  </button>
-                </div>
+          {/* 2-Column Workspace: Left = Search/Scan, Right = Already Selected Cylinders */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
+            {/* COLUMN 1 (LEFT): List of Cylinders Being Searched / Scanner */}
+            <div className="flex flex-col border border-slate-200/90 rounded-2xl bg-slate-50/50 p-4 h-[420px] lg:h-[490px]">
+              {/* Ingestion Mode Switcher */}
+              <div className="flex items-center gap-1.5 bg-slate-200/70 p-1 rounded-xl mb-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIngestMode('search')}
+                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                    ingestMode === 'search'
+                      ? 'bg-white text-emerald-800 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Search className="w-3.5 h-3.5" />
+                  <span>{language === 'ms' ? 'Cari Database' : 'Search Database'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIngestMode('qr')}
+                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                    ingestMode === 'qr'
+                      ? 'bg-white text-emerald-800 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <QrCode className="w-3.5 h-3.5" />
+                  <span>{language === 'ms' ? 'Imbas QR / Kod Bar' : 'Scan QR / Barcode'}</span>
+                </button>
               </div>
 
-              {/* Database Results List */}
-              <div className="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50/50">
-                <div className="max-h-[220px] overflow-y-auto divide-y divide-slate-200/70">
-                  {searchResults.length === 0 ? (
-                    <div className="p-8 text-center text-slate-400 text-xs font-semibold">
-                      {isSearching
-                        ? language === 'ms' ? 'Mencari silinder...' : 'Searching cylinders...'
-                        : language === 'ms'
-                        ? 'Tiada silinder sepadan dijumpai dalam pangkalan data.'
-                        : 'No matching cylinders found in database.'}
+              {/* MODE 1: Database Search */}
+              {ingestMode === 'search' && (
+                <div className="flex-1 min-h-0 flex flex-col space-y-2.5">
+                  {/* Search Input Field */}
+                  <div className="relative shrink-0">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      placeholder={
+                        language === 'ms'
+                          ? 'Cari no siri silinder dalam database (cth: saboxy-297)...'
+                          : 'Search cylinder serial no in database (e.g. saboxy-297)...'
+                      }
+                      value={searchTerm}
+                      onChange={e => setSearchTerm(e.target.value)}
+                      className="w-full pl-9 pr-9 py-2 bg-white border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-800 placeholder:font-sans placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                    />
+                    {isSearching ? (
+                      <RefreshCw className="w-3.5 h-3.5 text-emerald-600 animate-spin absolute right-3.5 top-1/2 -translate-y-1/2" />
+                    ) : searchTerm ? (
+                      <button
+                        type="button"
+                        onClick={() => setSearchTerm('')}
+                        className="p-1 text-slate-400 hover:text-slate-600 absolute right-2.5 top-1/2 -translate-y-1/2"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    ) : null}
+                  </div>
+
+                  {/* Filter Mode Pills + Result Count */}
+                  <div className="flex items-center justify-between gap-2 shrink-0">
+                    <div className="flex items-center gap-1 bg-slate-200/70 p-1 rounded-lg">
+                      <button
+                        type="button"
+                        onClick={() => setFilterMode('at_supplier')}
+                        className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-all ${
+                          filterMode === 'at_supplier'
+                            ? 'bg-white text-emerald-800 shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        {language === 'ms' ? 'Di Pembekal (Dipulangkan)' : 'At Supplier (Returned)'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFilterMode('all')}
+                        className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-all ${
+                          filterMode === 'all'
+                            ? 'bg-white text-emerald-800 shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        {language === 'ms' ? 'Semua Silinder' : 'All Cylinders'}
+                      </button>
                     </div>
-                  ) : (
-                    searchResults.map(cyl => {
-                      const isAlreadyStaged = stagedCylinders.some(c => c.id === cyl.id);
-                      const displayName = (cyl as any).combo?.display_name || cyl.type_info?.name || 'Standard Cylinder';
-                      const isAtSupplier = cyl.status === 'returned_to_supplier' || cyl.current_location === 'Supplier';
 
-                      return (
-                        <div
-                          key={cyl.id}
-                          className={`p-3 flex items-center justify-between gap-3 transition-colors ${
-                            isAlreadyStaged ? 'bg-emerald-50/60' : 'hover:bg-white'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-mono text-[10px] font-extrabold text-slate-700">
-                              O₂
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-mono text-xs font-extrabold text-slate-900">
-                                  {cyl.serial_number}
-                                </span>
-                                {isAtSupplier && (
-                                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                                    {language === 'ms' ? 'Di Pembekal' : 'At Supplier'}
-                                  </span>
-                                )}
-                                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                                  {cyl.status}
-                                </span>
-                              </div>
-                              <span className="text-[10px] text-slate-500 font-semibold block">
-                                {displayName} • {language === 'ms' ? 'Lokasi Semasa:' : 'Current Location:'} {cyl.current_location || '-'}
+                    <span className="text-[11px] font-bold text-slate-500 tabular-nums">
+                      {searchResults.length} {language === 'ms' ? 'silinder' : 'cylinders'}
+                    </span>
+                  </div>
+
+                  {/* Search Results List */}
+                  <div className="flex-1 min-h-0 overflow-y-auto rounded-xl border border-slate-200 bg-white divide-y divide-slate-100 shadow-inner">
+                    {searchResults.length === 0 ? (
+                      <div className="h-full flex flex-col items-center justify-center p-6 text-center text-slate-400 text-xs font-semibold space-y-1.5">
+                        {isSearching ? (
+                          <>
+                            <RefreshCw className="w-5 h-5 text-emerald-600 animate-spin mb-1" />
+                            <span>{language === 'ms' ? 'Mencari silinder...' : 'Searching cylinders...'}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Search className="w-6 h-6 text-slate-300 mb-1" />
+                            <span>
+                              {language === 'ms'
+                                ? 'Tiada silinder sepadan dijumpai dalam pangkalan data.'
+                                : 'No matching cylinders found in database.'}
+                            </span>
+                            {filterMode === 'at_supplier' && (
+                              <span className="text-[10px] text-slate-400 font-normal">
+                                {language === 'ms' ? 'Cuba tukar ke penapis "Semua Silinder"' : 'Try switching to "All Cylinders" filter'}
                               </span>
-                            </div>
-                          </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      searchResults.map(cyl => {
+                        const isAlreadyStaged = stagedCylinders.some(c => c.id === cyl.id);
+                        const sizeCode = cyl.size_info?.code || '';
+                        const valveName = cyl.type_info?.name || (cyl.type_info?.code === 'PI' ? 'Pin Index' : cyl.type_info?.code === 'BN' ? 'Bullnose' : '');
+                        const displayName = (cyl as any).combo?.display_name || 
+                          (sizeCode && valveName ? `${sizeCode} (${valveName})` : valveName || sizeCode || 'Standard Cylinder');
+                        const locName = extractLocationName(cyl.current_location, '');
+                        const isAtSupplier = cyl.status === 'returned_to_supplier' || locName.toLowerCase() === 'supplier';
 
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (isAlreadyStaged) {
-                                removeCylinderFromStaging(cyl.id);
-                              } else {
-                                addCylinderToStaging(cyl);
-                              }
-                            }}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all ${
-                              isAlreadyStaged
-                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200'
-                                : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                        return (
+                          <div
+                            key={cyl.id}
+                            className={`p-2.5 flex items-center justify-between gap-2.5 transition-colors ${
+                              isAlreadyStaged ? 'bg-emerald-50/60' : 'hover:bg-slate-50/80'
                             }`}
                           >
-                            {isAlreadyStaged ? (
-                              <>
-                                <Check className="w-3.5 h-3.5" />
-                                <span>{language === 'ms' ? 'Ditambah' : 'Added'}</span>
-                              </>
-                            ) : (
-                              <>
-                                <Plus className="w-3.5 h-3.5" />
-                                <span>{language === 'ms' ? 'Pilih' : 'Add'}</span>
-                              </>
-                            )}
-                          </button>
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center font-mono text-[10px] font-extrabold text-slate-700 shrink-0">
+                                O₂
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-mono text-xs font-extrabold text-slate-900 truncate">
+                                    {cyl.serial_number}
+                                  </span>
+                                  {isAtSupplier && (
+                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200 shrink-0">
+                                      {language === 'ms' ? 'Di Pembekal' : 'At Supplier'}
+                                    </span>
+                                  )}
+                                  <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
+                                    {cyl.status}
+                                  </span>
+                                </div>
+                                <span className="text-[10px] text-slate-500 font-medium block truncate">
+                                  {displayName} • {language === 'ms' ? 'Lokasi:' : 'Loc:'} {extractLocationName(cyl.current_location, '-')}
+                                </span>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (isAlreadyStaged) {
+                                  removeCylinderFromStaging(cyl.id);
+                                } else {
+                                  addCylinderToStaging(cyl);
+                                }
+                              }}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                                isAlreadyStaged
+                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200'
+                                  : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                              }`}
+                            >
+                              {isAlreadyStaged ? (
+                                <>
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span>{language === 'ms' ? 'Ditambah' : 'Added'}</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Plus className="w-3.5 h-3.5" />
+                                  <span>{language === 'ms' ? 'Pilih' : 'Add'}</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* MODE 2: QR Scanner / Barcode */}
+              {ingestMode === 'qr' && (
+                <div className="flex-1 min-h-0 overflow-y-auto space-y-3 pr-1">
+                  {/* Camera View / Activator */}
+                  <div className="border border-slate-200 rounded-xl p-3 bg-white flex flex-col items-center justify-center min-h-[170px] relative overflow-hidden">
+                    {cameraActive ? (
+                      <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black flex items-center justify-center">
+                        <video
+                          ref={videoRef}
+                          autoPlay
+                          playsInline
+                          muted
+                          className="w-full h-full object-cover"
+                        />
+                        <div
+                          className={`absolute inset-4 border-2 border-dashed rounded-lg transition-all duration-300 pointer-events-none ${
+                            scanSuccessFlash ? 'border-emerald-400 bg-emerald-500/20' : 'border-white/70'
+                          }`}
+                        >
+                          <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-emerald-400" />
+                          <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-emerald-400" />
+                          <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-emerald-400" />
+                          <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-emerald-400" />
+                          <div className="absolute inset-x-0 top-1/2 h-0.5 bg-emerald-400/80 shadow-[0_0_8px_#34d399] animate-pulse" />
                         </div>
-                      );
-                    })
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* MODE 2: QR Scanner / Barcode */}
-          {ingestMode === 'qr' && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Camera View / Activator */}
-                <div className="border border-slate-200 rounded-2xl p-4 bg-slate-50 flex flex-col items-center justify-center min-h-[200px] relative overflow-hidden">
-                  {cameraActive ? (
-                    <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black flex items-center justify-center">
-                      <video ref={videoRef} className="w-full h-full object-cover" />
-                      {/* Scanning Reticle */}
-                      <div
-                        className={`absolute inset-6 border-2 border-dashed rounded-xl transition-all duration-300 pointer-events-none ${
-                          scanSuccessFlash ? 'border-emerald-400 bg-emerald-500/20' : 'border-white/70'
-                        }`}
-                      />
-                      <button
-                        type="button"
-                        onClick={stopCamera}
-                        className="absolute top-2 right-2 p-1.5 bg-black/60 text-white rounded-lg hover:bg-black/80 text-xs"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="text-center space-y-3 py-4">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
-                        <Camera className="w-6 h-6" />
+                        <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-xs text-[10px] text-white font-mono rounded pointer-events-none">
+                          {language === 'ms' ? 'Arahkan ke Kod QR / Barcode' : 'Aim at QR / Barcode'}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={stopCamera}
+                          className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg transition-all text-xs z-10"
+                          title={language === 'ms' ? 'Tutup Kamera' : 'Close Camera'}
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
                       </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-slate-800">
-                          {language === 'ms' ? 'Imbas Kod QR Kamera Langsung' : 'Live Camera QR Scanner'}
-                        </h4>
-                        <p className="text-[11px] text-slate-500">
-                          {language === 'ms'
-                            ? 'Aktifkan kamera peranti untuk imbas silinder satu demi satu'
-                            : 'Enable device camera to scan cylinders sequentially'}
-                        </p>
+                    ) : (
+                      <div className="text-center space-y-2 py-3">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
+                          <Camera className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-bold text-slate-800">
+                            {language === 'ms' ? 'Imbas Kod QR Kamera Langsung' : 'Live Camera QR Scanner'}
+                          </h4>
+                          <p className="text-[10px] text-slate-500">
+                            {language === 'ms'
+                              ? 'Aktifkan kamera untuk imbas silinder'
+                              : 'Enable camera to scan cylinders'}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={startCamera}
+                          disabled={isStartingCamera}
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 mx-auto transition-all shadow-sm"
+                        >
+                          {isStartingCamera ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>{language === 'ms' ? 'Memulakan Kamera...' : 'Starting Camera...'}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Camera className="w-3.5 h-3.5" />
+                              <span>{language === 'ms' ? 'Buka Kamera' : 'Open Camera'}</span>
+                            </>
+                          )}
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={startCamera}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 mx-auto transition-all shadow-sm"
-                      >
-                        <Camera className="w-3.5 h-3.5" />
-                        <span>{language === 'ms' ? 'Buka Kamera' : 'Open Camera'}</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
 
-                {/* Manual Barcode / Scanner Gun Entry */}
-                <div className="border border-slate-200 rounded-2xl p-4 bg-slate-50 flex flex-col justify-between space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[11px] font-extrabold uppercase text-slate-600">
+                  {/* Manual Barcode / Scanner Gun Entry */}
+                  <div className="border border-slate-200 rounded-xl p-3 bg-white space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold uppercase text-slate-600">
                         {language === 'ms' ? 'Kemasukan Manual / Barcode Gun' : 'Manual / Scanner Gun Entry'}
                       </span>
                       <button
@@ -779,11 +989,6 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                         {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-emerald-600" /> : <VolumeX className="w-3.5 h-3.5" />}
                       </button>
                     </div>
-                    <p className="text-[11px] text-slate-500 mb-3">
-                      {language === 'ms'
-                        ? 'Taip no. siri atau imbas dengan scanner gun USB/Bluetooth. Tekan Enter untuk tambah.'
-                        : 'Type serial no or scan with USB/Bluetooth scanner gun. Press Enter to add.'}
-                    </p>
                     <form
                       onSubmit={e => {
                         e.preventDefault();
@@ -799,143 +1004,169 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                         placeholder="cth: saboxy-297058 / P101-F-0199"
                         value={manualQrInput}
                         onChange={e => setManualQrInput(e.target.value)}
-                        className="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-800 focus:outline-none focus:border-emerald-500 uppercase"
+                        className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-mono font-bold text-slate-800 focus:outline-none focus:border-emerald-500 uppercase focus:bg-white"
                       />
                       <button
                         type="submit"
                         disabled={!manualQrInput.trim()}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all shadow-sm shrink-0"
+                        className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all shadow-sm shrink-0"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
                     </form>
                   </div>
 
-                  <div className="text-[10px] text-slate-400 font-semibold">
-                    {language === 'ms'
-                      ? 'Silinder yang wujud dalam sistem akan dipadankan secara automatik ke stok Tersedia.'
-                      : 'Existing cylinders will automatically be matched and updated to Available stock.'}
-                  </div>
-                </div>
-              </div>
-
-              {/* Form to Register Brand-New Scanned Cylinder */}
-              {showNewCylForm && (
-                <div className="p-4 bg-teal-50/70 border border-teal-200 rounded-2xl space-y-3 animate-in fade-in">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-extrabold text-teal-900 flex items-center gap-1.5">
-                      <Barcode className="w-4 h-4 text-teal-700" />
-                      {language === 'ms' ? 'Daftar Silinder Baru Diterima' : 'Register Brand-New Received Cylinder'}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setShowNewCylForm(false)}
-                      className="text-slate-400 hover:text-slate-600 p-1"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <p className="text-[11px] text-teal-800 font-medium">
-                    {language === 'ms'
-                      ? `No. siri "${newCylSerial}" belum wujud dalam pangkalan data. Sila pilih jenis silinder untuk didaftarkan dan diterima terus ke stok tersedia:`
-                      : `Serial "${newCylSerial}" does not exist in the database yet. Select cylinder type to register and receive directly to Available stock:`}
-                  </p>
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <input
-                      type="text"
-                      value={newCylSerial}
-                      onChange={e => setNewCylSerial(e.target.value)}
-                      className="bg-white border border-teal-300 rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-800 uppercase focus:outline-none"
-                    />
-                    <select
-                      value={newCylComboId}
-                      onChange={e => setNewCylComboId(e.target.value)}
-                      className="flex-1 bg-white border border-teal-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none"
-                    >
-                      {combos.map(c => (
-                        <option key={c.id} value={c.id}>
-                          {c.display_name}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      onClick={handleAddNewCylinder}
-                      className="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-extrabold transition-all shadow-sm shrink-0"
-                    >
-                      {language === 'ms' ? 'Daftar & Tambah' : 'Register & Add'}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Staged Cylinders List (Ready to Receive) */}
-          <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white">
-            <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-              <span className="text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                <Layers className="w-4 h-4 text-emerald-600" />
-                {language === 'ms' ? 'Senarai Silinder Akan Diterima' : 'Cylinders to be Received'} ({stagedCylinders.length})
-              </span>
-              {stagedCylinders.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setStagedCylinders([])}
-                  className="text-[11px] font-bold text-rose-600 hover:text-rose-800 transition-colors"
-                >
-                  {language === 'ms' ? 'Kosongkan Senarai' : 'Clear All'}
-                </button>
-              )}
-            </div>
-
-            <div className="max-h-[200px] overflow-y-auto divide-y divide-slate-100">
-              {stagedCylinders.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 text-xs font-semibold">
-                  {language === 'ms'
-                    ? 'Belum ada silinder dipilih. Imbas QR atau pilih dari pangkalan data di atas.'
-                    : 'No cylinders selected yet. Scan QR or pick from database above.'}
-                </div>
-              ) : (
-                stagedCylinders.map((cyl, idx) => (
-                  <div key={cyl.id} className="p-3 flex items-center justify-between gap-3 hover:bg-slate-50/70">
-                    <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-mono font-bold text-slate-400 w-5 text-center">
-                        #{idx + 1}
-                      </span>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-extrabold text-slate-900">
-                            {cyl.serial_number}
-                          </span>
-                          {cyl.isNew && (
-                            <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-teal-100 text-teal-800 border border-teal-200">
-                              NEW
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-[10px] text-slate-500 font-semibold block">
-                          {cyl.type_name} • {language === 'ms' ? 'Dari:' : 'From:'} {cyl.from_location}
+                  {/* Form to Register Brand-New Scanned Cylinder */}
+                  {showNewCylForm && (
+                    <div className="p-3 bg-teal-50/80 border border-teal-200 rounded-xl space-y-2 animate-in fade-in">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-extrabold text-teal-900 flex items-center gap-1.5">
+                          <Barcode className="w-4 h-4 text-teal-700" />
+                          {language === 'ms' ? 'Daftar Silinder Baru Diterima' : 'Register Brand-New Received Cylinder'}
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => setShowNewCylForm(false)}
+                          className="text-slate-400 hover:text-slate-600 p-1"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-teal-800 font-medium">
+                        {language === 'ms'
+                          ? `No. siri "${newCylSerial}" belum wujud dalam pangkalan data. Pilih jenis untuk didaftarkan:`
+                          : `Serial "${newCylSerial}" not found in database. Select cylinder type to register:`}
+                      </p>
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={newCylSerial}
+                          onChange={e => setNewCylSerial(e.target.value)}
+                          className="w-full bg-white border border-teal-300 rounded-xl px-2.5 py-1.5 text-xs font-mono font-bold text-slate-800 uppercase focus:outline-none"
+                        />
+                        <div className="flex gap-2">
+                          <select
+                            value={newCylComboId}
+                            onChange={e => setNewCylComboId(e.target.value)}
+                            className="flex-1 bg-white border border-teal-300 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 focus:outline-none"
+                          >
+                            {combos.map(c => (
+                              <option key={c.id} value={c.id}>
+                                {c.display_name}
+                              </option>
+                            ))}
+                          </select>
+                          <button
+                            type="button"
+                            onClick={handleAddNewCylinder}
+                            className="px-3 py-1.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-extrabold transition-all shadow-sm shrink-0"
+                          >
+                            {language === 'ms' ? 'Daftar' : 'Register'}
+                          </button>
+                        </div>
                       </div>
                     </div>
+                  )}
+                </div>
+              )}
+            </div>
 
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        {language === 'ms' ? 'Ke: Stor (Tersedia)' : 'To: Store (Available)'}
+            {/* COLUMN 2 (RIGHT): Cylinders to be Received (Already Selected) */}
+            <div className="flex flex-col border border-slate-200/90 rounded-2xl bg-white p-4 h-[420px] lg:h-[490px] shadow-sm">
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 shrink-0">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                    <Layers className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                      <span>{language === 'ms' ? 'Silinder Dipilih' : 'Cylinders to be Received'}</span>
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums">
+                        {stagedCylinders.length}
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => removeCylinderFromStaging(cyl.id)}
-                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
-                        title="Remove"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                    </h3>
+                  </div>
+                </div>
+
+                {stagedCylinders.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setStagedCylinders([])}
+                    className="text-[11px] font-bold text-rose-600 hover:text-rose-800 hover:bg-rose-50 px-2 py-1 rounded-lg transition-colors cursor-pointer"
+                  >
+                    {language === 'ms' ? 'Kosongkan Semua' : 'Clear All'}
+                  </button>
+                )}
+              </div>
+
+              {/* Staged Cylinders List */}
+              <div className="flex-1 min-h-0 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50/40 divide-y divide-slate-100 shadow-inner">
+                {stagedCylinders.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center p-6 text-center text-slate-400 text-xs font-semibold space-y-2">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center">
+                      <Layers className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-600">
+                        {language === 'ms' ? 'Belum ada silinder dipilih' : 'No cylinders selected yet'}
+                      </p>
+                      <p className="text-[11px] text-slate-400 font-normal mt-0.5 max-w-[240px]">
+                        {language === 'ms'
+                          ? 'Pilih silinder dari senarai carian di sebelah kiri atau imbas kod QR.'
+                          : 'Select cylinders from the search list on the left or scan QR.'}
+                      </p>
                     </div>
                   </div>
-                ))
-              )}
+                ) : (
+                  stagedCylinders.map((cyl, idx) => (
+                    <div key={cyl.id} className="p-2.5 flex items-center justify-between gap-2.5 hover:bg-white transition-colors">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="text-[10px] font-mono font-bold text-slate-400 w-5 text-center shrink-0">
+                          #{idx + 1}
+                        </span>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs font-extrabold text-slate-900 truncate">
+                              {cyl.serial_number}
+                            </span>
+                            {cyl.isNew && (
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-teal-100 text-teal-800 border border-teal-200 shrink-0">
+                                NEW
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-slate-500 font-medium block truncate">
+                            {cyl.type_name} • {language === 'ms' ? 'Dari:' : 'From:'} {extractLocationName(cyl.from_location, 'Supplier')}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          {language === 'ms' ? 'Ke: Stor (Tersedia)' : 'To: Store (Available)'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeCylinderFromStaging(cyl.id)}
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
+                          title="Remove"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Staged Summary Footer */}
+              <div className="pt-2.5 mt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-500 shrink-0">
+                <span>{language === 'ms' ? 'Jumlah Silinder Dipilih:' : 'Total Selected Cylinders:'}</span>
+                <span className="text-emerald-700 font-extrabold tabular-nums">
+                  {stagedCylinders.length} {language === 'ms' ? 'silinder' : 'cylinders'}
+                </span>
+              </div>
             </div>
           </div>
 

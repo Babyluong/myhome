@@ -108,7 +108,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
   const [searchParams] = useSearchParams()
   const { user } = useAuthStore()
   const { language } = useLanguage()
-  const hospitalId = user?.hospital_id || 'hosp-lawas-001'
+  const hospitalId = user?.hospital_id || '85bb6adc-b868-428b-83f4-e5af2f5cf904'
 
   // Data states
   const [cylinderItems, setCylinderItems] = useState<CylinderLedgerItem[]>([])
@@ -192,17 +192,19 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
     if (res.data && res.data.length > 0) {
       setCylinderItems(res.data)
       const querySize = searchParams.get('sizeId')
+      const queryType = searchParams.get('typeId')
       const target = querySize
         ? (res.data.find(i => 
-            i.id === querySize || 
+            (i.id === querySize || 
             i.size_id === querySize || 
             i.item_code?.toLowerCase() === querySize.toLowerCase() ||
             (querySize === 'size-004' && i.item_code === '101-N') ||
             (querySize === 'size-003' && i.item_code === '101-F') ||
             (querySize === 'size-002' && i.item_code === 'P101-E') ||
-            (querySize === 'size-001' && i.item_code === 'P101-D')
+            (querySize === 'size-001' && i.item_code === 'P101-D')) &&
+            (!queryType || i.type_id === queryType)
           ) || res.data[0])
-        : (res.data.find(i => (selectedItemId && i.id === selectedItemId) || (selectedSizeId && i.size_id === selectedSizeId) || i.item_code === '101-N') || res.data[0])
+        : (res.data.find(i => (selectedItemId && i.id === selectedItemId) || (selectedSizeId && i.size_id === selectedSizeId && (!selectedItem?.type_id || i.type_id === selectedItem.type_id)) || i.item_code === '101-N') || res.data[0])
 
       if (target) {
         setSelectedItemId(target.id)
@@ -237,8 +239,8 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
         search_query: refSearch,
         ward_name: selectedWard
       }),
-      getCylinderDepartmentBreakdown(hospitalId, targetSize, dateFrom, dateTo),
-      getCylinderStoreVerificationHistory(hospitalId, targetSize)
+      getCylinderDepartmentBreakdown(hospitalId, targetSize, dateFrom, dateTo, selectedItem?.type_id),
+      getCylinderStoreVerificationHistory(hospitalId, targetSize, selectedItem?.type_id)
     ])
 
     if (txRes.data) {
@@ -464,7 +466,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
       return 'Verifikasi Stor Tahunan (Pegawai Luar)'
     }
     if (row.transaction_type === 'bring_forward') {
-      return 'Baki Bawa Ke Hadapan (Baki Pembukaan Rasmi)'
+      return 'Balance Brought Forward (Official Opening Balance)'
     }
     if (row.source_destination) {
       return sanitizeSupplierName(row.source_destination)
@@ -473,6 +475,15 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
       return 'LINDE EOX SDN BHD (CAW. MIRI)'
     }
     return 'Unit / Wad Klinikal'
+  }
+
+  const formatTransactionRemarks = (row: CylinderTransactionRow) => {
+    const raw = row.remarks || ''
+    if (row.transaction_type === 'issue' && /(?:pending(?:\s+to\s+issue)?|waiting\s+stock|menunggu\s+stok)/i.test(raw)) {
+      return `Pengeluaran silinder gas ke ${resolveRecipientName(row)}`
+    }
+    if (!raw) return '—'
+    return sanitizeSupplierName(raw)
   }
 
   const resolveRecorderName = (officerName?: string) => {
@@ -561,7 +572,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
     e.preventDefault()
     const physical = parseInt(checkFoundPhysicalQty, 10)
     if (isNaN(physical) || physical < 0) {
-      setCheckFoundStatus({ type: 'error', text: 'Sila masukkan kuantiti fizikal yang sah (≥ 0).' })
+      setCheckFoundStatus({ type: 'error', text: 'Please enter a valid physical quantity (≥ 0).' })
       return
     }
 
@@ -570,6 +581,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
 
     const res = await recordCylinderCheckFoundTransaction(hospitalId, {
       size_id: selectedItem?.size_id || selectedSizeId,
+      type_id: selectedItem?.type_id,
       item_code: selectedItem?.item_code,
       item_name: selectedItem?.item_name,
       physical_quantity: physical,
@@ -606,7 +618,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
     e.preventDefault()
     const qty = parseInt(bfQty, 10)
     if (isNaN(qty) || qty < 0) {
-      setBfStatus({ type: 'error', text: 'Sila masukkan kuantiti baki yang sah (≥ 0).' })
+      setBfStatus({ type: 'error', text: 'Please enter a valid balance quantity (≥ 0).' })
       return
     }
 
@@ -615,6 +627,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
 
     const res = await recordCylinderBringForwardTransaction(hospitalId, {
       size_id: selectedItem?.size_id || selectedSizeId,
+      type_id: selectedItem?.type_id,
       item_code: selectedItem?.item_code,
       item_name: selectedItem?.item_name,
       balance_quantity: qty,
@@ -629,7 +642,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
     if (res.error) {
       setBfStatus({ type: 'error', text: res.error })
     } else {
-      setBfStatus({ type: 'success', text: `Baki pembukaan sebanyak ${qty} tabung berjaya direkodkan dalam lejar!` })
+      setBfStatus({ type: 'success', text: `Baki pembukaan sebanyak ${qty} cylinders successfully recorded in ledger!` })
       await loadLedgerDetails()
       await loadCatalog()
       setTimeout(() => setIsBringForwardModalOpen(false), 1200)
@@ -671,6 +684,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
 
     const res = await recordCylinderStoreVerification(hospitalId, {
       size_id: selectedItem?.size_id || selectedSizeId,
+      type_id: selectedItem?.type_id,
       item_code: selectedItem?.item_code || '101-N',
       item_name: selectedItem?.item_name || 'Medical Oxygen Cylinder',
       verification_year: verificationYear,
@@ -706,7 +720,8 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
     setClearStatus(null)
 
     const targetSize = clearScope === 'selected' ? selectedSizeId : 'all'
-    const res = await clearCylinderTransactions(hospitalId, targetSize)
+    const targetType = clearScope === 'selected' ? selectedItem?.type_id : undefined
+    const res = await clearCylinderTransactions(hospitalId, targetSize, targetType)
 
     setIsSubmittingClear(false)
     if (res.error) {
@@ -1085,7 +1100,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
           <table class="kpi-table">
             <tr>
               <td width="25%">
-                <div class="kpi-title" style="color: #475569;">BAKI SEMASA</div>
+                <div class="kpi-title" style="color: #475569;">CURRENT BALANCE</div>
                 <div class="kpi-num" style="color: #0f172a;">${currentStockBalance} ${uom}</div>
               </td>
               <td width="25%">
@@ -1154,16 +1169,16 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
                   <td class="mono" style="color: #0369a1;">${formatReferenceNumber(row)}</td>
                   <td class="right mono" style="color: #15803d;">
                     ${row.receiptQty !== null && row.receiptQty !== undefined ? `+${row.receiptQty}` : '—'}
-                    ${row.serial_numbers && row.serial_numbers.length > 0 ? `<br/><span style="font-size: 8px; color: #0d9488; font-weight: bold;">S/N: ${row.serial_numbers.slice(0, 3).join(', ')}${row.serial_numbers.length > 3 ? '...' : ''}</span>` : ''}
+                    ${row.receiptQty !== null && row.receiptQty !== undefined && row.receiptQty > 0 && row.serial_numbers && row.serial_numbers.length > 0 ? `<br/><span style="font-size: 8px; color: #0d9488; font-weight: bold;">S/N: ${row.serial_numbers.slice(0, 3).join(', ')}${row.serial_numbers.length > 3 ? '...' : ''}</span>` : ''}
                   </td>
                   <td class="right mono" style="color: #b91c1c;">
                     ${row.issueQty !== null && row.issueQty !== undefined ? `-${row.issueQty}` : '—'}
-                    ${row.serial_numbers && row.serial_numbers.length > 0 ? `<br/><span style="font-size: 8px; color: #0d9488; font-weight: bold;">S/N: ${row.serial_numbers.slice(0, 3).join(', ')}${row.serial_numbers.length > 3 ? '...' : ''}</span>` : ''}
+                    ${row.issueQty !== null && row.issueQty !== undefined && row.issueQty > 0 && row.serial_numbers && row.serial_numbers.length > 0 ? `<br/><span style="font-size: 8px; color: #0d9488; font-weight: bold;">S/N: ${row.serial_numbers.slice(0, 3).join(', ')}${row.serial_numbers.length > 3 ? '...' : ''}</span>` : ''}
                   </td>
                   <td class="right mono" style="background-color: ${isStoreVerification ? '#d1fae5' : isCheckFound ? '#e0e7ff' : '#f8fafc'}; font-weight: 800;">${row.runningBalance}</td>
                   <td style="font-weight: 600;">${resolveRecipientName(row)}</td>
                   <td>${resolveRecorderName(row.officer_name)}</td>
-                  <td style="font-size: 8.5px; color: #475569;">${sanitizeSupplierName(row.remarks || '—')}</td>
+                  <td style="font-size: 8.5px; color: #475569;">${formatTransactionRemarks(row)}</td>
                 </tr>
               `}).join('')}
             </tbody>
@@ -1330,7 +1345,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
       r.runningBalance,
       `"${(r.serial_numbers || []).join(', ')}"`,
       `"${r.officer_name || ''}"`,
-      `"${r.remarks || ''}"`
+      `"${formatTransactionRemarks(r)}"`
     ])
 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n')
@@ -1511,7 +1526,8 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
                   const isSelected = selectedItemId
                     ? selectedItemId === item.id
                     : (selectedItem ? selectedItem.id === item.id : selectedSizeId === (item.size_id || item.id))
-                  const isItemLow = item.current_stock <= (item.min_stock || 0)
+                  const displayedStock = isSelected ? currentStockBalance : item.current_stock
+                  const isItemLow = displayedStock <= (item.min_stock || 0)
 
                   return (
                     <button
@@ -1537,7 +1553,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
 
                       <div className="text-right shrink-0">
                         <div className={`font-mono font-black text-sm ${isItemLow ? 'text-rose-600' : 'text-slate-800'}`}>
-                          {item.current_stock}
+                          {displayedStock}
                         </div>
                         <div className="text-[9px] text-slate-400 uppercase">{item.unit_of_measure}</div>
                       </div>
@@ -2164,7 +2180,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
                                   </td>
                                   <td className="py-3 px-3 text-right font-mono font-bold text-emerald-600">
                                     {row.receiptQty !== null && row.receiptQty !== undefined ? `+${row.receiptQty}` : '—'}
-                                    {row.serial_numbers && row.serial_numbers.length > 0 && (
+                                    {row.receiptQty !== null && row.receiptQty !== undefined && row.receiptQty > 0 && row.serial_numbers && row.serial_numbers.length > 0 && (
                                       <span className="block text-[9px] text-teal-600 font-normal">
                                         S/N: {row.serial_numbers.slice(0, 2).join(', ')}{row.serial_numbers.length > 2 ? '...' : ''}
                                       </span>
@@ -2172,7 +2188,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
                                   </td>
                                   <td className="py-3 px-3 text-right font-mono font-bold text-rose-600">
                                     {row.issueQty !== null && row.issueQty !== undefined ? `-${row.issueQty}` : '—'}
-                                    {row.serial_numbers && row.serial_numbers.length > 0 && (
+                                    {row.issueQty !== null && row.issueQty !== undefined && row.issueQty > 0 && row.serial_numbers && row.serial_numbers.length > 0 && (
                                       <span className="block text-[9px] text-rose-500 font-normal">
                                         S/N: {row.serial_numbers.slice(0, 2).join(', ')}{row.serial_numbers.length > 2 ? '...' : ''}
                                       </span>
@@ -2187,8 +2203,8 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
                                   <td className="py-3 px-3 text-slate-600 whitespace-nowrap">
                                     {resolveRecorderName(row.officer_name)}
                                   </td>
-                                  <td className="py-3 px-3 text-slate-500 text-[11px] max-w-xs truncate" title={row.remarks}>
-                                    {sanitizeSupplierName(row.remarks || '—')}
+                                  <td className="py-3 px-3 text-slate-500 text-[11px] max-w-xs truncate" title={formatTransactionRemarks(row)}>
+                                    {formatTransactionRemarks(row)}
                                   </td>
                                 </tr>
                               )
@@ -2210,7 +2226,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
                             </div>
 
                             <div className="font-bold text-xs text-slate-800">{resolveRecipientName(row)}</div>
-                            {row.remarks && <div className="text-[11px] text-slate-500">{sanitizeSupplierName(row.remarks)}</div>}
+                            {row.remarks && <div className="text-[11px] text-slate-500">{formatTransactionRemarks(row)}</div>}
 
                             <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-xs font-mono">
                               <div>
@@ -2704,7 +2720,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
           </div>
 
           <Button onClick={() => setIsQrModalOpen(false)} className="w-full bg-slate-900 text-white font-bold">
-            Tutup Pengimbas
+            Close Scanner
           </Button>
         </div>
       </Modal>

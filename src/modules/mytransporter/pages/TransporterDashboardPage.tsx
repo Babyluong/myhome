@@ -20,7 +20,6 @@ import {
 } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
 import { useAuthStore } from '@/stores/authStore'
-import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { useToast } from '@/stores/toastStore'
 import { 
   getTransporterAggregateStats,
@@ -28,20 +27,15 @@ import {
   getTransporterRoles
 } from '../services/transporterService'
 import type { TransportRequest } from '@/shared/types/mytransporter'
+import { Skeleton, SkeletonTable, SkeletonMobileCardList } from '@/shared/components/ui/skeleton'
 import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Badge 
+  Badge,
+  ModulePageHeader 
 } from '@/components/ui'
 
 const TransporterDashboardPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
-  const { language } = useLanguage()
-  const isEn = language !== 'ms'
   const toast = useToast()
   
   const [stats, setStats] = useState<any>(null)
@@ -80,396 +74,446 @@ const TransporterDashboardPage: React.FC = () => {
         }
       } catch (err: any) {
         toast.error(
-          isEn ? 'Failed to Load Data' : 'Gagal Memuatkan Data', 
-          err.message || (isEn ? 'An error occurred while fetching dashboard data.' : 'Ralat semasa mengambil data dashboard.')
+          'Failed to Load Data', 
+          err.message || 'An error occurred while fetching dashboard data.'
         )
       } finally {
         setLoading(false)
       }
     }
     fetchData()
-  }, [loggedUser?.id, isEn])
+  }, [loggedUser?.id])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'draft':
-        return <Badge variant="gray">{isEn ? 'Draft' : 'Draf'}</Badge>
+        return <Badge variant="gray">Draft</Badge>
       case 'submitted':
-        return <Badge variant="info">{isEn ? 'Submitted (New)' : 'Dihantar (Baharu)'}</Badge>
+        return <Badge variant="info">Submitted (New)</Badge>
       case 'driver_accepted':
-        return <Badge variant="warning">{isEn ? 'Driver Accepted' : 'Diterima Pemandu'}</Badge>
+        return <Badge variant="warning">Driver Accepted</Badge>
       case 'driver_rejected':
-        return <Badge variant="error">{isEn ? 'Driver Rejected' : 'Ditolak Pemandu'}</Badge>
+        return <Badge variant="error">Driver Rejected</Badge>
       case 'approved':
-        return <Badge variant="success">{isEn ? 'Approved' : 'Diluluskan'}</Badge>
+        return <Badge variant="success">Approved</Badge>
       case 'rejected':
-        return <Badge variant="error">{isEn ? 'Admin Rejected' : 'Ditolak Pentadbir'}</Badge>
+        return <Badge variant="error">Admin Rejected</Badge>
       case 'in_transit':
-        return <Badge variant="warning">{isEn ? 'In Transit' : 'Dalam Perjalanan'}</Badge>
+        return <Badge variant="warning">In Transit</Badge>
       case 'completed':
-        return <Badge variant="success">{isEn ? 'Completed' : 'Selesai'}</Badge>
+        return <Badge variant="success">Completed</Badge>
       case 'cancelled':
-        return <Badge variant="gray">{isEn ? 'Cancelled' : 'Dibatalkan'}</Badge>
+        return <Badge variant="gray">Cancelled</Badge>
       default:
         return <Badge variant="gray">{status}</Badge>
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-slate-500 font-medium animate-pulse">
-          {isEn ? 'Loading MyTransporter Dashboard...' : 'Memuatkan Papan Pemuka MyTransporter...'}
-        </p>
-      </div>
-    )
-  }
+
 
   return (
-    <div className="w-full p-6 md:p-8 space-y-8">
+    <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-            <Car className="w-10 h-10 text-blue-600 animate-pulse" />
-            MyTransporter
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            {isEn 
-              ? 'Integrated Hospital Fleet & Transport Management System'
-              : 'Sistem Bersepadu Pengurusan Ambulans & Kereta Jabatan Hospital'}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Button 
-            onClick={() => navigate('/transporter/requests/new')}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md border-0 transition-all duration-200 active:scale-95"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{isEn ? 'New Request' : 'Permohonan Baharu'}</span>
-          </Button>
-
-          {userRole === 'transport_admin' && (
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/transporter/admin/roles')}
-              className="flex items-center gap-2 border-slate-200 hover:bg-slate-50 text-slate-700"
+      <ModulePageHeader
+        title="MyTransporter"
+        subtitle="Integrated Hospital Fleet & Transport Management System"
+        badge="Fleet Management"
+        icon={<Car className="w-5 h-5 text-accent-base" />}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <button 
+              onClick={() => navigate('/transporter/requests/new')}
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold shadow-sm transition-all"
             >
-              <Settings className="w-4 h-4 text-slate-500" />
-              <span>{isEn ? 'Driver Role Permissions' : 'Kebenaran Pemandu'}</span>
-            </Button>
-          )}
-        </div>
-      </div>
+              <Plus className="w-3.5 h-3.5" />
+              <span>New Request</span>
+            </button>
+
+            {userRole === 'transport_admin' && (
+              <button 
+                onClick={() => navigate('/transporter/admin/roles')}
+                className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all"
+              >
+                <Settings className="w-3.5 h-3.5 text-text-muted" />
+                <span>Driver Permissions</span>
+              </button>
+            )}
+          </div>
+        }
+      />
 
       {/* Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-6 flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                {isEn ? 'Total Requests' : 'Jumlah Permohonan'}
-              </p>
-              <h3 className="text-3xl font-extrabold text-slate-800 tabular-nums">{stats?.totalRequests || 0}</h3>
-            </div>
-            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-              <ClipboardList className="w-6 h-6" />
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+              Total Requests
+            </p>
+            <h3 className="text-2xl font-bold font-mono text-text-primary tabular-nums">
+              {loading ? <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" /> : (stats?.totalRequests || 0)}
+            </h3>
+          </div>
+          <div className="p-2.5 bg-accent-base/10 text-accent-base rounded-lg">
+            <ClipboardList className="w-5 h-5" />
+          </div>
+        </div>
 
-        <Card className="border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-6 flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                {isEn ? 'Pending Approvals' : 'Menunggu Kelulusan'}
-              </p>
-              <h3 className="text-3xl font-extrabold text-amber-600 tabular-nums">{stats?.pendingApprovals || 0}</h3>
-            </div>
-            <div className="p-3 bg-amber-50 text-amber-600 rounded-xl animate-pulse">
-              <Clock className="w-6 h-6" />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+              Pending Approvals
+            </p>
+            <h3 className="text-2xl font-bold font-mono text-amber-500 tabular-nums">
+              {loading ? <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" /> : (stats?.pendingApprovals || 0)}
+            </h3>
+          </div>
+          <div className="p-2.5 bg-amber-500/10 text-amber-500 rounded-lg">
+            <Clock className="w-5 h-5" />
+          </div>
+        </div>
 
-        <Card className="border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-6 flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                {isEn ? 'Active Trips' : 'Dalam Perjalanan'}
-              </p>
-              <h3 className="text-3xl font-extrabold text-indigo-600 tabular-nums">{stats?.activeTrips || 0}</h3>
-            </div>
-            <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-              <Activity className="w-6 h-6 animate-bounce" />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+              Active Trips
+            </p>
+            <h3 className="text-2xl font-bold font-mono text-emerald-600 tabular-nums">
+              {loading ? <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" /> : (stats?.activeTrips || 0)}
+            </h3>
+          </div>
+          <div className="p-2.5 bg-emerald-500/10 text-emerald-600 rounded-lg">
+            <Activity className="w-5 h-5" />
+          </div>
+        </div>
 
-        <Card className="border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-6 flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                {isEn ? 'Open Vehicle Issues' : 'Isu Kenderaan Terbuka'}
-              </p>
-              <h3 className="text-3xl font-extrabold text-rose-600 tabular-nums">{stats?.totalIssuesOpen || 0}</h3>
-            </div>
-            <div className="p-3 bg-rose-50 text-rose-600 rounded-xl">
-              <AlertOctagon className="w-6 h-6" />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+              Open Defects
+            </p>
+            <h3 className="text-2xl font-bold font-mono text-rose-600 tabular-nums">
+              {loading ? <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" /> : (stats?.totalIssuesOpen || 0)}
+            </h3>
+          </div>
+          <div className="p-2.5 bg-rose-500/10 text-rose-600 rounded-lg">
+            <AlertOctagon className="w-5 h-5" />
+          </div>
+        </div>
       </div>
 
       {/* Role Navigation Dashboard Options */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Card 1: Requester Portal */}
-        <Card className="bg-gradient-to-br from-white to-slate-50 border border-slate-200/60 shadow-sm overflow-hidden flex flex-col justify-between group hover:border-blue-400/50 transition-colors">
-          <CardHeader className="pb-2">
-            <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-3">
-              <FileText className="w-5 h-5" />
+        <div className="bg-surface border border-border-default rounded-xl p-5 shadow-sm overflow-hidden flex flex-col justify-between group hover:border-accent-base/40 transition-colors">
+          <div>
+            <div className="w-9 h-9 rounded-lg bg-subtle text-text-secondary flex items-center justify-center mb-3 group-hover:bg-accent-base/10 group-hover:text-accent-base transition-colors">
+              <FileText className="w-4 h-4" />
             </div>
-            <CardTitle className="text-lg font-bold text-slate-800">
-              {isEn ? 'Staff Portal' : 'Portal Kakitangan'}
-            </CardTitle>
-            <p className="text-xs text-slate-500">
-              {isEn 
-                ? 'Submit Ambulance or Department Vehicle requests and track approval statuses in real-time.' 
-                : 'Buat permohonan Ambulans/SG dan semak status kelulusan semasa.'}
+            <h4 className="text-sm font-bold text-text-primary group-hover:text-accent-base transition-colors">
+              Staff Portal
+            </h4>
+            <p className="text-xs text-text-muted mt-1 leading-relaxed">
+              Submit Ambulance or Department Vehicle requests and track approval statuses in real-time.
             </p>
-          </CardHeader>
-          <CardContent className="pt-4 border-t border-slate-100 flex justify-between items-center bg-white/50">
-            <Button 
-              variant="ghost" 
+          </div>
+          <div className="pt-4 mt-3 border-t border-border-default flex justify-between items-center">
+            <button 
               onClick={() => navigate('/transporter/requests/my')}
-              className="text-xs font-bold text-blue-600 hover:text-blue-800 p-0 flex items-center gap-1 group-hover:translate-x-1 transition-transform bg-transparent hover:bg-transparent"
+              className="text-xs font-semibold text-accent-base flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
             >
-              <span>{isEn ? 'Manage My Requests' : 'Urus Permohonan Saya'}</span>
+              <span>Manage My Requests</span>
               <ArrowRight className="w-3.5 h-3.5" />
-            </Button>
-          </CardContent>
-        </Card>
+            </button>
+          </div>
+        </div>
 
         {/* Card 2: Driver Portal */}
-        <Card className={`bg-gradient-to-br from-white to-slate-50 border border-slate-200/60 shadow-sm overflow-hidden flex flex-col justify-between group hover:border-emerald-400/50 transition-colors ${
+        <div className={`bg-surface border border-border-default rounded-xl p-5 shadow-sm overflow-hidden flex flex-col justify-between group hover:border-accent-base/40 transition-colors ${
           userRole !== 'transport_driver' && userRole !== 'transport_admin' ? 'opacity-60' : ''
         }`}>
-          <CardHeader className="pb-2">
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3">
-              <Ambulance className="w-5 h-5" />
+          <div>
+            <div className="w-9 h-9 rounded-lg bg-subtle text-text-secondary flex items-center justify-center mb-3 group-hover:bg-accent-base/10 group-hover:text-accent-base transition-colors">
+              <Ambulance className="w-4 h-4" />
             </div>
-            <CardTitle className="text-lg font-bold text-slate-800">
-              {isEn ? 'Driver Operations Panel' : 'Panel Pemandu'}
-            </CardTitle>
-            <p className="text-xs text-slate-500">
-              {isEn 
-                ? 'Accept trip dispatches, conduct vehicle inspections (pre/post-trip), and log mileage.' 
-                : 'Terima tugasan perjalanan, lakukan pemeriksaan kenderaan (pre/post-trip), dan pantau sejarah tugasan.'}
+            <h4 className="text-sm font-bold text-text-primary group-hover:text-accent-base transition-colors">
+              Driver Operations Panel
+            </h4>
+            <p className="text-xs text-text-muted mt-1 leading-relaxed">
+              Accept trip dispatches, conduct vehicle inspections (pre/post-trip), and log mileage.
             </p>
-          </CardHeader>
-          <CardContent className="pt-4 border-t border-slate-100 flex justify-between items-center bg-white/50">
+          </div>
+          <div className="pt-4 mt-3 border-t border-border-default flex justify-between items-center">
             {userRole === 'transport_driver' || userRole === 'transport_admin' ? (
-              <Button 
-                variant="ghost" 
+              <button 
                 onClick={() => navigate('/transporter/driver/panel')}
-                className="text-xs font-bold text-emerald-600 hover:text-emerald-800 p-0 flex items-center gap-1 group-hover:translate-x-1 transition-transform bg-transparent hover:bg-transparent"
+                className="text-xs font-semibold text-accent-base flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
               >
-                <span>{isEn ? 'Open Driver Panel' : 'Buka Panel Tugasan'}</span>
+                <span>Open Driver Panel</span>
                 <ArrowRight className="w-3.5 h-3.5" />
-              </Button>
+              </button>
             ) : (
-              <span className="text-xs font-semibold text-slate-400 italic">
-                {isEn ? 'Restricted to duty drivers only' : 'Terhad untuk Pemandu Bertugas sahaja'}
+              <span className="text-xs font-medium text-text-muted italic">
+                Restricted to duty drivers only
               </span>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Card 3: Admin Portal */}
-        <Card className={`bg-gradient-to-br from-white to-slate-50 border border-slate-200/60 shadow-sm overflow-hidden flex flex-col justify-between group hover:border-indigo-400/50 transition-colors ${
+        <div className={`bg-surface border border-border-default rounded-xl p-5 shadow-sm overflow-hidden flex flex-col justify-between group hover:border-accent-base/40 transition-colors ${
           userRole !== 'transport_admin' ? 'opacity-60' : ''
         }`}>
-          <CardHeader className="pb-2">
-            <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mb-3">
-              <ClipboardList className="w-5 h-5" />
+          <div>
+            <div className="w-9 h-9 rounded-lg bg-subtle text-text-secondary flex items-center justify-center mb-3 group-hover:bg-accent-base/10 group-hover:text-accent-base transition-colors">
+              <ClipboardList className="w-4 h-4" />
             </div>
-            <CardTitle className="text-lg font-bold text-slate-800">
-              {isEn ? 'Fleet Administrator' : 'Menu Pentadbir'}
-            </CardTitle>
-            <p className="text-xs text-slate-500">
-              {isEn 
-                ? 'Approve requests, manage vehicle registry, resolve defect issues, and audit monthly movements.' 
-                : 'Kelulusan permohonan, pendaftaran kenderaan, laporan kerosakan, dan pemantauan pergerakan bulanan fleet.'}
+            <h4 className="text-sm font-bold text-text-primary group-hover:text-accent-base transition-colors">
+              Fleet Administrator
+            </h4>
+            <p className="text-xs text-text-muted mt-1 leading-relaxed">
+              Approve requests, manage vehicle registry, resolve defect issues, and audit monthly movements.
             </p>
-          </CardHeader>
-          <CardContent className="pt-4 border-t border-slate-100 flex justify-between items-center bg-white/50">
+          </div>
+          <div className="pt-4 mt-3 border-t border-border-default flex justify-between items-center">
             {userRole === 'transport_admin' ? (
-              <Button 
-                variant="ghost" 
+              <button 
                 onClick={() => navigate('/transporter/admin/approval')}
-                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 p-0 flex items-center gap-1 group-hover:translate-x-1 transition-transform bg-transparent hover:bg-transparent"
+                className="text-xs font-semibold text-accent-base flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
               >
-                <span>{isEn ? 'Open Admin Console' : 'Urus Urusan Pentadbiran'}</span>
+                <span>Open Admin Console</span>
                 <ArrowRight className="w-3.5 h-3.5" />
-              </Button>
+              </button>
             ) : (
-              <span className="text-xs font-semibold text-slate-400 italic">
-                {isEn ? 'Administrator access only' : 'Akses Terhad Pentadbir Sahaja'}
+              <span className="text-xs font-medium text-text-muted italic">
+                Administrator access only
               </span>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Admin Quick Operations Hub (Conditional) */}
       {userRole === 'transport_admin' && (
-        <Card className="border border-indigo-100 shadow-sm">
-          <CardHeader className="pb-3 border-b border-slate-100">
-            <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
-              <Settings className="w-4 h-4 text-indigo-600" />
-              {isEn ? 'Full Fleet Administration Hub' : 'Hab Pentadbiran Penuh (Transport Administrator)'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="bg-surface border border-border-default rounded-xl shadow-xs overflow-hidden">
+          <div className="px-5 py-3.5 border-b border-border-default flex items-center gap-2">
+            <Settings className="w-4 h-4 text-accent-base" />
+            <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider">
+              Full Fleet Administration Hub
+            </h3>
+          </div>
+          <div className="p-4 grid grid-cols-2 md:grid-cols-5 gap-3">
             <button 
               onClick={() => navigate('/transporter/admin/vehicles')}
-              className="p-4 bg-slate-50 hover:bg-indigo-50 border border-slate-200/50 hover:border-indigo-200 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
+              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
             >
-              <Truck className="w-6 h-6 text-slate-600 group-hover:text-indigo-600" />
-              <span className="text-xs font-bold text-slate-700">
-                {isEn ? 'Fleet Registry' : 'Daftar & Urus Fleet'}
+              <Truck className="w-5 h-5 text-text-secondary group-hover:text-accent-base transition-colors" />
+              <span className="text-xs font-medium text-text-primary group-hover:text-accent-base transition-colors">
+                Fleet Registry
               </span>
             </button>
             <button 
               onClick={() => navigate('/transporter/admin/vehicles/issues')}
-              className="p-4 bg-slate-50 hover:bg-rose-50 border border-slate-200/50 hover:border-rose-200 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
+              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
             >
-              <AlertOctagon className="w-6 h-6 text-slate-600 group-hover:text-rose-600" />
-              <span className="text-xs font-bold text-slate-700">
-                {isEn ? 'Vehicle Defect Logs' : 'Aduan Kerosakan'}
+              <AlertOctagon className="w-5 h-5 text-text-secondary group-hover:text-rose-500 transition-colors" />
+              <span className="text-xs font-medium text-text-primary group-hover:text-rose-500 transition-colors">
+                Vehicle Defect Logs
               </span>
             </button>
             <button 
               onClick={() => navigate('/transporter/admin/vehicles/movement')}
-              className="p-4 bg-slate-50 hover:bg-emerald-50 border border-slate-200/50 hover:border-emerald-200 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
+              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
             >
-              <Activity className="w-6 h-6 text-slate-600 group-hover:text-emerald-600" />
-              <span className="text-xs font-bold text-slate-700">
-                {isEn ? 'Monthly Movements' : 'Pergerakan Bulanan'}
+              <Activity className="w-5 h-5 text-text-secondary group-hover:text-accent-base transition-colors" />
+              <span className="text-xs font-medium text-text-primary group-hover:text-accent-base transition-colors">
+                Monthly Movements
               </span>
             </button>
             <button 
               onClick={() => navigate('/transporter/driver/monitor')}
-              className="p-4 bg-slate-50 hover:bg-blue-50 border border-slate-200/50 hover:border-blue-200 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
+              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
             >
-              <Users className="w-6 h-6 text-slate-600 group-hover:text-blue-600" />
-              <span className="text-xs font-bold text-slate-700">
-                {isEn ? 'Driver Monitor' : 'Pantau Pemandu'}
+              <Users className="w-5 h-5 text-text-secondary group-hover:text-accent-base transition-colors" />
+              <span className="text-xs font-medium text-text-primary group-hover:text-accent-base transition-colors">
+                Driver Monitor
               </span>
             </button>
             <button 
               onClick={() => navigate('/transporter/admin/reports')}
-              className="p-4 bg-slate-50 hover:bg-amber-50 border border-slate-200/50 hover:border-amber-200 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
+              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
             >
-              <TrendingUp className="w-6 h-6 text-slate-600 group-hover:text-amber-600" />
-              <span className="text-xs font-bold text-slate-700">
-                {isEn ? 'Reports & Claims' : 'Laporan & Tuntutan'}
+              <TrendingUp className="w-5 h-5 text-text-secondary group-hover:text-accent-base transition-colors" />
+              <span className="text-xs font-medium text-text-primary group-hover:text-accent-base transition-colors">
+                Reports & Claims
               </span>
             </button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Recent Requests Queue */}
-      <Card className="border border-slate-150 shadow-sm">
-        <CardHeader className="pb-3 border-b border-slate-100 flex flex-row justify-between items-center">
-          <CardTitle className="text-lg font-bold text-slate-800">
-            {isEn ? 'Recent Transport Requests' : 'Senarai Permohonan Terkini'}
-          </CardTitle>
-          <Button 
-            variant="ghost" 
+      <div className="bg-surface border border-border-default rounded-xl shadow-xs overflow-hidden">
+        <div className="px-5 py-3.5 border-b border-border-default flex flex-row justify-between items-center">
+          <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider">
+            Recent Transport Requests
+          </h3>
+          <button 
             onClick={() => navigate('/transporter/requests/my')}
-            className="text-xs font-bold text-blue-600 hover:text-blue-800 p-0 flex items-center gap-1"
+            className="text-xs font-semibold text-accent-base hover:opacity-80 p-0 flex items-center gap-1 transition-opacity"
           >
-            <span>{isEn ? 'All Records' : 'Semua Rekod'}</span>
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </CardHeader>
-        <CardContent className="p-0">
-          {requests.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">
-              {isEn ? 'No transport requests found in record.' : 'Tiada permohonan dijumpai dalam rekod.'}
+            <span>All Records</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+        <div className="p-0">
+          {loading ? (
+            <div className="p-4 sm:p-6 space-y-4">
+              <div className="hidden md:block">
+                <SkeletonTable rows={5} columns={6} className="border-none shadow-none rounded-xl" />
+              </div>
+              <div className="md:hidden">
+                <SkeletonMobileCardList count={3} />
+              </div>
+            </div>
+          ) : requests.length === 0 ? (
+            <div className="p-12 text-center text-text-muted text-xs">
+              No transport requests found in record.
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    <th className="px-6 py-4">{isEn ? 'Reference No.' : 'No. Rujukan'}</th>
-                    <th className="px-6 py-4">{isEn ? 'Vehicle Type' : 'Jenis Kenderaan'}</th>
-                    <th className="px-6 py-4">{isEn ? 'Destination / Purpose' : 'Destinasi / Tujuan'}</th>
-                    <th className="px-6 py-4">{isEn ? 'Date & Time' : 'Tarikh & Masa'}</th>
-                    <th className="px-6 py-4">{isEn ? 'Assigned Vehicle / Driver' : 'Kenderaan / Pemandu'}</th>
-                    <th className="px-6 py-4">{isEn ? 'Status' : 'Status'}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
-                  {requests.map((req) => (
-                    <tr key={req.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4 font-mono font-bold text-blue-600 select-all">{req.no_rujukan}</td>
-                      <td className="px-6 py-4 font-medium">
-                        <div className="flex items-center gap-2">
-                          {req.jenis_permohonan === 'ambulance' ? (
-                            <span className="p-1.5 bg-rose-50 text-rose-600 rounded-lg"><Ambulance className="w-4 h-4" /></span>
-                          ) : req.jenis_permohonan === 'van_jenazah' ? (
-                            <span className="p-1.5 bg-slate-100 text-slate-700 rounded-lg"><Truck className="w-4 h-4" /></span>
-                          ) : (
-                            <span className="p-1.5 bg-blue-50 text-blue-600 rounded-lg"><Car className="w-4 h-4" /></span>
-                          )}
-                          <span>
-                            {req.jenis_permohonan === 'sg' 
-                              ? (isEn ? 'Official Car (SG)' : 'Kereta Jabatan (SG)') 
-                              : req.jenis_permohonan === 'van_jenazah' 
-                              ? (isEn ? 'Hearse Van' : 'Van Jenazah') 
-                              : (isEn ? 'Ambulance' : 'Ambulans')}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="font-semibold text-slate-800 truncate max-w-xs">{req.destinasi}</div>
-                        <div className="text-xs text-slate-400 truncate max-w-xs">{req.tujuan_permohonan}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          {new Date(req.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY', {
-                            dateStyle: 'short',
-                            timeStyle: 'short'
-                          })}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        {req.kenderaan ? (
-                          <div>
-                            <div className="font-bold text-slate-800">{req.kenderaan.no_kenderaan}</div>
-                            <div className="text-xs text-slate-400">{req.kenderaan.model}</div>
-                          </div>
-                        ) : (
-                          <span className="text-slate-400 italic text-xs">
-                            {isEn ? 'Not yet assigned' : 'Belum diagihkan'}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(req.status_semasa)}</td>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-subtle/50 border-b border-border-default text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+                      <th className="px-5 py-3">Reference No.</th>
+                      <th className="px-5 py-3">Vehicle Type</th>
+                      <th className="px-5 py-3">Destination / Purpose</th>
+                      <th className="px-5 py-3">Date & Time</th>
+                      <th className="px-5 py-3">Assigned Vehicle / Driver</th>
+                      <th className="px-5 py-3">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-border-default text-xs text-text-primary">
+                    {requests.map((req) => (
+                      <tr key={req.id} className="hover:bg-subtle/40 transition-colors">
+                        <td className="px-5 py-3 font-mono font-semibold text-accent-base select-all">{req.no_rujukan}</td>
+                        <td className="px-5 py-3 font-medium">
+                          <div className="flex items-center gap-2">
+                            {req.jenis_permohonan === 'ambulance' ? (
+                              <span className="p-1.5 bg-rose-500/10 text-rose-600 rounded-lg"><Ambulance className="w-4 h-4" /></span>
+                            ) : req.jenis_permohonan === 'van_jenazah' ? (
+                              <span className="p-1.5 bg-subtle text-text-secondary rounded-lg"><Truck className="w-4 h-4" /></span>
+                            ) : (
+                              <span className="p-1.5 bg-accent-base/10 text-accent-base rounded-lg"><Car className="w-4 h-4" /></span>
+                            )}
+                            <span className="text-text-primary">
+                              {req.jenis_permohonan === 'sg' 
+                                ? 'Official Car (SG)' 
+                                : req.jenis_permohonan === 'van_jenazah' 
+                                ? 'Hearse Van' 
+                                : 'Ambulance'}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3">
+                          <div className="font-semibold text-text-primary truncate max-w-xs">{req.destinasi}</div>
+                          <div className="text-[11px] text-text-muted truncate max-w-xs">{req.tujuan_permohonan}</div>
+                        </td>
+                        <td className="px-5 py-3 whitespace-nowrap">
+                          <div className="flex items-center gap-1.5 text-xs text-text-secondary">
+                            <Calendar className="w-3.5 h-3.5 text-text-muted" />
+                            {new Date(req.tarikh_masa_diperlukan).toLocaleString('en-GB', {
+                              dateStyle: 'short',
+                              timeStyle: 'short'
+                            })}
+                          </div>
+                        </td>
+                        <td className="px-5 py-3">
+                          {req.kenderaan ? (
+                            <div>
+                              <div className="font-semibold text-text-primary">{req.kenderaan.no_kenderaan}</div>
+                              <div className="text-[11px] text-text-muted">{req.kenderaan.model}</div>
+                            </div>
+                          ) : (
+                            <span className="text-text-muted italic text-xs">
+                              Not yet assigned
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-5 py-3 whitespace-nowrap">{getStatusBadge(req.status_semasa)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Native Card View (Zero Horizontal Scroll!) */}
+              <div className="md:hidden divide-y divide-border-default">
+                {requests.map((req) => (
+                  <div key={req.id} className="p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        {req.jenis_permohonan === 'ambulance' ? (
+                          <span className="p-1.5 bg-rose-500/10 text-rose-600 rounded-lg"><Ambulance className="w-4 h-4" /></span>
+                        ) : req.jenis_permohonan === 'van_jenazah' ? (
+                          <span className="p-1.5 bg-subtle text-text-secondary rounded-lg"><Truck className="w-4 h-4" /></span>
+                        ) : (
+                          <span className="p-1.5 bg-accent-base/10 text-accent-base rounded-lg"><Car className="w-4 h-4" /></span>
+                        )}
+                        <div>
+                          <span className="font-mono font-bold text-accent-base text-xs block">{req.no_rujukan}</span>
+                          <span className="text-xs font-semibold text-text-primary">
+                            {req.jenis_permohonan === 'sg' 
+                              ? 'Official Car (SG)' 
+                              : req.jenis_permohonan === 'van_jenazah' 
+                              ? 'Hearse Van' 
+                              : 'Ambulance'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0">
+                        {getStatusBadge(req.status_semasa)}
+                      </div>
+                    </div>
+
+                    <div className="bg-subtle/50 p-3 rounded-xl border border-border-default space-y-1.5 text-xs">
+                      <div>
+                        <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">
+                          Destination / Purpose
+                        </span>
+                        <span className="font-semibold text-text-primary block truncate">{req.destinasi}</span>
+                        <span className="text-text-muted text-[11px] block truncate">{req.tujuan_permohonan}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 pt-1.5 border-t border-border-default">
+                        <div>
+                          <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">
+                            Date & Time
+                          </span>
+                          <span className="font-mono text-[11px] text-text-secondary block">
+                            {new Date(req.tarikh_masa_diperlukan).toLocaleString('en-GB', {
+                              dateStyle: 'short',
+                              timeStyle: 'short'
+                            })}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">
+                            Assigned Vehicle
+                          </span>
+                          <span className="font-semibold text-text-primary text-[11px] block truncate">
+                            {req.kenderaan ? req.kenderaan.no_kenderaan : 'Unassigned'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

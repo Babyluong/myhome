@@ -200,178 +200,245 @@ export const AdminApprovalsTab: React.FC = () => {
     switch (status) {
       case 'approved':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <CheckCircle className="w-3.5 h-3.5" /> Approved
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <CheckCircle className="w-3.5 h-3.5" /> Diluluskan
           </span>
         )
       case 'rejected':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
-            <XCircle className="w-3.5 h-3.5" /> Rejected
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+            <XCircle className="w-3.5 h-3.5" /> Ditolak
           </span>
         )
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse">
-            <Clock className="w-3.5 h-3.5" /> Pending Review
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <Clock className="w-3.5 h-3.5" /> Menunggu Semakan
           </span>
         )
     }
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header, Search & Filter */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900/40 p-4 rounded-xl border border-white/5">
-        <div className="relative w-full md:w-96">
+      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between bg-slate-900/60 p-3.5 sm:p-4 rounded-xl border border-slate-800">
+        <div className="relative flex-1 sm:max-w-xs md:max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input
             type="text"
-            placeholder="Carian nama, no IC, jawatan..."
+            placeholder="Cari nama, no IC, jawatan..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-950/60 border border-white/5 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
+            className="w-full bg-slate-950/80 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-colors min-h-[40px]"
           />
         </div>
 
-        <div className="flex gap-2 w-full md:w-auto">
+        <div className="flex overflow-x-auto no-scrollbar gap-1.5 pb-1 sm:pb-0">
           <button
             onClick={() => setStatusFilter('pending')}
-            className={`flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${
+            className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors min-h-[36px] ${
               statusFilter === 'pending'
                 ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                : 'bg-transparent text-slate-400 border-white/5 hover:bg-white/5'
+                : 'bg-transparent text-slate-400 border-slate-800 hover:bg-slate-800/40'
             }`}
           >
-            Pending Review
+            Menunggu Semakan
           </button>
           <button
             onClick={() => setStatusFilter('approved')}
-            className={`flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${
+            className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors min-h-[36px] ${
               statusFilter === 'approved'
                 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                : 'bg-transparent text-slate-400 border-white/5 hover:bg-white/5'
+                : 'bg-transparent text-slate-400 border-slate-800 hover:bg-slate-800/40'
             }`}
           >
-            Approved
+            Diluluskan
           </button>
           <button
             onClick={() => setStatusFilter('rejected')}
-            className={`flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${
+            className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors min-h-[36px] ${
               statusFilter === 'rejected'
                 ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
-                : 'bg-transparent text-slate-400 border-white/5 hover:bg-white/5'
+                : 'bg-transparent text-slate-400 border-slate-800 hover:bg-slate-800/40'
             }`}
           >
-            Rejected
+            Ditolak
           </button>
           <button
             onClick={() => setStatusFilter('all')}
-            className={`flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${
+            className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors min-h-[36px] ${
               statusFilter === 'all'
-                ? 'bg-white/10 text-white border-white/20'
-                : 'bg-transparent text-slate-400 border-white/5 hover:bg-white/5'
+                ? 'bg-slate-800 text-white border-slate-700'
+                : 'bg-transparent text-slate-400 border-slate-800 hover:bg-slate-800/40'
             }`}
           >
-            All
+            Semua
           </button>
         </div>
       </div>
 
-      {/* Main Request Table */}
-      <div className="bg-slate-900/40 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-md">
+      {/* Main Request Container */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl overflow-hidden">
         {isLoading ? (
-          <div className="p-12 space-y-4">
-            <div className="h-5 bg-white/5 rounded w-full animate-pulse" />
-            <div className="h-5 bg-white/5 rounded w-11/12 animate-pulse" />
-            <div className="h-5 bg-white/5 rounded w-10/12 animate-pulse" />
+          <div className="p-8 sm:p-12 space-y-3">
+            <div className="h-5 bg-slate-800 rounded w-full animate-pulse" />
+            <div className="h-5 bg-slate-800 rounded w-11/12 animate-pulse" />
+            <div className="h-5 bg-slate-800 rounded w-10/12 animate-pulse" />
           </div>
         ) : requests.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-            <AlertCircle className="w-12 h-12 text-slate-600" />
+          <div className="flex flex-col items-center justify-center py-16 text-center space-y-3 px-4">
+            <AlertCircle className="w-10 h-10 text-slate-600" />
             <div>
-              <p className="text-white font-bold">No requests found</p>
-              <p className="text-slate-500 text-sm mt-1">There are no pending registrations matching this filter.</p>
+              <p className="text-white font-bold text-sm sm:text-base">Tiada permohonan ditemui</p>
+              <p className="text-slate-400 text-xs sm:text-sm mt-1">Tiada rekod pendaftaran sepadan dengan tapisan semasa.</p>
             </div>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-white/5 text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                <th className="p-4">Nama Pemohon</th>
-                <th className="p-4">Maklumat KKM</th>
-                <th className="p-4">Sebab Hubungan</th>
-                <th className="p-4">Status</th>
-                <th className="p-4 text-center">Tindakan</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5 text-slate-300 text-sm font-medium">
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-950/80 text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-slate-800">
+                    <th className="p-3.5">Nama Pemohon</th>
+                    <th className="p-3.5">Maklumat KKM</th>
+                    <th className="p-3.5">Maklumat Hubungan</th>
+                    <th className="p-3.5">Status</th>
+                    <th className="p-3.5 text-center">Tindakan</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/80 text-slate-300 text-sm">
+                  {requests.map((req) => (
+                    <tr key={req.id} className="hover:bg-slate-800/40 transition-colors">
+                      <td className="p-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0">
+                            {req.profile_photo_url ? (
+                              <img src={req.profile_photo_url} alt={req.full_name} className="w-full h-full object-cover" />
+                            ) : (
+                              <User className="w-4 h-4 text-slate-400" />
+                            )}
+                          </div>
+                          <div>
+                            <div className="text-white text-sm font-semibold">{req.full_name}</div>
+                            <div className="text-xs text-slate-400 font-mono">
+                              {req.ic_number}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-3.5">
+                        <div className="space-y-1 text-xs">
+                          <div className="flex items-center gap-1.5 text-slate-200">
+                            <Briefcase className="w-3.5 h-3.5 text-slate-500" />
+                            <span>{req.jawatan}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-slate-400">
+                            <Building2 className="w-3.5 h-3.5 text-slate-500" />
+                            <span>{req.department?.department_name || 'Tiada Jabatan'}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-3.5 text-xs text-slate-400">
+                        <div className="flex items-center gap-1.5">
+                          <Phone className="w-3.5 h-3.5 text-slate-500" />
+                          <span>{req.phone_number}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-1 font-mono">
+                          <Mail className="w-3.5 h-3.5 text-slate-500" />
+                          <span className="truncate max-w-[180px]">{req.email}</span>
+                        </div>
+                      </td>
+                      <td className="p-3.5">{getStatusBadge(req.status)}</td>
+                      <td className="p-3.5 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => handleOpenApproval(req)}
+                            title="Lihat Maklumat / Luluskan"
+                            className="p-2 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20 hover:bg-teal-500 hover:text-white transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-teal-400"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          {req.status === 'pending' && (
+                            <button
+                              onClick={() => handleOpenRejection(req)}
+                              title="Tolak"
+                              className="p-2 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-rose-400"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card List View */}
+            <div className="md:hidden divide-y divide-slate-800">
               {requests.map((req) => (
-                <tr key={req.id} className="hover:bg-white/5 transition-colors">
-                  <td className="p-4">
+                <div key={req.id} className="p-4 space-y-3 bg-slate-900/40">
+                  <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0">
                         {req.profile_photo_url ? (
                           <img src={req.profile_photo_url} alt={req.full_name} className="w-full h-full object-cover" />
                         ) : (
-                          <User className="w-5 h-5 text-slate-500" />
+                          <User className="w-5 h-5 text-slate-400" />
                         )}
                       </div>
                       <div>
-                        <div className="text-white text-sm font-bold">{req.full_name}</div>
-                        <div className="text-xs text-slate-500 flex items-center gap-1 font-mono">
-                          {req.ic_number}
-                        </div>
+                        <div className="text-white text-sm font-semibold">{req.full_name}</div>
+                        <div className="text-xs text-slate-400 font-mono">{req.ic_number}</div>
                       </div>
                     </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="space-y-1 text-xs">
-                      <div className="flex items-center gap-1 text-slate-300">
-                        <Briefcase className="w-3.5 h-3.5 text-slate-500" />
-                        <span>{req.jawatan}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-slate-400">
-                        <Building2 className="w-3.5 h-3.5 text-slate-500" />
-                        <span>{req.department?.department_name || 'No Dept'}</span>
-                      </div>
+                    {getStatusBadge(req.status)}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
+                    <div className="space-y-0.5">
+                      <span className="text-[11px] text-slate-400">Jawatan</span>
+                      <div className="font-medium text-slate-200 truncate">{req.jawatan}</div>
                     </div>
-                  </td>
-                  <td className="p-4 text-xs text-slate-400">
-                    <div className="flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5 text-slate-500" />
-                      <span>{req.phone_number}</span>
+                    <div className="space-y-0.5">
+                      <span className="text-[11px] text-slate-400">Jabatan</span>
+                      <div className="font-medium text-slate-200 truncate">{req.department?.department_name || 'Tiada'}</div>
                     </div>
-                    <div className="flex items-center gap-1 mt-1 font-mono">
-                      <Mail className="w-3.5 h-3.5 text-slate-500" />
-                      <span>{req.email}</span>
+                    <div className="space-y-0.5 pt-1 border-t border-slate-800/60">
+                      <span className="text-[11px] text-slate-400">Telefon</span>
+                      <div className="font-mono text-slate-300">{req.phone_number}</div>
                     </div>
-                  </td>
-                  <td className="p-4">{getStatusBadge(req.status)}</td>
-                  <td className="p-4 text-center">
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="space-y-0.5 pt-1 border-t border-slate-800/60">
+                      <span className="text-[11px] text-slate-400">Emel</span>
+                      <div className="font-mono text-slate-300 truncate">{req.email}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={() => handleOpenApproval(req)}
+                      className="flex-1 min-h-[44px] px-3 py-2 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/30 hover:bg-teal-500 hover:text-white transition-colors text-xs font-semibold flex items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span>{req.status === 'pending' ? 'Semak & Luluskan' : 'Lihat Butiran'}</span>
+                    </button>
+                    {req.status === 'pending' && (
                       <button
-                        onClick={() => handleOpenApproval(req)}
-                        title="Lihat Maklumat / Luluskan"
-                        className="p-2 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20 hover:bg-teal-500 hover:text-white transition-all"
+                        onClick={() => handleOpenRejection(req)}
+                        className="min-h-[44px] px-3 py-2 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500 hover:text-white transition-colors text-xs font-semibold flex items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
                       >
-                        <Eye className="w-4 h-4" />
+                        <X className="w-4 h-4" />
+                        <span>Tolak</span>
                       </button>
-                      {req.status === 'pending' && (
-                        <button
-                          onClick={() => handleOpenRejection(req)}
-                          title="Tolak"
-                          className="p-2 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
+                    )}
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
 
@@ -390,24 +457,24 @@ export const AdminApprovalsTab: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-2xl overflow-hidden relative z-10 shadow-2xl"
+              className="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden relative z-10 shadow-2xl"
             >
               {/* Modal Header */}
-              <div className="p-6 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <div className="p-4 sm:p-5 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between flex-shrink-0">
+                <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                   <User className="w-5 h-5 text-teal-400" />
-                  Semakan Maklumat Pendaftaran
+                  <span>Semakan Maklumat Pendaftaran</span>
                 </h3>
                 <button
                   onClick={() => setSelectedRequest(null)}
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/5 transition-colors"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Modal Body */}
-              <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+              <div className="p-4 sm:p-6 space-y-5 flex-1 overflow-y-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Basic Details */}
                   <div className="space-y-4">
@@ -516,10 +583,10 @@ export const AdminApprovalsTab: React.FC = () => {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-6 border-t border-white/5 bg-slate-950/40 flex justify-end gap-3">
+              <div className="p-4 sm:p-5 border-t border-slate-800 bg-slate-950/80 flex flex-wrap justify-end gap-2.5 flex-shrink-0">
                 <button
                   onClick={() => setSelectedRequest(null)}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                  className="min-h-[44px] px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                 >
                   Tutup
                 </button>
@@ -530,16 +597,16 @@ export const AdminApprovalsTab: React.FC = () => {
                         setSelectedRequest(null)
                         handleOpenRejection(selectedRequest)
                       }}
-                      className="px-4 py-2 rounded-lg text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all"
+                      className="min-h-[44px] px-4 py-2 rounded-lg text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500 hover:text-white transition-colors"
                     >
-                      Reject Request
+                      Tolak Permohonan
                     </button>
                     <button
                       onClick={handleApprove}
                       disabled={isSubmitting || !assignedRole}
-                      className="px-4 py-2 rounded-lg text-xs font-semibold bg-teal-500 text-white hover:bg-teal-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      className="min-h-[44px] px-5 py-2 rounded-lg text-xs font-semibold bg-teal-500 text-white hover:bg-teal-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      {isSubmitting ? 'Approving...' : 'Approve & Activate'}
+                      {isSubmitting ? 'Memproses...' : 'Luluskan & Aktifkan'}
                     </button>
                   </>
                 )}
@@ -564,47 +631,47 @@ export const AdminApprovalsTab: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-md overflow-hidden relative z-10 shadow-2xl"
+              className="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden relative z-10 shadow-2xl"
             >
-              <div className="p-6 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <div className="p-4 sm:p-5 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between flex-shrink-0">
+                <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
                   <XCircle className="w-5 h-5 text-rose-500" />
-                  Sebab Penolakan Pendaftaran
+                  <span>Sebab Penolakan Pendaftaran</span>
                 </h3>
                 <button
                   onClick={() => setRejectionRequest(null)}
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/5 transition-colors"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="p-6 space-y-4">
+              <div className="p-4 sm:p-6 space-y-4 flex-1 overflow-y-auto">
                 <p className="text-xs text-slate-400">
-                  Sila nyatakan sebab permohonan pendaftaran untuk <strong>{rejectionRequest.full_name}</strong> ditolak. Maklum balas ini akan dipaparkan kepada pemohon.
+                  Sila nyatakan sebab permohonan pendaftaran untuk <strong className="text-white">{rejectionRequest.full_name}</strong> ditolak. Maklum balas ini akan dipaparkan kepada pemohon.
                 </p>
                 <textarea
                   rows={4}
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
-                  className="w-full bg-slate-950 border border-white/10 rounded-lg p-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-rose-500"
-                  placeholder="E.g. No kad pengenalan (IC) tidak sepadan dengan rekod rasmi jawatan KKM."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+                  placeholder="Contoh: No kad pengenalan (IC) tidak sepadan dengan rekod rasmi jawatan KKM."
                 />
               </div>
 
-              <div className="p-6 border-t border-white/5 bg-slate-950/40 flex justify-end gap-3">
+              <div className="p-4 sm:p-5 border-t border-slate-800 bg-slate-950/80 flex justify-end gap-2.5 flex-shrink-0">
                 <button
                   onClick={() => setRejectionRequest(null)}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                  className="min-h-[44px] px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   onClick={handleReject}
                   disabled={isSubmitting || !rejectionReason.trim()}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="min-h-[44px] px-5 py-2 rounded-lg text-xs font-semibold bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {isSubmitting ? 'Rejecting...' : 'Confirm Reject'}
+                  {isSubmitting ? 'Memproses...' : 'Sahkan Penolakan'}
                 </button>
               </div>
             </motion.div>

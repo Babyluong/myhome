@@ -2,6 +2,7 @@
 // MySuhu temperature monitoring service with Supabase and localStorage fallback
 
 import { supabase, isSupabaseConfigured } from '@/services/supabase';
+import { offlineAdapter } from '@/services/offlineAdapter';
 import type { ApiResponse } from '@/types';
 import type {
   Lokasi,
@@ -864,40 +865,44 @@ export async function logTemperature(
     const finalSuhuMax = suhuMax !== undefined ? suhuMax : suhu;
     
     if (isSupabaseConfigured()) {
-      // 1. Fetch active threshold config
-      const { data: threshold, error: thresholdErr } = await supabase
-        .from('ambang_suhu')
-        .select('*')
-        .eq('unit_id', unitId)
-        .is('effective_until', null)
-        .maybeSingle();
-        
-      if (thresholdErr) throw thresholdErr;
-      if (!threshold) throw new Error('No active threshold configured for this unit');
-      activeThreshold = threshold;
-      
-      // Calculate status
-      const status_bacaan = calculateReadingStatusWithRange(suhu, finalSuhuMin, finalSuhuMax, threshold.min_suhu, threshold.max_suhu);
-      
-      // 2. Insert reading
-      const { data: reading, error: readErr } = await supabase
-        .from('bacaan_suhu')
-        .insert({
+      // 1. Fetch active threshold config (with safe fallback for offline mode)
+      try {
+        const { data: threshold } = await supabase
+          .from('ambang_suhu')
+          .select('*')
+          .eq('unit_id', unitId)
+          .is('effective_until', null)
+          .maybeSingle();
+        if (threshold) activeThreshold = threshold;
+      } catch (e) {
+        console.warn('[MySuhu] Network unavailable fetching threshold, utilizing safe fallback:', e);
+      }
+
+      const minSuhu = activeThreshold?.min_suhu ?? 2;
+      const maxSuhu = activeThreshold?.max_suhu ?? 8;
+      const status_bacaan = calculateReadingStatusWithRange(suhu, finalSuhuMin, finalSuhuMax, minSuhu, maxSuhu);
+
+      // 2. Insert reading via offlineAdapter with automatic background sync
+      const res = await offlineAdapter.executeMutation<BacaanSuhu>({
+        module: 'mysuhu',
+        table: 'bacaan_suhu',
+        action: 'INSERT',
+        payload: {
           unit_id: unitId,
           suhu,
           suhu_min: finalSuhuMin,
           suhu_max: finalSuhuMax,
           status_bacaan,
-          ambang_id: threshold.id,
+          ambang_id: activeThreshold?.id || 'default',
           tarikh_masa: tarikhMasa,
           dicatat_oleh: dicatatOleh,
-          nota: nota || null
-        })
-        .select('*')
-        .single();
-        
-      if (readErr) throw readErr;
-      return { data: reading, error: null };
+          nota: nota || null,
+        },
+        conflictPolicy: 'client-wins',
+      });
+
+      if (res.error) throw res.error;
+      return { data: res.data as BacaanSuhu, error: null };
     } else {
       const thresholds = getMockData<AmbangSuhu[]>('ambang_suhu', []);
       const readings = getMockData<BacaanSuhu[]>('bacaan_suhu', []);

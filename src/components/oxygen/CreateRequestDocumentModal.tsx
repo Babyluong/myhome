@@ -79,7 +79,7 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedSupplierId) {
-      setError('Sila pilih pembekal.');
+      setError('Please select a supplier.');
       return;
     }
 
@@ -143,7 +143,7 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
       onClose();
     } catch (err) {
       console.error(err);
-      setError(err instanceof Error ? err.message : 'Gagal menghasilkan borang pesanan.');
+      setError(err instanceof Error ? err.message : 'Failed to generate order form.');
     } finally {
       setIsLoading(false);
     }
@@ -323,7 +323,7 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
               rows={3}
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
-              placeholder="Maklumat tambahan jika ada..."
+              placeholder="Additional notes if applicable..."
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none"
             />
           </div>
@@ -350,7 +350,7 @@ export const CreateRequestDocumentModal: React.FC<CreateRequestDocumentModalProp
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>Hantar Permohonan</span>
+                  <span>Submit Requisition</span>
                 </>
               )}
             </button>

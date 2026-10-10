@@ -2,6 +2,7 @@
 // MyTransporter integrated transport management service with Supabase and localStorage fallback
 
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
+import { offlineAdapter } from '@/services/offlineAdapter'
 import type { ApiResponse } from '@/types'
 import type {
   TransportVehicle,
@@ -289,10 +290,10 @@ const initMockData = () => {
       {
         id: 'log-1',
         request_id: 'req-1',
-        tindakan: 'Permohonan Dihantar',
+        tindakan: 'Requisition Submitted',
         status_sebelum: 'draft',
         status_selepas: 'submitted',
-        catatan: 'Permohonan baru dihantar oleh Pemohon.',
+        catatan: 'New requisition submitted by applicant.',
         performed_by: 'user-1',
         hospital_id: 'hosp-1',
         created_at: new Date(Date.now() - 2 * 24 * 3600 * 1000 - 60 * 60000).toISOString()
@@ -300,7 +301,7 @@ const initMockData = () => {
       {
         id: 'log-2',
         request_id: 'req-1',
-        tindakan: 'Pre-trip Inspection & Terima Tugasan',
+        tindakan: 'Pre-Trip Inspection & Accept Assignment',
         status_sebelum: 'submitted',
         status_selepas: 'driver_accepted',
         catatan: 'Diterima oleh Pemandu driver-1 selepas pemeriksaan kenderaan WXD 4291 selesai (Bersih/Good).',
@@ -545,7 +546,7 @@ export const createRequest = async (
     setMockData('requests', list)
 
     // Log the action
-    await logRequestTransition(newRequest.id, 'Permohonan Baru', 'draft', 'submitted', 'Permohonan pengangkutan dihantar.', request.pemohon_id, request.hospital_id)
+    await logRequestTransition(newRequest.id, 'New Requisition', 'draft', 'submitted', 'Permohonan pengangkutan dihantar.', request.pemohon_id, request.hospital_id)
 
     return { data: newRequest, error: null }
   }
@@ -557,18 +558,23 @@ export const createRequest = async (
       status_semasa: 'submitted'
     }
 
-    const { data, error } = await supabase
-      .from('transport_requests')
-      .insert(newRequestData)
-      .select()
-      .single()
+    const res = await offlineAdapter.executeMutation<TransportRequest>({
+      module: 'mytransporter',
+      table: 'transport_requests',
+      action: 'INSERT',
+      payload: newRequestData,
+      conflictPolicy: 'server-wins',
+    })
 
-    if (error) throw error
+    if (res.error) throw res.error
+    const data = res.data as TransportRequest
 
     // Log the transition
-    await logRequestTransition(data.id, 'Permohonan Baru', 'draft', 'submitted', 'Permohonan pengangkutan dihantar.', request.pemohon_id, request.hospital_id)
+    if (data?.id) {
+      await logRequestTransition(data.id, 'New Requisition', 'draft', 'submitted', 'Permohonan pengangkutan dihantar.', request.pemohon_id, request.hospital_id).catch(() => {})
+    }
 
-    return { data: data as TransportRequest, error: null }
+    return { data, error: null }
   } catch (error: any) {
     console.error('createRequest error:', error)
     return { data: null, error: error.message || 'Failed to create request' }

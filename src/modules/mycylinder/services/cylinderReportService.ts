@@ -411,12 +411,13 @@ export async function generateCylinderReport(
       // Total Expenses from completed receptions (filtered to active Fiscal Year)
       const completedReceptions = (receptionsRaw || [])
         .filter(r => r.status === 'completed')
+        .filter(r => !String(r.vote_code || '').trim().startsWith('24') && String(r.vote_code || '').trim() !== '020200')
         .filter(r => {
           const rDate = new Date(r.reception_date)
           return rDate >= fiscalYearStart && rDate <= fiscalYearEnd
         })
 
-      const totalExpenses = completedReceptions.reduce((sum, r) => sum + Number(r.total_amount || 0), 0)
+      const totalExpenses = completedReceptions.reduce((sum, r) => sum + Number(r.refill_amount != null ? r.refill_amount : r.total_amount || 0), 0)
       const currentBalance = totalWarrantAmount - totalExpenses
       const budgetUtilization = totalWarrantAmount > 0 ? (totalExpenses / totalWarrantAmount) * 100 : 0
 
@@ -449,7 +450,7 @@ export async function generateCylinderReport(
         const rDate = new Date(r.reception_date)
         const mLabel = months[rDate.getMonth()] + ' ' + String(rDate.getFullYear()).slice(-2)
         if (warrantTrendMap[mLabel]) {
-          warrantTrendMap[mLabel].spent += Number(r.total_amount || 0)
+          warrantTrendMap[mLabel].spent += Number(r.refill_amount != null ? r.refill_amount : r.total_amount || 0)
         }
       })
 

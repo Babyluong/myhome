@@ -97,8 +97,8 @@ const TransporterMyRequestsPage: React.FC = () => {
       }
     } catch (err: any) {
       toast.error(
-        isEn ? 'Failed to Load Requests' : 'Gagal Memuatkan Permohonan', 
-        err.message || (isEn ? 'Please try again later.' : 'Sila cuba sebentar lagi.')
+        isEn ? 'Failed to Load Requests' : 'Failed to Load Requisitions', 
+        err.message || (isEn ? 'Please try again later.' : 'Please try again shortly.')
       )
     } finally {
       setLoading(false)
@@ -132,8 +132,8 @@ const TransporterMyRequestsPage: React.FC = () => {
   const handleCancelSubmit = async () => {
     if (!cancellingId || !cancelReason) {
       toast.error(
-        isEn ? 'Reason Required' : 'Sebab Diperlukan', 
-        isEn ? 'Please state the cancellation reason.' : 'Sila isi sebab pembatalan.'
+        isEn ? 'Reason Required' : 'Reason Required', 
+        isEn ? 'Please state the cancellation reason.' : 'Please provide the cancellation reason.'
       )
       return
     }
@@ -144,8 +144,8 @@ const TransporterMyRequestsPage: React.FC = () => {
       if (res.error) throw new Error(res.error)
       
       toast.success(
-        isEn ? 'Request Cancelled' : 'Permohonan Dibatalkan', 
-        isEn ? 'Transport request has been cancelled successfully.' : 'Permohonan pengangkutan berjaya dibatalkan.'
+        isEn ? 'Request Cancelled' : 'Requisition Cancelled', 
+        isEn ? 'Transport request has been cancelled successfully.' : 'Transport requisition successfully cancelled.'
       )
       setIsCancelOpen(false)
       fetchRequests()
@@ -157,7 +157,7 @@ const TransporterMyRequestsPage: React.FC = () => {
         if (updatedLogs.data) setLogs(updatedLogs.data)
       }
     } catch (err: any) {
-      toast.error('Gagal Membatalkan', err.message || 'Sila cuba lagi.')
+      toast.error('Cancellation Failed', err.message || 'Sila cuba lagi.')
     }
   }
 
@@ -169,7 +169,7 @@ const TransporterMyRequestsPage: React.FC = () => {
 
   const handleEditSubmit = () => {
     if (!editingId || !editReason.trim()) {
-      toast.error('Sebab Diperlukan', 'Sila isi sebab pindaan.')
+      toast.error('Reason Required', 'Please provide a reason for the amendment.')
       return
     }
     setIsEditReasonOpen(false)
@@ -206,9 +206,9 @@ const TransporterMyRequestsPage: React.FC = () => {
       a.download = `Borang_Sempadan_${req.no_rujukan}.pdf`
       a.click()
       URL.revokeObjectURL(url)
-      toast.success('Muat Turun PDF', 'Borang Merentas Sempadan berjaya dimuat turun.')
+      toast.success('Muat Turun PDF', 'Cross-Border Transfer Form successfully generated.')
     } catch (err: any) {
-      toast.error('Ralat Cetakan', err.message || 'Gagal menjana PDF.')
+      toast.error('Print Error', err.message || 'Failed to generate PDF.')
     }
   }
 
@@ -221,9 +221,9 @@ const TransporterMyRequestsPage: React.FC = () => {
       a.download = `Surat_Kebenaran_${req.no_rujukan}.pdf`
       a.click()
       URL.revokeObjectURL(url)
-      toast.success('Muat Turun PDF', 'Surat Kebenaran Rentasi Sempadan berjaya dimuat turun.')
+      toast.success('Muat Turun PDF', 'Cross-Border Permission Letter successfully generated.')
     } catch (err: any) {
-      toast.error('Ralat Cetakan', err.message || 'Gagal menjana PDF.')
+      toast.error('Print Error', err.message || 'Failed to generate PDF.')
     }
   }
 
@@ -300,8 +300,8 @@ const TransporterMyRequestsPage: React.FC = () => {
       : (req.pengiring ? req.pengiring.toUpperCase() : 'TIADA')
 
     const jenisPeminjamanStr = req.jenis_permohonan === 'sg'
-      ? (req.pemandu_diperlukan ? 'Kenderaan & Pemandu' : 'Kenderaan Sahaja (Tanpa Pemandu)')
-      : 'Kenderaan & Pemandu'
+      ? (req.pemandu_diperlukan ? 'Vehicle & Driver' : 'Vehicle Only (Self-Drive)')
+      : 'Vehicle & Driver'
 
     const passengerStr = req.senarai_penumpang && req.senarai_penumpang.length > 0
       ? req.senarai_penumpang.map(p => p.name).join(', ')
@@ -367,7 +367,7 @@ const TransporterMyRequestsPage: React.FC = () => {
       const vehicleDetails = [
         ['Nombor Pendaftaran', req.kenderaan.no_kenderaan],
         ['Model Kenderaan', req.kenderaan.model],
-        ['Pemandu Bertugas', req.pemandu?.full_name || 'Driver Assigned'],
+        ['On-Duty Driver', req.pemandu?.full_name || 'Driver Assigned'],
         ['Tarikh Lulus Pentadbiran', req.approved_at ? new Date(req.approved_at).toLocaleString('ms-MY') : '-']
       ]
 
@@ -529,7 +529,7 @@ const TransporterMyRequestsPage: React.FC = () => {
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>{isEn ? 'New Request' : 'Permohonan Baru'}</span>
+          <span>{isEn ? 'New Request' : 'New Requisition'}</span>
         </Button>
       </div>
 
@@ -959,7 +959,7 @@ const TransporterMyRequestsPage: React.FC = () => {
             {selectedRequest.kenderaan && (
               <div className="space-y-3 pt-4 border-t border-slate-100">
                 <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
-                  {isEn ? 'Assigned Vehicle & Duty Driver' : 'Kenderaan & Pemandu Bertugas'}
+                  {isEn ? 'Assigned Vehicle & Duty Driver' : 'Kenderaan & On-Duty Driver'}
                 </h4>
                 <div className="grid grid-cols-2 gap-y-3 text-sm">
                   <div>

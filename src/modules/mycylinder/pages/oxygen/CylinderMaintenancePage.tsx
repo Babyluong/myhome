@@ -684,7 +684,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                   </label>
                   <textarea
                     rows={3}
-                    placeholder="Sila nyatakan justifikasi permohonan selenggaraan ini..."
+                    placeholder="Please state the justification for this maintenance request..."
                     value={justification}
                     onChange={e => setJustification(e.target.value)}
                     required
@@ -845,7 +845,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                         <Loader2 className="w-4 h-4 animate-spin" /> Hantar permohonan...
                       </>
                     ) : (
-                      'Hantar Ke Semakan'
+                      'Submit for Review'
                     )}
                   </button>
                   <button

@@ -105,7 +105,7 @@ export const DilutionProtocolPage: React.FC = () => {
                   IV Reconstitution &amp; Dilution Protocols
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                  Panduan Pelarutan Parenteral &amp; Sekatan Cecair ICU/Wad Hospital Lawas
+                  Parenteral Dilution Guidelines &amp; Fluid Restrictions ICU/Ward Lawas Hospital
                 </p>
               </div>
             </div>
@@ -116,7 +116,7 @@ export const DilutionProtocolPage: React.FC = () => {
                 className="px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-2xs flex items-center gap-2 transition-all cursor-pointer active:scale-95"
               >
                 <Printer className="w-4 h-4" />
-                <span>Cetak Garis Panduan</span>
+                <span>Print Clinical Guidelines</span>
               </button>
             </div>
           </div>
@@ -153,7 +153,7 @@ export const DilutionProtocolPage: React.FC = () => {
               <span>Dokumen Rujukan Rasmi KKM (Official MOH Guidelines)</span>
             </div>
             <p className="text-xs text-teal-100/80 max-w-2xl leading-relaxed">
-              Semua protokol diekstrak terus daripada Bahagian Perkhidmatan Farmasi KKM tanpa sebarang data sintetik bagi menjamin keselamatan pesakit.
+              All protocols are extracted directly from MOH Pharmaceutical Services Programme with zero synthetic data to safeguard patient safety.
             </p>
           </div>
 
@@ -206,7 +206,7 @@ export const DilutionProtocolPage: React.FC = () => {
               onChange={e => setDiluentFilter(e.target.value)}
               className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden focus:border-teal-500"
             >
-              <option value="ALL">Semua Pelarut (Diluents)</option>
+              <option value="ALL">All Diluents</option>
               <option value="NS">Normal Saline (0.9% NaCl)</option>
               <option value="D5">Dextrose 5% (D5W)</option>
               <option value="WFI">Water for Injection (WFI)</option>
@@ -217,7 +217,7 @@ export const DilutionProtocolPage: React.FC = () => {
               onChange={e => setReconFilter(e.target.value as any)}
               className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden focus:border-teal-500"
             >
-              <option value="ALL">Semua Sediaan (Cecair &amp; Serbuk)</option>
+              <option value="ALL">All Preparations (Liquid &amp; Powder)</option>
               <option value="LIQUID_ONLY">Sediaan Cecair Sahaja (Ready-to-Use)</option>
               <option value="RECON_REQUIRED">Serbuk Sahaja (Rekonstitusi)</option>
             </select>
@@ -256,8 +256,8 @@ export const DilutionProtocolPage: React.FC = () => {
           {filteredMonographs.length === 0 && (
             <div className="p-12 text-center bg-white rounded-3xl border border-dashed border-slate-300 text-slate-500 text-xs space-y-2">
               <Droplets className="w-8 h-8 mx-auto text-slate-400 opacity-60" />
-              <p className="font-bold text-slate-700 text-sm">Tiada protokol pelarutan KKM ditemui</p>
-              <p className="text-slate-500">Cuba ubah kata kunci carian atau tetapkan semula pilihan tapisan.</p>
+              <p className="font-bold text-slate-700 text-sm">No MOH dilution protocols found</p>
+              <p className="text-slate-500">Try modifying search keywords or resetting filter options.</p>
             </div>
           )}
         </div>

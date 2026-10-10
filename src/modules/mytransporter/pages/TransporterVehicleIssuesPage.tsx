@@ -89,22 +89,22 @@ const TransporterVehicleIssuesPage: React.FC = () => {
   const handleReportSubmit = async () => {
     if (!reportVehicleId) {
       toast.error(
-        isEn ? 'Vehicle Required' : 'Pilih Kenderaan', 
-        isEn ? 'Please select the affected vehicle.' : 'Sila pilih kenderaan yang bermasalah.'
+        isEn ? 'Vehicle Required' : 'Select Vehicle', 
+        isEn ? 'Please select the affected vehicle.' : 'Please select the affected vehicle.'
       )
       return
     }
     if (!reportTitle.trim()) {
       toast.error(
         isEn ? 'Title Required' : 'Tajuk Diperlukan', 
-        isEn ? 'Please provide an issue title.' : 'Sila nyatakan tajuk kerosakan.'
+        isEn ? 'Please provide an issue title.' : 'Please state the defect title.'
       )
       return
     }
     if (!reportDesc.trim()) {
       toast.error(
         isEn ? 'Description Required' : 'Penerangan Diperlukan', 
-        isEn ? 'Please detail the defect or symptoms observed.' : 'Sila isi penerangan kerosakan secara terperinci.'
+        isEn ? 'Please detail the defect or symptoms observed.' : 'Please provide detailed defect description.'
       )
       return
     }
@@ -127,7 +127,7 @@ const TransporterVehicleIssuesPage: React.FC = () => {
 
       toast.success(
         isEn ? 'Report Submitted' : 'Aduan Dihantar', 
-        isEn ? 'Vehicle defect report registered successfully.' : 'Aduan kerosakan kenderaan berjaya didaftarkan.'
+        isEn ? 'Vehicle defect report registered successfully.' : 'Vehicle defect report successfully submitted.'
       )
       setIsReportOpen(false)
       // Reset form
@@ -470,14 +470,14 @@ const TransporterVehicleIssuesPage: React.FC = () => {
             <div className="space-y-3">
               <div>
                 <label className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">
-                  {isEn ? 'Select Vehicle' : 'Pilih Kenderaan'}
+                  {isEn ? 'Select Vehicle' : 'Select Vehicle'}
                 </label>
                 <select
                   value={reportVehicleId}
                   onChange={(e) => setReportVehicleId(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-900 outline-none focus:border-rose-500 focus:bg-white transition-colors font-medium shadow-xs cursor-pointer"
                 >
-                  <option value="">{isEn ? '-- Select Fleet Vehicle --' : '-- Sila Pilih Kenderaan --'}</option>
+                  <option value="">{isEn ? '-- Select Fleet Vehicle --' : '-- Sila Select Vehicle --'}</option>
                   {vehicles.map((v) => (
                     <option key={v.id} value={v.id}>
                       {v.no_kenderaan} ({v.model} - {v.jenis_kenderaan === 'ambulance' ? (isEn ? 'Ambulance' : 'Ambulans') : v.jenis_kenderaan === 'van_jenazah' ? (isEn ? 'Hearse Van' : 'Van Jenazah') : 'SG'})

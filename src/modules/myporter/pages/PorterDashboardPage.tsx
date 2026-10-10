@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
-  Truck, 
+  PersonStanding, 
   Plus, 
   Clock, 
   CheckCircle2, 
@@ -26,7 +26,8 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from '@/components/ui'
+import { Card, CardHeader, CardTitle, CardContent, Button, Badge, ModulePageHeader } from '@/components/ui'
+import { Skeleton } from '@/shared/components/ui/skeleton'
 import { 
   getPorterStats, 
   getPorterJobs, 
@@ -40,13 +41,11 @@ import type {
 } from '@/shared/types/myporter'
 import { JobStatusBadge, UrgencyBadge, StaffStatusBadge } from '../components/PorterStatusBadge'
 import { PorterJobTrackerStepper } from '../components/PorterJobTrackerStepper'
-import { useLanguage } from '@/shared/contexts/LanguageContext'
 
 export const PorterDashboardPage: React.FC = () => {
   const navigate = useNavigate()
   const loggedUser = useAuthStore((state) => state.user)
   const toast = useToast()
-  const { language } = useLanguage()
 
   const [stats, setStats] = useState<PorterAggregateStats | null>(null)
   const [recentJobs, setRecentJobs] = useState<PorterJobRequest[]>([])
@@ -78,8 +77,8 @@ export const PorterDashboardPage: React.FC = () => {
       }
     } catch (err: any) {
       toast.error(
-        language === 'ms' ? 'Ralat Memuat Data' : 'Error Loading Data',
-        err.message || (language === 'ms' ? 'Gagal memuatkan data papan pemuka.' : 'Failed to load dashboard data.')
+        'Error Loading Data',
+        err.message || 'Failed to load dashboard data.'
       )
     } finally {
       setLoading(false)
@@ -94,196 +93,302 @@ export const PorterDashboardPage: React.FC = () => {
 
   if (loading && !stats) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <div className="w-12 h-12 border-4 border-sky-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-slate-400 font-medium animate-pulse">
-          {language === 'ms' ? 'Memuatkan Papan Pemuka MyPorter...' : 'Loading MyPorter Dashboard...'}
-        </p>
+      <div className="w-full max-w-full overflow-x-hidden space-y-8 animate-pulse-subtle">
+        {/* Top Banner Skeleton */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/90 p-6 md:p-8 rounded-3xl border border-slate-800 shadow-2xl">
+          <div className="flex items-center gap-3">
+            <Skeleton variant="rectangular" className="w-14 h-14 rounded-2xl bg-slate-800/80" />
+            <div className="space-y-2">
+              <Skeleton variant="text" className="h-8 w-44 bg-slate-800/80" />
+              <Skeleton variant="text" className="h-4 w-72 max-w-full bg-slate-800/60" />
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Skeleton className="h-11 w-48 rounded-xl bg-slate-800/90" />
+            <Skeleton className="h-11 w-36 rounded-xl bg-slate-800/80" />
+            <Skeleton className="h-11 w-36 rounded-xl bg-slate-800/80" />
+          </div>
+        </div>
+
+        {/* 4 Metric Card Skeletons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-slate-900/70 border border-slate-800 p-6 rounded-2xl flex items-center justify-between">
+              <div className="space-y-2">
+                <Skeleton variant="text" className="h-3.5 w-28 bg-slate-800/80" />
+                <Skeleton variant="text" className="h-8 w-16 bg-slate-800/90" />
+                <Skeleton variant="text" className="h-3 w-32 bg-slate-800/60" />
+              </div>
+              <Skeleton variant="rectangular" className="w-12 h-12 rounded-2xl bg-slate-800/70 flex-shrink-0" />
+            </div>
+          ))}
+        </div>
+
+        {/* Quick Request Categories Skeletons (8 buttons) */}
+        <div className="space-y-3">
+          <Skeleton variant="text" className="h-4 w-48 bg-slate-800/80" />
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="p-4 rounded-2xl border border-slate-800 bg-slate-900/50 flex flex-col items-center justify-center gap-2 min-h-[90px]">
+                <Skeleton variant="rectangular" className="w-6 h-6 rounded-lg bg-slate-800/80" />
+                <Skeleton variant="text" className="h-3 w-14 bg-slate-800/60" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Split Grid: Live Jobs + Porter Radar */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Recent Jobs Feed Skeleton (2 cols) */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="flex justify-between items-center">
+              <Skeleton variant="text" className="h-6 w-56 bg-slate-800/80" />
+              <Skeleton variant="text" className="h-4 w-28 bg-slate-800/60" />
+            </div>
+
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="p-5 bg-slate-900/80 border border-slate-800 rounded-2xl space-y-4">
+                  <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+                    <div className="flex items-center gap-2.5">
+                      <Skeleton variant="text" className="h-4 w-24 bg-slate-800/80 font-mono" />
+                      <Skeleton className="h-5 w-16 rounded-full bg-slate-800/70" />
+                    </div>
+                    <Skeleton className="h-5 w-20 rounded-full bg-slate-800/70" />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="flex items-start gap-2">
+                      <Skeleton className="w-4 h-4 rounded-full bg-slate-800 shrink-0 mt-0.5" />
+                      <div className="space-y-1.5 flex-1">
+                        <Skeleton variant="text" className="h-3 w-16 bg-slate-800/60" />
+                        <Skeleton variant="text" className="h-4 w-32 bg-slate-800/80" />
+                        <Skeleton variant="text" className="h-3 w-20 bg-slate-800/50" />
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Skeleton className="w-4 h-4 rounded-full bg-slate-800 shrink-0 mt-0.5" />
+                      <div className="space-y-1.5 flex-1">
+                        <Skeleton variant="text" className="h-3 w-16 bg-slate-800/60" />
+                        <Skeleton variant="text" className="h-4 w-32 bg-slate-800/80" />
+                        <Skeleton variant="text" className="h-3 w-20 bg-slate-800/50" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Stepper Skeleton */}
+                  <div className="py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      {Array.from({ length: 5 }).map((_, stepIdx) => (
+                        <React.Fragment key={stepIdx}>
+                          <div className="flex flex-col items-center gap-1.5">
+                            <Skeleton className="w-7 h-7 rounded-full bg-slate-800" />
+                            <Skeleton variant="text" className="h-2.5 w-12 bg-slate-800/60" />
+                          </div>
+                          {stepIdx < 4 && <Skeleton className="h-1 flex-1 rounded bg-slate-800/60 mb-4" />}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
+                    <Skeleton variant="text" className="h-4 w-36 bg-slate-800/70" />
+                    <Skeleton variant="text" className="h-4 w-24 bg-slate-800/70" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Porter Status Radar Skeleton (1 col) */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <Skeleton variant="text" className="h-6 w-40 bg-slate-800/80" />
+              <Skeleton variant="text" className="h-4 w-20 bg-slate-800/60" />
+            </div>
+
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 divide-y divide-slate-800/80 space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="pt-3 first:pt-0 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Skeleton variant="rectangular" className="w-10 h-10 rounded-xl bg-slate-800 ring-2 ring-slate-800" />
+                    <div className="space-y-1">
+                      <Skeleton variant="text" className="h-3.5 w-24 bg-slate-800/80" />
+                      <Skeleton variant="text" className="h-2.5 w-16 bg-slate-800/60" />
+                      <Skeleton variant="text" className="h-2.5 w-20 bg-slate-800/50" />
+                    </div>
+                  </div>
+                  <div className="space-y-1 flex flex-col items-end">
+                    <Skeleton className="h-5 w-16 rounded-full bg-slate-800" />
+                    <Skeleton variant="text" className="h-2.5 w-14 bg-slate-800/60" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="w-full space-y-8">
-      {/* Top Banner Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-slate-900 via-slate-900 to-sky-950 p-6 md:p-8 rounded-3xl border border-slate-800/80 shadow-2xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-3 bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-2xl backdrop-blur-md">
-              <Truck className="w-8 h-8 animate-pulse" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black text-white tracking-tight">MyPorter</h1>
-              <p className="text-slate-400 text-xs sm:text-sm">
-                {language === 'ms' 
-                  ? 'Sistem Logistik, Pemindahan Pesakit & Dispatch Bersepadu Hospital' 
-                  : 'Integrated Hospital Logistics, Patient Transfer & Dispatch Ecosystem'}
-              </p>
-            </div>
+    <div className="w-full space-y-6">
+      {/* Header */}
+      <ModulePageHeader
+        title="MyPorter"
+        subtitle="Hospital Patient Transfer, Porter Dispatch & Specimen Logistics"
+        badge="Logistics & Porter"
+        icon={<PersonStanding className="w-5 h-5 text-accent-base" />}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => navigate('/porter/requests/new')}
+              className="min-h-[38px] px-4 py-2 bg-accent-base hover:bg-accent-hover text-white text-xs font-semibold rounded-lg shadow-xs flex items-center gap-1.5 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Request Porter</span>
+            </button>
+            <button
+              onClick={() => navigate('/porter/panel')}
+              className="min-h-[38px] px-3.5 py-2 bg-surface hover:bg-subtle text-text-primary border border-border-default rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors shadow-xs"
+            >
+              <Radio className="w-3.5 h-3.5 text-accent-base" />
+              <span>Porter Panel</span>
+            </button>
+            {userRole === 'porter_manager' && (
+              <button
+                onClick={() => navigate('/porter/manager')}
+                className="min-h-[38px] px-3.5 py-2 bg-surface hover:bg-subtle text-text-primary border border-border-default rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors shadow-xs"
+              >
+                <Shield className="w-3.5 h-3.5 text-amber-500" />
+                <span>Dispatch Control</span>
+              </button>
+            )}
+          </div>
+        }
+      />
+
+      {/* Metrics Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-surface border border-border-default rounded-xl p-5 shadow-xs flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+              Today's Requests
+            </p>
+            <h3 className="text-2xl font-bold font-mono text-text-primary tabular-nums">{stats?.totalJobsToday || 0}</h3>
+            <p className="text-[11px] text-accent-base font-medium">
+              {stats?.activeBroadcasting || 0} searching for porters
+            </p>
+          </div>
+          <div className="p-2.5 bg-accent-base/10 text-accent-base rounded-lg">
+            <ClipboardList className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 relative z-10">
-          <Button
-            onClick={() => navigate('/porter/requests/new')}
-            className="flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-bold shadow-lg shadow-sky-500/25 border-0 rounded-xl px-5 py-2.5 transition-all duration-200 active:scale-95 text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{language === 'ms' ? 'Pesan Porter Sekarang' : 'Request Porter Now'}</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => navigate('/porter/panel')}
-            className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 text-slate-200 border-slate-700 rounded-xl px-4 py-2.5 text-sm"
-          >
-            <Radio className="w-4 h-4 text-sky-400" />
-            <span>{language === 'ms' ? 'Panel PPK Rider' : 'Porter Driver Panel'}</span>
-          </Button>
-
-          {userRole === 'porter_manager' && (
-            <Button
-              variant="outline"
-              onClick={() => navigate('/porter/manager')}
-              className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 text-slate-200 border-slate-700 rounded-xl px-4 py-2.5 text-sm"
-            >
-              <Shield className="w-4 h-4 text-amber-400" />
-              <span>{language === 'ms' ? 'Pusat Dispatch' : 'Dispatch Control Center'}</span>
-            </Button>
-          )}
+        <div className="bg-surface border border-border-default rounded-xl p-5 shadow-xs flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+              Active In Transit
+            </p>
+            <h3 className="text-2xl font-bold font-mono text-text-primary tabular-nums">{stats?.inTransit || 0}</h3>
+            <p className="text-[11px] text-text-muted">
+              {stats?.pendingReceiverConfirmation || 0} at destination
+            </p>
+          </div>
+          <div className="p-2.5 bg-accent-base/10 text-accent-base rounded-lg">
+            <PersonStanding className="w-5 h-5" />
+          </div>
         </div>
-      </div>
 
-      {/* Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <Card className="bg-slate-900/70 border-slate-800 shadow-lg hover:border-sky-500/50 transition-all rounded-2xl">
-          <CardContent className="p-6 flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                {language === 'ms' ? 'Permohonan Hari Ini' : 'Today\'s Requests'}
-              </p>
-              <h3 className="text-3xl font-black text-white tabular-nums">{stats?.totalJobsToday || 0}</h3>
-              <p className="text-[11px] text-sky-400 font-medium">
-                {stats?.activeBroadcasting || 0} {language === 'ms' ? 'sedang mencari PPK' : 'searching for porters'}
-              </p>
-            </div>
-            <div className="p-3 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-2xl">
-              <ClipboardList className="w-7 h-7" />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-surface border border-border-default rounded-xl p-5 shadow-xs flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+              Available Porters
+            </p>
+            <h3 className="text-2xl font-bold font-mono text-text-primary tabular-nums">
+              {stats?.availablePortersCount || 0} <span className="text-xs font-normal text-text-muted">/ {stats?.totalPortersOnDuty || 0}</span>
+            </h3>
+            <p className="text-[11px] text-emerald-600 font-medium">
+              Sufficient duty coverage
+            </p>
+          </div>
+          <div className="p-2.5 bg-emerald-500/10 text-emerald-600 rounded-lg">
+            <Users className="w-5 h-5" />
+          </div>
+        </div>
 
-        <Card className="bg-slate-900/70 border-slate-800 shadow-lg hover:border-blue-500/50 transition-all rounded-2xl">
-          <CardContent className="p-6 flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                {language === 'ms' ? 'Sedang Dalam Perjalanan' : 'Active In Transit'}
-              </p>
-              <h3 className="text-3xl font-black text-blue-400 tabular-nums">{stats?.inTransit || 0}</h3>
-              <p className="text-[11px] text-slate-400">
-                {stats?.pendingReceiverConfirmation || 0} {language === 'ms' ? 'tiba di destinasi' : 'at destination'}
-              </p>
-            </div>
-            <div className="p-3 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-2xl">
-              <Truck className="w-7 h-7 animate-pulse" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900/70 border-slate-800 shadow-lg hover:border-emerald-500/50 transition-all rounded-2xl">
-          <CardContent className="p-6 flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                {language === 'ms' ? 'PPK Bersedia (Online)' : 'Available Porters (Online)'}
-              </p>
-              <h3 className="text-3xl font-black text-emerald-400 tabular-nums">
-                {stats?.availablePortersCount || 0} <span className="text-sm font-normal text-slate-500">/ {stats?.totalPortersOnDuty || 0}</span>
-              </h3>
-              <p className="text-[11px] text-emerald-400 font-medium">
-                {language === 'ms' ? 'Kadar sedia ada mencukupi' : 'Sufficient duty coverage'}
-              </p>
-            </div>
-            <div className="p-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-2xl">
-              <Users className="w-7 h-7" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900/70 border-slate-800 shadow-lg hover:border-amber-500/50 transition-all rounded-2xl">
-          <CardContent className="p-6 flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                {language === 'ms' ? 'Purata Masa TAT (SLA)' : 'Average TAT (SLA)'}
-              </p>
-              <h3 className="text-3xl font-black text-amber-400 tabular-nums">
-                {stats?.averageTATMinutes || 14} <span className="text-sm font-normal text-slate-500">min</span>
-              </h3>
-              <p className="text-[11px] text-amber-400 font-medium">
-                {stats?.slaCompliancePercentage || 96.8}% {language === 'ms' ? 'patuh SLA' : 'SLA compliance'}
-              </p>
-            </div>
-            <div className="p-3 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-2xl">
-              <TrendingUp className="w-7 h-7" />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-surface border border-border-default rounded-xl p-5 shadow-xs flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+              Average TAT (SLA)
+            </p>
+            <h3 className="text-2xl font-bold font-mono text-text-primary tabular-nums">
+              {stats?.averageTATMinutes || 14} <span className="text-xs font-normal text-text-muted">min</span>
+            </h3>
+            <p className="text-[11px] text-amber-500 font-medium">
+              {stats?.slaCompliancePercentage || 96.8}% SLA compliance
+            </p>
+          </div>
+          <div className="p-2.5 bg-amber-500/10 text-amber-500 rounded-lg">
+            <TrendingUp className="w-5 h-5" />
+          </div>
+        </div>
       </div>
 
       {/* Grab-Style Quick 1-Click Order Categories */}
       <div className="space-y-3">
-        <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-          <span>{language === 'ms' ? 'Kategori Pantas Pesanan (Quick Request)' : 'Quick Request Categories'}</span>
+        <h2 className="text-xs font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+          <span>Quick Request Categories</span>
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
           {[
             { 
               cat: 'patient_transfer', 
-              label: language === 'ms' ? 'Pesakit' : 'Patient Transfer', 
+              label: 'Patient Transfer', 
               icon: Bed, 
-              color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30' 
+              color: 'text-indigo-500 bg-indigo-500/10 border-indigo-500/20' 
             },
             { 
               cat: 'lab_specimen', 
-              label: language === 'ms' ? 'Spesimen' : 'Lab Specimen', 
+              label: 'Lab Specimen', 
               icon: FlaskConical, 
-              color: 'text-teal-400 bg-teal-500/10 border-teal-500/30' 
+              color: 'text-teal-500 bg-teal-500/10 border-teal-500/20' 
             },
             { 
               cat: 'blood_bank', 
-              label: language === 'ms' ? 'Tabung Darah' : 'Blood Bank', 
+              label: 'Blood Bank', 
               icon: Droplets, 
-              color: 'text-rose-400 bg-rose-500/10 border-rose-500/30' 
+              color: 'text-rose-500 bg-rose-500/10 border-rose-500/20' 
             },
             { 
               cat: 'pharmacy_run', 
-              label: language === 'ms' ? 'Ubat Farmasi' : 'Pharmacy Run', 
+              label: 'Pharmacy Run', 
               icon: Pill, 
-              color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' 
+              color: 'text-amber-500 bg-amber-500/10 border-amber-500/20' 
             },
             { 
               cat: 'gas_equipment', 
-              label: language === 'ms' ? 'Oksigen / Alat' : 'Gas & Equipment', 
+              label: 'Gas & Equipment', 
               icon: AirVent, 
-              color: 'text-sky-400 bg-sky-500/10 border-sky-500/30' 
+              color: 'text-sky-500 bg-sky-500/10 border-sky-500/20' 
             },
             { 
               cat: 'mortuary', 
-              label: language === 'ms' ? 'Jenazah' : 'Mortuary', 
+              label: 'Mortuary', 
               icon: Shield, 
-              color: 'text-slate-300 bg-slate-500/10 border-slate-500/30' 
+              color: 'text-slate-500 bg-slate-500/10 border-slate-500/20' 
             },
             { 
               cat: 'medical_records', 
-              label: language === 'ms' ? 'Rekod BHT' : 'Medical Records', 
+              label: 'Medical Records', 
               icon: FileText, 
-              color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' 
+              color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' 
             },
             { 
               cat: 'cssd_linen', 
-              label: language === 'ms' ? 'CSSD & Linen' : 'CSSD & Linen', 
+              label: 'CSSD & Linen', 
               icon: Activity, 
-              color: 'text-fuchsia-400 bg-fuchsia-500/10 border-fuchsia-500/30' 
+              color: 'text-fuchsia-500 bg-fuchsia-500/10 border-fuchsia-500/20' 
             },
           ].map((item) => {
             const Icon = item.icon
@@ -291,10 +396,10 @@ export const PorterDashboardPage: React.FC = () => {
               <button
                 key={item.cat}
                 onClick={() => navigate(`/porter/requests/new?category=${item.cat}`)}
-                className={`p-4 rounded-2xl border ${item.color} flex flex-col items-center justify-center gap-2 hover:scale-105 hover:bg-slate-800/80 transition-all duration-200 active:scale-95 shadow-sm text-center`}
+                className={`min-h-[64px] p-3 sm:p-4 rounded-xl border ${item.color} flex flex-col items-center justify-center gap-2 hover:scale-[1.02] hover:bg-subtle transition-all duration-200 active:scale-98 shadow-xs text-center`}
               >
-                <Icon className="w-6 h-6" />
-                <span className="text-xs font-bold text-slate-200">{item.label}</span>
+                <Icon className="w-5 h-5" />
+                <span className="text-xs font-medium text-text-primary">{item.label}</span>
               </button>
             )
           })}
@@ -306,34 +411,34 @@ export const PorterDashboardPage: React.FC = () => {
         {/* Recent Jobs Feed (2 cols) */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Activity className="w-5 h-5 text-sky-400" />
-              <span>{language === 'ms' ? 'Status Pergerakan Langsung (Live Jobs)' : 'Live Dispatch & Movement Status'}</span>
+            <h2 className="text-base font-bold text-text-primary flex items-center gap-2">
+              <Activity className="w-5 h-5 text-accent-base" />
+              <span>Live Dispatch & Movement Status</span>
             </h2>
             <Button
               variant="ghost"
               onClick={() => navigate('/porter/requests/my')}
-              className="text-xs font-bold text-sky-400 hover:text-sky-300 p-0 flex items-center gap-1"
+              className="text-xs font-semibold text-accent-base hover:text-accent-dark p-0 flex items-center gap-1"
             >
-              <span>{language === 'ms' ? 'Lihat Semua Pesanan' : 'View All Requests'}</span>
+              <span>View All Requests</span>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
 
           <div className="space-y-4">
             {recentJobs.length === 0 ? (
-              <div className="p-12 text-center text-slate-500 bg-slate-900/50 rounded-2xl border border-slate-800">
-                {language === 'ms' ? 'Tiada permohonan aktif pada masa ini.' : 'No active requests at this time.'}
+              <div className="p-12 text-center text-text-muted bg-surface rounded-xl border border-border-default">
+                No active requests at this time.
               </div>
             ) : (
               recentJobs.map((job) => (
                 <div
                   key={job.id}
-                  className="p-5 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl shadow-md transition-all space-y-4"
+                  className="p-5 bg-surface hover:bg-subtle/30 border border-border-default hover:border-accent-base/30 rounded-xl shadow-xs transition-all space-y-4"
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-default pb-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="font-mono text-xs font-bold text-slate-400">{job.no_rujukan}</span>
+                      <span className="font-mono text-xs font-semibold text-text-muted">{job.no_rujukan}</span>
                       <UrgencyBadge urgency={job.urgency} />
                     </div>
                     <JobStatusBadge status={job.status} />
@@ -341,23 +446,23 @@ export const PorterDashboardPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                     <div className="flex items-start gap-2">
-                      <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <MapPin className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-slate-400 text-[10px] uppercase font-semibold">
-                          {language === 'ms' ? 'Dari (Asal):' : 'From (Origin):'}
+                        <p className="text-text-muted text-[10px] uppercase font-semibold">
+                          From (Origin):
                         </p>
-                        <p className="font-bold text-slate-200">{job.origin_department_name}</p>
-                        <p className="text-slate-500">{job.origin_location_details}</p>
+                        <p className="font-semibold text-text-primary">{job.origin_department_name}</p>
+                        <p className="text-text-muted">{job.origin_location_details}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <MapPin className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                      <MapPin className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-slate-400 text-[10px] uppercase font-semibold">
-                          {language === 'ms' ? 'Ke (Destinasi):' : 'To (Destination):'}
+                        <p className="text-text-muted text-[10px] uppercase font-semibold">
+                          To (Destination):
                         </p>
-                        <p className="font-bold text-slate-200">{job.destination_department_name}</p>
-                        <p className="text-slate-500">{job.destination_location_details}</p>
+                        <p className="font-semibold text-text-primary">{job.destination_department_name}</p>
+                        <p className="text-text-muted">{job.destination_location_details}</p>
                       </div>
                     </div>
                   </div>
@@ -365,17 +470,17 @@ export const PorterDashboardPage: React.FC = () => {
                   {/* Step Progress Bar */}
                   <PorterJobTrackerStepper job={job} compact />
 
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-800/80 text-xs">
-                    <div className="text-slate-400">
-                      {language === 'ms' ? 'PPK:' : 'Porter:'} <span className="font-semibold text-slate-200">
-                        {job.assigned_porter_name || (language === 'ms' ? 'Menunggu tugasan' : 'Awaiting assignment')}
+                  <div className="flex items-center justify-between pt-1 border-t border-border-default text-xs">
+                    <div className="text-text-muted">
+                      Porter: <span className="font-medium text-text-primary">
+                        {job.assigned_porter_name || 'Awaiting assignment'}
                       </span>
                     </div>
                     <button
                       onClick={() => navigate('/porter/requests/my')}
-                      className="text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1"
+                      className="text-accent-base hover:text-accent-dark font-medium flex items-center gap-1"
                     >
-                      <span>{language === 'ms' ? 'Jejak Pesanan' : 'Track Request'}</span>
+                      <span>Track Request</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -388,21 +493,21 @@ export const PorterDashboardPage: React.FC = () => {
         {/* Available PPK Fleet Status (1 col) */}
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Users className="w-5 h-5 text-emerald-400" />
-              <span>{language === 'ms' ? 'Status Petugas PPK' : 'Porter Duty Status'}</span>
+            <h2 className="text-base font-bold text-text-primary flex items-center gap-2">
+              <Users className="w-5 h-5 text-accent-base" />
+              <span>Porter Duty Status</span>
             </h2>
             <Button
               variant="ghost"
               onClick={() => navigate('/porter/roster')}
-              className="text-xs font-bold text-sky-400 hover:text-sky-300 p-0 flex items-center gap-1"
+              className="text-xs font-semibold text-accent-base hover:text-accent-dark p-0 flex items-center gap-1"
             >
-              <span>{language === 'ms' ? 'Jadual Syif' : 'Duty Roster'}</span>
+              <span>Duty Roster</span>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
 
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 divide-y divide-slate-800/80 space-y-3">
+          <div className="bg-surface border border-border-default rounded-xl p-4 divide-y divide-border-default space-y-3 shadow-xs">
             {porters.map((p) => (
               <div key={p.id} className="pt-3 first:pt-0 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -410,30 +515,30 @@ export const PorterDashboardPage: React.FC = () => {
                     <img
                       src={p.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&auto=format&fit=crop&q=80'}
                       alt={p.full_name}
-                      className="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-800"
+                      className="w-10 h-10 rounded-lg object-cover ring-1 ring-border-default"
                     />
                     <span
-                      className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-slate-900 ${
+                      className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-surface ${
                         p.current_status === 'available'
                           ? 'bg-emerald-500'
                           : p.current_status === 'in_job'
                             ? 'bg-blue-500'
                             : p.current_status === 'on_break'
                               ? 'bg-amber-500'
-                              : 'bg-slate-500'
+                              : 'bg-slate-400'
                       }`}
                     />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-slate-200">{p.full_name}</h4>
-                    <p className="text-[10px] text-slate-400">{p.assigned_zone}</p>
-                    <p className="text-[10px] text-slate-500">{p.current_location}</p>
+                    <h4 className="text-xs font-semibold text-text-primary">{p.full_name}</h4>
+                    <p className="text-[10px] text-text-muted">{p.assigned_zone}</p>
+                    <p className="text-[10px] text-text-muted">{p.current_location}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <StaffStatusBadge status={p.current_status} />
-                  <p className="text-[10px] text-slate-400 mt-1 font-mono">
-                    {p.total_completed_today} {language === 'ms' ? 'selesai' : 'completed'}
+                  <p className="text-[10px] text-text-muted mt-1 font-mono">
+                    {p.total_completed_today} completed
                   </p>
                 </div>
               </div>

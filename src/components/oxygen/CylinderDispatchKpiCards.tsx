@@ -1,13 +1,35 @@
-// @ts-nocheck
 import React from 'react';
 import { ClipboardList, AlertCircle, PlayCircle, CheckCircle, XCircle } from 'lucide-react';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 import type { CylinderDispatchKPI } from '@/types/pharmacy';
 
 interface CylinderDispatchKpiCardsProps {
-  kpi: CylinderDispatchKPI;
+  kpi?: CylinderDispatchKPI | null;
+  loading?: boolean;
 }
 
-export const CylinderDispatchKpiCards: React.FC<CylinderDispatchKpiCardsProps> = ({ kpi }) => {
+export const CylinderDispatchKpiCards: React.FC<CylinderDispatchKpiCardsProps> = ({ kpi, loading = false }) => {
+  if (loading || !kpi) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {[1, 2, 3, 4, 5].map((idx) => (
+          <div
+            key={idx}
+            className="relative overflow-hidden bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-3 w-20 !bg-slate-200" />
+                <Skeleton className="h-8 w-16 !bg-slate-200" />
+                <Skeleton className="h-3 w-28 !bg-slate-200" />
+              </div>
+              <Skeleton className="h-11 w-11 rounded-xl !bg-slate-200 shrink-0" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
   const cards = [
     {
       title: 'Total Requests',

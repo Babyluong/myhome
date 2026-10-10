@@ -11,7 +11,8 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { Badge, Spinner } from '@/components/ui'
+import { Badge, ModulePageHeader } from '@/components/ui'
+import { Skeleton } from '@/shared/components/ui/skeleton'
 import { getUnitPemantauan } from '@/modules/mysuhu/services/suhuService'
 import { getDepartmentsByHospital } from '@/services/departmentService'
 import type { UnitPemantauanWithRelations } from '@/types/mysuhu'
@@ -108,158 +109,180 @@ export const SuhuDashboardPage: React.FC = () => {
     return { total, normal, warning, breach, noReading }
   }, [visibleDepartments, deptStats])
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-400">
-        <Spinner size="lg" className="text-[#00a68a] mb-4" />
-        <p className="text-sm font-medium">Loading Temperature Dashboard...</p>
-      </div>
-    )
-  }
+
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-8 text-slate-800">
+    <div className="p-4 sm:p-6 lg:p-8 w-full max-w-full overflow-x-hidden space-y-6">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-[#00a68a] to-emerald-500" />
-        <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-            <span>Temperature Monitoring Dashboard</span>
-          </h1>
-          <p className="text-sm text-slate-500 mt-0.5 font-medium">Select a department to view and record temperature logs</p>
-        </div>
-      </div>
+      <ModulePageHeader
+        icon={Thermometer}
+        title="Temperature Monitoring Dashboard"
+        description="Select a hospital department to inspect cold chain storage devices and record clinical temperature logs."
+        badges={[
+          { label: 'KKM Cold Chain Standard', variant: 'accent' },
+          { label: 'Pharmacy Quality Assurance', variant: 'neutral' },
+        ]}
+      />
 
       {/* Global Breach Notification */}
       {summary.breach > 0 && (
         <div 
           onClick={() => navigate('/suhu/breaches')}
-          className="flex items-center justify-between p-4 bg-rose-50 border border-rose-100 rounded-2xl cursor-pointer hover:bg-rose-100/50 transition-all shadow-md group animate-pulse"
+          className="flex items-center justify-between p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl cursor-pointer hover:bg-rose-500/15 transition-all shadow-2xs group"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-rose-500 text-white rounded-xl">
+            <div className="p-2 bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-lg">
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-bold text-rose-800">Active Temperature Breach Incident Detected</p>
-              <p className="text-xs text-rose-600 font-medium">Click to inspect and annotate correct action logs immediately.</p>
+              <p className="text-sm font-semibold text-rose-600 dark:text-rose-400">Active Temperature Breach Incident Detected</p>
+              <p className="text-xs text-rose-600/80 dark:text-rose-400/80">Click to inspect and annotate correct action logs immediately.</p>
             </div>
           </div>
-          <span className="text-xs font-black text-rose-700 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+          <span className="text-xs font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
             View Breach Log &rarr;
           </span>
         </div>
       )}
 
       {/* Hospital KPI Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Units</span>
-          <p className="text-3xl font-black font-mono text-slate-800 mt-2">{summary.total}</p>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">Total Units</span>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-text-primary mt-1 tabular-nums">{loading ? <Skeleton className="h-8 w-14 bg-subtle inline-block rounded" /> : summary.total}</div>
         </div>
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-emerald-500">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Normal</span>
-          <p className="text-3xl font-black font-mono text-emerald-600 mt-2">{summary.normal}</p>
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+          <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            Normal
+          </span>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1 tabular-nums">{loading ? <Skeleton className="h-8 w-14 bg-subtle inline-block rounded" /> : summary.normal}</div>
         </div>
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-amber-500">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Warning</span>
-          <p className="text-3xl font-black font-mono text-amber-600 mt-2">{summary.warning}</p>
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+          <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+            Warning
+          </span>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1 tabular-nums">{loading ? <Skeleton className="h-8 w-14 bg-subtle inline-block rounded" /> : summary.warning}</div>
         </div>
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-rose-500">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Breach</span>
-          <p className="text-3xl font-black font-mono text-rose-600 mt-2">{summary.breach}</p>
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+          <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+            Breach
+          </span>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1 tabular-nums">{loading ? <Skeleton className="h-8 w-14 bg-subtle inline-block rounded" /> : summary.breach}</div>
         </div>
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-slate-400">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">No Readings</span>
-          <p className="text-3xl font-black font-mono text-slate-500 mt-2">{summary.noReading}</p>
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-text-muted" />
+            No Readings
+          </span>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-text-muted mt-1 tabular-nums">{loading ? <Skeleton className="h-8 w-14 bg-subtle inline-block rounded" /> : summary.noReading}</div>
         </div>
       </div>
 
       {/* Department Selector Grid */}
-      <div className="space-y-4">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">Hospital Departments</h2>
+      <div className="space-y-3.5">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-text-muted">Hospital Departments</h2>
         
-        {visibleDepartments.length === 0 ? (
-          <div className="bg-white border border-slate-100 rounded-3xl p-12 text-center shadow-lg">
-            <Building className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-slate-600">No departments configured with temperature monitoring</p>
-            <p className="text-xs text-slate-400 mt-1">Please contact system administrator to enroll your department.</p>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-surface border border-border-default rounded-xl p-5 shadow-2xs space-y-4 animate-pulse">
+                <div className="flex justify-between items-start gap-4 mb-4">
+                  <Skeleton className="w-10 h-10 rounded-lg bg-subtle flex-shrink-0" />
+                  <Skeleton className="h-4 w-16 rounded bg-subtle" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-3/4 bg-subtle rounded" />
+                  <Skeleton className="h-3.5 w-1/2 bg-subtle/70 rounded" />
+                </div>
+                <div className="mt-6 pt-3 border-t border-border-default flex items-center justify-between">
+                  <Skeleton className="h-4 w-24 rounded bg-subtle/70" />
+                  <Skeleton className="h-4 w-12 rounded bg-subtle" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : visibleDepartments.length === 0 ? (
+          <div className="bg-surface border border-border-default rounded-xl p-12 text-center shadow-2xs">
+            <Building className="w-12 h-12 text-text-muted opacity-40 mx-auto mb-3" />
+            <p className="text-sm font-semibold text-text-primary">No departments configured with temperature monitoring</p>
+            <p className="text-xs text-text-muted mt-1">Please contact system administrator to enroll your department.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {visibleDepartments.map(dept => {
               const stat = deptStats[dept.id] || { total: 0, normal: 0, warning: 0, breach: 0, noReading: 0 }
               const hasBreach = stat.breach > 0
               const hasWarning = stat.warning > 0
               
-              let borderClass = 'border-slate-100 hover:border-[#00a68a]/30'
-              if (hasBreach) borderClass = 'border-rose-100 hover:border-rose-300/60 ring-2 ring-rose-500/5'
-              else if (hasWarning) borderClass = 'border-amber-100 hover:border-amber-300/60 ring-2 ring-amber-500/5'
+              let borderClass = 'border-border-default hover:border-border-strong'
+              if (hasBreach) borderClass = 'border-rose-500/40 hover:border-rose-500/60 ring-1 ring-rose-500/10'
+              else if (hasWarning) borderClass = 'border-amber-500/40 hover:border-amber-500/60 ring-1 ring-amber-500/10'
 
               return (
                 <div 
                   key={dept.id}
                   onClick={() => navigate(`/suhu/department/${dept.id}`)}
-                  className={`bg-white border rounded-3xl p-6 shadow-md hover:shadow-xl cursor-pointer transition-all duration-300 flex flex-col justify-between group relative overflow-hidden ${borderClass}`}
+                  className={`bg-surface border rounded-xl p-5 shadow-2xs hover:bg-subtle/30 cursor-pointer transition-all duration-150 flex flex-col justify-between group relative overflow-hidden ${borderClass}`}
                 >
-                  <div className="absolute top-0 left-0 w-full h-1 bg-slate-50 group-hover:bg-gradient-to-r group-hover:from-teal-400 group-hover:to-emerald-500 transition-all duration-300" />
-                  
                   <div>
-                    <div className="flex justify-between items-start gap-4 mb-4">
-                      <div className="p-3 bg-slate-50 text-slate-600 rounded-2xl group-hover:bg-[#00a68a]/10 group-hover:text-[#00a68a] transition-all">
-                        <Building className="w-5 h-5" />
+                    <div className="flex justify-between items-start gap-4 mb-3">
+                      <div className="p-2.5 bg-subtle text-text-secondary rounded-lg group-hover:bg-accent-subtle group-hover:text-accent-base transition-all">
+                        <Building className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
                       
                       <div className="flex items-center gap-1.5">
                         {hasBreach && (
-                          <Badge variant="error" className="text-[9px] font-black uppercase tracking-wide px-2 py-0.5 rounded-lg">
+                          <Badge variant="error" className="text-[9px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-md">
                             Breach
                           </Badge>
                         )}
                         {hasWarning && !hasBreach && (
-                          <Badge variant="warning" className="text-[9px] font-black uppercase tracking-wide px-2 py-0.5 rounded-lg">
+                          <Badge variant="warning" className="text-[9px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-md">
                             Warning
                           </Badge>
                         )}
-                        <span className="text-xs text-slate-400 font-bold font-mono">
+                        <span className="text-xs text-text-muted font-semibold font-mono">
                           {dept.department_code}
                         </span>
                       </div>
                     </div>
 
-                    <h3 className="text-base font-black text-slate-800 group-hover:text-[#00a68a] transition-colors line-clamp-1 mb-1">
+                    <h3 className="text-sm sm:text-base font-semibold text-text-primary group-hover:text-accent-base transition-colors line-clamp-1 mb-1">
                       {dept.department_name}
                     </h3>
-                    <p className="text-xs text-slate-400 font-medium">
+                    <p className="text-xs text-text-muted font-normal">
                       {stat.total === 0 ? 'No monitoring points registered' : `${stat.total} Active Monitoring Points`}
                     </p>
                   </div>
 
-                  <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <div className="flex gap-2">
+                  <div className="mt-6 pt-3 border-t border-border-default flex items-center justify-between">
+                    <div className="flex flex-wrap gap-1.5">
                       {stat.total > 0 && (
                         <>
                           {stat.normal > 0 && (
-                            <span className="text-[10px] font-black font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md flex items-center gap-1">
+                            <span className="text-[10px] font-semibold font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                               {stat.normal} OK
                             </span>
                           )}
                           {stat.warning > 0 && (
-                            <span className="text-[10px] font-black font-mono text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md flex items-center gap-1">
+                            <span className="text-[10px] font-semibold font-mono text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                               {stat.warning} WRN
                             </span>
                           )}
                           {stat.breach > 0 && (
-                            <span className="text-[10px] font-black font-mono text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md flex items-center gap-1">
+                            <span className="text-[10px] font-semibold font-mono text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded-md flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                               {stat.breach} BRCH
                             </span>
                           )}
                           {stat.noReading > 0 && (
-                            <span className="text-[10px] font-black font-mono text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                            <span className="text-[10px] font-semibold font-mono text-text-muted bg-subtle border border-border-default px-2 py-0.5 rounded-md flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-text-muted" />
                               {stat.noReading} N/A
                             </span>
                           )}
@@ -267,7 +290,7 @@ export const SuhuDashboardPage: React.FC = () => {
                       )}
                     </div>
                     
-                    <span className="text-xs font-black text-[#00a68a] flex items-center gap-1 transform group-hover:translate-x-1 transition-all">
+                    <span className="text-xs font-semibold text-accent-base flex items-center gap-1 transform group-hover:translate-x-0.5 transition-all">
                       Open &rarr;
                     </span>
                   </div>

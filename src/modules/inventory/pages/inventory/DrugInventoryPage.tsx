@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useState, useCallback } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, Navigate } from 'react-router-dom'
+import { isPharmacyLogisticsUser } from '@/shared/utils/inventoryRbac'
 import { 
   AlertTriangle, 
   Pill, 
@@ -41,6 +42,12 @@ import QRCode from 'qrcode'
 export const DrugInventoryPage: React.FC = () => {
   const location = useLocation()
   const { user } = useAuthStore()
+
+  // Master catalog is strictly reserved for Pharmacy Logistics department
+  if (user && !isPharmacyLogisticsUser(user)) {
+    return <Navigate to="/pharmacy/inventory" replace />
+  }
+
   const hospitalId = user?.hospital_id
   const { success: showSuccess, error: showError } = useToastStore()
   const { language } = useLanguage()
@@ -257,12 +264,12 @@ export const DrugInventoryPage: React.FC = () => {
         showError(isEn ? 'Error' : 'Ralat', res.error)
         return
       }
-      showSuccess(isEn ? 'Success' : 'Berjaya', isEn ? 'Drug information updated successfully!' : 'Maklumat ubat berjaya dikemaskini!')
+      showSuccess(isEn ? 'Success' : 'Berjaya', isEn ? 'Drug information updated successfully!' : 'Medication details successfully updated!')
       setIsEditModalOpen(false)
       setSelectedDrugForEdit(null)
       void loadDrugs()
     } catch (err: any) {
-      showError(isEn ? 'Error' : 'Ralat', err.message || (isEn ? 'Failed to save drug information' : 'Gagal menyimpan maklumat ubat'))
+      showError(isEn ? 'Error' : 'Ralat', err.message || (isEn ? 'Failed to save drug information' : 'Failed to save medication details'))
     }
   }
 
@@ -282,13 +289,16 @@ export const DrugInventoryPage: React.FC = () => {
 
     const res = await getDrugs(hospitalId, filter, page, pageSize)
 
-    if (res.error) {
+    if (res.error && (typeof navigator === 'undefined' || navigator.onLine)) {
       setError(res.error)
       setDrugs([])
     } else if (res.data) {
+      setError(null)
       setDrugs(res.data.data)
       setTotalPages(res.data.totalPages)
       setTotal(res.data.total)
+    } else {
+      setError(null)
     }
 
     setIsLoading(false)
@@ -616,7 +626,7 @@ export const DrugInventoryPage: React.FC = () => {
       )}
 
       {/* Error */}
-      {!isLoading && error && (
+      {!isLoading && error && (typeof navigator === 'undefined' || navigator.onLine) && (
         <div className="flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700">
           <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500 mt-0.5" />
           <div>
@@ -634,7 +644,7 @@ export const DrugInventoryPage: React.FC = () => {
               {selectedIds.length} {isEn ? 'Selected' : 'Dipilih'}
             </span>
             <span className="text-xs text-slate-300 font-medium hidden sm:inline">
-              {isEn ? 'Select bulk action to activate or deactivate selected drugs' : 'Pilih tindakan pukal untuk mengaktifkan atau me-nyahaktifkan ubat'}
+              {isEn ? 'Select bulk action to activate or deactivate selected drugs' : 'Select bulk action to activate or deactivate medications'}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -658,7 +668,7 @@ export const DrugInventoryPage: React.FC = () => {
               onClick={() => setSelectedIds([])}
               className="px-3 py-1.5 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
             >
-              {isEn ? 'Deselect All' : 'Batal Pilihan'}
+              {isEn ? 'Deselect All' : 'Clear Selection'}
             </button>
           </div>
         </div>
@@ -911,7 +921,7 @@ export const DrugInventoryPage: React.FC = () => {
                 disabled={!qrCodeUrl}
               >
                 <Printer className="w-4 h-4" />
-                {isEn ? 'Print Label' : 'Cetak Label'}
+                {isEn ? 'Print Label' : 'Print Label'}
               </Button>
             </div>
           </div>

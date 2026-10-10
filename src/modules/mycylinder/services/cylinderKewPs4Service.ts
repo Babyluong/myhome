@@ -20,6 +20,7 @@
 
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
 import type { ApiResponse } from '@/types'
+import { extractSerialsFromNotes } from './cylinderDispatchService'
 
 export interface CylinderLedgerItem {
   id: string
@@ -49,6 +50,7 @@ export interface CylinderTransactionRow {
   id: string
   index: number
   size_id: string
+  type_id?: string
   item_code: string
   item_name: string
   transaction_date: string
@@ -79,6 +81,7 @@ export interface CylinderStoreVerificationRecord {
   id: string
   hospital_id?: string
   size_id: string
+  type_id?: string
   item_code: string
   item_name: string
   verification_year: number
@@ -202,7 +205,11 @@ export async function getCylinderLedgerItems(
           (c: any) => c.cylinder_size_id === row.size_id && c.cylinder_type_id === row.type_id
         )
 
-        const fullCount = matchedInv.filter((c: any) => c.status === 'full' || c.status === 'available').length
+        const fullCount = matchedInv.filter((c: any) => 
+          (c.status === 'full' || c.status === 'available') && 
+          c.current_location !== 'Supplier' && 
+          !c.department_id
+        ).length
         const emptyCount = matchedInv.filter((c: any) => c.status === 'empty').length
         const inUseCount = matchedInv.filter((c: any) => c.status === 'issued' || c.status === 'in_use' || !!c.department_id).length
         const maintCount = matchedInv.filter((c: any) => c.status === 'maintenance' || c.status === 'testing').length
@@ -247,7 +254,7 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 /**
  * Helper to resolve the canonical cylinder size UUID from any combo ID, size ID, or size code
  */
-async function resolveSizeInfo(sizeIdentifier: string): Promise<{ sizeId: string; itemCode: string; itemName: string }> {
+async function resolveSizeInfo(sizeIdentifier: string): Promise<{ sizeId: string; typeId?: string; itemCode: string; itemName: string }> {
   try {
     if (!sizeIdentifier) {
       return {
@@ -279,7 +286,7 @@ async function resolveSizeInfo(sizeIdentifier: string): Promise<{ sizeId: string
       // 2. Check if sizeIdentifier is a combo id
       const { data: combo, error: comboErr } = await supabase
         .from('pharmacy_oxygen_size_type_combos')
-        .select('id, size_id, display_name, size_info:pharmacy_oxygen_cylinder_sizes(id, code, capacity)')
+        .select('id, size_id, type_id, display_name, size_info:pharmacy_oxygen_cylinder_sizes(id, code, capacity)')
         .eq('id', trimmed)
         .maybeSingle()
 
@@ -287,6 +294,7 @@ async function resolveSizeInfo(sizeIdentifier: string): Promise<{ sizeId: string
         const s = Array.isArray(combo.size_info) ? combo.size_info[0] : combo.size_info
         return {
           sizeId: combo.size_id || s?.id || trimmed,
+          typeId: combo.type_id,
           itemCode: s?.code || '101-N',
           itemName: combo.display_name || `Medical Oxygen Cylinder (${s?.code || ''})`
         }
@@ -348,8 +356,8 @@ export async function getCylinderTransactions(
       return { data: [], error: null }
     }
 
-    const { sizeId: targetSizeId, itemCode, itemName } = await resolveSizeInfo(filter?.sizeId || '332911a0-9e8c-4c0e-980a-9df3d0197dce')
-    const targetTypeId = filter?.typeId
+    const { sizeId: targetSizeId, typeId: resolvedTypeId, itemCode, itemName } = await resolveSizeInfo(filter?.sizeId || '332911a0-9e8c-4c0e-980a-9df3d0197dce')
+    const targetTypeId = filter?.typeId || resolvedTypeId
 
     const txList: CylinderTransactionRow[] = []
 
@@ -383,6 +391,8 @@ export async function getCylinderTransactions(
           supplier_name,
           reception_date,
           created_at,
+          refill_amount,
+          loan_amount,
           items:pharmacy_oxygen_reception_items(id, cylinder_size_id, cylinder_type_id, quantity)
         `)
         .eq('hospital_id', hospitalId)
@@ -392,7 +402,17 @@ export async function getCylinderTransactions(
     const dbReceiveDocs = rcvDocsRes.data || []
     const dbReceptions = receptionsRes.data || []
 
-    const processedDoKeys = new Set<string>()
+    const extractDoNumbers = (str?: string): string[] => {
+      if (!str) return []
+      // Matches standard DO numbers like D26/09-065, D26/09-066, etc. without splitting on slash
+      const matches = str.match(/D\d+[\/\-][\w\-]+/gi)
+      if (matches && matches.length > 0) {
+        return matches.map(m => m.toUpperCase().replace(/\s+/g, ''))
+      }
+      return str.split(/[,;&]|\s+\/\s+/).map(s => s.trim().toUpperCase()).filter(s => s.length > 3)
+    }
+
+    const processedDoTokens = new Set<string>()
 
     // First process physical receive documents which contain exact serial numbers
     dbReceiveDocs.forEach((doc: any) => {
@@ -403,15 +423,26 @@ export async function getCylinderTransactions(
 
       if (matchingItems.length > 0) {
         const recDate = doc.received_date ? (doc.received_date.includes('T') ? doc.received_date.split('T')[0] : doc.received_date) : (doc.created_at ? doc.created_at.split('T')[0] : '2026-01-01')
+        // Deliveries on day D arrive in the morning (08:00 AM local = 00:00:00Z UTC) before wards draw stock
+        const recDateTime = `${recDate}T00:00:00Z`
         const doNum = doc.delivery_order_no || doc.document_number || 'DO-RECEPTION'
         const supName = doc.supplier?.company_name || 'Pembekal Oksigen'
         const serials = matchingItems.map((itm: any) => itm.cylinder?.serial_number).filter(Boolean)
         const officer = doc.creator?.full_name || 'Pegawai Farmasi Penerima Stor'
 
+        const docTokens = [
+          ...extractDoNumbers(doc.delivery_order_no),
+          ...extractDoNumbers(doc.document_number)
+        ]
+
         // Check if there is a matching reception record for SO number
-        const matchingRec = dbReceptions.find((r: any) =>
-          r.delivery_order_no && r.delivery_order_no.trim().toUpperCase() === doNum.trim().toUpperCase()
-        )
+        const matchingRec = dbReceptions.find((r: any) => {
+          const recTokens = [
+            ...extractDoNumbers(r.delivery_order_no),
+            ...extractDoNumbers(r.sales_order_no)
+          ]
+          return recTokens.some(tok => docTokens.includes(tok))
+        })
         const soStr = matchingRec?.sales_order_no ? ` (SO: ${matchingRec.sales_order_no})` : ''
 
         txList.push({
@@ -420,7 +451,7 @@ export async function getCylinderTransactions(
           size_id: targetSizeId,
           item_code: itemCode,
           item_name: itemName,
-          transaction_date: `${recDate}T10:00:00Z`,
+          transaction_date: recDateTime,
           transaction_type: 'receipt',
           transaction_number: doNum,
           source_destination: supName,
@@ -430,74 +461,40 @@ export async function getCylinderTransactions(
           serial_numbers: serials,
           officer_name: officer,
           remarks: doc.remarks || `Penerimaan bekalan gas DO: ${doNum}${soStr}`,
-          created_at: `${recDate}T10:00:00Z`
+          created_at: recDateTime
         })
 
-        if (doc.delivery_order_no) {
-          processedDoKeys.add(doc.delivery_order_no.trim().toUpperCase())
-        }
-        if (doc.document_number) {
-          processedDoKeys.add(doc.document_number.trim().toUpperCase())
-        }
+        docTokens.forEach(tok => processedDoTokens.add(tok))
       }
     })
 
-    // Next process any reception records not already captured by physical receive documents
-    dbReceptions.forEach((rec: any) => {
-      const doNum = rec.delivery_order_no || 'DO-RECEPTION'
-      const normDo = doNum.trim().toUpperCase()
-      if (processedDoKeys.has(normDo)) return
+    // STRICT BUSINESS RULE: Payment DO records in pharmacy_oxygen_reception_records do NOT contain
+    // cylinder serial numbers and are strictly for accounting / financial payment claims.
+    // Physical cylinder intake for the KEW.PS-4 store ledger ONLY occurs via "Receive From Supplier"
+    // (pharmacy_oxygen_receive_documents), where exact cylinder serial numbers are verified and credited
+    // to physical store inventory. Therefore, dbReceptions is NOT added as stock intake transactions.
 
-      const matchingItems = (rec.items || []).filter((itm: any) => 
-        itm.cylinder_size_id === targetSizeId && (!targetTypeId || itm.cylinder_type_id === targetTypeId)
-      )
-
-      const totalQty = matchingItems.reduce((acc: number, itm: any) => {
-        return acc + (Number(itm.quantity) || 1)
-      }, 0)
-
-      if (totalQty > 0) {
-        const recDate = rec.reception_date || (rec.created_at ? rec.created_at.split('T')[0] : '2026-01-01')
-        const supName = rec.supplier_name || 'Pembekal Oksigen'
-
-        txList.push({
-          id: `rec-${rec.id}`,
-          index: 0,
-          size_id: targetSizeId,
-          item_code: itemCode,
-          item_name: itemName,
-          transaction_date: `${recDate}T10:00:00Z`,
-          transaction_type: 'receipt',
-          transaction_number: doNum,
-          source_destination: supName,
-          receiptQty: totalQty,
-          issueQty: null,
-          runningBalance: 0,
-          serial_numbers: [],
-          officer_name: 'Pegawai Farmasi Penerima Stor',
-          remarks: `Penerimaan bekalan gas DO: ${doNum}${rec.sales_order_no ? ` (SO: ${rec.sales_order_no})` : ''}`,
-          created_at: `${recDate}T10:00:00Z`
-        })
-
-        processedDoKeys.add(normDo)
-      }
-    })
-
-    // 2. Fetch movements to accurately separate cylinder types for ward dispatches
+    // 2. Fetch movements to accurately track cylinder types and serials for ward dispatches
     const { data: dbMovements } = await supabase
       .from('pharmacy_oxygen_cylinder_movements')
-      .select('dept_request_id, cylinder:pharmacy_oxygen_cylinder_inventory(cylinder_size_id, cylinder_type_id)')
+      .select('id, cylinder_id, dept_request_id, cylinder:pharmacy_oxygen_cylinder_inventory(id, cylinder_size_id, cylinder_type_id, serial_number)')
       .eq('hospital_id', hospitalId)
       .not('dept_request_id', 'is', null)
 
-    const movementsByReq = new Map<string, { sizeId: string; typeId: string }[]>()
+    const movementsByReq = new Map<string, { id: string; cylinderId: string; sizeId: string; typeId: string; serialNumber: string }[]>()
     if (dbMovements) {
       dbMovements.forEach((m: any) => {
         if (!m.dept_request_id || !m.cylinder) return
         const list = movementsByReq.get(m.dept_request_id) || []
         const c = Array.isArray(m.cylinder) ? m.cylinder[0] : m.cylinder
         if (c) {
-          list.push({ sizeId: c.cylinder_size_id, typeId: c.cylinder_type_id })
+          list.push({
+            id: m.id,
+            cylinderId: m.cylinder_id || c.id,
+            sizeId: c.cylinder_size_id,
+            typeId: c.cylinder_type_id,
+            serialNumber: c.serial_number || ''
+          })
           movementsByReq.set(m.dept_request_id, list)
         }
       })
@@ -505,43 +502,130 @@ export async function getCylinderTransactions(
 
     // Fetch live dispatches/issues to wards from pharmacy_oxygen_dept_requests
     const { data: dbRequests, error: reqErr } = await supabase
-      .from('pharmacy_oxygen_dept_requests')
-      .select(`
-        id,
-        request_id,
-        status,
-        created_at,
-        manual_requester_name,
-        is_external_facility,
-        external_facility_name,
-        indent_direction,
-        remarks,
-        department:departments(department_name),
-        items:pharmacy_oxygen_dept_request_items(id, cylinder_size_id, quantity, quantity_issued, usage_notes)
-      `)
+        .from('pharmacy_oxygen_dept_requests')
+        .select(`
+          id,
+          request_id,
+          status,
+          created_at,
+          approved_at,
+          updated_at,
+          manual_requester_name,
+          is_external_facility,
+          external_facility_name,
+          indent_direction,
+          remarks,
+          department:departments(department_name),
+          items:pharmacy_oxygen_dept_request_items(id, cylinder_size_id, quantity, quantity_issued, usage_notes)
+        `)
       .eq('hospital_id', hospitalId)
       .in('status', ['completed', 'issued', 'approved'])
       .order('created_at', { ascending: true })
 
     if (!reqErr && dbRequests) {
       dbRequests.forEach((req: any) => {
-        let qty = 0
-        const reqMovements = movementsByReq.get(req.id)
-        if (reqMovements && reqMovements.length > 0 && targetTypeId) {
-          qty = reqMovements.filter(m => m.sizeId === targetSizeId && m.typeId === targetTypeId).length
+        const reqMovements = movementsByReq.get(req.id) || []
+        const allItems = req.items || []
+
+        // Find items that match targetSizeId
+        const matchingItems = allItems.filter((itm: any) => itm.cylinder_size_id === targetSizeId)
+        if (matchingItems.length === 0 && !reqMovements.some(m => m.sizeId === targetSizeId)) {
+          return // Not relevant to target size
+        }
+
+        // Strict Valve-Type Isolation Engine:
+        // Prevents cross-contamination between Bullnose and Pin Index on shared physical sizes (e.g. P101-F).
+        const isTargetBullnose = targetTypeId === '3edfc0fe-98fb-4592-9ce1-4229718871a2'
+        const isTargetPinIndex = targetTypeId === '1874961b-a46d-4cf6-8a47-90b18a1e0fb7'
+
+        // Check if all items of this size in the request explicitly belong to the OTHER valve type
+        if (targetTypeId && matchingItems.length > 0) {
+          const isExclusivelyOtherValve = matchingItems.every((itm: any) => {
+            const notesUpper = (itm.usage_notes || '').toUpperCase()
+            const hasBn = notesUpper.includes('BULLNOSE') || notesUpper.includes('BN') || notesUpper.includes('P101-F-BN')
+            const hasPi = notesUpper.includes('PIN INDEX') || notesUpper.includes('PI') || notesUpper.includes('P101-F-PI')
+            if (isTargetBullnose && hasPi && !hasBn) return true
+            if (isTargetPinIndex && hasBn && !hasPi) return true
+            return false
+          })
+          if (isExclusivelyOtherValve) {
+            return // Request explicitly belongs 100% to the other valve ledger
+          }
+        }
+
+        // Determine valve type compatibility when targetTypeId is specified
+        let relevantItems: any[] = []
+        if (!targetTypeId) {
+          relevantItems = matchingItems
         } else {
-          const matchingItems = (req.items || []).filter((itm: any) => itm.cylinder_size_id === targetSizeId)
-          qty = matchingItems.reduce((acc: number, curr: any) => {
-            return acc + (curr.quantity_issued || curr.quantity || 0)
-          }, 0)
+          // Known single-valve sizes
+          const isStrictBullnoseSize = itemCode === '101-N' || itemCode === 'P101-HS'
+          const isStrictPinIndexSize = itemCode === 'P101-D' || itemCode === 'P101-E' || (itemCode === '101-F' && !itemCode.includes('BN'))
+
+          if (isStrictBullnoseSize) {
+            relevantItems = isTargetBullnose ? matchingItems : []
+          } else if (isStrictPinIndexSize) {
+            relevantItems = isTargetPinIndex ? matchingItems : []
+          } else {
+            // Mixed size like P101-F: match strictly by item-level usage_notes valve tags or movements
+            relevantItems = matchingItems.filter((itm: any) => {
+              const notesUpper = (itm.usage_notes || '').toUpperCase()
+              const hasBnTag = notesUpper.includes('BULLNOSE') || notesUpper.includes('BN') || notesUpper.includes('P101-F-BN')
+              const hasPiTag = notesUpper.includes('PIN INDEX') || notesUpper.includes('PI') || notesUpper.includes('P101-F-PI')
+
+              // Strict exclusive matching when tags are present
+              if (hasBnTag && !hasPiTag) return isTargetBullnose
+              if (hasPiTag && !hasBnTag) return isTargetPinIndex
+
+              // When un-tagged, check if cylinders of this targetTypeId were moved for this request
+              const cylMovements = reqMovements.filter(m => m.sizeId === targetSizeId && m.typeId === targetTypeId)
+              if (cylMovements.length > 0) return true
+
+              // Un-tagged fallback: standard hospital supply default is Bullnose
+              return isTargetBullnose
+            })
+          }
+        }
+
+        const matchingMovements = reqMovements.filter(m => 
+          m.sizeId === targetSizeId && (!targetTypeId || m.typeId === targetTypeId)
+        )
+
+        // Strict Malaysian TPS Mandate: The authorized requisition document is the primary ledger record.
+        // We compute qty from authorized quantity_issued, notes serial count, and recorded movements.
+        // This ensures missing or dropped movement rows NEVER cause KEW.PS-4 to undercount deductions!
+        let qty = 0
+        const collectedSerials = new Set<string>()
+
+        relevantItems.forEach((itm: any) => {
+          const docQty = itm.quantity_issued !== undefined && itm.quantity_issued !== null
+            ? Number(itm.quantity_issued)
+            : (Number(itm.quantity) || 0)
+          
+          const itmSerials = extractSerialsFromNotes(itm.usage_notes)
+          itmSerials.forEach(s => collectedSerials.add(s))
+
+          const itmQty = Math.max(docQty, itmSerials.length)
+          qty += itmQty
+        })
+
+        // Add matching movements serials
+        matchingMovements.forEach(m => {
+          if (m.serialNumber) collectedSerials.add(m.serialNumber)
+        })
+
+        if (relevantItems.length === 0 && matchingMovements.length > 0) {
+          qty = matchingMovements.length
+        } else if (relevantItems.length > 0) {
+          qty = Math.max(qty, matchingMovements.length)
         }
 
         if (qty > 0) {
+          const effectiveDate = req.approved_at || req.updated_at || req.created_at
           const isExt = req.is_external_facility || req.manual_requester_name?.includes('[EXTERNAL]');
           const extName = req.external_facility_name || (req.manual_requester_name?.includes('[EXTERNAL]') ? req.manual_requester_name.replace('[EXTERNAL]', '').split('(')[0].trim() : '');
           const reqNameLower = (req.manual_requester_name || '').toLowerCase();
           const remarksLower = (req.remarks || '').toLowerCase();
-          const matchingItems = (req.items || []).filter((itm: any) => itm.cylinder_size_id === targetSizeId);
 
           // Check if this is an inter-facility INBOUND receipt (receiving cylinders from another facility)
           const isInbound = req.indent_direction === 'inbound' || reqNameLower.includes('inbound') || reqNameLower.includes('terima');
@@ -550,8 +634,8 @@ export async function getCylinderTransactions(
           // IMPORTANT: Requires EXPLICIT evidence of empty cylinders — "kosong" must appear in usage_notes or remarks.
           // DO NOT use absence of "penuh" as a signal — normal ward issuances never contain "penuh" and would be wrongly classified.
           const hasExplicitKosongEvidence =
-            matchingItems.some((itm: any) => itm.usage_notes?.toLowerCase().includes('kosong')) ||
-            matchingItems.some((itm: any) => itm.usage_notes?.toLowerCase().includes('pemulangan luar')) ||
+            relevantItems.some((itm: any) => itm.usage_notes?.toLowerCase().includes('kosong')) ||
+            relevantItems.some((itm: any) => itm.usage_notes?.toLowerCase().includes('pemulangan luar')) ||
             remarksLower.includes('kosong') ||
             remarksLower.includes('pemulangan silinder') ||
             (remarksLower.includes('pemulangan') && isExt);
@@ -566,6 +650,8 @@ export async function getCylinderTransactions(
               req.indent_direction === 'outbound'
             );
 
+          const serialsList = Array.from(collectedSerials)
+
           if (isOutboundReturn) {
             // Outbound return of EMPTY cylinders: Recorded as container return documentation without deducting from full oxygen gas stock balance
             const destName = extName ? `${extName} (Pemulangan Silinder Kosong)` : 'Pemulangan Silinder Kosong';
@@ -576,17 +662,17 @@ export async function getCylinderTransactions(
               size_id: targetSizeId,
               item_code: itemCode,
               item_name: itemName,
-              transaction_date: req.created_at,
+              transaction_date: effectiveDate,
               transaction_type: 'return',
               transaction_number: req.request_id || 'RET-EXT',
               source_destination: destName,
               receiptQty: null,
               issueQty: null, // Empty cylinders do NOT deduct from full oxygen gas stock
               runningBalance: 0,
-              serial_numbers: [],
+              serial_numbers: serialsList,
               officer_name: req.manual_requester_name || 'Pegawai Stor Farmasi',
               remarks: remarksText,
-              created_at: req.created_at
+              created_at: effectiveDate
             });
           } else if (isInbound) {
             // Inbound receipt of cylinders from another facility: Adds to stock
@@ -598,17 +684,17 @@ export async function getCylinderTransactions(
               size_id: targetSizeId,
               item_code: itemCode,
               item_name: itemName,
-              transaction_date: req.created_at,
+              transaction_date: effectiveDate,
               transaction_type: 'receipt',
               transaction_number: req.request_id || 'INDEN-MASUK',
               source_destination: sourceName,
               receiptQty: qty,
               issueQty: null,
               runningBalance: 0,
-              serial_numbers: [],
+              serial_numbers: serialsList,
               officer_name: req.manual_requester_name || 'Pegawai Stor Farmasi',
               remarks: remarksText,
-              created_at: req.created_at
+              created_at: effectiveDate
             });
           } else {
             // Genuine issuance of full cylinders to hospital wards or external facility
@@ -616,7 +702,9 @@ export async function getCylinderTransactions(
               ? `${extName} (Indent Luar)`
               : (req.department?.department_name || 'Unit / Wad Klinikal');
             const txNum = req.request_id || 'INDEN-WAD';
-            const remarks = req.remarks || (isExt && extName
+            const isStalePendingRemark = req.remarks && /(?:pending(?:\s+to\s+issue)?|waiting\s+stock|menunggu\s+stok)/i.test(req.remarks.trim());
+            const cleanReqRemarks = isStalePendingRemark ? null : req.remarks;
+            const remarks = cleanReqRemarks || (isExt && extName
               ? `Bekalan silinder gas ke ${extName}`
               : `Pengeluaran silinder oksigen ke ${wardName}`);
 
@@ -626,17 +714,17 @@ export async function getCylinderTransactions(
               size_id: targetSizeId,
               item_code: itemCode,
               item_name: itemName,
-              transaction_date: req.created_at,
+              transaction_date: effectiveDate,
               transaction_type: 'issue',
               transaction_number: txNum,
               source_destination: wardName,
               receiptQty: null,
               issueQty: qty,
               runningBalance: 0,
-              serial_numbers: [],
+              serial_numbers: serialsList,
               officer_name: req.manual_requester_name || 'Pegawai Stor Farmasi',
               remarks: remarks,
-              created_at: req.created_at
+              created_at: effectiveDate
             });
           }
         }
@@ -692,22 +780,47 @@ export async function getCylinderTransactions(
     }
 
     // 4. Fetch manual KEW.PS-4 records (Bring Forward, Check & Found, Store Verifications)
-    const { data: manualTxs } = await supabase
+    let manualQuery = supabase
       .from('pharmacy_oxygen_kewps4_transactions')
       .select('*')
       .eq('hospital_id', hospitalId)
       .eq('size_id', targetSizeId)
-      .order('transaction_date', { ascending: true })
+
+    if (targetTypeId) {
+      manualQuery = manualQuery.eq('type_id', targetTypeId)
+    }
+
+    const { data: manualTxs } = await manualQuery.order('transaction_date', { ascending: true })
 
     if (manualTxs && manualTxs.length > 0) {
       manualTxs.forEach((mtx: any) => {
+        let effectiveDate = mtx.transaction_date || mtx.created_at
+
+        // For audit checks (check_found, store_verification), ensure correct chronological sequence:
+        // If transaction_date has 00:00:00 (midnight) and created_at exists on that same day, use created_at
+        // so that audits reflect verified stock after morning operations.
+        // If created_at is on a different date and transaction_date is midnight, use 23:59:59.999Z of that date.
+        if (mtx.transaction_type === 'check_found' || mtx.transaction_type === 'store_verification') {
+          const txDay = mtx.transaction_date ? String(mtx.transaction_date).split('T')[0].split(' ')[0] : ''
+          const createdDay = mtx.created_at ? String(mtx.created_at).split('T')[0].split(' ')[0] : ''
+          if (txDay && txDay === createdDay && mtx.created_at) {
+            effectiveDate = mtx.created_at
+          } else if (txDay && String(mtx.transaction_date).includes('00:00:00')) {
+            effectiveDate = `${txDay}T23:59:59.999Z`
+          }
+        } else if (mtx.transaction_type === 'bring_forward') {
+          const txDay = mtx.transaction_date ? String(mtx.transaction_date).split('T')[0].split(' ')[0] : ''
+          effectiveDate = `${txDay}T00:00:00.000Z`
+        }
+
         txList.push({
           id: mtx.id,
           index: 0,
           size_id: mtx.size_id,
+          type_id: mtx.type_id,
           item_code: itemCode,
           item_name: itemName,
-          transaction_date: mtx.transaction_date,
+          transaction_date: effectiveDate,
           transaction_type: mtx.transaction_type,
           transaction_number: mtx.transaction_number,
           source_destination: mtx.source_destination,
@@ -741,22 +854,37 @@ export async function getCylinderTransactions(
     // 6. Sort chronologically ascending
     txList.sort((a, b) => new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime())
 
-    // If no manual Bring Forward exists, compute official opening Bring Forward
-    const hasManualBf = txList.some(t => t.transaction_type === 'bring_forward')
-    if (!hasManualBf) {
-      const OVERRIDE_TYPES = ['check_found', 'store_verification', 'return']
-      const totalReceipts = txList.reduce((sum, t) => 
-        OVERRIDE_TYPES.includes(t.transaction_type) ? sum : sum + (t.receiptQty || 0), 0)
-      const totalIssues = txList.reduce((sum, t) => 
-        OVERRIDE_TYPES.includes(t.transaction_type) ? sum : sum + (t.issueQty || 0), 0)
-      const netMovement = totalReceipts - totalIssues
-      const initialOpeningBalance = Math.max(0, actualAvailableInStore - netMovement)
+    // 7. Calculate running balances
+    const hasAuditOverride = txList.some(t => 
+      t.transaction_type === 'bring_forward' || 
+      t.transaction_type === 'check_found' || 
+      t.transaction_type === 'store_verification'
+    )
 
+    let calculatedTxList: CylinderTransactionRow[] = []
+
+    if (!hasAuditOverride && actualAvailableInStore !== undefined && actualAvailableInStore !== null) {
+      // Anchor to genuine physical store inventory count: calculate running balances backwards from actualAvailableInStore
+      // so that KEW.PS-4 ending balance matches physical store inventory (e.g. 56 tabung).
+      let currentBal = actualAvailableInStore
+      const revBalances: number[] = new Array(txList.length)
+
+      for (let i = txList.length - 1; i >= 0; i--) {
+        revBalances[i] = currentBal
+        const row = txList[i]
+        if (row.transaction_type === 'receipt' && row.receiptQty) {
+          currentBal = Math.max(0, currentBal - Number(row.receiptQty))
+        } else if (row.transaction_type === 'issue' && row.issueQty) {
+          currentBal = currentBal + Number(row.issueQty)
+        }
+      }
+
+      // Prepend Bring Forward row with initial opening balance
       const earliestDate = txList.length > 0 ? new Date(txList[0].transaction_date) : new Date()
       earliestDate.setDate(earliestDate.getDate() - 1)
       const bfDateStr = earliestDate.toISOString().split('T')[0]
 
-      txList.unshift({
+      const bfRow: CylinderTransactionRow = {
         id: `tx-bf-init-${targetSizeId}`,
         index: 1,
         size_id: targetSizeId,
@@ -765,55 +893,61 @@ export async function getCylinderTransactions(
         transaction_date: `${bfDateStr}T08:00:00Z`,
         transaction_type: 'bring_forward',
         transaction_number: `BF-${earliestDate.getFullYear()}/01`,
-        source_destination: 'Baki Bawa Ke Hadapan (Baki Pembukaan Rasmi)',
-        receiptQty: initialOpeningBalance,
+        source_destination: 'Balance Brought Forward (Official Opening Balance)',
+        receiptQty: currentBal,
         issueQty: null,
-        runningBalance: initialOpeningBalance,
+        runningBalance: currentBal,
         serial_numbers: [],
         officer_name: 'Pegawai Stor Farmasi',
         remarks: 'Baki permulaan lejar dibawa ke hadapan mengikut Tatacara Pengurusan Stor (TPS) KEW.PS-4',
         created_at: `${bfDateStr}T08:00:00Z`
-      })
-    }
+      }
 
-    // 7. Calculate running balances chronologically
-    let running = 0
-    const calculatedTxList = txList.map((row, idx) => {
-      if (row.transaction_type === 'check_found' || row.transaction_type === 'store_verification') {
-        const target = row.runningBalance !== null && row.runningBalance !== undefined
-          ? Number(row.runningBalance)
-          : (row.receiptQty !== null ? running + Number(row.receiptQty) : (row.issueQty !== null ? Math.max(0, running - Number(row.issueQty)) : running))
+      calculatedTxList = [
+        bfRow,
+        ...txList.map((row, idx) => ({
+          ...row,
+          index: idx + 2,
+          runningBalance: revBalances[idx]
+        }))
+      ]
+    } else {
+      // Forward calculation when an explicit manual Bring Forward, Check & Found, or Store Verification exists
+      let running = 0
+      calculatedTxList = txList.map((row, idx) => {
+        if (row.transaction_type === 'check_found' || row.transaction_type === 'store_verification') {
+          const target = row.runningBalance !== null && row.runningBalance !== undefined
+            ? Number(row.runningBalance)
+            : (row.receiptQty !== null ? running + Number(row.receiptQty) : (row.issueQty !== null ? Math.max(0, running - Number(row.issueQty)) : running))
 
-        let rec = row.receiptQty
-        let iss = row.issueQty
-
-        if (rec === null && iss === null && target !== running) {
+          let rec: number | null = null
+          let iss: number | null = null
           const diff = target - running
           if (diff > 0) rec = diff
           else if (diff < 0) iss = Math.abs(diff)
+
+          running = target
+          return {
+            ...row,
+            index: idx + 1,
+            receiptQty: rec,
+            issueQty: iss,
+            runningBalance: running
+          }
         }
 
-        running = target
+        if (row.receiptQty !== null && row.receiptQty !== undefined) {
+          running += Number(row.receiptQty)
+        } else if (row.issueQty !== null && row.issueQty !== undefined) {
+          running = Math.max(0, running - Number(row.issueQty))
+        }
         return {
           ...row,
           index: idx + 1,
-          receiptQty: rec,
-          issueQty: iss,
-          runningBalance: running
+          runningBalance: Math.max(0, running)
         }
-      }
-
-      if (row.receiptQty !== null && row.receiptQty !== undefined) {
-        running += Number(row.receiptQty)
-      } else if (row.issueQty !== null && row.issueQty !== undefined) {
-        running = Math.max(0, running - Number(row.issueQty))
-      }
-      return {
-        ...row,
-        index: idx + 1,
-        runningBalance: Math.max(0, running)
-      }
-    })
+      })
+    }
 
     // 8. Reverse chronological (newest first) for UI display
     let displayList = [...calculatedTxList].reverse()
@@ -860,6 +994,7 @@ export async function recordCylinderReceiptTransaction(
   hospitalId: string,
   payload: {
     size_id: string
+    type_id?: string
     item_code?: string
     item_name?: string
     quantity: number
@@ -873,7 +1008,8 @@ export async function recordCylinderReceiptTransaction(
   }
 ): Promise<ApiResponse<CylinderTransactionRow>> {
   try {
-    const { sizeId, itemCode, itemName } = await resolveSizeInfo(payload.size_id)
+    const { sizeId, typeId: resolvedTypeId, itemCode, itemName } = await resolveSizeInfo(payload.size_id)
+    const targetTypeId = payload.type_id || resolvedTypeId || null
 
     const txDate = payload.delivery_date ? new Date(payload.delivery_date).toISOString() : new Date().toISOString()
     const remarks = payload.remarks || `Penerimaan bekalan dari ${payload.supplier_name} (DO: ${payload.do_number}${payload.po_number ? `, PO: ${payload.po_number}` : ''})`
@@ -883,6 +1019,7 @@ export async function recordCylinderReceiptTransaction(
       .insert({
         hospital_id: hospitalId,
         size_id: sizeId,
+        type_id: targetTypeId,
         transaction_type: 'receipt',
         transaction_number: payload.do_number,
         transaction_date: txDate,
@@ -904,6 +1041,7 @@ export async function recordCylinderReceiptTransaction(
         id: inserted.id,
         index: 1,
         size_id: sizeId,
+        type_id: inserted.type_id,
         item_code: itemCode,
         item_name: itemName,
         transaction_date: inserted.transaction_date,
@@ -933,6 +1071,7 @@ export async function recordCylinderIssueTransaction(
   hospitalId: string,
   payload: {
     size_id: string
+    type_id?: string
     item_code?: string
     item_name?: string
     quantity: number
@@ -945,7 +1084,8 @@ export async function recordCylinderIssueTransaction(
   }
 ): Promise<ApiResponse<CylinderTransactionRow>> {
   try {
-    const { sizeId, itemCode, itemName } = await resolveSizeInfo(payload.size_id)
+    const { sizeId, typeId: resolvedTypeId, itemCode, itemName } = await resolveSizeInfo(payload.size_id)
+    const targetTypeId = payload.type_id || resolvedTypeId || null
 
     const txDate = payload.issue_date ? new Date(payload.issue_date).toISOString() : new Date().toISOString()
     const remarks = payload.remarks || `Pengeluaran silinder ke ${payload.ward_name} (No Inden: ${payload.indent_number})`
@@ -955,6 +1095,7 @@ export async function recordCylinderIssueTransaction(
       .insert({
         hospital_id: hospitalId,
         size_id: sizeId,
+        type_id: targetTypeId,
         transaction_type: 'issue',
         transaction_number: payload.indent_number,
         transaction_date: txDate,
@@ -976,6 +1117,7 @@ export async function recordCylinderIssueTransaction(
         id: inserted.id,
         index: 1,
         size_id: sizeId,
+        type_id: inserted.type_id,
         item_code: itemCode,
         item_name: itemName,
         transaction_date: inserted.transaction_date,
@@ -1005,6 +1147,7 @@ export async function recordCylinderCheckFoundTransaction(
   hospitalId: string,
   payload: {
     size_id: string
+    type_id?: string
     item_code?: string
     item_name?: string
     physical_quantity: number
@@ -1015,12 +1158,13 @@ export async function recordCylinderCheckFoundTransaction(
   }
 ): Promise<ApiResponse<CylinderTransactionRow>> {
   try {
-    const { sizeId, itemCode, itemName } = await resolveSizeInfo(payload.size_id)
+    const { sizeId, typeId: resolvedTypeId, itemCode, itemName } = await resolveSizeInfo(payload.size_id)
+    const targetTypeId = payload.type_id || resolvedTypeId || null
 
     // Resolve current KEW.PS-4 ledger balance
     let currentBal = payload.current_kewps_balance
     if (currentBal === undefined || currentBal === null) {
-      const txRes = await getCylinderTransactions(hospitalId, { sizeId })
+      const txRes = await getCylinderTransactions(hospitalId, { sizeId, typeId: targetTypeId || undefined })
       currentBal = txRes.data && txRes.data.length > 0 ? txRes.data[0].runningBalance : 0
     }
 
@@ -1028,7 +1172,13 @@ export async function recordCylinderCheckFoundTransaction(
     const isSurplus = diff >= 0
     const absDiff = Math.abs(diff)
 
-    const txDate = payload.check_date ? new Date(payload.check_date).toISOString() : new Date().toISOString()
+    const todayStr = new Date().toISOString().split('T')[0]
+    let txDate: string
+    if (!payload.check_date || payload.check_date === todayStr) {
+      txDate = new Date().toISOString()
+    } else {
+      txDate = `${payload.check_date.split('T')[0]}T23:59:59.999Z`
+    }
     const txNumber = `CF-${new Date().getFullYear()}/${Date.now().toString().slice(-4)}`
     const remarks = payload.remarks || `Pelarasan stok fizikal (${payload.physical_quantity} tabung) berbanding baki Kad Petak (${currentBal} tabung). Varians: ${diff >= 0 ? `+${diff}` : diff}`
 
@@ -1037,6 +1187,7 @@ export async function recordCylinderCheckFoundTransaction(
       .insert({
         hospital_id: hospitalId,
         size_id: sizeId,
+        type_id: targetTypeId,
         transaction_type: 'check_found',
         transaction_number: txNumber,
         transaction_date: txDate,
@@ -1053,6 +1204,65 @@ export async function recordCylinderCheckFoundTransaction(
 
     if (error) throw error
 
+    // Synchronize physical inventory rows in pharmacy_oxygen_cylinder_inventory
+    try {
+      let invQuery = supabase
+        .from('pharmacy_oxygen_cylinder_inventory')
+        .select('id, status, current_location')
+        .eq('hospital_id', hospitalId)
+        .eq('cylinder_size_id', sizeId)
+
+      if (targetTypeId) {
+        invQuery = invQuery.eq('cylinder_type_id', targetTypeId)
+      }
+
+      const { data: invRows } = await invQuery
+
+      if (invRows && invRows.length > 0) {
+        const availableInStore = invRows.filter(
+          (c: any) => (c.status === 'available' || c.status === 'full') && c.current_location !== 'Supplier'
+        )
+        const currentCount = availableInStore.length
+        const targetCount = payload.physical_quantity
+
+        if (targetCount > currentCount) {
+          const needed = targetCount - currentCount
+          const candidates = invRows.filter(
+            (c: any) => c.status === 'empty' || (c.status !== 'available' && c.current_location !== 'Supplier')
+          ).slice(0, needed)
+
+          if (candidates.length > 0) {
+            const idsToUpdate = candidates.map((c: any) => c.id)
+            await supabase
+              .from('pharmacy_oxygen_cylinder_inventory')
+              .update({
+                status: 'available',
+                current_location: 'Store',
+                department_id: null,
+                updated_at: new Date().toISOString()
+              })
+              .in('id', idsToUpdate)
+          }
+        } else if (targetCount < currentCount) {
+          const excess = currentCount - targetCount
+          const candidates = availableInStore.slice(0, excess)
+          if (candidates.length > 0) {
+            const idsToUpdate = candidates.map((c: any) => c.id)
+            await supabase
+              .from('pharmacy_oxygen_cylinder_inventory')
+              .update({
+                status: 'empty',
+                current_location: 'Pharmacy Store',
+                updated_at: new Date().toISOString()
+              })
+              .in('id', idsToUpdate)
+          }
+        }
+      }
+    } catch (syncErr) {
+      console.warn('Could not synchronize physical inventory rows:', syncErr)
+    }
+
     // Log to stock adjustments audit if difference exists
     if (absDiff > 0) {
       try {
@@ -1064,7 +1274,7 @@ export async function recordCylinderCheckFoundTransaction(
           remarks: remarks
         })
       } catch (logErr) {
-        console.warn('Could not insert stock adjustment audit record:', logErr)
+        // Handled silently
       }
     }
 
@@ -1073,6 +1283,7 @@ export async function recordCylinderCheckFoundTransaction(
         id: inserted.id,
         index: 1,
         size_id: sizeId,
+        type_id: inserted.type_id,
         item_code: itemCode,
         item_name: itemName,
         transaction_date: inserted.transaction_date,
@@ -1096,12 +1307,13 @@ export async function recordCylinderCheckFoundTransaction(
 }
 
 /**
- * Record a Bring Forward opening balance in Supabase (Baki Bawa Ke Hadapan)
+ * Record a Bring Forward opening balance in Supabase (Balance Brought Forward)
  */
 export async function recordCylinderBringForwardTransaction(
   hospitalId: string,
   payload: {
     size_id: string
+    type_id?: string
     item_code?: string
     item_name?: string
     balance_quantity: number
@@ -1113,11 +1325,13 @@ export async function recordCylinderBringForwardTransaction(
   }
 ): Promise<ApiResponse<CylinderTransactionRow>> {
   try {
-    const { sizeId, itemCode, itemName } = await resolveSizeInfo(payload.size_id)
+    const { sizeId, typeId: resolvedTypeId, itemCode, itemName } = await resolveSizeInfo(payload.size_id)
+    const targetTypeId = payload.type_id || resolvedTypeId || null
 
-    const txDate = payload.bf_date ? new Date(payload.bf_date).toISOString() : new Date().toISOString()
+    const bfDateStr = payload.bf_date ? payload.bf_date.split('T')[0] : new Date().toISOString().split('T')[0]
+    const txDate = `${bfDateStr}T00:00:00.000Z`
     const txNum = payload.ref_number || `BF-${new Date().getFullYear()}`
-    const sourceDest = `Baki Bawa Ke Hadapan (${payload.period_type === 'previous_year' ? 'Tahun Lepas' : 'Bulan Lepas'})`
+    const sourceDest = `Balance Brought Forward (${payload.period_type === 'previous_year' ? 'Tahun Lepas' : 'Bulan Lepas'})`
     const remarks = payload.remarks || `Baki permulaan lejar dibawa ke hadapan sebanyak ${payload.balance_quantity} tabung`
 
     const { data: inserted, error } = await supabase
@@ -1125,6 +1339,7 @@ export async function recordCylinderBringForwardTransaction(
       .insert({
         hospital_id: hospitalId,
         size_id: sizeId,
+        type_id: targetTypeId,
         transaction_type: 'bring_forward',
         transaction_number: txNum,
         transaction_date: txDate,
@@ -1146,6 +1361,7 @@ export async function recordCylinderBringForwardTransaction(
         id: inserted.id,
         index: 1,
         size_id: sizeId,
+        type_id: inserted.type_id,
         item_code: itemCode,
         item_name: itemName,
         transaction_date: inserted.transaction_date,
@@ -1164,7 +1380,7 @@ export async function recordCylinderBringForwardTransaction(
     }
   } catch (error) {
     console.error('Error recording bring forward:', error)
-    return { data: null, error: error instanceof Error ? error.message : 'Gagal merekodkan baki bawa ke hadapan' }
+    return { data: null, error: error instanceof Error ? error.message : 'Failed to record balance brought forward' }
   }
 }
 
@@ -1175,6 +1391,7 @@ export async function recordCylinderStoreVerification(
   hospitalId: string,
   payload: {
     size_id: string
+    type_id?: string
     item_code: string
     item_name: string
     verification_year: number
@@ -1189,17 +1406,27 @@ export async function recordCylinderStoreVerification(
   }
 ): Promise<ApiResponse<CylinderStoreVerificationRecord>> {
   try {
-    const { sizeId, itemCode, itemName } = await resolveSizeInfo(payload.size_id)
+    const { sizeId, typeId: resolvedTypeId, itemCode, itemName } = await resolveSizeInfo(payload.size_id)
+    const targetTypeId = payload.type_id || resolvedTypeId || null
 
     const diffKew = payload.physical_count - payload.kewps_balance
     const diffSys = payload.physical_count - payload.system_count
     const isTally = diffKew === 0 && diffSys === 0
+
+    const todayStr = new Date().toISOString().split('T')[0]
+    let verifiedAtStr: string
+    if (!payload.verified_at || payload.verified_at === todayStr) {
+      verifiedAtStr = new Date().toISOString()
+    } else {
+      verifiedAtStr = `${payload.verified_at.split('T')[0]}T23:59:59.999Z`
+    }
 
     const { data: record, error } = await supabase
       .from('pharmacy_oxygen_store_verifications')
       .insert({
         hospital_id: hospitalId,
         size_id: sizeId,
+        type_id: targetTypeId,
         verification_year: payload.verification_year || new Date().getFullYear(),
         physical_count: payload.physical_count,
         kewps_balance: payload.kewps_balance,
@@ -1210,7 +1437,7 @@ export async function recordCylinderStoreVerification(
         verifier_name: payload.verifier_name,
         verifier_ic: payload.verifier_ic,
         verifier_jawatan: payload.verifier_jawatan || 'Pegawai Pemverifikasi Stor',
-        verified_at: payload.verified_at || new Date().toISOString(),
+        verified_at: verifiedAtStr,
         remarks: payload.remarks || (isTally ? 'Semua kiraan fizikal sepadan dengan Kad Petak KEW.PS-4.' : 'Terdapat varians kiraan fizikal.')
       })
       .select('*')
@@ -1224,9 +1451,10 @@ export async function recordCylinderStoreVerification(
       .insert({
         hospital_id: hospitalId,
         size_id: sizeId,
+        type_id: targetTypeId,
         transaction_type: 'store_verification',
         transaction_number: `VER-${payload.verification_year}/${Date.now().toString().slice(-4)}`,
-        transaction_date: payload.verified_at || new Date().toISOString(),
+        transaction_date: verifiedAtStr,
         source_destination: `Verifikasi Stor Tahunan ${payload.verification_year} (${payload.verifier_name})`,
         receipt_qty: diffKew > 0 ? diffKew : null,
         issue_qty: diffKew < 0 ? Math.abs(diffKew) : null,
@@ -1270,7 +1498,8 @@ export async function recordCylinderStoreVerification(
  */
 export async function getCylinderStoreVerificationHistory(
   hospitalId: string,
-  sizeId?: string
+  sizeId?: string,
+  typeId?: string
 ): Promise<ApiResponse<CylinderStoreVerificationRecord[]>> {
   try {
     if (!isSupabaseConfigured() || !hospitalId) {
@@ -1284,8 +1513,12 @@ export async function getCylinderStoreVerificationHistory(
       .order('verified_at', { ascending: false })
 
     if (sizeId) {
-      const { sizeId: targetId } = await resolveSizeInfo(sizeId)
+      const { sizeId: targetId, typeId: resolvedTypeId } = await resolveSizeInfo(sizeId)
       query = query.eq('size_id', targetId)
+      const targetType = typeId || resolvedTypeId
+      if (targetType) {
+        query = query.eq('type_id', targetType)
+      }
     }
 
     const { data, error } = await query
@@ -1295,6 +1528,7 @@ export async function getCylinderStoreVerificationHistory(
       id: r.id,
       hospital_id: r.hospital_id,
       size_id: r.size_id,
+      type_id: r.type_id,
       item_code: '101-N',
       item_name: 'Medical Oxygen Cylinder',
       verification_year: r.verification_year,
@@ -1350,7 +1584,8 @@ export async function getCylinderDepartmentBreakdown(
   hospitalId: string,
   sizeId?: string,
   dateFrom?: string,
-  dateTo?: string
+  dateTo?: string,
+  typeId?: string
 ): Promise<ApiResponse<CylinderDeptBreakdown[]>> {
   try {
     if (!isSupabaseConfigured() || !hospitalId) {
@@ -1367,11 +1602,17 @@ export async function getCylinderDepartmentBreakdown(
     if (deptErr) throw deptErr
 
     // 2. Fetch inventory in use by department
-    const { data: invRows } = await supabase
+    let invQuery = supabase
       .from('pharmacy_oxygen_cylinder_inventory')
-      .select('department_id, status, cylinder_size_id')
+      .select('department_id, status, cylinder_size_id, cylinder_type_id')
       .eq('hospital_id', hospitalId)
       .in('status', ['issued', 'in_use'])
+
+    if (typeId) {
+      invQuery = invQuery.eq('cylinder_type_id', typeId)
+    }
+
+    const { data: invRows } = await invQuery
 
     // 3. Fetch requests by department
     const { data: reqRows } = await supabase
@@ -1436,7 +1677,8 @@ export async function getCylinderDepartmentBreakdown(
  */
 export async function clearCylinderTransactions(
   hospitalId: string,
-  sizeId?: string
+  sizeId?: string,
+  typeId?: string
 ): Promise<ApiResponse<boolean>> {
   try {
     if (!isSupabaseConfigured() || !hospitalId) {
@@ -1449,8 +1691,12 @@ export async function clearCylinderTransactions(
       .eq('hospital_id', hospitalId)
 
     if (sizeId && sizeId !== 'all') {
-      const { sizeId: targetId } = await resolveSizeInfo(sizeId)
+      const { sizeId: targetId, typeId: resolvedTypeId } = await resolveSizeInfo(sizeId)
       query = query.eq('size_id', targetId)
+      const targetType = typeId || resolvedTypeId
+      if (targetType) {
+        query = query.eq('type_id', targetType)
+      }
     }
 
     const { error } = await query

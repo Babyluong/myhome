@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -15,6 +16,31 @@ export default {
     },
     extend: {
       colors: {
+        // High-Tier Semantic Design Tokens
+        canvas: 'var(--bg-canvas)',
+        surface: 'var(--bg-surface)',
+        subtle: 'var(--bg-subtle)',
+        'muted-surface': 'var(--bg-muted)',
+        inset: 'var(--bg-inset)',
+        'border-default': 'var(--border-default)',
+        'border-subtle': 'var(--border-subtle)',
+        'border-strong': 'var(--border-strong)',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-muted': 'var(--text-muted)',
+        'accent-base': 'var(--accent-base)',
+        'accent-hover': 'var(--accent-hover)',
+        'accent-active': 'var(--accent-active)',
+        'accent-subtle': 'var(--accent-subtle)',
+        'accent-foreground': 'var(--accent-foreground)',
+        'accent-decor': 'var(--accent-decor)',
+        'surface-subtle': 'var(--bg-subtle)',
+        'surface-hover': 'var(--bg-hover)',
+        'text-tertiary': 'var(--text-muted)',
+        'ink': 'var(--ink-button)',
+        'ink-hover': 'var(--ink-button-hover)',
+        'ink-text': 'var(--ink-button-text)',
+        
         primary: {
           50: '#F0FDFA',
           100: '#CCFBF1',
@@ -102,9 +128,13 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['Geist', 'Plus Jakarta Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        serif: ['Newsreader', 'Source Serif 4', 'Georgia', 'Cambria', 'serif'],
+        mono: ['Geist Mono', 'JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       boxShadow: {
+        '2xs': '0 1px 0 0 rgba(31, 30, 29, 0.04)',
+        'xs': '0 1px 2px 0 rgba(31, 30, 29, 0.06)',
         'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
         'glow': '0 0 20px rgba(15, 118, 110, 0.3)',
         'glow-lg': '0 0 40px rgba(15, 118, 110, 0.4)',

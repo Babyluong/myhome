@@ -90,9 +90,12 @@ function getDepartmentLabel(department: string): string {
     operation_theater: 'Operation Theater',
     laboratory_pathology: 'Laboratory & Pathology',
     general_ward: 'General Ward',
+    female_ward: 'Female Ward',
+    male_ward: 'Male Ward',
     wound_care: 'Wound Care',
     rehabilitation: 'Rehabilitation',
     anaesthesiology: 'Anaesthesiology',
+    klinik_pakar: 'Klinik Pakar',
   }
   return map[department] || department
 }

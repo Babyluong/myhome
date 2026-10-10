@@ -55,10 +55,10 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
     ? isMs
       ? [
           'Sesi / Acara Dibatalkan',
-          'Tersilap Masuk Maklumat / Rekod Bertindih',
+          'Accidental Data Entry / Duplicate Record',
           'Pertindihan Jadual Kerja',
           'Pegawai Ditugaskan Urusan Lain',
-          'Pertukaran Tarikh & Masa Sesi'
+          'Session Date & Time Reschedule'
         ]
       : [
           'Session / Event Cancelled',
@@ -69,11 +69,11 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
         ]
     : isMs
       ? [
-          'Pertukaran Tarikh / Masa',
+          'Date / Time Change',
           'Pembetulan Pautan / Link Sesi',
-          'Kemaskini Dokumen / Lampiran Slaid',
+          'Update Documents / Presentation Slides',
           'Pembetulan Nama Pegawai / Lokasi',
-          'Kemaskini Tajuk & Kategori'
+          'Update Title & Category'
         ]
       : [
           'Change of Date / Time',

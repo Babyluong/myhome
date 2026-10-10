@@ -40,24 +40,24 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-sm sm:text-base font-black tracking-tight text-white flex items-center gap-2">
-                <span>Panduan Pantas Penggunaan NAG (Edisi Ke-4, KKM 2024)</span>
+                <span>NAG Quick Reference Guide (4th Edition, MOH 2024)</span>
               </h2>
               <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                Piawaian Rasmi KKM
+                Official MOH Standard
               </span>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-200 border border-cyan-400/30 hidden sm:inline-block">
                 Point-of-Care Assistant
               </span>
             </div>
             <p className="text-xs text-emerald-100/70 mt-0.5">
-              Ketahui cara mencari indikasi jangkitan, semakan alahan, pengiraan dos mg/kg, dan protokol kawalan rintangan antimikrob (AMS).
+              Learn how to search infection indications, verify allergies, calculate mg/kg doses, and review antimicrobial stewardship (AMS) protocols.
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className="text-xs text-emerald-300 font-bold hidden md:inline">
-            {isOpen ? 'Sembunyikan Panduan' : 'Buka Panduan Pengguna'}
+            {isOpen ? 'Hide Guide' : 'Open User Guide'}
           </span>
           <div className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-emerald-200">
             {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -74,13 +74,13 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
             <div className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-2xl border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  Langkah 1
+                  Step 1
                 </span>
                 <Users className="w-4 h-4 text-emerald-400" />
               </div>
-              <h3 className="text-xs font-black text-white">Pilih Populasi Pesakit</h3>
+              <h3 className="text-xs font-black text-white">Select Patient Population</h3>
               <p className="text-[11px] text-slate-300 leading-relaxed">
-                Pilih antara <strong className="text-white">Dewasa (Section A : A1-A17)</strong> atau <strong className="text-white">Pediatrik &amp; Neonat (Section B : B1-B14)</strong> mengikut kumpulan umur pesakit anda.
+                Choose between <strong className="text-white">Adult (Section A : A1-A17)</strong> or <strong className="text-white">Paediatric &amp; Neonatal (Section B : B1-B14)</strong> according to your patient age group.
               </p>
             </div>
 
@@ -88,13 +88,13 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
             <div className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-2xl border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                  Langkah 2
+                  Step 2
                 </span>
                 <Search className="w-4 h-4 text-cyan-400" />
               </div>
-              <h3 className="text-xs font-black text-white">Carian Pantas Pintar</h3>
+              <h3 className="text-xs font-black text-white">Smart Quick Search</h3>
               <p className="text-[11px] text-slate-300 leading-relaxed">
-                Taip sebarang diagnosis (cth: <span className="text-cyan-200 underline cursor-pointer" onClick={() => onQuickFilter && onQuickFilter('CAP')}>CAP</span>, <span className="text-cyan-200 underline cursor-pointer" onClick={() => onQuickFilter && onQuickFilter('Sepsis')}>Sepsis</span>, <span className="text-cyan-200 underline cursor-pointer" onClick={() => onQuickFilter && onQuickFilter('UTI')}>UTI</span>), patogen (cth: <span className="text-cyan-200 italic">MRSA</span>), atau nama antibiotik untuk hasil serta-merta.
+                Type any diagnosis (e.g., <span className="text-cyan-200 underline cursor-pointer" onClick={() => onQuickFilter && onQuickFilter('CAP')}>CAP</span>, <span className="text-cyan-200 underline cursor-pointer" onClick={() => onQuickFilter && onQuickFilter('Sepsis')}>Sepsis</span>, <span className="text-cyan-200 underline cursor-pointer" onClick={() => onQuickFilter && onQuickFilter('UTI')}>UTI</span>), pathogen (e.g., <span className="text-cyan-200 italic">MRSA</span>), or antibiotic name for instant results.
               </p>
             </div>
 
@@ -102,13 +102,13 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
             <div className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-2xl border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Langkah 3
+                  Step 3
                 </span>
                 <ShieldAlert className="w-4 h-4 text-amber-400" />
               </div>
-              <h3 className="text-xs font-black text-white">Semak Rejimen &amp; Alahan</h3>
+              <h3 className="text-xs font-black text-white">Review Regimens &amp; Allergies</h3>
               <p className="text-[11px] text-slate-300 leading-relaxed">
-                Setiap panduan klinikal memaparkan <strong className="text-emerald-300">Lini Pertama (1st-Line)</strong>, <strong className="text-blue-300">Lini Kedua</strong>, amaran keselamatan <strong className="text-amber-300">Alahan Penisilin</strong>, dan kriteria pertukaran rawatan ke oral.
+                Each clinical guideline displays <strong className="text-emerald-300">First-Line (1st-Line)</strong>, <strong className="text-blue-300">Second-Line</strong>, <strong className="text-amber-300">Penicillin Allergy</strong> safety warnings, and oral step-down criteria.
               </p>
             </div>
 
@@ -116,13 +116,13 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
             <div className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-2xl border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                  Langkah 4
+                  Step 4
                 </span>
                 <Calculator className="w-4 h-4 text-purple-400" />
               </div>
-              <h3 className="text-xs font-black text-white">Kira Dos &amp; Salin Preskripsi</h3>
+              <h3 className="text-xs font-black text-white">Calculate Dose &amp; Copy Prescription</h3>
               <p className="text-[11px] text-slate-300 leading-relaxed">
-                Gunakan butang <strong className="text-white">Kira Dos (mg/kg)</strong> untuk dos pediatrik atau klik <strong className="text-white">Salin Preskripsi</strong> untuk menampal terus ke sistem e-Prescribing hospital (HIS).
+                Use the <strong className="text-white">Calculate Dose (mg/kg)</strong> button for paediatric dosing or click <strong className="text-white">Copy Prescription</strong> to paste directly into hospital HIS.
               </p>
             </div>
           </div>
@@ -132,8 +132,8 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
             <div className="flex items-center gap-2.5 text-emerald-200">
               <Clock className="w-4 h-4 text-emerald-400 flex-shrink-0" />
               <span>
-                <strong className="text-white font-bold">Peringatan AMS Lawas Hospital: </strong>
-                Semua preskripsi antibiotik empirik wajib disemak semula pada tempoh <strong>48–72 jam</strong> berdasarkan keputusan kultur C&amp;S mikrobiologi.
+                <strong className="text-white font-bold">Lawas Hospital AMS Reminder: </strong>
+                All empirical antibiotic prescriptions must be reassessed at <strong>48–72 hours</strong> based on microbiology C&amp;S culture results.
               </span>
             </div>
             <button
@@ -141,7 +141,7 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
               onClick={toggleOpen}
               className="text-[11px] font-bold text-emerald-300 hover:text-white underline cursor-pointer self-end md:self-auto"
             >
-              Faham, tutup panduan ini &times;
+              Understood, close guide &times;
             </button>
           </div>
         </div>

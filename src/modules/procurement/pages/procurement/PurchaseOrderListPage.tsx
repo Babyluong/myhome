@@ -96,12 +96,15 @@ export const PurchaseOrderListPage: React.FC = () => {
 
     const res = await getPurchaseOrders(hospitalId, filter, page, pageSize)
 
-    if (res.error) {
+    if (res.error && (typeof navigator === 'undefined' || navigator.onLine)) {
       setError(res.error)
       setOrders([])
     } else if (res.data) {
+      setError(null)
       setOrders(res.data.data)
       setTotalRecords(res.data.total || 0)
+    } else {
+      setError(null)
     }
 
     setIsLoading(false)

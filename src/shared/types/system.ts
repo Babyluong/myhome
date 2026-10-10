@@ -10,6 +10,8 @@ export type ModuleCode =
   | 'pharmacy_inpatient'
   | 'pharmacy_galenical'
   | 'general_ward'
+  | 'female_ward'
+  | 'male_ward'
   | 'paediatric_ward'
   | 'maternity_ward'
   | 'emergency_trauma'

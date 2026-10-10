@@ -1,12 +1,13 @@
-// @ts-nocheck
 import React from 'react';
 import { Package, CheckCircle, Clock, Truck, Activity } from 'lucide-react';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 
 interface CylinderKpiCardsProps {
   total: number;
   available: number;
   inUse: number;
   returned: number;
+  loading?: boolean;
 }
 
 export const CylinderKpiCards: React.FC<CylinderKpiCardsProps> = ({
@@ -14,6 +15,7 @@ export const CylinderKpiCards: React.FC<CylinderKpiCardsProps> = ({
   available,
   inUse,
   returned,
+  loading = false,
 }) => {
   const cards = [
     {
@@ -94,9 +96,13 @@ export const CylinderKpiCards: React.FC<CylinderKpiCardsProps> = ({
                 <span className="text-slate-500 dark:text-slate-400 font-bold text-[11px] uppercase tracking-wider mb-2">
                   {card.title}
                 </span>
-                <span className={`text-3xl font-black ${card.textColor} tracking-tight tabular-nums font-sans`}>
-                  {card.value.toLocaleString()}
-                </span>
+                {loading ? (
+                  <Skeleton className="h-8 w-20 rounded-lg my-0.5 !bg-slate-200 dark:!bg-slate-700" />
+                ) : (
+                  <span className={`text-3xl font-black ${card.textColor} tracking-tight tabular-nums font-sans`}>
+                    {card.value.toLocaleString()}
+                  </span>
+                )}
                 <span className="text-slate-500 dark:text-slate-400 font-medium text-xs mt-2">
                   {card.description}
                 </span>
@@ -106,9 +112,13 @@ export const CylinderKpiCards: React.FC<CylinderKpiCardsProps> = ({
                 <div className={`p-3.5 rounded-2xl bg-gradient-to-br ${card.gradient} border border-slate-200/50 dark:border-slate-800 shadow-inner group-hover:rotate-6 transition-transform duration-300`}>
                   <Icon className={`w-5 h-5 ${card.iconColor}`} />
                 </div>
-                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${card.badgeStyle}`}>
-                  {card.badge}
-                </span>
+                {loading ? (
+                  <Skeleton className="h-5 w-16 rounded-full !bg-slate-200 dark:!bg-slate-700" />
+                ) : (
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${card.badgeStyle}`}>
+                    {card.badge}
+                  </span>
+                )}
               </div>
             </div>
           </div>

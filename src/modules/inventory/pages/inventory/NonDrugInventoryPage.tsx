@@ -1,5 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useState, useCallback } from 'react'
+import { Navigate } from 'react-router-dom'
+import { isPharmacyLogisticsUser } from '@/shared/utils/inventoryRbac'
 import { 
   AlertTriangle, 
   Package, 
@@ -37,6 +39,12 @@ import QRCode from 'qrcode'
 
 export const NonDrugInventoryPage: React.FC = () => {
   const { user } = useAuthStore()
+
+  // Master catalog is strictly reserved for Pharmacy Logistics department
+  if (user && !isPharmacyLogisticsUser(user)) {
+    return <Navigate to="/pharmacy/inventory" replace />
+  }
+
   const hospitalId = user?.hospital_id
   const { success: showSuccess, error: showError } = useToastStore()
   const { language } = useLanguage()
@@ -246,12 +254,12 @@ export const NonDrugInventoryPage: React.FC = () => {
         showError(isEn ? 'Error' : 'Ralat', res.error)
         return
       }
-      showSuccess(isEn ? 'Success' : 'Berjaya', isEn ? 'Item updated successfully!' : 'Maklumat bukan ubat berjaya dikemaskini!')
+      showSuccess(isEn ? 'Success' : 'Berjaya', isEn ? 'Item updated successfully!' : 'Non-drug item details successfully updated!')
       setIsEditModalOpen(false)
       setSelectedItemForEdit(null)
       void loadItems()
     } catch (err: any) {
-      showError(isEn ? 'Error' : 'Ralat', err.message || (isEn ? 'Failed to save item information' : 'Gagal menyimpan maklumat bukan ubat'))
+      showError(isEn ? 'Error' : 'Ralat', err.message || (isEn ? 'Failed to save item information' : 'Failed to save non-drug item details'))
     }
   }
 
@@ -609,7 +617,7 @@ export const NonDrugInventoryPage: React.FC = () => {
               {selectedIds.length} {isEn ? 'Selected' : 'Dipilih'}
             </span>
             <span className="text-xs text-slate-300 font-medium hidden sm:inline">
-              {isEn ? 'Select bulk action to activate or deactivate non-drug items' : 'Pilih tindakan pukal untuk mengaktifkan atau me-nyahaktifkan item bukan ubat'}
+              {isEn ? 'Select bulk action to activate or deactivate non-drug items' : 'Select bulk action to activate or deactivate non-drug items'}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -633,7 +641,7 @@ export const NonDrugInventoryPage: React.FC = () => {
               onClick={() => setSelectedIds([])}
               className="px-3 py-1.5 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
             >
-              {isEn ? 'Deselect All' : 'Batal Pilihan'}
+              {isEn ? 'Deselect All' : 'Clear Selection'}
             </button>
           </div>
         </div>
@@ -904,7 +912,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                 disabled={!qrCodeUrl}
               >
                 <Printer className="w-4 h-4" />
-                {isEn ? 'Print Label' : 'Cetak Label'}
+                {isEn ? 'Print Label' : 'Print Label'}
               </Button>
             </div>
           </div>

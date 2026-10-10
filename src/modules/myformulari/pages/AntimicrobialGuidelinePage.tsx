@@ -102,11 +102,11 @@ export const AntimicrobialGuidelinePage: React.FC = () => {
                 {syncMeta.edition}
               </span>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                17 Dewasa (A1–A17) • 14 Pediatrik (B1–B14)
+                17 Adult (A1–A17) • 14 Paediatric (B1–B14)
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium leading-relaxed">
-              Portal Garis Panduan Antimikrobial Kebangsaan Edisi Ke-4 (KKM) &amp; Kawalan Rintangan Antimikrob (AMS) Lawas Hospital
+              National Antimicrobial Guideline 4th Edition (MOH) &amp; Antimicrobial Stewardship (AMS) Portal Lawas Hospital
             </p>
           </div>
         </div>
@@ -230,7 +230,7 @@ export const AntimicrobialGuidelinePage: React.FC = () => {
               className="lg:hidden px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Kembali ke Senarai Kategori</span>
+              <span>Back to Category List</span>
             </button>
           )}
 

@@ -262,13 +262,13 @@ export const CrossborderCreatePage: React.FC = () => {
   };
 
   const validateForm = () => {
-    if (!tarikhPerjalanan) return language === 'ms' ? 'Tarikh Perjalanan diperlukan' : 'Travel Date is required';
+    if (!tarikhPerjalanan) return language === 'ms' ? 'Travel Date is required' : 'Travel Date is required';
     if (!masaBerlepas) return language === 'ms' ? 'Masa Berlepas diperlukan' : 'Departure Time is required';
-    if (!noPendaftaran) return language === 'ms' ? 'No Pendaftaran Kenderaan diperlukan' : 'Vehicle Plate Number is required';
+    if (!noPendaftaran) return language === 'ms' ? 'Vehicle Registration Number is required' : 'Vehicle Plate Number is required';
     if (!doktorPerujukNama) return language === 'ms' ? 'Nama Doktor Perujuk diperlukan' : 'Referring Doctor Name is required';
 
     if (pemanduPassport && !pemanduPassportExpiry) {
-      return language === 'ms' ? 'Tarikh Tamat Pasport Pemandu diperlukan' : 'Driver Passport Expiry Date is required';
+      return language === 'ms' ? 'Driver Passport Expiry Date is required' : 'Driver Passport Expiry Date is required';
     }
 
     for (let i = 0; i < patients.length; i++) {
@@ -375,7 +375,7 @@ export const CrossborderCreatePage: React.FC = () => {
         const submitRes = await submitCrossborderTransfer(res.data!.id);
         if (submitRes.error) throw new Error(submitRes.error);
         toast.success(
-          language === 'ms' ? 'Hantar Permohonan' : 'Application Submitted',
+          language === 'ms' ? 'Submit Requisition' : 'Application Submitted',
           language === 'ms' ? 'Permohonan berjaya dihantar untuk kelulusan Pengarah.' : 'Application submitted successfully for Director approval.'
         );
       } else {

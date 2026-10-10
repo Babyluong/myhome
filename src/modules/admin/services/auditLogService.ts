@@ -134,17 +134,29 @@ export async function recordAuditLog(params: RecordAuditLogParams): Promise<Audi
   // 2. Persist to Supabase if configured and online
   if (isSupabaseConfigured()) {
     try {
-      await supabase.from('audit_logs').insert({
-        user_id: effectiveUserId || null,
+      // Supabase audit_logs.user_id is type uuid referencing users(id).
+      // If effectiveUserId is not a valid UUID (e.g. demo string), send null to avoid 22P02 Postgres errors.
+      const isValidUuid = typeof effectiveUserId === 'string' &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(effectiveUserId)
+      const dbUserId = isValidUuid ? effectiveUserId : null
+
+      const { error } = await supabase.from('audit_logs').insert({
+        user_id: dbUserId,
         action: logEntry.action,
         module: logEntry.module,
         entity_type: logEntry.entity_type,
         entity_id: logEntry.entity_id,
         old_values: logEntry.old_values,
-        new_values: logEntry.new_values,
+        new_values: effectiveUserId && !isValidUuid
+          ? { ...(logEntry.new_values || {}), local_user_id: effectiveUserId }
+          : logEntry.new_values,
         ip_address: logEntry.ip_address,
         user_agent: logEntry.user_agent,
       })
+
+      if (error) {
+        console.warn('Could not persist audit log to Supabase, saved locally:', error.message)
+      }
     } catch (err) {
       console.warn('Could not persist audit log to Supabase, saved locally:', err)
     }

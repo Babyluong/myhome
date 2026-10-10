@@ -325,7 +325,7 @@ const TransporterRequestFormPage: React.FC = () => {
             }
           }
         } catch (err: any) {
-          toast.error('Gagal Memuatkan Permohonan', err.message || 'Sila cuba lagi.')
+          toast.error('Failed to Load Requisitions', err.message || 'Sila cuba lagi.')
         }
       }
       fetchRequestDetails()
@@ -391,7 +391,7 @@ const TransporterRequestFormPage: React.FC = () => {
     if (isCrossborder && jenisPermohonan === 'ambulance') {
       steps.push({ id: 4, label: isEn ? 'Cross-Border' : 'Sempadan' })
     }
-    steps.push({ id: 5, label: isEn ? 'Confirm & Submit' : 'Sahkan & Hantar' })
+    steps.push({ id: 5, label: isEn ? 'Confirm & Submit' : 'Confirm & Submit' })
     return steps
   }
 
@@ -401,15 +401,15 @@ const TransporterRequestFormPage: React.FC = () => {
     if (step === 1) {
       if (!tujuanPermohonan || !destinasi || !tarikhDiperlukan || !masaDiperlukan) {
         toast.error(
-          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
-          isEn ? 'Please fill in purpose, destination, date, and required time.' : 'Sila isi tujuan, destinasi, tarikh dan masa diperlukan.'
+          isEn ? 'Incomplete Form' : 'Incomplete Form', 
+          isEn ? 'Please fill in purpose, destination, date, and required time.' : 'Please enter the purpose, destination, date, and required time.'
         )
         return
       }
       if (jenisPermohonan === 'sg') {
         if (!tarikhTamat || !masaTamat) {
           toast.error(
-            isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+            isEn ? 'Incomplete Form' : 'Incomplete Form', 
             isEn ? 'Please specify reservation end date and time.' : 'Sila isi tarikh dan masa tamat tempahan.'
           )
           return
@@ -427,21 +427,21 @@ const TransporterRequestFormPage: React.FC = () => {
     } else if (step === 2) {
       if (!unitPemohon) {
         toast.error(
-          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Incomplete Form' : 'Incomplete Form', 
           isEn ? 'Please specify Requester Unit/Ward.' : 'Sila nyatakan Unit/Wad Pemohon.'
         )
         return
       }
       if (!namaPemohon.trim()) {
         toast.error(
-          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Incomplete Form' : 'Incomplete Form', 
           isEn ? 'Please specify Applicant Name.' : 'Sila nyatakan Nama Pemohon.'
         )
         return
       }
       if (!referringDoctorName.trim() || !referringDoctorDept.trim()) {
         toast.error(
-          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Incomplete Form' : 'Incomplete Form', 
           isEn ? 'Please specify Referring Medical Officer name and department.' : 'Sila nyatakan nama dan jabatan Pegawai Perubatan Merujuk.'
         )
         return
@@ -449,7 +449,7 @@ const TransporterRequestFormPage: React.FC = () => {
       const invalidEscort = escortList.some(escort => !escort.name.trim())
       if (invalidEscort) {
         toast.error(
-          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Incomplete Form' : 'Incomplete Form', 
           isEn ? 'Please provide names for all escort personnel.' : 'Sila isi nama bagi setiap kakitangan pengiring.'
         )
         return
@@ -463,21 +463,21 @@ const TransporterRequestFormPage: React.FC = () => {
           const p1 = crossborderPatients[0]
           if (!p1 || !p1.nama.trim() || !p1.no_dokumen.trim() || !p1.tarikh_lahir) {
             toast.error(
-              isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+              isEn ? 'Incomplete Form' : 'Incomplete Form', 
               isEn ? 'Please provide complete details for Patient 1 (Name, Date of Birth, Nationality, ID/Doc No).' : 'Sila isi butiran lengkap Pesakit 1 (Nama, Tarikh Lahir, Warganegara, No. Dokumen).'
             )
             return
           }
           if (!diagnosisPesakit) {
             toast.error(
-              isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+              isEn ? 'Incomplete Form' : 'Incomplete Form', 
               isEn ? 'Please state the Primary Diagnosis of the patient.' : 'Sila nyatakan Diagnosis Utama Pesakit.'
             )
             return
           }
           if (jenisPermohonan !== 'van_jenazah' && !patientMobility) {
             toast.error(
-              isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+              isEn ? 'Incomplete Form' : 'Incomplete Form', 
               isEn ? 'Please select Patient Mobility.' : 'Sila pilih Keupayaan Bergerak Pesakit (Patient Mobility).'
             )
             return
@@ -487,7 +487,7 @@ const TransporterRequestFormPage: React.FC = () => {
             const patientLabel = jenisPermohonan === 'van_jenazah' ? (isEn ? 'deceased' : 'jenazah') : (isEn ? 'patient' : 'pesakit')
             const diagnosisLabel = jenisPermohonan === 'van_jenazah' ? (isEn ? 'Cause of Death' : 'Sebab Kematian') : (isEn ? 'Diagnosis' : 'Diagnosis')
             toast.error(
-              isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+              isEn ? 'Incomplete Form' : 'Incomplete Form', 
               isEn 
                 ? `Please fill in complete details for ${patientLabel} (Name, RN, Gender, ${diagnosisLabel}, Mobility).` 
                 : `Sila isi butiran lengkap ${patientLabel} (Nama, RN, Jantina, ${diagnosisLabel}, Mobiliti).`
@@ -499,7 +499,7 @@ const TransporterRequestFormPage: React.FC = () => {
       if (jenisPermohonan === 'ambulance' && oksigenDiperlukan) {
         if (!jenisOksigen) {
           toast.error(
-            isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+            isEn ? 'Incomplete Form' : 'Incomplete Form', 
             isEn ? 'Please select oxygen delivery mode.' : 'Sila pilih jenis sokongan oksigen.'
           )
           return
@@ -508,7 +508,7 @@ const TransporterRequestFormPage: React.FC = () => {
       if (jenisPermohonan === 'ambulance' && selectedMesin.includes('others')) {
         if (!customMesin.trim()) {
           toast.error(
-            isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+            isEn ? 'Incomplete Form' : 'Incomplete Form', 
             isEn ? 'Please specify other equipment/devices required.' : 'Sila nyatakan mesin/peralatan lain yang diperlukan.'
           )
           return
@@ -518,7 +518,7 @@ const TransporterRequestFormPage: React.FC = () => {
       // Validate crossborder specific data
       if (!borderControlPost.trim() || !tempatBerlepas.trim() || !pengarahNama.trim() || !doktorPerujukNama.trim()) {
         toast.error(
-          isEn ? 'Incomplete Form' : 'Borang Tidak Lengkap', 
+          isEn ? 'Incomplete Form' : 'Incomplete Form', 
           isEn ? 'Please fill in Border Post, Departure Place, Referring Doctor, and Hospital Director name.' : 'Sila isi Pintu Kawalan Sempadan, Tempat Berlepas, Doktor Perujuk, dan Nama Pengarah.'
         )
         return
@@ -612,7 +612,7 @@ const TransporterRequestFormPage: React.FC = () => {
       } else {
         const res = await createRequest(payload)
         if (res.error) throw new Error(res.error)
-        toast.success('Permohonan Dihantar', `Permohonan pengangkutan berjaya didaftarkan dengan No. Rujukan ${res.data?.no_rujukan}`)
+        toast.success('Requisition Submitted', `Permohonan pengangkutan berjaya didaftarkan dengan No. Rujukan ${res.data?.no_rujukan}`)
       }
       navigate('/transporter/requests/my')
     } catch (err: any) {
@@ -2674,7 +2674,7 @@ const TransporterRequestFormPage: React.FC = () => {
               >
                 {isSubmitting 
                   ? (isEn ? 'Submitting...' : 'Menghantar...') 
-                  : (isEn ? 'Submit Requisition' : 'Hantar Permohonan')}
+                  : (isEn ? 'Submit Requisition' : 'Submit Requisition')}
               </Button>
             )}
           </div>

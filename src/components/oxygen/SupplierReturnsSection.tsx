@@ -39,6 +39,9 @@ import {
   updateCylinderValveType,
   deleteReceiveDocument,
   updateReceiveDocument,
+  updateReceiveDocumentCylinders,
+  getReceiveDocumentById,
+  searchCylindersInDatabase,
   getSupplierCylinderReconciliationData,
 } from '@/modules/mycylinder/services/oxygenService';
 import { SupplierCylinderTrackingSection } from './SupplierCylinderTrackingSection';
@@ -248,6 +251,31 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
   const [supplierSizeFilter, setSupplierSizeFilter] = useState<'all' | '101-N' | '101-F'>('101-N');
   const [privateSizeFilter, setPrivateSizeFilter] = useState<string>('');
 
+  // Edit received cylinders state
+  const [editReceivedCylinders, setEditReceivedCylinders] = useState<Array<{
+    itemId?: string;
+    cylinderId: string;
+    serialNumber: string;
+    originalSerial: string;
+    typeName: string;
+    sizeCode?: string;
+    valveType?: 'BN' | 'PI';
+    isRemoved?: boolean;
+    isNew?: boolean;
+    combo?: any;
+    cylinder?: any;
+  }>>([]);
+  const [receivedCylSearchTerm, setReceivedCylSearchTerm] = useState('');
+  const [isLoadingReceivedCyls, setIsLoadingReceivedCyls] = useState(false);
+  const [isAddingReceivedCyl, setIsAddingReceivedCyl] = useState(false);
+  const [newReceivedCylSerial, setNewReceivedCylSerial] = useState('');
+  const [newReceivedCylComboId, setNewReceivedCylComboId] = useState('');
+  const [availableCombos, setAvailableCombos] = useState<any[]>([]);
+  const [dbSearchResults, setDbSearchResults] = useState<any[]>([]);
+  const [isSearchingDb, setIsSearchingDb] = useState(false);
+  const [hasSearchedDb, setHasSearchedDb] = useState(false);
+  const [selectedDbCylinder, setSelectedDbCylinder] = useState<any | null>(null);
+
   // Delete form state
   const [deleteReason, setDeleteReason] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -438,6 +466,174 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     }
   };
 
+  const fetchCombos = async () => {
+    try {
+      const { data } = await supabase
+        .from('pharmacy_oxygen_size_type_combos')
+        .select('id, size_id, type_id, display_name')
+        .order('display_order', { ascending: true });
+      if (data) setAvailableCombos(data);
+    } catch (err) {
+      console.error('Error fetching combos:', err);
+    }
+  };
+
+  const fetchFreshReceivedDoc = async (docId: string) => {
+    setIsLoadingReceivedCyls(true);
+    try {
+      const res = await getReceiveDocumentById(docId);
+      if (res.data?.items) {
+        const freshCyls = res.data.items.map((it: any) => {
+          const cyl = it.cylinder;
+          const typeName = cyl?.combo?.display_name || cyl?.type_info?.type_name || 'Standard Cylinder';
+          const isPI = typeName.includes('PI') || typeName.includes('Pin');
+          const isBN = typeName.includes('BN') || typeName.includes('Bull');
+          const valveType = isPI ? 'PI' : isBN ? 'BN' : undefined;
+          return {
+            itemId: it.id,
+            cylinderId: it.cylinder_id || cyl?.id,
+            serialNumber: cyl?.serial_number || '',
+            originalSerial: cyl?.serial_number || '',
+            typeName,
+            sizeCode: cyl?.size_info?.code || '',
+            valveType: valveType as 'BN' | 'PI' | undefined,
+            isRemoved: false,
+            cylinder: cyl,
+          };
+        });
+        setEditReceivedCylinders(freshCyls);
+      }
+    } catch (err) {
+      console.error('Error fetching fresh receive document for edit:', err);
+    } finally {
+      setIsLoadingReceivedCyls(false);
+    }
+  };
+
+  const handleReceivedCylSerialChange = (cylinderId: string, val: string) => {
+    setEditReceivedCylinders(prev => prev.map(c => 
+      c.cylinderId === cylinderId ? { ...c, serialNumber: val.toUpperCase() } : c
+    ));
+  };
+
+  const handleRevertReceivedCylSerial = (cylinderId: string) => {
+    setEditReceivedCylinders(prev => prev.map(c => 
+      c.cylinderId === cylinderId ? { ...c, serialNumber: c.originalSerial } : c
+    ));
+  };
+
+  const handleToggleRemoveReceivedCyl = (cylinderId: string) => {
+    setEditReceivedCylinders(prev => prev.map(c => 
+      c.cylinderId === cylinderId ? { ...c, isRemoved: !c.isRemoved } : c
+    ));
+  };
+
+  const handleToggleReceivedCylValve = (cylinderId: string) => {
+    setEditReceivedCylinders(prev => prev.map(c => {
+      if (c.cylinderId !== cylinderId) return c;
+      const currentValve = c.valveType || (c.typeName.includes('PI') ? 'PI' : 'BN');
+      const targetValve: 'BN' | 'PI' = currentValve === 'PI' ? 'BN' : 'PI';
+      let updatedTypeName = c.typeName;
+      if (currentValve === 'PI') {
+        updatedTypeName = c.typeName.replace(/\bPI\b/g, 'BN').replace(/Pin Index/gi, 'Bullnose');
+      } else {
+        updatedTypeName = c.typeName.replace(/\bBN\b/g, 'PI').replace(/Bullnose/gi, 'Pin Index');
+      }
+      if (!updatedTypeName.includes('BN') && !updatedTypeName.includes('PI')) {
+        updatedTypeName = `${c.typeName} ${targetValve}`;
+      }
+      return {
+        ...c,
+        valveType: targetValve,
+        typeName: updatedTypeName,
+      };
+    }));
+  };
+
+  useEffect(() => {
+    if (!isAddingReceivedCyl || !newReceivedCylSerial.trim() || !activeHospitalId) {
+      setDbSearchResults([]);
+      setHasSearchedDb(false);
+      setIsSearchingDb(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearchingDb(true);
+      setHasSearchedDb(true);
+      try {
+        const res = await searchCylindersInDatabase(activeHospitalId, newReceivedCylSerial.trim());
+        setDbSearchResults(res.data || []);
+      } catch (err) {
+        console.error('Error searching cylinders in database:', err);
+      } finally {
+        setIsSearchingDb(false);
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [newReceivedCylSerial, isAddingReceivedCyl, activeHospitalId]);
+
+  const handleSelectSearchedCylinder = (cyl: any) => {
+    setSelectedDbCylinder(cyl);
+    setNewReceivedCylSerial(cyl.serial_number);
+    const matchingCombo = availableCombos.find(c => 
+      c.size_id === cyl.cylinder_size_id && c.type_id === cyl.cylinder_type_id
+    );
+    if (matchingCombo) {
+      setNewReceivedCylComboId(matchingCombo.id);
+    }
+    setDbSearchResults([]);
+    setHasSearchedDb(false);
+  };
+
+  const handleAddNewReceivedCylinder = (explicitCyl?: any) => {
+    const targetDbCyl = explicitCyl || selectedDbCylinder;
+    const cleanSerial = (targetDbCyl?.serial_number || newReceivedCylSerial).trim().toUpperCase();
+    if (!cleanSerial) {
+      alert('Please enter the cylinder serial number.');
+      return;
+    }
+    if (editReceivedCylinders.some(c => !c.isRemoved && c.serialNumber.trim().toUpperCase() === cleanSerial)) {
+      alert(`Silinder dengan nombor siri "${cleanSerial}" sudah ada dalam senarai penerimaan ini.`);
+      return;
+    }
+    
+    let typeName = targetDbCyl?.combo?.display_name || targetDbCyl?.type_info?.type_name;
+    const selectedCombo = availableCombos.find(c => c.id === newReceivedCylComboId);
+    if (!typeName) {
+      typeName = selectedCombo?.display_name || 'Standard Cylinder';
+    }
+    const isPI = typeName.includes('PI') || typeName.includes('Pin');
+    const isBN = typeName.includes('BN') || typeName.includes('Bull');
+    const valveType = isPI ? 'PI' : isBN ? 'BN' : undefined;
+
+    const cylId = targetDbCyl ? targetDbCyl.id : `new-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const isNew = true;
+
+    setEditReceivedCylinders(prev => [
+      ...prev,
+      {
+        itemId: undefined,
+        cylinderId: cylId,
+        serialNumber: cleanSerial,
+        originalSerial: '',
+        typeName,
+        sizeCode: targetDbCyl?.size_info?.code || '',
+        valveType: valveType as 'BN' | 'PI' | undefined,
+        isRemoved: false,
+        isNew,
+        combo: selectedCombo,
+        cylinder: targetDbCyl,
+      } as any
+    ]);
+    setNewReceivedCylSerial('');
+    setSelectedDbCylinder(null);
+    setDbSearchResults([]);
+    setHasSearchedDb(false);
+    setIsAddingReceivedCyl(false);
+  };
+
   const openEditModal = (doc: any, type: 'returns' | 'requests' | 'received') => {
     setSelectedDoc(doc);
     setDocType(type);
@@ -460,10 +656,45 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       const cylIds = items.map((x: any) => x.cylinder_id || x.cylinder?.id).filter(Boolean);
       setSelectedCylIdList(cylIds);
       fetchAvailableCylinders(doc.hospital_id, currentCyls);
+    } else if (type === 'received') {
+      setSelectedCylIdList([]);
+      setEmptyCylinders([]);
+      setSupplierCylinders([]);
+
+      const rawItems = doc.items || [];
+      const initialCyls = rawItems.map((it: any) => {
+        const cyl = it.cylinder;
+        const typeName = cyl?.combo?.display_name || cyl?.type_info?.type_name || 'Standard Cylinder';
+        const isPI = typeName.includes('PI') || typeName.includes('Pin');
+        const isBN = typeName.includes('BN') || typeName.includes('Bull');
+        const valveType = isPI ? 'PI' : isBN ? 'BN' : undefined;
+        return {
+          itemId: it.id,
+          cylinderId: it.cylinder_id || cyl?.id,
+          serialNumber: cyl?.serial_number || '',
+          originalSerial: cyl?.serial_number || '',
+          typeName,
+          sizeCode: cyl?.size_info?.code || '',
+          valveType: valveType as 'BN' | 'PI' | undefined,
+          isRemoved: false,
+          cylinder: cyl,
+        };
+      });
+      setEditReceivedCylinders(initialCyls);
+      setReceivedCylSearchTerm('');
+      setIsAddingReceivedCyl(false);
+      setNewReceivedCylSerial('');
+      setNewReceivedCylComboId('');
+      setSelectedDbCylinder(null);
+      setDbSearchResults([]);
+      setHasSearchedDb(false);
+      void fetchCombos();
+      void fetchFreshReceivedDoc(doc.id);
     } else {
       setSelectedCylIdList([]);
       setEmptyCylinders([]);
       setSupplierCylinders([]);
+      setEditReceivedCylinders([]);
     }
 
     setIsEditOpen(true);
@@ -543,6 +774,17 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       if (newVal.remarks !== undefined && oldVal.remarks !== newVal.remarks) {
         changes.push(`Remarks updated`);
       }
+      if (newVal.cylinder_serial_changes && newVal.cylinder_serial_changes.length > 0) {
+        newVal.cylinder_serial_changes.forEach((c: any) => {
+          changes.push(`Nombor siri silinder dikemaskini: ${c.from} ➔ ${c.to}`);
+        });
+      }
+      if (newVal.cylinders_removed && newVal.cylinders_removed.length > 0) {
+        changes.push(`Silinder dikeluarkan dari dokumen: ${newVal.cylinders_removed.join(', ')}`);
+      }
+      if (newVal.cylinders_added && newVal.cylinders_added.length > 0) {
+        changes.push(`Silinder ditambah ke dokumen: ${newVal.cylinders_added.join(', ')}`);
+      }
     }
     if (changes.length === 0) return null;
     return (
@@ -559,6 +801,26 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       alert('Please enter a reason for this edit.');
       return;
     }
+
+    if (docType === 'received') {
+      const activeItems = editReceivedCylinders.filter(c => !c.isRemoved);
+      for (const c of activeItems) {
+        if (!c.serialNumber.trim()) {
+          alert('Sila pastikan semua silinder mempunyai nombor siri yang sah (tidak boleh dibiarkan kosong).');
+          return;
+        }
+      }
+      const seen = new Set<string>();
+      for (const c of activeItems) {
+        const sn = c.serialNumber.trim().toUpperCase();
+        if (seen.has(sn)) {
+          alert(`Nombor siri berulang dikesan: "${sn}". Sila pastikan setiap silinder unik.`);
+          return;
+        }
+        seen.add(sn);
+      }
+    }
+
     setIsSaving(true);
     try {
       const updates = {
@@ -616,6 +878,42 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           const cylindersRes = await updateReturnDocumentCylinders(selectedDoc.id, selectedCylIdList);
           if (cylindersRes.error) {
             alert(`Document details updated, but failed to update cylinders: ${cylindersRes.error}`);
+          }
+        } else if (docType === 'received') {
+          // Existing items in this document (they have an itemId)
+          const existingItemsToUpdate = editReceivedCylinders
+            .filter((c: any) => c.itemId)
+            .map(c => ({
+              itemId: c.itemId,
+              cylinderId: c.cylinderId,
+              serialNumber: c.serialNumber.trim().toUpperCase(),
+              originalSerial: (c.originalSerial || '').trim().toUpperCase(),
+              valveType: c.valveType,
+              isRemoved: !!c.isRemoved,
+            }));
+
+          // Cylinders newly added to this document (no itemId, and not removed)
+          const newCylindersToInsert = editReceivedCylinders
+            .filter((c: any) => !c.itemId && !c.isRemoved)
+            .map((c: any) => ({
+              cylinderId: c.cylinder?.id || (c.cylinderId && !c.cylinderId.startsWith('new-') ? c.cylinderId : undefined),
+              serialNumber: c.serialNumber.trim().toUpperCase(),
+              sizeId: c.combo?.size_id || c.cylinder?.cylinder_size_id,
+              typeId: c.combo?.type_id || c.cylinder?.cylinder_type_id,
+              valveType: c.valveType,
+            }));
+
+          const cylindersRes = await updateReceiveDocumentCylinders(
+            selectedDoc.id,
+            activeHospitalId,
+            existingItemsToUpdate,
+            newCylindersToInsert,
+            user?.id || '',
+            editReason
+          );
+          if (cylindersRes.error) {
+            alert(`Maklumat dokumen dikemaskini, tetapi gagal mengemaskini silinder: ${cylindersRes.error}`);
+            return;
           }
         }
         setIsEditOpen(false);
@@ -842,7 +1140,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               {subTab === 'returns' 
                 ? (language === 'ms' ? 'Dokumen penghantaran balik silinder gas ke pembekal perubatan rasmi.' : 'Official return document dispatch to medical gas suppliers.')
                 : subTab === 'requests'
-                ? (language === 'ms' ? 'Pesanan pembekalan dan permohonan isian semula silinder perubatan.' : 'Official purchase order and cylinder replenishment indents.')
+                ? (language === 'ms' ? 'Medical gas cylinder supply order and refill requisition.' : 'Official purchase order and cylinder replenishment indents.')
                 : (language === 'ms' ? 'Kemasukan kelompok silinder daripada pembekal terus dikreditkan ke stor.' : 'Cylinder intake batches received from supplier directly credited to live storage.')}
             </p>
           </div>
@@ -860,7 +1158,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   {language === 'ms' ? 'Kosong Di Stor' : 'Empty in Store'}
                 </span>
                 <span className="text-[10px] text-indigo-600 font-bold group-hover:underline flex items-center gap-0.5">
-                  {language === 'ms' ? 'Lihat Senarai' : 'View Manifest'} &rarr;
+                  {language === 'ms' ? 'View List' : 'View Manifest'} &rarr;
                 </span>
               </div>
               <div className="text-lg font-extrabold text-amber-900 font-mono mt-0.5">
@@ -2089,20 +2387,38 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   setIsViewCylindersOpen(false);
                   setViewCylindersDoc(null);
                 }}
-                className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl"
+                className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl cursor-pointer"
               >
                 Tutup
               </button>
-              <button
-                onClick={() => {
-                  setIsViewCylindersOpen(false);
-                  onPrintReceiveClick(viewCylindersDoc.id);
-                }}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                <span>Cetak Dokumen</span>
-              </button>
+              <div className="flex items-center gap-2">
+                {!isViewOnly && (
+                  <button
+                    onClick={() => {
+                      const docToEdit = viewCylindersDoc;
+                      setIsViewCylindersOpen(false);
+                      setViewCylindersDoc(null);
+                      openEditModal(docToEdit, 'received');
+                    }}
+                    className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                    <span>{language === 'ms' ? 'Edit Dokumen / Silinder' : 'Edit Document / Cylinders'}</span>
+                  </button>
+                )}
+                {onPrintReceiveClick && (
+                  <button
+                    onClick={() => {
+                      setIsViewCylindersOpen(false);
+                      onPrintReceiveClick(viewCylindersDoc.id);
+                    }}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Cetak Dokumen</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -2407,6 +2723,444 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           })}
                         </div>
                       );
+                    })()}
+                  </div>
+                </div>
+              )}
+
+              {docType === 'received' && (
+                <div className="space-y-3.5 bg-slate-50/70 border border-slate-200/90 rounded-2xl p-4">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <PackageCheck className="w-4 h-4 text-emerald-600" />
+                        <label className="block text-slate-800 font-bold text-xs uppercase tracking-wide">
+                          {language === 'ms' ? 'Silinder Diterima & Nombor Siri' : 'Received Cylinders & Serial Numbers'}
+                        </label>
+                      </div>
+                      <p className="text-[11px] text-slate-500 font-medium mt-0.5">
+                        {language === 'ms' 
+                          ? 'Edit nombor siri silinder yang diterima jika terdapat kesilapan ejaan atau pertukaran tag.' 
+                          : 'Edit received cylinder serial numbers directly to correct typos or tag mismatches.'}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] font-bold font-mono px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 border border-slate-200">
+                        {editReceivedCylinders.filter(c => !c.isRemoved).length} {language === 'ms' ? 'silinder' : 'cylinders'}
+                      </span>
+                      {(() => {
+                        const addedCount = editReceivedCylinders.filter(c => !c.itemId && !c.isRemoved).length;
+                        if (addedCount === 0) return null;
+                        return (
+                          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+                            <span>+{addedCount} {language === 'ms' ? 'ditambah' : 'added'}</span>
+                          </span>
+                        );
+                      })()}
+                      {(() => {
+                        const modCount = editReceivedCylinders.filter(c => !c.isRemoved && c.originalSerial && c.serialNumber.trim().toUpperCase() !== c.originalSerial.trim().toUpperCase()).length;
+                        if (modCount === 0) return null;
+                        return (
+                          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1 animate-pulse">
+                            <span>{modCount} {language === 'ms' ? 'diubah' : 'modified'}</span>
+                          </span>
+                        );
+                      })()}
+                      {(() => {
+                        const remCount = editReceivedCylinders.filter(c => c.isRemoved).length;
+                        if (remCount === 0) return null;
+                        return (
+                          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-rose-50 text-rose-800 border border-rose-200">
+                            {remCount} {language === 'ms' ? 'dikeluarkan' : 'removed'}
+                          </span>
+                        );
+                      })()}
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingReceivedCyl(!isAddingReceivedCyl)}
+                        className="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
+                      >
+                        <Plus className="w-3 h-3 text-slate-600" />
+                        <span>{language === 'ms' ? 'Tambah Silinder' : 'Add Cylinder'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Add Cylinder Form */}
+                  {isAddingReceivedCyl && (
+                    <div className="p-3.5 bg-white border border-emerald-200/90 rounded-2xl space-y-3 shadow-md animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          <Plus className="w-3.5 h-3.5 text-emerald-600" />
+                          {language === 'ms' ? 'Tambah Silinder ke Dokumen Penerimaan' : 'Add Cylinder to Receive Document'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsAddingReceivedCyl(false);
+                            setNewReceivedCylSerial('');
+                            setSelectedDbCylinder(null);
+                            setDbSearchResults([]);
+                            setHasSearchedDb(false);
+                          }}
+                          className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="relative">
+                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center justify-between">
+                            <span>{language === 'ms' ? 'Nombor Siri / Tag' : 'Serial Number / Tag'} *</span>
+                            {selectedDbCylinder && (
+                              <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                                ✓ Database
+                              </span>
+                            )}
+                          </label>
+                          <div className="relative">
+                            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <input
+                              type="text"
+                              placeholder={language === 'ms' ? 'Taip & cari no siri dlm database (cth: 0189)...' : 'Type & search serial in db (e.g. 0189)...'}
+                              value={newReceivedCylSerial}
+                              onChange={(e) => {
+                                setNewReceivedCylSerial(e.target.value.toUpperCase());
+                                setSelectedDbCylinder(null);
+                              }}
+                              className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-8 py-1.5 text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 outline-none transition-all"
+                            />
+                            {isSearchingDb ? (
+                              <div className="w-3.5 h-3.5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin absolute right-2.5 top-1/2 -translate-y-1/2" />
+                            ) : newReceivedCylSerial ? (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setNewReceivedCylSerial('');
+                                  setSelectedDbCylinder(null);
+                                  setDbSearchResults([]);
+                                  setHasSearchedDb(false);
+                                }}
+                                className="text-slate-400 hover:text-slate-600 p-1 absolute right-1.5 top-1/2 -translate-y-1/2 cursor-pointer"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            ) : null}
+                          </div>
+
+                          {/* Database Search Results Dropdown */}
+                          {newReceivedCylSerial.trim() && (
+                            <div className="mt-1.5 border border-slate-200 bg-white rounded-xl shadow-lg overflow-hidden max-h-52 overflow-y-auto divide-y divide-slate-100 z-20 relative">
+                              {isSearchingDb ? (
+                                <div className="p-3 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+                                  <div className="w-3.5 h-3.5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                                  <span>{language === 'ms' ? 'Mencari silinder dalam database...' : 'Searching database...'}</span>
+                                </div>
+                              ) : dbSearchResults.length > 0 ? (
+                                <>
+                                  <div className="px-2.5 py-1 bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+                                    <span>{language === 'ms' ? 'Silinder Dijumpai dalam Database' : 'Cylinders Found in Database'}</span>
+                                    <span className="text-emerald-700 font-bold">{dbSearchResults.length} rekod</span>
+                                  </div>
+                                  {dbSearchResults.map((cyl) => {
+                                    const isAlreadyInDoc = editReceivedCylinders.some(
+                                      c => !c.isRemoved && (c.cylinderId === cyl.id || c.serialNumber.trim().toUpperCase() === cyl.serial_number.trim().toUpperCase())
+                                    );
+                                    const typeName = cyl.combo?.display_name || cyl.type_info?.type_name || 'Standard Cylinder';
+                                    const location = cyl.current_location || 'Store';
+
+                                    return (
+                                      <div
+                                        key={cyl.id}
+                                        onClick={() => {
+                                          if (!isAlreadyInDoc) handleSelectSearchedCylinder(cyl);
+                                        }}
+                                        className={`p-2 flex items-center justify-between gap-2 transition-colors ${
+                                          isAlreadyInDoc
+                                            ? 'bg-slate-50/70 opacity-60 cursor-not-allowed'
+                                            : 'hover:bg-emerald-50/50 cursor-pointer'
+                                        }`}
+                                      >
+                                        <div className="min-w-0">
+                                          <div className="flex items-center gap-2 flex-wrap">
+                                            <span className="font-mono text-xs font-bold text-slate-800">
+                                              {cyl.serial_number}
+                                            </span>
+                                            <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
+                                              {typeName}
+                                            </span>
+                                          </div>
+                                          <div className="text-[10px] text-slate-400 mt-0.5">
+                                            Lokasi: <span className="font-medium text-slate-600">{location}</span> • Status: <span className="font-medium text-slate-600">{cyl.status}</span>
+                                          </div>
+                                        </div>
+
+                                        <div className="shrink-0 flex items-center gap-1.5">
+                                          {isAlreadyInDoc ? (
+                                            <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
+                                              {language === 'ms' ? 'Sudah Ada' : 'In Document'}
+                                            </span>
+                                          ) : (
+                                            <button
+                                              type="button"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleAddNewReceivedCylinder(cyl);
+                                              }}
+                                              className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-[10px] font-bold shadow-2xs transition-all cursor-pointer flex items-center gap-1"
+                                            >
+                                              <Plus className="w-2.5 h-2.5" />
+                                              <span>{language === 'ms' ? 'Pilih & Tambah' : 'Add'}</span>
+                                            </button>
+                                          )}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </>
+                              ) : hasSearchedDb ? (
+                                <div className="p-3 text-center text-xs text-slate-500">
+                                  <p className="font-semibold text-slate-700">
+                                    {language === 'ms' ? `Tiada rekod silinder untuk "${newReceivedCylSerial}"` : `No cylinder record for "${newReceivedCylSerial}"`}
+                                  </p>
+                                  <p className="text-[10px] text-slate-400 mt-0.5">
+                                    {language === 'ms' 
+                                      ? 'Silinder ini akan didaftarkan sebagai silinder baharu apabila ditambah.' 
+                                      : 'This cylinder will be registered as a new cylinder upon adding.'}
+                                  </p>
+                                </div>
+                              ) : null}
+                            </div>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                            {language === 'ms' ? 'Saiz & Jenis Injap' : 'Size & Valve Type'}
+                          </label>
+                          <select
+                            value={newReceivedCylComboId}
+                            onChange={(e) => setNewReceivedCylComboId(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-800 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 outline-none"
+                          >
+                            <option value="">Standard Cylinder (Default)</option>
+                            {availableCombos.map(c => (
+                              <option key={c.id} value={c.id}>{c.display_name}</option>
+                            ))}
+                          </select>
+                          <p className="text-[10px] text-slate-400 mt-1">
+                            {selectedDbCylinder 
+                              ? (language === 'ms' ? 'Ditetapkan secara automatik mengikut rekod database.' : 'Automatically matched from database record.')
+                              : (language === 'ms' ? 'Pilih jenis injap & saiz jika mendaftar silinder baharu.' : 'Select valve & size if registering new cylinder.')}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end gap-2 pt-1 border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsAddingReceivedCyl(false);
+                            setNewReceivedCylSerial('');
+                            setSelectedDbCylinder(null);
+                            setDbSearchResults([]);
+                            setHasSearchedDb(false);
+                          }}
+                          className="px-3 py-1 text-xs text-slate-500 hover:text-slate-700 font-semibold cursor-pointer"
+                        >
+                          {language === 'ms' ? 'Batal' : 'Cancel'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleAddNewReceivedCylinder()}
+                          disabled={!newReceivedCylSerial.trim()}
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>{language === 'ms' ? 'Masuk ke Senarai Dokumen' : 'Add to Document List'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Filter for cylinder list in this document */}
+                  {editReceivedCylinders.length > 0 && (
+                    <div className="relative">
+                      <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <input
+                        type="text"
+                        placeholder={language === 'ms' ? 'Cari nombor siri silinder dalam dokumen ini (cth: 0189)...' : 'Filter cylinder serial numbers in this document (e.g. 0189)...'}
+                        value={receivedCylSearchTerm}
+                        onChange={(e) => setReceivedCylSearchTerm(e.target.value)}
+                        className="w-full pl-8 pr-20 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-700 placeholder-slate-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/10 transition-all"
+                      />
+                      {receivedCylSearchTerm && (
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                          <span className="text-[10px] font-mono font-bold text-slate-400">
+                            {editReceivedCylinders.filter(c => {
+                              const q = receivedCylSearchTerm.trim().toLowerCase();
+                              return (c.serialNumber || '').toLowerCase().includes(q) || (c.originalSerial || '').toLowerCase().includes(q) || (c.typeName || '').toLowerCase().includes(q);
+                            }).length} / {editReceivedCylinders.length}
+                          </span>
+                          <button 
+                            type="button" 
+                            onClick={() => setReceivedCylSearchTerm('')}
+                            className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Cylinder Items List */}
+                  <div className="border border-slate-200/80 bg-white rounded-xl divide-y divide-slate-100 max-h-[360px] overflow-y-auto shadow-2xs">
+                    {isLoadingReceivedCyls ? (
+                      <div className="py-8 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+                        <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                        <span>{language === 'ms' ? 'Memuatkan senarai silinder...' : 'Loading cylinders list...'}</span>
+                      </div>
+                    ) : (() => {
+                      const q = receivedCylSearchTerm.trim().toLowerCase();
+                      const displayedList = editReceivedCylinders.filter(c => {
+                        if (!q) return true;
+                        return (
+                          (c.serialNumber || '').toLowerCase().includes(q) ||
+                          (c.originalSerial || '').toLowerCase().includes(q) ||
+                          (c.typeName || '').toLowerCase().includes(q)
+                        );
+                      });
+
+                      if (displayedList.length === 0) {
+                        return (
+                          <div className="py-8 text-center text-xs text-slate-400">
+                            {receivedCylSearchTerm 
+                              ? (language === 'ms' ? 'Tiada silinder sepadan dengan carian.' : 'No cylinders matching search.')
+                              : (language === 'ms' ? 'Tiada silinder dalam dokumen ini.' : 'No cylinders in this document.')}
+                          </div>
+                        );
+                      }
+
+                      return displayedList.map((cyl, idx) => {
+                        const isChanged = !cyl.isRemoved && cyl.originalSerial && cyl.serialNumber.trim().toUpperCase() !== cyl.originalSerial.trim().toUpperCase();
+                        const isFSize = (cyl.typeName || '').includes('1.4') || (cyl.typeName || '').includes('101-F') || (cyl.serialNumber || '').includes('101-F');
+                        const isPI = (cyl.valveType === 'PI') || (!cyl.valveType && ((cyl.typeName || '').includes('PI') || (cyl.typeName || '').includes('Pin')));
+
+                        return (
+                          <div 
+                            key={cyl.cylinderId || idx}
+                            className={`p-2.5 sm:p-3 flex items-center justify-between gap-3 transition-colors ${
+                              cyl.isRemoved 
+                                ? 'bg-rose-50/40 opacity-60' 
+                                : isChanged 
+                                ? 'bg-amber-50/30' 
+                                : 'hover:bg-slate-50/70'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                              <span className="text-[10px] font-mono font-bold text-slate-400 w-6 shrink-0 text-center">
+                                #{idx + 1}
+                              </span>
+
+                              <div className="flex-1 min-w-0 max-w-sm">
+                                <div className="flex items-center gap-1.5">
+                                  <input
+                                    type="text"
+                                    disabled={cyl.isRemoved}
+                                    value={cyl.serialNumber}
+                                    onChange={(e) => handleReceivedCylSerialChange(cyl.cylinderId, e.target.value)}
+                                    className={`w-full font-mono text-xs font-bold px-2.5 py-1.5 rounded-lg border transition-all outline-none ${
+                                      cyl.isRemoved
+                                        ? 'line-through bg-slate-100 text-slate-400 border-slate-200'
+                                        : isChanged
+                                        ? 'border-amber-400 bg-amber-50/60 text-amber-900 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 shadow-2xs'
+                                        : 'border-slate-200 bg-slate-50/50 text-slate-800 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10'
+                                    }`}
+                                    placeholder="Serial Number..."
+                                  />
+                                  {isChanged && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRevertReceivedCylSerial(cyl.cylinderId)}
+                                      title={language === 'ms' ? `Kembalikan ke: ${cyl.originalSerial}` : `Revert to: ${cyl.originalSerial}`}
+                                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-all shrink-0 cursor-pointer"
+                                    >
+                                      <RotateCcw className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+
+                                {!cyl.itemId && (
+                                  <div className="flex items-center gap-1.5 mt-1 pl-1">
+                                    <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                      {language === 'ms' ? '+ Ditambah' : '+ Added'}
+                                    </span>
+                                    {cyl.cylinder && (
+                                      <span className="text-[9px] font-semibold text-slate-500">
+                                        ({language === 'ms' ? 'Dari Database' : 'From Database'})
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                                {cyl.itemId && isChanged && (
+                                  <div className="flex items-center gap-1.5 mt-1 pl-1">
+                                    <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-amber-100/80 text-amber-800 border border-amber-200">
+                                      {language === 'ms' ? 'Diubah' : 'Modified'}
+                                    </span>
+                                    <span className="text-[10px] text-slate-400 font-mono">
+                                      {language === 'ms' ? 'Asal:' : 'Original:'} <span className="line-through">{cyl.originalSerial}</span>
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Badge and Actions */}
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 max-w-[140px] truncate hidden sm:inline-block">
+                                {cyl.typeName || 'Standard'}
+                              </span>
+
+                              {isFSize && !cyl.isRemoved && (
+                                <button
+                                  type="button"
+                                  title={`Tukar jenis injap kepada ${isPI ? 'Bullnose (BN)' : 'Pin Index (PI)'}`}
+                                  onClick={() => handleToggleReceivedCylValve(cyl.cylinderId)}
+                                  className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md border transition-all hover:scale-105 active:scale-95 shadow-2xs cursor-pointer ${
+                                    isPI 
+                                      ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100' 
+                                      : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
+                                  }`}
+                                >
+                                  {isPI ? '➔ BN' : '➔ PI'}
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => handleToggleRemoveReceivedCyl(cyl.cylinderId)}
+                                title={cyl.isRemoved 
+                                  ? (language === 'ms' ? 'Pulihkan silinder ini' : 'Restore this cylinder') 
+                                  : (language === 'ms' ? 'Keluarkan silinder dari dokumen penerimaan' : 'Remove from receive document')}
+                                className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                  cyl.isRemoved
+                                    ? 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200'
+                                    : 'text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent'
+                                }`}
+                              >
+                                {cyl.isRemoved ? (
+                                  <RotateCcw className="w-3.5 h-3.5" />
+                                ) : (
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      });
                     })()}
                   </div>
                 </div>

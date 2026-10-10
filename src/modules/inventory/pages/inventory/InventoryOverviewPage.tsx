@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { Table, Spinner, Input, Badge, Button } from '@/components/ui'
+import { ModulePageHeader } from '@/shared/components/ui/ModulePageHeader'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { 
   getStockLevelSummary, 
@@ -28,13 +29,18 @@ import {
   getStockTransactions,
   getFastMovingItems
 } from '../../services/inventoryService'
+import { useInventoryStore } from '../../context/InventoryStoreContext'
+import { StoreLocationSelector } from '../../components/StoreLocationSelector'
+import { isPharmacyLogisticsUser } from '@/shared/utils/inventoryRbac'
 import type { StockLevelSummary, ExpiryItem, SlowMovingItem, StockTransaction } from '@/types/pharmacy'
 
 export const InventoryOverviewPage: React.FC = () => {
   const navigate = useNavigate()
   const { user } = useAuthStore()
   const { language, t } = useLanguage()
+  const { activeStore, activeStoreId, isConsolidatedView } = useInventoryStore()
   const hospitalId = user?.hospital_id
+  const isLogisticsUser = isPharmacyLogisticsUser(user)
 
   // State lists
   const [items, setItems] = useState<StockLevelSummary[]>([])
@@ -69,12 +75,13 @@ export const InventoryOverviewPage: React.FC = () => {
       setIsLoading(true)
       setError(null)
       try {
+        const effectiveStoreId = activeStoreId || undefined
         const [summaryRes, expiryRes, slowRes, fastRes, txnRes] = await Promise.all([
-          getStockLevelSummary(hospitalId),
-          getNearExpiryItems(hospitalId, 180), // near expiry within 180 days (less than 6 months)
-          getSlowMovingItems(hospitalId, 90),
-          getFastMovingItems(hospitalId, 90),
-          getStockTransactions(hospitalId, { transaction_type: 'issue' })
+          getStockLevelSummary(hospitalId, undefined, effectiveStoreId),
+          getNearExpiryItems(hospitalId, 180, effectiveStoreId), // near expiry within 180 days (less than 6 months)
+          getSlowMovingItems(hospitalId, 90, effectiveStoreId),
+          getFastMovingItems(hospitalId, 90, effectiveStoreId),
+          getStockTransactions(hospitalId, { transaction_type: 'issue', store_location_id: effectiveStoreId })
         ])
 
         const summaryData = summaryRes.data || []
@@ -147,7 +154,7 @@ export const InventoryOverviewPage: React.FC = () => {
     }
 
     void loadDashboardData()
-  }, [hospitalId])
+  }, [hospitalId, activeStoreId])
 
   const renderStatusBadge = (status: StockLevelSummary['status']) => {
     const map: Record<
@@ -219,7 +226,7 @@ export const InventoryOverviewPage: React.FC = () => {
         // Formulate reason
         let reason = ''
         if (currentVal === 0) {
-          reason = language === 'ms' ? 'Tiada baki stok dalam simpanan' : 'No stock in storage'
+          reason = language === 'ms' ? 'No stock balance in storage' : 'No stock in storage'
         } else {
           reason = language === 'ms'
             ? `Baki stok semasa (${currentVal}) di bawah paras minimum (${minVal})`
@@ -264,68 +271,75 @@ export const InventoryOverviewPage: React.FC = () => {
   const recommendedPurchases = getRecommendedPurchases()
 
   return (
-    <div className="p-6 md:p-8 space-y-8 text-slate-800">
+    <div className="w-full space-y-6 text-text-primary">
       
-      {/* LUXURY EXECUTIVE HEADER BANNER */}
-      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden border border-slate-800">
-        <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500" />
-        
-        <div className="relative z-10 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-            <div className="space-y-1.5 max-w-2xl">
-              <div className="flex items-center gap-2">
-                <Badge className="bg-teal-500/20 text-teal-300 border-teal-500/30 text-[10px] uppercase tracking-wider font-bold">
-                  MyInventory Ecosystem Portal
-                </Badge>
-                <span className="text-xs text-slate-400 font-mono">{language === 'ms' ? 'Fasiliti Kesihatan KKM' : 'MOH Health Facility'}</span>
-              </div>
-              <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white flex items-center gap-3">
-                <Package className="w-7 h-7 text-teal-400" />
-                <span>{language === 'ms' ? 'Inventori Stor Farmasi (MyInventory)' : 'Pharmacy Store Inventory (MyInventory)'}</span>
-              </h1>
-              <p className="text-xs md:text-sm text-slate-300 font-medium leading-relaxed">
-                {language === 'ms' 
-                  ? 'Paparan ekosistem inventori masa-nyata bagi bekalan ubat dan bukan ubat mengikut standard Tatacara Pengurusan Stor KKM.'
-                  : 'Real-time inventory ecosystem view for drug and non-drug supplies following MOH Store Management Procedures standards.'}
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-              <Button
-                onClick={() => navigate('/pharmacy/inventory/ledger?openScan=true')}
-                className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-2xl font-bold text-xs gap-1.5 px-4 py-2.5 shadow-lg"
-              >
-                <QrCode className="w-4 h-4" />
-                {language === 'ms' ? 'Imbas & Transaksi QR' : 'QR Scan & Transaction'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigate('/pharmacy/inventory/drugs')}
-                className="rounded-2xl border-slate-700 text-slate-200 hover:bg-slate-800 font-bold text-xs px-3.5 py-2.5"
-              >
-                {language === 'ms' ? 'Katalog Ubat' : 'Drug Catalog'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigate('/pharmacy/inventory/non-drugs')}
-                className="rounded-2xl border-slate-700 text-slate-200 hover:bg-slate-800 font-bold text-xs px-3.5 py-2.5"
-              >
-                {language === 'ms' ? 'Bukan Ubat' : 'Non-Drug'}
-              </Button>
-            </div>
+      {/* Standard Module Header */}
+      <ModulePageHeader
+        badge={language === 'ms' ? 'EKOSISTEM INVENTORI KKM' : 'MOH INVENTORY ECOSYSTEM'}
+        title={language === 'ms' ? 'Inventori Stor Farmasi' : 'Pharmacy Store Inventory'}
+        description={
+          language === 'ms'
+            ? 'Paparan ekosistem inventori masa-nyata bagi bekalan ubat dan bukan ubat mengikut standard Tatacara Pengurusan Stor KKM.'
+            : 'Real-time inventory ecosystem view for drug and non-drug supplies following MOH Store Management Procedures standards.'
+        }
+        icon={<Package className="w-5 h-5 text-accent-base" />}
+        actions={
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <StoreLocationSelector />
+            <Button
+              onClick={() => navigate('/pharmacy/inventory/ledger?openScan=true')}
+              className="bg-accent-base hover:bg-accent-dark text-white rounded-lg font-semibold text-xs gap-1.5 px-3.5 py-2 shadow-xs"
+            >
+              <QrCode className="w-4 h-4" />
+              {language === 'ms' ? 'Imbas & Transaksi QR' : 'QR Scan & Transaction'}
+            </Button>
+            {isLogisticsUser ? (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/pharmacy/inventory/drugs')}
+                  className="rounded-lg border-border-default text-text-secondary hover:bg-subtle font-semibold text-xs px-3 py-2"
+                >
+                  {language === 'ms' ? 'Katalog Ubat' : 'Drug Catalog'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/pharmacy/inventory/non-drugs')}
+                  className="rounded-lg border-border-default text-text-secondary hover:bg-subtle font-semibold text-xs px-3 py-2"
+                >
+                  {language === 'ms' ? 'Bukan Ubat' : 'Non-Drug'}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/pharmacy/inventory/facility-drugs')}
+                  className="rounded-lg border-border-default text-text-secondary hover:bg-subtle font-semibold text-xs px-3 py-2"
+                >
+                  {language === 'ms' ? 'Inventori Ubat' : 'Facility Drugs'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/pharmacy/inventory/facility-non-drugs')}
+                  className="rounded-lg border-border-default text-text-secondary hover:bg-subtle font-semibold text-xs px-3 py-2"
+                >
+                  {language === 'ms' ? 'Inventori Bukan Ubat' : 'Facility Non-Drugs'}
+                </Button>
+              </>
+            )}
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Metrics Grid Layout (Luxury theme with colored left borders) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         
         {/* Total Items */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm border-l-4 border-l-slate-500 flex items-center justify-between">
+        <div className="bg-surface border border-border-default rounded-xl p-4 shadow-xs flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{language === 'ms' ? 'JUMLAH ITEM' : 'TOTAL ITEMS'}</span>
-            <span className="text-2xl font-black text-slate-800">{metrics.totalItems}</span>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{language === 'ms' ? 'TOTAL ITEMS' : 'TOTAL ITEMS'}</span>
+            <span className="text-2xl font-bold text-text-primary">{metrics.totalItems}</span>
           </div>
           <div className="p-2 bg-slate-50 text-slate-600 rounded-xl">
             <Layers className="w-5 h-5" />
@@ -333,9 +347,9 @@ export const InventoryOverviewPage: React.FC = () => {
         </div>
 
         {/* Near Expiry */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm border-l-4 border-l-orange-500 flex items-center justify-between">
+        <div className="bg-surface border border-border-default rounded-xl p-4 shadow-xs flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{language === 'ms' ? 'HAMPIR LUPUT (< 6B)' : 'NEAR EXPIRY (< 6M)'}</span>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{language === 'ms' ? 'HAMPIR LUPUT (< 6B)' : 'NEAR EXPIRY (< 6M)'}</span>
             <span className="text-2xl font-black text-orange-600">{metrics.nearExpiryCount}</span>
           </div>
           <div className="p-2 bg-orange-50 text-orange-500 rounded-xl">
@@ -344,9 +358,9 @@ export const InventoryOverviewPage: React.FC = () => {
         </div>
 
         {/* Low Stock Alert */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm border-l-4 border-l-amber-500 flex items-center justify-between">
+        <div className="bg-surface border border-border-default rounded-xl p-4 shadow-xs flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{language === 'ms' ? 'KURANG STOK' : 'LOW STOCK'}</span>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{language === 'ms' ? 'KURANG STOK' : 'LOW STOCK'}</span>
             <span className="text-2xl font-black text-amber-600">{metrics.lowStockCount}</span>
           </div>
           <div className="p-2 bg-amber-50 text-amber-600 rounded-xl">
@@ -355,9 +369,9 @@ export const InventoryOverviewPage: React.FC = () => {
         </div>
 
         {/* Slow Moving */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm border-l-4 border-l-indigo-500 flex items-center justify-between">
+        <div className="bg-surface border border-border-default rounded-xl p-4 shadow-xs flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{language === 'ms' ? 'LAMBAT BERGERAK' : 'SLOW MOVING'}</span>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{language === 'ms' ? 'LAMBAT BERGERAK' : 'SLOW MOVING'}</span>
             <span className="text-2xl font-black text-indigo-600">{metrics.slowMovingCount}</span>
           </div>
           <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -366,9 +380,9 @@ export const InventoryOverviewPage: React.FC = () => {
         </div>
 
         {/* Fast Moving */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm border-l-4 border-l-teal-500 flex items-center justify-between">
+        <div className="bg-surface border border-border-default rounded-xl p-4 shadow-xs flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{language === 'ms' ? 'CEPAT BERGERAK' : 'FAST MOVING'}</span>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{language === 'ms' ? 'CEPAT BERGERAK' : 'FAST MOVING'}</span>
             <span className="text-2xl font-black text-teal-600">{metrics.fastMovingCount}</span>
           </div>
           <div className="p-2 bg-teal-50 text-teal-600 rounded-xl">
@@ -383,11 +397,11 @@ export const InventoryOverviewPage: React.FC = () => {
         
         {/* Left Side: Ledger & Filters (8 columns) */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="bg-white border border-slate-100 rounded-3xl shadow-soft p-6 space-y-6">
+          <div className="bg-surface border border-border-default rounded-xl shadow-xs p-5 sm:p-6 space-y-5">
             
             {/* Header + Tabs + Search */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-50 pb-5">
-              <h3 className="font-black text-slate-800 text-lg flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-default pb-4">
+              <h3 className="font-bold text-text-primary text-base flex items-center gap-2">
                 <Layers className="w-5 h-5 text-slate-400" />
                 <span>{language === 'ms' ? 'Kedudukan Stok Semasa' : 'Current Stock Position'}</span>
               </h3>
@@ -416,8 +430,8 @@ export const InventoryOverviewPage: React.FC = () => {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`px-4 py-2 text-xs font-bold rounded-xl transition-all border ${
                     activeTab === tab.id 
-                      ? 'bg-slate-800 border-slate-800 text-white shadow-sm' 
-                      : 'bg-slate-50 hover:bg-slate-100 text-slate-500 border-slate-100'
+                      ? 'bg-accent-base border-accent-base text-white shadow-xs' 
+                      : 'bg-subtle hover:bg-subtle/80 text-text-secondary border-border-default'
                   }`}
                 >
                   {language === 'ms' ? tab.labelMs : tab.labelEn}
@@ -440,21 +454,21 @@ export const InventoryOverviewPage: React.FC = () => {
 
             {/* Table Listing */}
             {!isLoading && !error && (
-              <div className="border border-slate-100 rounded-2xl overflow-hidden">
+              <div className="border border-border-default rounded-xl overflow-hidden">
                 {/* Desktop View: Full Table */}
                 <div className="hidden md:block overflow-x-auto">
                   <Table>
                     <Table.Header>
-                      <Table.Row className="bg-slate-50/50">
-                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">{language === 'ms' ? 'KOD' : 'CODE'}</Table.Cell>
-                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">{language === 'ms' ? 'NAMA ITEM' : 'ITEM NAME'}</Table.Cell>
-                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right">{language === 'ms' ? 'BAKI SEMASA' : 'CURRENT BALANCE'}</Table.Cell>
+                      <Table.Row className="bg-subtle/50 border-b border-border-default">
+                        <Table.Cell as="th" className="text-text-muted font-semibold text-xs py-3">{language === 'ms' ? 'KOD' : 'CODE'}</Table.Cell>
+                        <Table.Cell as="th" className="text-text-muted font-semibold text-xs py-3">{language === 'ms' ? 'NAMA ITEM' : 'ITEM NAME'}</Table.Cell>
+                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right">{language === 'ms' ? 'CURRENT BALANCE' : 'CURRENT BALANCE'}</Table.Cell>
                         <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono">AMC</Table.Cell>
                         <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono">MOS</Table.Cell>
                         <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-center">STATUS</Table.Cell>
                       </Table.Row>
                     </Table.Header>
-                    <Table.Body className="divide-y divide-slate-100">
+                    <Table.Body className="divide-y divide-border-default">
                       {filteredItemsList.length === 0 ? (
                         <Table.Row>
                           <Table.Cell colSpan={6} className="text-center text-slate-400 py-12 text-sm font-medium">
@@ -469,7 +483,7 @@ export const InventoryOverviewPage: React.FC = () => {
                           const mosVal = amcVal > 0 ? parseFloat((item.current_stock / amcVal).toFixed(1)) : null
                           
                           return (
-                            <Table.Row key={`${item.item_type}-${item.item_id}`} className="hover:bg-slate-50/30 transition-colors">
+                            <Table.Row key={`${item.item_type}-${item.item_id}`} className="hover:bg-subtle/30 transition-colors">
                               <Table.Cell className="font-mono text-xs font-bold text-slate-500">{item.item_code}</Table.Cell>
                               <Table.Cell className="py-3 text-sm font-black text-slate-800">
                                 <div className="flex flex-col">
@@ -506,7 +520,7 @@ export const InventoryOverviewPage: React.FC = () => {
                 </div>
 
                 {/* Mobile View: Native App Responsive Cards (Zero Horizontal Scrolling) */}
-                <div className="md:hidden divide-y divide-slate-100 bg-white">
+                <div className="md:hidden divide-y divide-border-default bg-surface">
                   {filteredItemsList.length === 0 ? (
                     <div className="text-center text-slate-400 py-12 px-4 text-xs font-medium">
                       {language === 'ms' 
@@ -544,7 +558,7 @@ export const InventoryOverviewPage: React.FC = () => {
                           {/* Metrics Grid Chip */}
                           <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
                             <div>
-                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">
                                 {language === 'ms' ? 'Baki Semasa' : 'Balance'}
                               </span>
                               <span className="font-mono font-black text-xs text-slate-800">
@@ -552,7 +566,7 @@ export const InventoryOverviewPage: React.FC = () => {
                               </span>
                             </div>
                             <div>
-                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">
                                 AMC
                               </span>
                               <span className="font-mono font-bold text-xs text-slate-600">
@@ -560,7 +574,7 @@ export const InventoryOverviewPage: React.FC = () => {
                               </span>
                             </div>
                             <div>
-                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">
                                 MOS
                               </span>
                               {mosVal !== null ? (
@@ -588,10 +602,10 @@ export const InventoryOverviewPage: React.FC = () => {
           
 
           {/* Recommended Purchases (Pembelian Disyorkan) */}
-          <div className="bg-gradient-to-br from-white to-slate-50 border border-slate-150 rounded-3xl shadow-md p-5 space-y-4 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 via-amber-500 to-emerald-500" />
+          <div className="bg-surface border border-border-default rounded-xl shadow-xs p-5 space-y-4 relative overflow-hidden">
             
-            <h4 className="font-black text-slate-800 text-sm flex items-center gap-2 border-b border-slate-100 pb-3">
+            
+            <h4 className="font-bold text-text-primary text-sm flex items-center gap-2 border-b border-border-default pb-3">
               <ShoppingBag className="w-4 h-4 text-rose-500 animate-pulse" />
               <span>{language === 'ms' ? 'Saranan Pembelian' : 'Purchase Suggestions'}</span>
               <Badge variant="danger" className="ml-auto text-[9px] font-black uppercase">
@@ -614,7 +628,7 @@ export const InventoryOverviewPage: React.FC = () => {
             ) : (
               <div className="space-y-4 pt-1">
                 {recommendedPurchases.map(p => (
-                  <div key={`${p.item_type}-${p.item_id}`} className="bg-white border border-slate-100 rounded-2xl p-3.5 space-y-2 shadow-soft hover:shadow-md transition-all">
+                  <div key={`${p.item_type}-${p.item_id}`} className="bg-subtle/30 border border-border-default rounded-lg p-3 space-y-2 transition-all">
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-1 max-w-[70%]">
                         <span className="font-black text-slate-800 text-[11px] block leading-tight">{p.item_name}</span>

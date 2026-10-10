@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
@@ -31,7 +31,7 @@ import {
   Megaphone,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { Badge, Button, Spinner } from '@/components/ui'
+import { Badge, Button, Spinner, Skeleton } from '@/components/ui'
 import { cn, formatDate, formatCurrency } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
 import { getDashboardStats } from '@/services/pharmacy/pharmacyDashboardService'
@@ -284,8 +284,51 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Spinner size="lg" />
+      <div className="space-y-8 p-6 pt-10 animate-pulse-subtle">
+        {/* Banner Skeleton */}
+        <div className="bg-gradient-to-br from-[#00a68a]/60 to-[#10b981]/60 rounded-3xl px-8 py-6 text-white shadow-lg flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Skeleton className="w-14 h-14 rounded-2xl bg-white/30" />
+            <div className="space-y-2">
+              <Skeleton className="h-7 w-44 bg-white/30" />
+              <Skeleton className="h-4 w-72 bg-white/20" />
+            </div>
+          </div>
+        </div>
+
+        {/* 8 Stat Cards Skeleton */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl space-y-3 shadow-xs">
+              <div className="flex justify-between items-center">
+                <Skeleton className="h-4 w-28 bg-slate-200" />
+                <Skeleton className="w-9 h-9 rounded-xl bg-slate-100" />
+              </div>
+              <Skeleton className="h-8 w-20 bg-slate-200" />
+              <Skeleton className="h-3 w-32 bg-slate-100" />
+            </div>
+          ))}
+        </div>
+
+        {/* 2-Column Split Skeletons */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white border border-slate-200 p-6 rounded-3xl space-y-4 shadow-xs">
+            <Skeleton className="h-6 w-48 bg-slate-200" />
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full rounded-2xl bg-slate-100" />
+              ))}
+            </div>
+          </div>
+          <div className="bg-white border border-slate-200 p-6 rounded-3xl space-y-4 shadow-xs">
+            <Skeleton className="h-6 w-48 bg-slate-200" />
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full rounded-2xl bg-slate-100" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     )
   }

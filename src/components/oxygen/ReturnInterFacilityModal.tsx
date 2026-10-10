@@ -311,7 +311,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
     const rawQuery = queryOverride !== undefined ? queryOverride : (searchQueries[itemIdx] || '');
     const query = rawQuery.trim();
     if (!query) {
-      setSearchMessage(prev => ({ ...prev, [itemIdx]: 'Sila taip nombor siri atau sebahagian nombor siri (cth: 7072).' }));
+      setSearchMessage(prev => ({ ...prev, [itemIdx]: 'Please type the serial number or suffix (e.g. 7072).' }));
       return;
     }
 
@@ -350,7 +350,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
 
       setSearchResults(prev => ({ ...prev, [itemIdx]: found }));
       if (found.length === 0) {
-        setSearchMessage(prev => ({ ...prev, [itemIdx]: `Tiada silinder ditemui dengan carian "${query}".` }));
+        setSearchMessage(prev => ({ ...prev, [itemIdx]: `No cylinder found matching search "${query}".` }));
       }
     } catch (err) {
       console.warn('Search error:', err);
@@ -359,7 +359,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
       );
       setSearchResults(prev => ({ ...prev, [itemIdx]: localMatches }));
       if (localMatches.length === 0) {
-        setSearchMessage(prev => ({ ...prev, [itemIdx]: `Tiada silinder ditemui dengan carian "${query}".` }));
+        setSearchMessage(prev => ({ ...prev, [itemIdx]: `No cylinder found matching search "${query}".` }));
       }
     } finally {
       setIsSearching(prev => ({ ...prev, [itemIdx]: false }));
@@ -477,7 +477,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
     const finalFacility = isManualFacility ? manualFacilityName.trim() : selectedFacility;
 
     if (!finalFacility) {
-      setError('Sila nyatakan atau pilih Fasiliti Luar penerima.');
+      setError('Please specify or select recipient External Facility.');
       return;
     }
 
@@ -494,7 +494,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
     const effectiveReturnedAt = returnedDate ? new Date(returnedDate).toISOString() : new Date().toISOString();
 
     if (!effectiveDeptId) {
-      setError('Sila pilih bahagian / jabatan pengeluar.');
+      setError('Please select issuing department / unit.');
       return;
     }
 
@@ -1011,7 +1011,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                                     {cyl.current_location && (
                                       <>
                                         <span>•</span>
-                                        <span>{typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name : cyl.current_location}</span>
+                                        <span>{typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name || 'Stor Farmasi' : cyl.current_location || 'Stor Farmasi'}</span>
                                       </>
                                     )}
                                   </div>

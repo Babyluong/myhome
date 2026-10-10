@@ -465,7 +465,7 @@ const BalanceWeeklyPerformanceTooltip = ({ active, payload, label }: any) => {
         </div>
       ) : (
         <div className="text-slate-400 text-[11px] py-1">
-          {totalBalance > 0 ? `${totalBalance} Tanks (Total)` : 'Tiada data baki silinder'}
+          {totalBalance > 0 ? `${totalBalance} Tanks (Total)` : 'No cylinder balance data'}
         </div>
       )}
     </div>

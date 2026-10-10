@@ -10,32 +10,38 @@ import { isCylinderAuthorizedOfficer } from '@/shared/utils/cylinderRbac';
 
 export const ALLOWED_OXYGEN_CLINICAL_DEPARTMENTS = [
   { name: 'Emergency and trauma', code: 'ETD' },
-  { name: 'General ward', code: 'GW' },
+  { name: 'Female Ward', code: 'FW' },
+  { name: 'Male Ward', code: 'MW' },
   { name: 'Paediatric ward', code: 'PAED' },
   { name: 'Maternity ward', code: 'MAT' },
   { name: 'Operation Theater', code: 'OT' },
   { name: 'Radiology and radiography', code: 'RAD' },
   { name: 'Nephrology', code: 'NEPH' },
+  { name: 'Unit Klinik Pakar', code: 'KP' },
 ];
 
 /**
- * 7 Official hospital clinical departments/wards authorized for medical oxygen cylinder indents:
- * 1. General ward
- * 2. Paediatric ward
- * 3. Maternity Ward
- * 4. Emergency and Trauma
- * 5. Radiology and Radiography
- * 6. Nephrology
- * 7. Operation Theater
+ * 9 Official hospital clinical departments/wards authorized for medical oxygen cylinder indents:
+ * 1. Female Ward
+ * 2. Male Ward
+ * 3. Paediatric Ward
+ * 4. Maternity Ward
+ * 5. Emergency and Trauma
+ * 6. Radiology and Radiography
+ * 7. Nephrology
+ * 8. Operation Theater
+ * 9. Unit Klinik Pakar
  */
 export const ALLOWED_CYLINDER_DEPARTMENTS = [
-  { key: 'general_ward', name: 'General Ward', match: (n: string, c: string) => (n.includes('general') && n.includes('ward')) || c === 'GENERAL_WARD' },
+  { key: 'female_ward', name: 'Female Ward', match: (n: string, c: string) => (n.includes('female') && n.includes('ward')) || n.includes('perempuan') || c === 'FEMALE_WARD' || c === 'WAD_PEREMPUAN' },
+  { key: 'male_ward', name: 'Male Ward', match: (n: string, c: string) => ((n.includes('male') && !n.includes('female')) && n.includes('ward')) || n.includes('lelaki') || c === 'MALE_WARD' || c === 'WAD_LELAKI' },
   { key: 'paediatric_ward', name: 'Paediatric Ward', match: (n: string, c: string) => n.includes('paediatric') || n.includes('pediatric') || c === 'PAEDIATRIC_WARD' },
   { key: 'maternity_ward', name: 'Maternity Ward', match: (n: string, c: string) => n.includes('maternity') || c === 'MATERNITY_WARD' },
   { key: 'emergency_trauma', name: 'Emergency and Trauma', match: (n: string, c: string) => (n.includes('emergency') && !n.includes('pharmacy')) || n.includes('trauma') || c === 'EMERGENCY_TRAUMA' },
   { key: 'radiology', name: 'Radiology and Radiography', match: (n: string, c: string) => n.includes('radiolog') || c === 'RADIOLOGY' },
   { key: 'nephrology', name: 'Nephrology', match: (n: string, c: string) => n.includes('nephrolog') || c === 'NEPHROLOGY' },
   { key: 'operation_theater', name: 'Operation Theater', match: (n: string, c: string) => n.includes('operation') || n.includes('theater') || n.includes('theatre') || c === 'OPERATION_THEATER' },
+  { key: 'klinik_pakar', name: 'Unit Klinik Pakar', match: (n: string, c: string) => n.includes('klinik pakar') || n.includes('specialist clinic') || c === 'KLINIK_PAKAR' },
 ];
 
 export async function getClinicalDepartments(hospitalId: string): Promise<{ id: string; department_name: string; department_code: string }[]> {
@@ -893,31 +899,35 @@ export async function createManualIssue(
         const { data: currentCyls } = await supabase
           .from('pharmacy_oxygen_cylinder_inventory')
           .select('id, current_location, serial_number, department:departments(department_name)')
-          .in('id', data.cylinder_ids);
-
         const cylMap = new Map((currentCyls || []).map((c: any) => [c.id, c]));
 
-        for (const cid of data.cylinder_ids) {
-          const prevCyl = cylMap.get(cid);
-          const rawPrevLoc = prevCyl?.department?.department_name || prevCyl?.current_location || 'Pharmacy Store';
-          const isTransfer = rawPrevLoc && rawPrevLoc !== 'Pharmacy Store' && rawPrevLoc !== 'Store';
-          const fromLocation = isTransfer ? rawPrevLoc : 'Pharmacy Store';
+        if (data.cylinder_ids && data.cylinder_ids.length > 0) {
+          const nowIso = new Date().toISOString();
 
-          // Update status in inventory
-          await supabase
+          // 1. Batch update status in inventory
+          const { error: invErr } = await supabase
             .from('pharmacy_oxygen_cylinder_inventory')
             .update({
               status: 'issued',
               current_location: targetDeptName,
               department_id: data.department_id,
-              updated_at: new Date().toISOString()
+              updated_at: nowIso
             })
-            .eq('id', cid);
+            .in('id', data.cylinder_ids);
 
-          // Insert movement log
-          await supabase
-            .from('pharmacy_oxygen_cylinder_movements')
-            .insert({
+          if (invErr) {
+            console.error('Error batch updating inventory on manual issue:', invErr);
+            throw new Error(`Gagal mengemaskini inventori silinder: ${invErr.message}`);
+          }
+
+          // 2. Prepare and batch insert movement logs
+          const movementRows = data.cylinder_ids.map(cid => {
+            const prevCyl = cylMap.get(cid);
+            const rawPrevLoc = prevCyl?.department?.department_name || prevCyl?.current_location || 'Pharmacy Store';
+            const isTransfer = rawPrevLoc && rawPrevLoc !== 'Pharmacy Store' && rawPrevLoc !== 'Store';
+            const fromLocation = isTransfer ? rawPrevLoc : 'Pharmacy Store';
+
+            return {
               hospital_id: hospitalId,
               cylinder_id: cid,
               movement_type: isTransfer ? 'transfer' : 'issued',
@@ -925,12 +935,23 @@ export async function createManualIssue(
               to_location: targetDeptName,
               department_id: data.department_id,
               moved_by: data.issuer_id,
-              moved_at: new Date().toISOString(),
+              moved_at: nowIso,
+              created_at: nowIso,
               dept_request_id: request.id,
               remarks: isTransfer 
                 ? `Transferred via manual issue ${request_id} from ${fromLocation}`
                 : `Dispatched via manual issue ${request_id}`
-            });
+            };
+          });
+
+          const { error: moveErr } = await supabase
+            .from('pharmacy_oxygen_cylinder_movements')
+            .insert(movementRows);
+
+          if (moveErr) {
+            console.error('Error batch inserting movements on manual issue:', moveErr);
+            throw new Error(`Gagal merekod pergerakan silinder: ${moveErr.message}`);
+          }
         }
       }
 
@@ -1907,7 +1928,7 @@ export async function issueRequest(
       // 1. Fetch request details once
       const { data: request } = await supabase
         .from('pharmacy_oxygen_dept_requests')
-        .select('department_id, request_id, hospital_id, is_external_facility, external_facility_name, manual_requester_name')
+        .select('department_id, request_id, hospital_id, is_external_facility, external_facility_name, manual_requester_name, remarks')
         .eq('id', requestId)
         .single();
 
@@ -2001,44 +2022,66 @@ export async function issueRequest(
 
         // Log movement and update cylinder inventory for each assigned cylinder
         if (request && uniqueIds.length > 0) {
-          for (const cid of uniqueIds) {
-            await supabase
-              .from('pharmacy_oxygen_cylinder_inventory')
-              .update({
-                status: 'issued',
-                current_location: 'Department',
-                department_id: request.department_id,
-                updated_at: new Date().toISOString()
-              })
-              .eq('id', cid);
+          const nowIso = new Date().toISOString();
 
-            await supabase
-              .from('pharmacy_oxygen_cylinder_movements')
-              .insert({
-                hospital_id: request.hospital_id,
-                cylinder_id: cid,
-                movement_type: 'issued',
-                from_location: 'Pharmacy Store',
-                to_location: 'Department',
-                department_id: request.department_id,
-                moved_by: issuerId,
-                moved_at: new Date().toISOString(),
-                dept_request_id: requestId,
-                remarks: `Dispatched via dept request ${request.request_id} [item:${item.id}]`
-              });
+          // 1. Batch update status in inventory for all assigned cylinders
+          const { error: cylBatchErr } = await supabase
+            .from('pharmacy_oxygen_cylinder_inventory')
+            .update({
+              status: 'issued',
+              current_location: 'Department',
+              department_id: request.department_id,
+              updated_at: nowIso
+            })
+            .in('id', uniqueIds);
+
+          if (cylBatchErr) {
+            console.error('Error batch updating cylinder inventory on issue:', cylBatchErr);
+            throw new Error(`Gagal mengemaskini status inventori silinder: ${cylBatchErr.message}`);
+          }
+
+          // 2. Batch insert movement logs
+          const movementRows = uniqueIds.map(cid => ({
+            hospital_id: request.hospital_id,
+            cylinder_id: cid,
+            movement_type: 'issued',
+            from_location: 'Pharmacy Store',
+            to_location: 'Department',
+            department_id: request.department_id,
+            moved_by: issuerId,
+            moved_at: nowIso,
+            created_at: nowIso,
+            dept_request_id: requestId,
+            remarks: `Dispatched via dept request ${request.request_id} [item:${item.id}]`
+          }));
+
+          const { error: moveBatchErr } = await supabase
+            .from('pharmacy_oxygen_cylinder_movements')
+            .insert(movementRows);
+
+          if (moveBatchErr) {
+            console.error('Error batch inserting cylinder movements on issue:', moveBatchErr);
+            throw new Error(`Gagal merekod pergerakan silinder dispatch: ${moveBatchErr.message}`);
           }
         }
       }
 
       // 3. Update Request Status to 'completed' / 'issued'
+      // If request has obsolete temporary pending remarks (e.g. waiting for stock), clear them upon issue
+      const isStalePendingRemark = request?.remarks && /(?:pending(?:\s+to\s+issue)?|waiting\s+stock|menunggu\s+stok)/i.test(request.remarks.trim());
+      const updatePayload: Record<string, any> = {
+        status: 'completed',
+        approved_by: issuerId,
+        approved_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      if (isStalePendingRemark) {
+        updatePayload.remarks = null;
+      }
+
       const { error: reqError } = await supabase
         .from('pharmacy_oxygen_dept_requests')
-        .update({
-          status: 'completed',
-          approved_by: issuerId,
-          approved_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
+        .update(updatePayload)
         .eq('id', requestId);
 
       if (reqError) throw reqError;
@@ -2132,7 +2175,7 @@ export async function deleteCylinderDispatchRequest(
     if (!reason || !reason.trim()) {
       return {
         data: null,
-        error: 'Sila berikan sebab atau justifikasi pemadaman rekod ini.'
+        error: 'Please provide the reason or justification for deleting this record.'
       };
     }
 
@@ -2162,7 +2205,7 @@ export async function deleteCylinderDispatchRequest(
       .single();
 
     if (fetchErr || !request) {
-      return { data: null, error: 'Rekod permohonan tidak dijumpai atau telah dipadam.' };
+      return { data: null, error: 'Requisition record not found or already deleted.' };
     }
 
     // 3. Fetch user info for actor details in audit log
@@ -2268,7 +2311,7 @@ export async function deleteCylinderDispatchRequest(
     console.error('Error deleting cylinder dispatch request:', error);
     return {
       data: null,
-      error: error instanceof Error ? error.message : 'Gagal memadam permohonan silinder'
+      error: error instanceof Error ? error.message : 'Failed to delete cylinder requisition'
     };
   }
 }

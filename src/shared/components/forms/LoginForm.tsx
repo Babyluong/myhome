@@ -78,145 +78,159 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <motion.form
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.3 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-5"
+      className="space-y-4"
     >
       {/* Error Alert */}
       {errors.root && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3"
+          className="p-3.5 rounded-xl bg-red-950/50 border border-red-800/60 flex items-start gap-2.5"
         >
-          <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-red-700">{errors.root.message}</p>
+          <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+          <p className="text-xs font-medium text-red-200 leading-relaxed">{errors.root.message}</p>
         </motion.div>
       )}
 
       {/* Reset Password Prompt */}
       {showResetPrompt && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="p-4 rounded-xl bg-amber-50 border border-amber-200"
+          className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex flex-col gap-2"
         >
-          <p className="text-sm text-amber-800 font-medium mb-2">
-            Password Reset Required
-          </p>
-          <p className="text-sm text-amber-700 mb-3">
-            Your account has been locked due to multiple failed login attempts.
-            Please reset your password to continue.
-          </p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onShowResetPassword}
-          >
-            Reset Password
-          </Button>
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-semibold text-amber-800 dark:text-amber-200">
+                Account Temporarily Locked
+              </p>
+              <p className="text-xs text-amber-700 dark:text-amber-300/90 mt-0.5 leading-relaxed">
+                Your account was locked due to consecutive failed attempts. Please reset your password to continue.
+              </p>
+            </div>
+          </div>
+          <div className="pt-1">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-xs h-8 border-amber-500/40 hover:bg-amber-500/10 text-amber-800 dark:text-amber-200"
+              onClick={onShowResetPassword}
+            >
+              Reset Password
+            </Button>
+          </div>
         </motion.div>
       )}
 
       {/* Employee ID */}
-      <div className="space-y-2.5">
-        <label className="block text-sm font-bold text-slate-800 ml-1">
+      <div className="space-y-1.5">
+        <label htmlFor="login-employee-id" className="block text-xs font-medium text-text-secondary">
           Employee ID
         </label>
         <div className="relative group">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none group-focus-within:text-teal-600 transition-colors">
-            <User className="w-5 h-5 text-slate-400" />
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-text-muted group-focus-within:text-accent-base transition-colors">
+            <User className="w-4 h-4" />
           </div>
           <input
+            id="login-employee-id"
             {...register('employeeId')}
             type="text"
             placeholder="e.g. MOH-12345"
             autoComplete="username"
             className={cn(
-              'w-full h-14 pl-12 pr-4 bg-slate-50/50 border border-slate-200 rounded-2xl',
-              'text-slate-900 placeholder:text-slate-400 font-semibold text-base',
-              'focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 focus:bg-white',
-              'transition-all duration-300',
-              errors.employeeId && 'border-red-300 focus:ring-red-500/10 focus:border-red-500'
+              'w-full h-11 pl-10 pr-3.5 bg-surface border border-border-default rounded-lg',
+              'text-text-primary placeholder:text-text-muted font-normal text-sm',
+              'focus:outline-none focus:ring-2 focus:ring-accent-base/20 focus:border-accent-base',
+              'hover:border-border-strong transition-colors duration-150',
+              errors.employeeId && 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
             )}
           />
         </div>
         {errors.employeeId && (
-          <p className="text-xs font-bold text-red-500 ml-1 mt-1">{errors.employeeId.message}</p>
+          <p className="text-xs font-medium text-red-600 dark:text-red-400 mt-1">{errors.employeeId.message}</p>
         )}
       </div>
 
       {/* Password */}
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between ml-1">
-          <label className="block text-sm font-bold text-slate-800">
-            Security Key
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <label htmlFor="login-password" className="block text-xs font-medium text-text-secondary">
+            Password
           </label>
           <button
             type="button"
             onClick={onShowResetPassword}
-            className="text-xs text-teal-600 hover:text-teal-700 font-bold tracking-tight hover:underline transition-all"
+            className="text-xs text-accent-base hover:underline font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base rounded px-1"
           >
-            Forgot Password?
+            Forgot password?
           </button>
         </div>
         <div className="relative group">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none group-focus-within:text-teal-600 transition-colors">
-            <Lock className="w-5 h-5 text-slate-400" />
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-text-muted group-focus-within:text-accent-base transition-colors">
+            <Lock className="w-4 h-4" />
           </div>
           <input
+            id="login-password"
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
             placeholder="••••••••••••"
             autoComplete="current-password"
             className={cn(
-              'w-full h-14 pl-12 pr-12 bg-slate-50/50 border border-slate-200 rounded-2xl',
-              'text-slate-900 placeholder:text-slate-400 font-semibold text-base',
-              'focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 focus:bg-white',
-              'transition-all duration-300',
-              errors.password && 'border-red-300 focus:ring-red-500/10 focus:border-red-500'
+              'w-full h-11 pl-10 pr-10 bg-surface border border-border-default rounded-lg',
+              'text-text-primary placeholder:text-text-muted font-normal text-sm',
+              'focus:outline-none focus:ring-2 focus:ring-accent-base/20 focus:border-accent-base',
+              'hover:border-border-strong transition-colors duration-150',
+              errors.password && 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
             )}
           />
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-teal-600 transition-colors"
+            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-text-muted hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base rounded"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? (
-              <EyeOff className="w-5 h-5" />
+              <EyeOff className="w-4 h-4" />
             ) : (
-              <Eye className="w-5 h-5" />
+              <Eye className="w-4 h-4" />
             )}
           </button>
         </div>
         {errors.password && (
-          <p className="text-xs font-bold text-red-500 ml-1 mt-1">{errors.password.message}</p>
+          <p className="text-xs font-medium text-red-600 dark:text-red-400 mt-1">{errors.password.message}</p>
         )}
       </div>
 
       {/* Submit Button */}
-      <div className="pt-6">
-        <Button
+      <div className="pt-2">
+        <button
           type="submit"
+          disabled={isLoading}
           className={cn(
-            'w-full h-15 text-lg font-extrabold rounded-2xl transition-all duration-300',
-            'bg-slate-900 hover:bg-slate-800 text-white',
-            'shadow-xl shadow-slate-200 hover:shadow-slate-300 hover:-translate-y-0.5 active:translate-y-0',
-            'border-none flex items-center justify-center gap-3'
+            'w-full h-11 text-sm font-medium rounded-lg transition-all duration-150',
+            'bg-ink text-ink-text hover:bg-ink-hover disabled:opacity-50 disabled:pointer-events-none',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base focus-visible:ring-offset-2 focus-visible:ring-offset-canvas',
+            'shadow-2xs active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer border border-border-default'
           )}
-          isLoading={isLoading}
         >
-          {isLoading ? 'Verifying Identity...' : (
+          {isLoading ? (
             <>
-              Sign In to Ecosystem
-              <LogIn className="w-5 h-5" />
+              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              <span>Authenticating...</span>
+            </>
+          ) : (
+            <>
+              <span>Sign in to Ecosystem</span>
+              <LogIn className="w-4 h-4" />
             </>
           )}
-        </Button>
+        </button>
       </div>
     </motion.form>
   )

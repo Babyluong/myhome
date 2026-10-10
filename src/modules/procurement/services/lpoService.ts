@@ -1,5 +1,6 @@
 // cache bust
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
+import { offlineAdapter } from '@/services/offlineAdapter'
 import { PDFDocument } from 'pdf-lib'
 import type { ApiResponse, PaginatedResponse } from '@/types'
 import type { 
@@ -90,6 +91,18 @@ export async function getLPOStats(
     }
   } catch (error) {
     console.error('Error fetching LPO stats:', error)
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      return {
+        data: {
+          totalApproved: 0,
+          pendingCount: 0,
+          sentCount: 0,
+          verifiedCount: 0,
+          totalValue: 0
+        },
+        error: null
+      }
+    }
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Failed to fetch LPO stats',
@@ -216,6 +229,10 @@ export async function getLPOList(
 
         if (lpoError) throw lpoError
 
+        if (lpoData && lpoData.length > 0 && page === 1 && !filter?.search) {
+          void offlineAdapter.setCache('pharmacy_lpo', lpoData)
+        }
+
         let results: LPOListItem[] = (lpoData || [])
           .filter((lpo: any) => ALLOWED_MEDICAL_VOTE_CODES.includes(lpo.po?.vote_code))
           .map((lpo: any) => {
@@ -248,7 +265,6 @@ export async function getLPOList(
         if (filter?.vote_code) results = results.filter(r => r.vote_code === filter.vote_code)
         if (filter?.category) results = results.filter(r => r.category === filter.category)
         if (filter?.department) results = results.filter(r => r.department === filter.department)
-        // payment filter is not in ProcurementFilter standard yet, but we could add it.
 
         if (filter?.search) {
           const search = filter.search.toLowerCase()
@@ -273,10 +289,55 @@ export async function getLPOList(
       }
     }
 
-    // Mock data fallback
+    // Offline cache fallback
+    try {
+      const cached = await offlineAdapter.getCache<any>('pharmacy_lpo', 'procurement', 'pharmacy_lpo')
+      if (cached && cached.length > 0) {
+        let results: LPOListItem[] = cached.map((lpo: any) => {
+          const po = lpo.po || {}
+          const supplierData = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier
+          return {
+            po_id: lpo.po_id,
+            po_number: po.po_number,
+            po_type: po.po_type,
+            order_date: po.order_date,
+            total_amount: po.total_amount || 0,
+            vote_code: po.vote_code,
+            category: po.category,
+            department: po.department,
+            supplier_name: po.manual_supplier_name || supplierData?.company_name,
+            lpo_id: lpo.id,
+            lpo_number: lpo.lpo_number,
+            lpo_status: lpo.status,
+            document_date: lpo.document_date,
+            document_url: lpo.document_url,
+            verify_tracking: lpo.verify_tracking,
+            payment_status: lpo.payment_status,
+            sent_for_payment_date: lpo.sent_for_payment_date,
+            item_names: (po.items || []).map((i: any) => i.item_name)
+          }
+        })
+        const total = results.length
+        const paginatedData = results.slice((page - 1) * pageSize, page * pageSize)
+        return { data: { data: paginatedData, total, page, pageSize, totalPages: Math.ceil(total / pageSize) }, error: null }
+      }
+    } catch (_) {}
+
     return { data: { data: [], total: 0, page, pageSize, totalPages: 0 }, error: null }
   } catch (error) {
     console.error('Error fetching LPO list:', error)
+    try {
+      const cached = await offlineAdapter.getCache<any>('pharmacy_lpo', 'procurement', 'pharmacy_lpo')
+      if (cached && cached.length > 0) {
+        const total = cached.length
+        const paginatedData = cached.slice((page - 1) * pageSize, page * pageSize)
+        return { data: { data: paginatedData, total, page, pageSize, totalPages: Math.ceil(total / pageSize) }, error: null }
+      }
+    } catch (_) {}
+
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      return { data: { data: [], total: 0, page, pageSize, totalPages: 0 }, error: null }
+    }
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Failed to fetch LPO list',

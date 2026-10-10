@@ -57,6 +57,15 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
   // All in-stock cylinders in store (status = 'available') including Loan & Saboxy
   const [allAvailableCylinders, setAllAvailableCylinders] = useState<any[]>([]);
+
+  const getSafeLocationString = (loc: any, fallback = 'General Ward'): string => {
+    if (!loc) return fallback;
+    if (typeof loc === 'string') return loc;
+    if (typeof loc === 'object') {
+      return loc.location_name || loc.name || loc.department_name || fallback;
+    }
+    return fallback;
+  };
   // Standard trackable cylinders for the scan & picker console
   const [availableCylinders, setAvailableCylinders] = useState<any[]>([]);
   // Complete hospital cylinder inventory (for on-demand resolution and direct ward transfer)
@@ -248,8 +257,10 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
             const inStock = data.filter((c: any) => {
               if (c.status === 'deactivated' || c.is_active === false) return false;
               const st = (c.status || '').toLowerCase();
-              const loc = (c.current_location || '').toLowerCase();
-              return st === 'available' || st === 'in_stock' || st === 'full' || loc.includes('store') || loc.includes('farmasi');
+              const loc = (typeof c.current_location === 'object' ? (c.current_location as any)?.location_name || '' : c.current_location || '').toLowerCase();
+              const isAvailableStatus = st === 'available' || st === 'in_stock' || st === 'full';
+              const isNotSupplier = !loc.includes('supplier') && loc !== 'archived';
+              return isAvailableStatus && isNotSupplier;
             });
             setAllAvailableCylinders(inStock);
 
@@ -512,7 +523,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
       }
 
       const status = (hospitalMatch.status || '').toLowerCase();
-      const loc = hospitalMatch.department?.department_name || hospitalMatch.current_location || 'General Ward';
+      const loc = hospitalMatch.department?.department_name || getSafeLocationString(hospitalMatch.current_location, 'General Ward');
 
       // Format display name for candidate
       const sizeCode = hospitalMatch.size_info?.code || '';
@@ -522,8 +533,10 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
       const typeNameDisplay = `${prefix}${typeCode ? ` ${typeCode}` : ''}${capacity ? ` (${capacity})` : ''}`;
       const enrichedMatch = { ...hospitalMatch, type_name_display: typeNameDisplay, size_code: sizeCode };
 
-      // If cylinder is available or store location, add directly
-      if (status === 'available' || status === 'in_stock' || status === 'full' || loc.toLowerCase().includes('store') || loc.toLowerCase().includes('farmasi')) {
+      // If cylinder is genuinely available in store, add directly
+      const isAvailableStatus = status === 'available' || status === 'in_stock' || status === 'full';
+      const isNotSupplier = !loc.toLowerCase().includes('supplier') && loc.toLowerCase() !== 'archived';
+      if (isAvailableStatus && isNotSupplier) {
         toggleCylinderSelect(enrichedMatch);
         setQrInput('');
         setPendingActionCylinder(null);
@@ -552,7 +565,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
   };
 
   const handleConfirmTransferAndSelect = (cyl: any) => {
-    const loc = cyl.department?.department_name || cyl.current_location || 'General Ward';
+    const loc = cyl.department?.department_name || getSafeLocationString(cyl.current_location, 'General Ward');
     const enriched = {
       ...cyl,
       is_transfer: true,
@@ -593,7 +606,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
             hospital_id: hospitalId,
             cylinder_id: cyl.id,
             movement_type: 'returned',
-            from_location: cyl.current_location || 'Ward',
+            from_location: typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name || 'Ward' : cyl.current_location || 'Ward',
             to_location: 'Pharmacy Store',
             moved_by: currentUser?.id || null,
             moved_at: new Date().toISOString(),
@@ -635,12 +648,12 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
     if (isSelected) {
       setSelectedCylinders(selectedCylinders.filter(c => c.id !== cyl.id));
     } else {
-      const loc = cyl.department?.department_name || cyl.current_location || 'General Ward';
+      const loc = cyl.department?.department_name || getSafeLocationString(cyl.current_location, 'General Ward');
       const isTransfer = cyl.is_ward_cylinder || cyl.is_transfer || (cyl.status && cyl.status !== 'available' && !loc.toLowerCase().includes('store') && !loc.toLowerCase().includes('farmasi'));
       const enriched = {
         ...cyl,
         is_transfer: isTransfer,
-        transfer_from: isTransfer ? (cyl.transfer_from || loc) : undefined
+        transfer_from: isTransfer ? (getSafeLocationString(cyl.transfer_from, loc)) : undefined
       };
       setSelectedCylinders([...selectedCylinders, enriched]);
       playBeep('success');
@@ -655,7 +668,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
   const wardCylinders = allHospitalCylinders
     .filter((c: any) => {
       const st = (c.status || '').toLowerCase();
-      const loc = (c.current_location || '').toLowerCase();
+      const loc = (typeof c.current_location === 'object' ? (c.current_location as any)?.location_name || '' : c.current_location || '').toLowerCase();
       const sizeCode = c.size_info?.code || '';
       const isLoan = c.supplier_tagged || c.is_loan || c.size_info?.is_loan || !sizeCode.startsWith('P');
       return !isLoan && (st === 'issued' || st === 'allocated' || st === 'in_use' || (!loc.includes('store') && !loc.includes('farmasi') && st !== 'returned_to_supplier'));
@@ -687,7 +700,8 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
     if (selectedTypeFilter && c.type_name_display !== selectedTypeFilter) return false;
     if (!qrInput) return true;
     const query = qrInput.toLowerCase();
-    const loc = (c.department?.department_name || c.current_location || '').toLowerCase();
+    const locRaw = typeof c.current_location === 'object' ? (c.current_location as any)?.location_name : c.current_location;
+    const loc = (c.department?.department_name || locRaw || '').toLowerCase();
     return (
       (c.serial_number || '').toLowerCase().includes(query) || 
       (c.qr_code || '').toLowerCase().includes(query) || 
@@ -907,13 +921,15 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                 <option value="">Select Department...</option>
                 {(() => {
                   const ALLOWED_CYLINDER_DEPTS = [
-                    { key: 'general_ward', name: 'General ward', match: (n: string, c: string) => (n.includes('general') && n.includes('ward')) || c === 'GENERAL_WARD' },
+                    { key: 'female_ward', name: 'Female Ward', match: (n: string, c: string) => (n.includes('female') && n.includes('ward')) || n.includes('perempuan') || c === 'FEMALE_WARD' || c === 'WAD_PEREMPUAN' },
+                    { key: 'male_ward', name: 'Male Ward', match: (n: string, c: string) => ((n.includes('male') && !n.includes('female')) && n.includes('ward')) || n.includes('lelaki') || c === 'MALE_WARD' || c === 'WAD_LELAKI' },
                     { key: 'paediatric_ward', name: 'Paediatric ward', match: (n: string, c: string) => n.includes('paediatric') || n.includes('pediatric') || c === 'PAEDIATRIC_WARD' },
                     { key: 'maternity_ward', name: 'Maternity Ward', match: (n: string, c: string) => n.includes('maternity') || c === 'MATERNITY_WARD' },
                     { key: 'emergency_trauma', name: 'Emergency and Trauma', match: (n: string, c: string) => (n.includes('emergency') && !n.includes('pharmacy')) || n.includes('trauma') || c === 'EMERGENCY_TRAUMA' },
                     { key: 'radiology', name: 'Radiology and Radiography', match: (n: string, c: string) => n.includes('radiolog') || c === 'RADIOLOGY' },
                     { key: 'nephrology', name: 'Nephrology', match: (n: string, c: string) => n.includes('nephrolog') || c === 'NEPHROLOGY' },
                     { key: 'operation_theater', name: 'Operation Theater', match: (n: string, c: string) => n.includes('operation') || n.includes('theater') || n.includes('theatre') || c === 'OPERATION_THEATER' },
+                    { key: 'klinik_pakar', name: 'Unit Klinik Pakar', match: (n: string, c: string) => n.includes('klinik pakar') || n.includes('specialist clinic') || c === 'KLINIK_PAKAR' },
                   ];
 
                   const listToRender: { id: string; department_name: string }[] = [];
@@ -1138,7 +1154,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                           </span>
                         </div>
                         <p className="text-xs text-amber-900 mt-1.5 font-medium leading-relaxed">
-                          Silinder <strong className="font-mono text-amber-950 font-bold bg-white/80 px-1.5 py-0.5 rounded border border-amber-200">{pendingActionCylinder.serial_number || pendingActionCylinder.qr_code}</strong> ({pendingActionCylinder.type_name_display || pendingActionCylinder.size_info?.code || 'P101-F'}) sedang direkodkan di lokasi <strong className="text-amber-950 underline decoration-amber-300 decoration-2 font-bold">{pendingActionCylinder.department?.department_name || (typeof pendingActionCylinder.current_location === 'object' ? (pendingActionCylinder.current_location as any)?.location_name : pendingActionCylinder.current_location) || 'General Ward'}</strong>.
+                          Silinder <strong className="font-mono text-amber-950 font-bold bg-white/80 px-1.5 py-0.5 rounded border border-amber-200">{pendingActionCylinder.serial_number || pendingActionCylinder.qr_code}</strong> ({pendingActionCylinder.type_name_display || pendingActionCylinder.size_info?.code || 'P101-F'}) sedang direkodkan di lokasi <strong className="text-amber-950 underline decoration-amber-300 decoration-2 font-bold">{pendingActionCylinder.department?.department_name || getSafeLocationString(pendingActionCylinder.current_location, 'General Ward')}</strong>.
                         </p>
                       </div>
                       <button
@@ -1287,7 +1303,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                                         {(cyl.serial_number || cyl.qr_code || '').replace(/\s*\(\d+(?:\.\d+)?\s*(?:m3|m┬│)\)/gi, '')}
                                         {cyl.is_ward_cylinder && (
                                           <span className="text-[8px] text-amber-700 font-sans block truncate font-bold">
-                                            {cyl.department?.department_name || (typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name : cyl.current_location) || 'Wad'}
+                                            {cyl.department?.department_name || getSafeLocationString(cyl.current_location, 'Wad')}
                                           </span>
                                         )}
                                       </span>
@@ -1349,7 +1365,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                           <span>{cyl.serial_number}</span>
                           {cyl.is_transfer && (
                             <span className="text-[9px] font-sans font-extrabold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200">
-                              Pindah dari {cyl.transfer_from || 'Wad'}
+                              Pindah dari {getSafeLocationString(cyl.transfer_from, 'Wad')}
                             </span>
                           )}
                           <button

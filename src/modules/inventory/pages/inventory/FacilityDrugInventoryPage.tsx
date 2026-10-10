@@ -57,12 +57,15 @@ import { loadStoreLocations, formatLocationString } from '@/services/pharmacy/st
 import { loadStoreSubLocations } from '@/services/pharmacy/storeSubLocationService'
 import type { SubLocationUnit } from '@/modules/inventory/pages/inventory/StoreLocationManagementPage'
 import type { DrugWithRelations, DrugCategory } from '@/types/pharmacy'
+import { useInventoryStore } from '@/modules/inventory/context/InventoryStoreContext'
+import { StoreLocationSelector } from '@/modules/inventory/components/StoreLocationSelector'
 
 export const FacilityDrugInventoryPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const currentVoteParam = searchParams.get('vote') || 'all'
 
   const { user } = useAuthStore()
+  const { activeStore, activeStoreId } = useInventoryStore()
   const hospitalId = user?.hospital_id || 'hosp-lawas-01'
 
   const { success: showSuccess, error: showError } = useToastStore()
@@ -186,7 +189,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   useEffect(() => {
     let isMounted = true
     setIsLoadingInventory(true)
-    loadFacilityDrugInventory(hospitalId).then(items => {
+    loadFacilityDrugInventory(hospitalId, activeStoreId || undefined).then(items => {
       if (isMounted) {
         setFacilityItems(items)
         setIsLoadingInventory(false)
@@ -198,7 +201,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
       }
     })
     return () => { isMounted = false }
-  }, [hospitalId])
+  }, [hospitalId, activeStoreId])
 
   // ─── Add Single Item ──────────────────────────────────────────────────────
   const handleAddItem = async () => {
@@ -206,11 +209,14 @@ export const FacilityDrugInventoryPage: React.FC = () => {
     const res = await addToFacilityDrugInventory(
       hospitalId, selectedCatalogDrug,
       Number(initialStockInput) || 0,
-      Number(minBufferInput) || 20
+      Number(minBufferInput) || 20,
+      undefined,
+      activeStoreId || undefined,
+      activeStore?.department_id || user?.department_id
     )
     if (!res.success) { showError(res.error || 'Gagal menambah item.'); return }
     // Reload from Supabase so all browsers get the latest
-    const fresh = await loadFacilityDrugInventory(hospitalId)
+    const fresh = await loadFacilityDrugInventory(hospitalId, activeStoreId || undefined)
     setFacilityItems(fresh)
     showSuccess(`'${selectedCatalogDrug.drug_name}' berjaya ditambah ke Inventori Fasiliti.`)
     setSelectedCatalogDrug(null)
@@ -228,10 +234,13 @@ export const FacilityDrugInventoryPage: React.FC = () => {
     const res = await batchAddToFacilityDrugInventory(
       hospitalId, drugsToAdd,
       Number(initialStockInput) || 0,
-      Number(minBufferInput) || 20
+      Number(minBufferInput) || 20,
+      undefined,
+      activeStoreId || undefined,
+      activeStore?.department_id || user?.department_id
     )
     if (res.error && res.added === 0) { showError(res.error); return }
-    const fresh = await loadFacilityDrugInventory(hospitalId)
+    const fresh = await loadFacilityDrugInventory(hospitalId, activeStoreId || undefined)
     setFacilityItems(fresh)
     showSuccess(`${res.added} item ubat berjaya ditambah ke Inventori Fasiliti.${ res.skipped > 0 ? ` (${res.skipped} sudah wujud, dilangkau.)` : '' }`)
     setSelectedCatalogDrugIds([])
@@ -242,8 +251,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   // ─── Delete Single Item ───────────────────────────────────────────────────
   const handleDeleteItem = async (drugId: string, drugName: string, e: React.MouseEvent) => {
     e.stopPropagation()
-    await removeFromFacilityDrugInventory(hospitalId, drugId)
-    const fresh = await loadFacilityDrugInventory(hospitalId)
+    await removeFromFacilityDrugInventory(hospitalId, drugId, activeStoreId || undefined)
+    const fresh = await loadFacilityDrugInventory(hospitalId, activeStoreId || undefined)
     setFacilityItems(fresh)
     showSuccess(`'${drugName}' dikeluarkan daripada Inventori Fasiliti.`)
   }
@@ -251,8 +260,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   // ─── Remove from edit drawer ─────────────────────────────────────────────
   const handleRemoveItem = async (id: string, name: string) => {
     if (!confirm(`Adakah anda pasti untuk memadam '${name}' daripada Inventori Fasiliti?`)) return
-    await removeFromFacilityDrugInventory(hospitalId, id)
-    const fresh = await loadFacilityDrugInventory(hospitalId)
+    await removeFromFacilityDrugInventory(hospitalId, id, activeStoreId || undefined)
+    const fresh = await loadFacilityDrugInventory(hospitalId, activeStoreId || undefined)
     setFacilityItems(fresh)
     showSuccess(`'${name}' telah dipadam daripada Inventori Fasiliti.`)
     setEditingItem(null)
@@ -511,7 +520,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Cetak Label QR - ${code}</title>
+          <title>Print Label QR - ${code}</title>
           <style>
             @page { 
               size: 60mm 40mm; 
@@ -1076,7 +1085,9 @@ export const FacilityDrugInventoryPage: React.FC = () => {
             <Warehouse className="w-4 h-4 text-emerald-400" />
             <span>Facility Inventory Module</span>
             <span className="text-slate-500">•</span>
-            <span className="text-emerald-400 font-medium">Main Store</span>
+            <span className="text-emerald-400 font-medium">
+              {activeStore ? `${activeStore.location_name} (${activeStore.location_code})` : 'Semua Stor'}
+            </span>
           </div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-3">
             Facility Drug Inventory
@@ -1089,7 +1100,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="relative z-10 flex items-center gap-3">
+        <div className="relative z-10 flex flex-wrap items-center gap-3">
+          <StoreLocationSelector />
           {/* Export Excel */}
           <button
             onClick={() => {
@@ -1302,7 +1314,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
               <button
                 onClick={handleClearCurrentScheme}
                 className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-all"
-                title="Kosongkan senarai item untuk skim ini"
+                title="Clear item list for this scheme"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 Kosongkan Senarai
@@ -1321,7 +1333,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                 <th className="py-3.5 px-4">Packaging</th>
                 <th className="py-3.5 px-4">Stok Fasiliti</th>
                 <th className="py-3.5 px-4">No. Batch</th>
-                <th className="py-3.5 px-4">Tarikh Luput</th>
+                <th className="py-3.5 px-4">Expiry Date</th>
                 <th className="py-3.5 px-4">Harga (RM)</th>
                 <th className="py-3.5 px-4">Skim</th>
                 <th className="py-3.5 px-4">Status</th>
@@ -1364,7 +1376,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                       key={drug.id}
                       onClick={() => handleOpenEditModal(drug)}
                       className="hover:bg-slate-50/80 transition-colors cursor-pointer"
-                      title="Klik untuk kemaskini stok & butiran"
+                      title="Click to update stock & details"
                     >
                       <td className="py-3 px-4">
                         <div className="font-mono text-[11px] font-bold text-blue-600 mb-0.5">{code}</div>
@@ -1448,7 +1460,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                         <button
                           onClick={(e) => handleDeleteItem(drug.id, drug.drug_name, e)}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                          title="Padam item ini dari inventori fasiliti"
+                          title="Delete this item from facility inventory"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -2028,7 +2040,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                               onChange={e => handleLocationChange(e.target.value, '', '')}
                               className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50/70 text-xs font-medium text-slate-900 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
                             >
-                              <option value="">-- Pilih Stor --</option>
+                              <option value="">-- Select Store --</option>
                               {availableStoreLocations.map(loc => (
                                 <option key={loc.id} value={loc.location_code}>
                                   [{loc.location_code}] {loc.store_name}
@@ -2050,10 +2062,10 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                             >
                               <option value="">
                                 {!selectedStoreCode 
-                                  ? '-- Pilih Stor --' 
+                                  ? '-- Select Store --' 
                                   : availableRacks.length === 0 
                                   ? 'Tiada Rak Didaftarkan' 
-                                  : '-- Pilih Rak / Kabinet --'}
+                                  : '-- Select Shelf / Cabinet --'}
                               </option>
                               {availableRacks.map(rack => (
                                 <option key={rack.id} value={rack.name}>
@@ -2377,7 +2389,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                             className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2.5 rounded-xl shadow-md flex items-center justify-center gap-2"
                           >
                             <Printer className="w-4 h-4" />
-                            Cetak Label QR (Sticker)
+                            Print Label QR (Sticker)
                           </Button>
 
                           {qrCodeUrl && (

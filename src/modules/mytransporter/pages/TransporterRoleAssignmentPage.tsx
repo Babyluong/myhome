@@ -73,7 +73,7 @@ const TransporterRoleAssignmentPage: React.FC = () => {
       if (res.error) throw new Error(res.error)
       
       toast.success(
-        isEn ? 'Update Successful' : 'Kemaskini Berjaya', 
+        isEn ? 'Update Successful' : 'Update Successful', 
         isEn ? 'User module access role updated successfully.' : 'Kebenaran peranan pengguna berjaya dikemaskini.'
       )
       
@@ -103,7 +103,7 @@ const TransporterRoleAssignmentPage: React.FC = () => {
   )
 
   const getTransporterRoleLabel = (role: string | null) => {
-    if (role === 'transport_driver') return <Badge variant="success">{isEn ? 'Duty Driver' : 'Pemandu Bertugas'}</Badge>
+    if (role === 'transport_driver') return <Badge variant="success">{isEn ? 'Duty Driver' : 'On-Duty Driver'}</Badge>
     if (role === 'transport_admin') return <Badge variant="error">{isEn ? 'Transport Admin' : 'Pentadbir Transport'}</Badge>
     return <Badge variant="gray">{isEn ? 'Standard Staff (Requester)' : 'Staff Biasa (Pemohon)'}</Badge>
   }
@@ -129,7 +129,7 @@ const TransporterRoleAssignmentPage: React.FC = () => {
         <p className="text-slate-500 text-sm">
           {isEn 
             ? 'Assign designated hospital staff as Duty Drivers (for vehicle pre-trip logs) or Transport Administrators (for dispatch approvals).' 
-            : 'Tentukan kakitangan yang mempunyai peranan sebagai Pemandu Bertugas atau Pentadbir Pengangkutan untuk meluluskan permohonan.'}
+            : 'Tentukan kakitangan yang mempunyai peranan sebagai On-Duty Driver atau Pentadbir Pengangkutan untuk meluluskan permohonan.'}
         </p>
       </div>
 
@@ -158,7 +158,7 @@ const TransporterRoleAssignmentPage: React.FC = () => {
         <CardContent className="p-0">
           {loading ? (
             <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
-              {isEn ? 'Loading hospital staff roster...' : 'Memuatkan maklumat kakitangan hospital...'}
+              {isEn ? 'Loading hospital staff roster...' : 'Loading hospital personnel records...'}
             </div>
           ) : filteredUsers.length === 0 ? (
             <div className="p-12 text-center text-slate-500">
@@ -205,7 +205,7 @@ const TransporterRoleAssignmentPage: React.FC = () => {
                             className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-bold outline-none cursor-pointer"
                           >
                             <option value="">{isEn ? 'None (Standard Requester Access)' : 'Tiada (Akses Pemohon Sahaja)'}</option>
-                            <option value="transport_driver">{isEn ? 'Duty Driver (Driver Panel)' : 'Pemandu Bertugas (Driver)'}</option>
+                            <option value="transport_driver">{isEn ? 'Duty Driver (Driver Panel)' : 'On-Duty Driver (Driver)'}</option>
                             <option value="transport_admin">{isEn ? 'Transport Admin (Approvals)' : 'Pentadbir Transport (Admin)'}</option>
                           </select>
                         </td>

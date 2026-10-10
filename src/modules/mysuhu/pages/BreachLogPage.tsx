@@ -11,7 +11,7 @@ import {
   Edit2
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { Badge, Spinner } from '@/components/ui'
+import { Badge, Spinner, ModulePageHeader } from '@/components/ui'
 import { getBreachLogs, getLokasi, annotateReading } from '@/modules/mysuhu/services/suhuService'
 import { exportBreachLogsToCsv } from '@/modules/mysuhu/services/suhuReportService'
 import type { BacaanSuhuWithRelations, Lokasi } from '@/types/mysuhu'
@@ -115,65 +115,61 @@ export const BreachLogPage: React.FC = () => {
 
   return (
     <div className="w-full space-y-6">
-      
-      {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-[#00a68a] to-emerald-500" />
-        <div>
-          <button 
-            onClick={() => navigate(ROUTES.HUB_SUHU_DASHBOARD)}
-            className="flex items-center gap-1.5 text-slate-400 hover:text-slate-600 transition-colors mb-2 text-xs font-bold"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Dashboard</span>
-          </button>
-          
-          <h1 className="text-xl font-black text-slate-800 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-rose-500" />
-            <span>Temperature Breach Logs (Auditing Log)</span>
-          </h1>
-          <p className="text-xs text-slate-400 mt-1 font-semibold">
-            Audit report list for equipment temperature readings outside safe thresholds (KKM / MSQH)
-          </p>
-        </div>
-
+      {/* Back button & ModulePageHeader */}
+      <div className="space-y-3">
         <button 
-          onClick={handleExportCsv}
-          disabled={filteredBreaches.length === 0}
-          className="flex items-center gap-1.5 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-slate-900 rounded-xl text-xs font-black shadow-sm hover:shadow-md transition-all disabled:opacity-40"
+          onClick={() => navigate(ROUTES.HUB_SUHU_DASHBOARD)}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-text-muted hover:text-text-primary transition-colors"
         >
-          <Download className="w-4 h-4 text-slate-550" />
-          <span>Export CSV</span>
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Suhu Dashboard</span>
         </button>
+
+        <ModulePageHeader
+          title="Temperature Breach Logs"
+          subtitle="Audit compliance trail for equipment temperature readings outside safe thresholds (KKM / MSQH)"
+          badge="Audit & Compliance"
+          icon={<AlertTriangle className="w-5 h-5 text-rose-500" />}
+          actions={
+            <button 
+              onClick={handleExportCsv}
+              disabled={filteredBreaches.length === 0}
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all disabled:opacity-40"
+            >
+              <Download className="w-3.5 h-3.5 text-text-muted" />
+              <span>Export CSV</span>
+            </button>
+          }
+        />
       </div>
 
       {/* Filter toolbar */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-lg flex flex-col gap-4">
+      <div className="bg-surface border border-border-default rounded-xl p-4 shadow-sm flex flex-col gap-4">
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between w-full">
           {/* Search bar */}
           <div className="relative w-full md:w-80">
-            <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-muted" />
             <input 
               type="text"
               placeholder="Search unit, location, comments..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+              className="w-full pl-9 pr-4 py-2 bg-subtle border border-border-default rounded-lg text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all font-medium"
             />
           </div>
 
           {/* Location and Date filters */}
           <div className="flex flex-wrap gap-3 items-center w-full md:w-auto justify-end text-xs">
             <div className="flex items-center gap-1.5 px-1">
-              <Filter className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-[10px] uppercase font-bold text-slate-400">Filters:</span>
+              <Filter className="w-3.5 h-3.5 text-text-muted" />
+              <span className="text-[10px] uppercase font-bold text-text-muted">Filters:</span>
             </div>
 
             {/* Location selector */}
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-600 font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all"
+              className="px-3 py-1.5 bg-surface border border-border-default rounded-lg text-xs text-text-secondary font-medium focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all"
             >
               <option value="all">All Locations</option>
               {locations.map(loc => (
@@ -187,14 +183,14 @@ export const BreachLogPage: React.FC = () => {
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-700 outline-none focus:border-[#00a68a] text-xs font-semibold"
+                className="bg-surface border border-border-default rounded-lg px-2.5 py-1.5 text-text-primary outline-none focus:border-accent-base text-xs font-medium"
               />
-              <span className="text-slate-400 font-bold">to</span>
+              <span className="text-text-muted font-medium">to</span>
               <input 
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-700 outline-none focus:border-[#00a68a] text-xs font-semibold"
+                className="bg-surface border border-border-default rounded-lg px-2.5 py-1.5 text-text-primary outline-none focus:border-accent-base text-xs font-medium"
               />
             </div>
           </div>
@@ -202,20 +198,20 @@ export const BreachLogPage: React.FC = () => {
       </div>
 
       {/* Audit Log Table */}
-      <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden p-6 shadow-xl">
+      <div className="bg-surface border border-border-default rounded-xl overflow-hidden shadow-sm">
         {filteredBreaches.length === 0 ? (
-          <div className="text-center py-20">
-            <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto mb-4 animate-bounce" />
-            <h3 className="text-base font-bold text-slate-700 mb-1">Full Compliance Met</h3>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
-              Excellent! No temperature breach incidents recorded within your selected date range and search criteria.
+          <div className="text-center py-16 px-4">
+            <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
+            <h3 className="text-sm font-bold text-text-primary mb-1">Full Compliance Met</h3>
+            <p className="text-xs text-text-muted max-w-sm mx-auto leading-relaxed">
+              No temperature breach incidents recorded within your selected date range and search criteria.
             </p>
           </div>
         ) : (
           <>
             <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-700">
-                <thead className="bg-slate-50 text-[10px] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
+              <table className="w-full text-left text-xs text-text-primary">
+                <thead className="bg-subtle text-[11px] text-text-muted font-semibold uppercase tracking-wider border-b border-border-default">
                   <tr>
                     <th className="px-4 py-3">No.</th>
                     <th className="px-4 py-3">Equipment (Unit ID)</th>
@@ -228,53 +224,53 @@ export const BreachLogPage: React.FC = () => {
                     <th className="px-4 py-3 text-right">Edit</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-border-default">
                   {filteredBreaches.map((b, i) => (
-                    <tr key={b.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-4 py-3 font-bold text-slate-400">{i + 1}</td>
-                      <td className="px-4 py-3 text-slate-800">
+                    <tr key={b.id} className="hover:bg-subtle/50 transition-colors">
+                      <td className="px-4 py-3 font-semibold text-text-muted tabular-nums">{i + 1}</td>
+                      <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
                           {b.unit?.photo_url && (
                             <img 
                               src={b.unit.photo_url} 
                               alt={b.unit.nama_unit} 
-                              className="w-9 h-9 rounded-xl object-cover border border-slate-200 flex-shrink-0 shadow-sm"
+                              className="w-8 h-8 rounded-lg object-cover border border-border-default flex-shrink-0"
                             />
                           )}
                           <div>
                             <span 
                               onClick={() => navigate(`/suhu/unit/${b.unit_id}`)}
-                              className="hover:underline hover:text-[#00a68a] cursor-pointer font-extrabold block"
+                              className="hover:underline hover:text-accent-base cursor-pointer font-bold text-text-primary block"
                             >
                               {b.unit?.nama_unit}
                             </span>
-                            <span className="text-[9px] font-mono text-slate-400">{b.unit?.unit_id}</span>
+                            <span className="text-[10px] font-mono text-text-muted">{b.unit?.unit_id}</span>
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3 font-medium">
-                        <div className="text-slate-700">{b.unit?.lokasi?.nama_lokasi}</div>
-                        <div className="text-[9px] text-slate-450">{b.unit?.lokasi?.jabatan}</div>
+                        <div className="text-text-primary">{b.unit?.lokasi?.nama_lokasi}</div>
+                        <div className="text-[10px] text-text-muted">{b.unit?.lokasi?.jabatan}</div>
                       </td>
-                      <td className="px-4 py-3 font-black text-rose-600 text-sm font-mono whitespace-nowrap">
+                      <td className="px-4 py-3 font-bold text-rose-600 text-xs font-mono tabular-nums whitespace-nowrap">
                         {b.suhu.toFixed(1)}°C
                       </td>
-                      <td className="px-4 py-3 font-mono text-[10px] text-slate-400 whitespace-nowrap">
+                      <td className="px-4 py-3 font-mono text-[10px] text-text-muted whitespace-nowrap tabular-nums">
                         {b.ambang?.min_suhu}°C to {b.ambang?.max_suhu}°C
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-slate-500 font-semibold">
+                      <td className="px-4 py-3 whitespace-nowrap text-text-secondary font-medium tabular-nums">
                         {format(new Date(b.tarikh_masa), 'dd/MM/yyyy HH:mm')}
                       </td>
-                      <td className="px-4 py-3 max-w-[200px] truncate font-medium text-slate-500" title={b.nota || ''}>
+                      <td className="px-4 py-3 max-w-[200px] truncate font-medium text-text-secondary" title={b.nota || ''}>
                         {b.is_corrected && (
                           <div className="text-[9px] text-rose-600 font-bold mb-0.5">[CORRECTIVE ACTION]</div>
                         )}
                         {b.nota || '—'}
                         {b.is_corrected && b.correction_note && (
-                          <div className="text-[9px] text-slate-400 italic mt-0.5">Correction Note: {b.correction_note}</div>
+                          <div className="text-[9px] text-text-muted italic mt-0.5">Correction Note: {b.correction_note}</div>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-slate-500 font-semibold whitespace-nowrap">
+                      <td className="px-4 py-3 text-text-secondary font-medium whitespace-nowrap">
                         {b.dicatat_oleh_user?.full_name || 'Duty Staff'}
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -284,7 +280,7 @@ export const BreachLogPage: React.FC = () => {
                             setCorrectNote(b.correction_note || '')
                             setShowCorrectModal(true)
                           }}
-                          className="p-1.5 bg-white border border-slate-200 hover:border-slate-350 text-slate-450 hover:text-slate-800 rounded-lg transition-colors shadow-sm"
+                          className="p-1.5 bg-surface border border-border-default hover:bg-subtle text-text-muted hover:text-text-primary rounded-lg transition-colors shadow-sm"
                           title="Edit breach record"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
@@ -297,30 +293,30 @@ export const BreachLogPage: React.FC = () => {
             </div>
 
             {/* Mobile View: High-End Native Cards */}
-            <div className="md:hidden divide-y divide-slate-100">
+            <div className="md:hidden divide-y divide-border-default">
               {filteredBreaches.map((b) => (
-                <div key={b.id} className="p-4 space-y-2.5 hover:bg-slate-50/50 transition">
+                <div key={b.id} className="p-4 space-y-2.5 hover:bg-subtle/50 transition">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5">
                       {b.unit?.photo_url && (
                         <img 
                           src={b.unit.photo_url} 
                           alt={b.unit.nama_unit} 
-                          className="w-10 h-10 rounded-xl object-cover border border-slate-200 flex-shrink-0 shadow-sm"
+                          className="w-9 h-9 rounded-lg object-cover border border-border-default flex-shrink-0"
                         />
                       )}
                       <div>
                         <span 
                           onClick={() => navigate(`/suhu/unit/${b.unit_id}`)}
-                          className="font-extrabold text-slate-800 text-sm hover:underline hover:text-[#00a68a] cursor-pointer block"
+                          className="font-bold text-text-primary text-sm hover:underline hover:text-accent-base cursor-pointer block"
                         >
                           {b.unit?.nama_unit}
                         </span>
-                        <span className="text-[10px] font-mono text-slate-400">{b.unit?.unit_id}</span>
+                        <span className="text-[10px] font-mono text-text-muted">{b.unit?.unit_id}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className="px-2.5 py-1 bg-rose-50 border border-rose-200 text-rose-700 font-mono font-black text-xs rounded-lg">
+                      <span className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/20 text-rose-600 font-mono font-bold text-xs rounded-lg tabular-nums">
                         {b.suhu.toFixed(1)}°C
                       </span>
                       <button 
@@ -329,7 +325,7 @@ export const BreachLogPage: React.FC = () => {
                           setCorrectNote(b.correction_note || '')
                           setShowCorrectModal(true)
                         }}
-                        className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition"
+                        className="p-1.5 bg-subtle hover:bg-subtle/80 text-text-secondary rounded-lg transition"
                         title="Edit"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -337,30 +333,30 @@ export const BreachLogPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="bg-slate-50/80 rounded-xl p-2.5 border border-slate-100 text-xs">
-                    <div className="flex items-center justify-between text-[11px] text-slate-600 font-medium">
+                  <div className="bg-subtle/60 rounded-lg p-2.5 border border-border-default text-xs">
+                    <div className="flex items-center justify-between text-[11px] text-text-secondary font-medium">
                       <span>{b.unit?.lokasi?.nama_lokasi} ({b.unit?.lokasi?.jabatan})</span>
-                      <span className="text-slate-400 font-mono">
-                        Had: {b.ambang?.min_suhu}°C - {b.ambang?.max_suhu}°C
+                      <span className="text-text-muted font-mono tabular-nums">
+                        Threshold: {b.ambang?.min_suhu}°C - {b.ambang?.max_suhu}°C
                       </span>
                     </div>
                   </div>
 
                   {b.nota && (
-                    <div className="text-xs text-slate-500 bg-amber-50/60 p-2 rounded-lg border border-amber-100">
+                    <div className="text-xs text-text-secondary bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
                       {b.is_corrected && (
-                        <span className="text-[10px] font-bold text-rose-600 mr-1">[TINDAKAN PEMBETULAN]</span>
+                        <span className="text-[10px] font-bold text-rose-600 mr-1">[CORRECTIVE ACTION]</span>
                       )}
                       {b.nota}
                       {b.is_corrected && b.correction_note && (
-                        <div className="text-[10px] text-slate-400 italic mt-0.5">Nota: {b.correction_note}</div>
+                        <div className="text-[10px] text-text-muted italic mt-0.5">Note: {b.correction_note}</div>
                       )}
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
-                    <span>{format(new Date(b.tarikh_masa), 'dd/MM/yyyy HH:mm')}</span>
-                    <span>Dicatat: <strong className="text-slate-600">{b.dicatat_oleh_user?.full_name || 'Duty Staff'}</strong></span>
+                  <div className="flex items-center justify-between text-[11px] text-text-muted pt-0.5">
+                    <span className="tabular-nums">{format(new Date(b.tarikh_masa), 'dd/MM/yyyy HH:mm')}</span>
+                    <span>Logged by: <strong className="text-text-secondary font-medium">{b.dicatat_oleh_user?.full_name || 'Duty Staff'}</strong></span>
                   </div>
                 </div>
               ))}
@@ -371,40 +367,40 @@ export const BreachLogPage: React.FC = () => {
 
       {/* Correction Modal */}
       {showCorrectModal && (
-        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-100 rounded-3xl max-w-md w-full p-6 shadow-2xl text-slate-800">
-            <h3 className="text-lg font-black text-slate-900 mb-3">Edit Temperature Breach Log</h3>
-            <p className="text-xs text-slate-500 leading-relaxed mb-4 font-semibold">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-surface border border-border-default rounded-2xl max-w-md w-full p-6 shadow-2xl text-text-primary">
+            <h3 className="text-base font-bold text-text-primary mb-2">Edit Temperature Breach Log</h3>
+            <p className="text-xs text-text-muted leading-relaxed mb-4">
               Documented breach records can be appended with official corrective actions or notes. The original log will be preserved for medical audit integrity.
             </p>
 
             <div className="space-y-4 mb-5">
               <div>
-                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">Reason for Amendment / Corrective Action</label>
+                <label className="block text-[10px] font-bold text-text-muted uppercase tracking-wide mb-1.5">Reason for Amendment / Corrective Action</label>
                 <textarea 
                   required
                   placeholder="Specify corrective action (e.g. ice buildup cleaning, specimen transfer to backup unit)."
                   value={correctNote}
                   onChange={(e) => setCorrectNote(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4.5 py-3 text-xs text-slate-700 focus:outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-500/10 transition-colors h-24 resize-none font-semibold"
+                  className="w-full bg-subtle border border-border-default rounded-xl px-3.5 py-2.5 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors h-24 resize-none font-medium"
                 />
               </div>
             </div>
 
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-2.5 justify-end">
               <button 
                 onClick={() => {
                   setShowCorrectModal(false)
                   setCorrectReadingId(null)
                 }}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all"
+                className="px-4 py-2 bg-subtle hover:bg-subtle/80 text-text-secondary rounded-lg text-xs font-semibold transition-all"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleCorrectSubmit}
                 disabled={submitting || !correctNote.trim()}
-                className="px-4 py-2 bg-[#00a68a] hover:bg-[#008f76] text-white rounded-xl text-xs font-bold transition-all shadow-md disabled:opacity-50"
+                className="px-4 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold transition-all shadow-sm disabled:opacity-50"
               >
                 {submitting ? 'Saving...' : 'Save Comments'}
               </button>

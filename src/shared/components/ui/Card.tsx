@@ -9,12 +9,12 @@ type CardProps = {
 
 export function Card({ children, className, hover = false, onClick }: CardProps) {
   const hoverClasses = hover 
-    ? 'hover:shadow-lg hover:scale-[1.01] hover:border-blue-300/70 cursor-pointer transition-all duration-300 ease-out' 
+    ? 'hover:border-border-strong hover:bg-subtle/30 cursor-pointer transition-all duration-150 ease-out active:scale-[0.99]' 
     : '';
   
   return (
     <div 
-      className={`rounded-xl border border-gray-200/70 bg-white shadow-md backdrop-blur-sm ${hoverClasses} ${className ?? ''}`}
+      className={`rounded-xl border border-border-default bg-surface shadow-2xs text-text-primary ${hoverClasses} ${className ?? ''}`}
       onClick={onClick}
     >
       {children}
@@ -24,7 +24,7 @@ export function Card({ children, className, hover = false, onClick }: CardProps)
 
 export function CardHeader({ children, className, actions }: { children: ReactNode; className?: string; actions?: ReactNode }) {
   return (
-    <div className={`px-6 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between ${className ?? ''}`}>
+    <div className={`px-6 pt-5 pb-4 border-b border-border-default flex items-center justify-between ${className ?? ''}`}>
       <div className="flex-1">{children}</div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>
@@ -34,20 +34,20 @@ export function CardHeader({ children, className, actions }: { children: ReactNo
 export function CardTitle({ children, className, subtitle }: { children: ReactNode; className?: string; subtitle?: string }) {
   return (
     <div>
-      <h3 className={`text-lg font-bold tracking-tight text-gray-900 ${className ?? ''}`}>{children}</h3>
-      {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+      <h3 className={`text-base font-semibold tracking-tight text-text-primary ${className ?? ''}`}>{children}</h3>
+      {subtitle && <p className="text-xs text-text-muted mt-0.5">{subtitle}</p>}
     </div>
   );
 }
 
 export function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
-  return <p className={`text-sm text-gray-600 mt-1.5 ${className ?? ''}`}>{children}</p>;
+  return <p className={`text-sm text-text-secondary mt-1 leading-relaxed ${className ?? ''}`}>{children}</p>;
 }
 
 export function CardContent({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={`px-6 py-5 ${className ?? ''}`}>{children}</div>;
+  return <div className={`px-6 py-4 ${className ?? ''}`}>{children}</div>;
 }
 
 export function CardFooter({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={`px-6 pb-6 pt-4 border-t border-gray-100 ${className ?? ''}`}>{children}</div>;
+  return <div className={`px-6 pb-5 pt-3 border-t border-border-default ${className ?? ''}`}>{children}</div>;
 }

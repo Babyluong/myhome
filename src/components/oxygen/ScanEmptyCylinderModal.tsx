@@ -1,11 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import jsQR from 'jsqr';
-import { X, QrCode, AlertCircle, AlertTriangle, RefreshCw, CheckCircle2, Trash2, Camera, Keyboard, Check, Volume2, VolumeX, Search, Database, Wrench, ChevronDown, CheckSquare, Square, ArrowRight, Sparkles, Layers, FileText, Truck } from 'lucide-react';
-import { getCylinderByQrOrSerial, markCylinderAsEmpty, markMultipleCylindersAsEmpty, updateCylinderValveType, getEmptyCylindersInStore } from '@/services/pharmacy/oxygenService';
+import { X, QrCode, AlertCircle, AlertTriangle, RefreshCw, CheckCircle2, Trash2, Camera, Keyboard, Check, Volume2, VolumeX, Search, Database, Wrench, ChevronDown, CheckSquare, Square, ArrowRight, Sparkles, Layers, FileText, Truck, Wifi, WifiOff } from 'lucide-react';
+import {
+  offlineAwareGetCylinderByCode,
+  offlineAwareMarkCylinderAsEmpty,
+  offlineAwareMarkMultipleCylindersAsEmpty,
+  offlineAwareUpdateValveType,
+  isNetworkAvailable,
+  withTimeout,
+} from '@/modules/mycylinder/services/cylinderOfflineService';
+import { cylinderOfflineDB } from '@/modules/mycylinder/services/cylinderOfflineDB';
+import { useCylinderOffline } from '@/modules/mycylinder/hooks/useCylinderOffline';
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
-import { supabase } from '@/services/supabase';
+import { supabase, isSupabaseConfigured } from '@/services/supabase';
 import type { OxygenCylinderWithRelations } from '@/types/pharmacy';
 
 interface ScanEmptyCylinderModalProps {
@@ -35,6 +44,10 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   const { user } = useAuthStore();
   const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'camera' | 'manual'>('camera');
+  
+  // Offline & sync capabilities
+  const { isOnline, isSyncing, pendingCount, cachedCount, syncNow } = useCylinderOffline(hospitalId);
+  const [isOperatingOffline, setIsOperatingOffline] = useState(false);
   
   // Input text field
   const [qrInput, setQrInput] = useState('');
@@ -159,31 +172,15 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     };
   };
 
-  // Fetch real active/allocated cylinders from Supabase (including issued ward cylinders and hospital assets)
+  // Fetch active/allocated cylinders with instant local IndexedDB fallback
   useEffect(() => {
     const fetchActiveCylinders = async () => {
       setIsDbLoading(true);
       try {
-        let query = supabase
-          .from('pharmacy_oxygen_cylinder_inventory')
-          .select(`
-            *,
-            type_info:pharmacy_oxygen_cylinder_types(*),
-            size_info:pharmacy_oxygen_cylinder_sizes(*),
-            department:departments(*)
-          `)
-          .neq('status', 'deactivated')
-          .eq('is_active', true)
-          .limit(2000);
-
-        if (hospitalId) {
-          query = query.eq('hospital_id', hospitalId);
-        }
-
-        const { data, error } = await query;
-
-        if (!error && data) {
-          const normalized = data
+        // Step 1: Instant load from IndexedDB local cache (0ms latency, works 100% offline!)
+        const localCached = await cylinderOfflineDB.getAllCylinders(hospitalId);
+        if (localCached && localCached.length > 0) {
+          const normalizedCached = localCached
             .filter((c: any) => {
               if (c.status === 'deactivated' || c.is_active === false) return false;
               const upperSn = (c.serial_number || '').toUpperCase();
@@ -192,16 +189,60 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
               const isHospitalAsset = upperSn.startsWith('O2-P') || upperSn.startsWith('02-P') || upperSn.startsWith('P101') || upperQr.startsWith('O2-P') || upperQr.startsWith('02-P') || upperQr.startsWith('P101') || sizeCode.startsWith('P');
               const isLoan = !isHospitalAsset && (c.supplier_tagged || c.is_loan || upperSn.includes('SABOXY') || upperQr.includes('SABOXY'));
 
-              // Exclude supplier loan cylinders that are already empty or already returned (they are tracked in Empty Cylinder List and Supplier Returns)
+              // Exclude supplier loan cylinders that are already empty or already returned
               if (isLoan && (c.status === 'empty' || c.status === 'returned_to_supplier')) return false;
 
               return true;
             })
             .map(normalizeCylinder);
-          setActiveCylinders(normalized);
+          setActiveCylinders(normalizedCached);
+          setIsDbLoading(false);
+        }
+
+        // Step 2: Background refresh if online, protected with 2500ms timeout so bad network never hangs
+        if (isNetworkAvailable() && isSupabaseConfigured()) {
+          let query = supabase
+            .from('pharmacy_oxygen_cylinder_inventory')
+            .select(`
+              *,
+              type_info:pharmacy_oxygen_cylinder_types(*),
+              size_info:pharmacy_oxygen_cylinder_sizes(*),
+              department:departments(*)
+            `)
+            .neq('status', 'deactivated')
+            .eq('is_active', true)
+            .limit(2000);
+
+          if (hospitalId) {
+            query = query.eq('hospital_id', hospitalId);
+          }
+
+          const { data, error } = (await withTimeout(Promise.resolve(query), 2500, 'Supabase query timed out')) as any;
+
+          if (!error && data) {
+            const normalized = data
+              .filter((c: any) => {
+                if (c.status === 'deactivated' || c.is_active === false) return false;
+                const upperSn = (c.serial_number || '').toUpperCase();
+                const upperQr = (c.qr_code || '').toUpperCase();
+                const sizeCode = c.size_info?.code || c.size_code || '';
+                const isHospitalAsset = upperSn.startsWith('O2-P') || upperSn.startsWith('02-P') || upperSn.startsWith('P101') || upperQr.startsWith('O2-P') || upperQr.startsWith('02-P') || upperQr.startsWith('P101') || sizeCode.startsWith('P');
+                const isLoan = !isHospitalAsset && (c.supplier_tagged || c.is_loan || upperSn.includes('SABOXY') || upperQr.includes('SABOXY'));
+
+                if (isLoan && (c.status === 'empty' || c.status === 'returned_to_supplier')) return false;
+
+                return true;
+              })
+              .map(normalizeCylinder);
+            setActiveCylinders(normalized);
+            void cylinderOfflineDB.upsertCylinders(data);
+          }
+        } else if (!isNetworkAvailable()) {
+          setIsOperatingOffline(true);
         }
       } catch (err) {
-        console.error("Error loading active cylinders from Supabase:", err);
+        console.warn("Notice: Operating on local offline cylinders.", err);
+        setIsOperatingOffline(true);
       } finally {
         setIsDbLoading(false);
       }
@@ -220,44 +261,60 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     }
   }, [isOpen, hospitalId]);
 
-  // On-demand real-time Supabase search for quick picker fallback
+  // On-demand search: queries local IndexedDB first, then remote Supabase with timeout
   useEffect(() => {
     const queryText = (dbSearchQuery || '').trim();
     if (queryText.length < 2) return;
 
     const timer = setTimeout(async () => {
       try {
-        const cleanQ = queryText.replace(/[^a-z0-9]/gi, '');
-        let remoteQuery = supabase
-          .from('pharmacy_oxygen_cylinder_inventory')
-          .select(`
-            *,
-            type_info:pharmacy_oxygen_cylinder_types(*),
-            size_info:pharmacy_oxygen_cylinder_sizes(*),
-            department:departments(*)
-          `)
-          .neq('status', 'deactivated')
-          .eq('is_active', true)
-          .or(`serial_number.ilike.%${queryText}%,qr_code.ilike.%${queryText}%,serial_number.ilike.%${cleanQ}%,qr_code.ilike.%${cleanQ}%`)
-          .limit(20);
-
-        if (hospitalId) {
-          remoteQuery = remoteQuery.eq('hospital_id', hospitalId);
-        }
-
-        const { data: remoteCyls } = await remoteQuery;
-
-        if (remoteCyls && remoteCyls.length > 0) {
+        // 1. Search local offline cache first (zero latency)
+        const localMatches = await cylinderOfflineDB.searchCylinders(hospitalId, queryText, undefined, 30);
+        if (localMatches && localMatches.length > 0) {
           setActiveCylinders(prev => {
             const existingIds = new Set(prev.map(c => c.id));
-            const toAdd = remoteCyls
+            const toAdd = localMatches
               .filter(rc => !existingIds.has(rc.id) && rc.status !== 'deactivated' && rc.is_active !== false)
               .map(normalizeCylinder);
             return toAdd.length > 0 ? [...prev, ...toAdd] : prev;
           });
         }
+
+        // 2. If online, supplement with live database query with 1500ms timeout
+        if (isNetworkAvailable() && isSupabaseConfigured()) {
+          const cleanQ = queryText.replace(/[^a-z0-9]/gi, '');
+          let remoteQuery = supabase
+            .from('pharmacy_oxygen_cylinder_inventory')
+            .select(`
+              *,
+              type_info:pharmacy_oxygen_cylinder_types(*),
+              size_info:pharmacy_oxygen_cylinder_sizes(*),
+              department:departments(*)
+            `)
+            .neq('status', 'deactivated')
+            .eq('is_active', true)
+            .or(`serial_number.ilike.%${queryText}%,qr_code.ilike.%${queryText}%,serial_number.ilike.%${cleanQ}%,qr_code.ilike.%${cleanQ}%`)
+            .limit(20);
+
+          if (hospitalId) {
+            remoteQuery = remoteQuery.eq('hospital_id', hospitalId);
+          }
+
+          const { data: remoteCyls } = (await withTimeout(Promise.resolve(remoteQuery), 1500, 'Search query timed out')) as any;
+
+          if (remoteCyls && remoteCyls.length > 0) {
+            setActiveCylinders(prev => {
+              const existingIds = new Set(prev.map(c => c.id));
+              const toAdd = remoteCyls
+                .filter((rc: any) => !existingIds.has(rc.id) && rc.status !== 'deactivated' && rc.is_active !== false)
+                .map(normalizeCylinder);
+              return toAdd.length > 0 ? [...prev, ...toAdd] : prev;
+            });
+            void cylinderOfflineDB.upsertCylinders(remoteCyls);
+          }
+        }
       } catch (e) {
-        console.warn('On-demand database search error:', e);
+        console.warn('Search query warning:', e);
       }
     }, 200);
 
@@ -499,9 +556,10 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           continue;
         }
         try {
-          const res = await getCylinderByQrOrSerial(hospitalId, code, selectedSizeFilter || undefined);
+          const res = await offlineAwareGetCylinderByCode(hospitalId, code, selectedSizeFilter ? { expectedSizeCode: selectedSizeFilter } : undefined);
           if (res.data && !res.error) {
             let targetCylinder = res.data;
+            if (res.isOffline) setIsOperatingOffline(true);
             if (selectedSizeFilter && !isCylinderMatchingFilter(targetCylinder, selectedSizeFilter)) {
               errorCount++;
               continue;
@@ -514,7 +572,8 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
 
             if (targetCylinder.status !== 'empty') {
               const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
-              const updateRes = await markCylinderAsEmpty(hospitalId, targetCylinder.id, creatorId);
+              const updateRes = await offlineAwareMarkCylinderAsEmpty(hospitalId, targetCylinder.id, creatorId);
+              if (updateRes.isOfflinePending) setIsOperatingOffline(true);
               if (!updateRes.error) {
                 targetCylinder = { ...targetCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any };
               }
@@ -547,7 +606,9 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           text: `Successfully processed ${successCount} cylinders (${errorCount} skipped/failed)`
         });
         setQrInput('');
-        onSuccess();
+        if (isNetworkAvailable()) {
+          setTimeout(() => onSuccess(), 50);
+        }
       } else {
         playBeep('error');
         setStatusMessage({
@@ -563,10 +624,12 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     setStatusMessage(null);
 
     try {
-      const res = await getCylinderByQrOrSerial(hospitalId, cleanedInput, selectedSizeFilter || undefined);
+      const res = await offlineAwareGetCylinderByCode(hospitalId, cleanedInput, selectedSizeFilter ? { expectedSizeCode: selectedSizeFilter } : undefined);
+      if (res.isOffline) setIsOperatingOffline(true);
+
       if (res.error || !res.data) {
         playBeep('error');
-        setStatusMessage({ type: 'error', text: res.error || `Cylinder "${cleanedInput}" not found in system.` });
+        setStatusMessage({ type: 'error', text: res.error || `Cylinder "${cleanedInput}" not found in system or offline cache.` });
       } else {
         const cyl = res.data;
         if (selectedSizeFilter && !isCylinderMatchingFilter(cyl, selectedSizeFilter)) {
@@ -589,7 +652,10 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           playBeep('success');
           setSuccessFlash(true);
           setTimeout(() => setSuccessFlash(false), 500);
-          setStatusMessage({ type: 'success', text: `Added Empty Cylinder: ${cyl.serial_number}` });
+          setStatusMessage({
+            type: 'success',
+            text: `Added Empty Cylinder: ${cyl.serial_number} ${res.isOffline ? '(Mod Luar Talian / Offline)' : ''}`
+          });
           setQrInput('');
           // Reset cooldown so camera is immediately ready for the NEXT cylinder
           lastScannedRef.current = null;
@@ -597,7 +663,8 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           // In Bulk / Auto-Confirm mode, automatically deplete the cylinder without prompt
           let targetCylinder = cyl;
           const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
-          const updateRes = await markCylinderAsEmpty(hospitalId, targetCylinder.id, creatorId);
+          const updateRes = await offlineAwareMarkCylinderAsEmpty(hospitalId, targetCylinder.id, creatorId);
+          if (updateRes.isOfflinePending) setIsOperatingOffline(true);
           if (!updateRes.error) {
             targetCylinder = { ...targetCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any };
           }
@@ -613,10 +680,15 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           playBeep('success');
           setSuccessFlash(true);
           setTimeout(() => setSuccessFlash(false), 500);
-          setStatusMessage({ type: 'success', text: `Marked as Depleted: ${targetCylinder.serial_number}` });
+          setStatusMessage({
+            type: 'success',
+            text: `Marked as Depleted: ${targetCylinder.serial_number} ${updateRes.isOfflinePending || res.isOffline ? '(Mod Luar Talian / Disimpan Tempatan)' : ''}`
+          });
           setQrInput('');
           lastScannedRef.current = null;
-          onSuccess();
+          if (isNetworkAvailable()) {
+            setTimeout(() => onSuccess(), 50);
+          }
         } else {
           playBeep('success');
           setMatchedCylinder(cyl);
@@ -649,7 +721,8 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
         setQrInput('');
       } else {
         const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
-        const res = await markCylinderAsEmpty(hospitalId, matchedCylinder.id, creatorId);
+        const res = await offlineAwareMarkCylinderAsEmpty(hospitalId, matchedCylinder.id, creatorId);
+        if (res.isOfflinePending) setIsOperatingOffline(true);
         if (res.error) {
           setStatusMessage({ type: 'error', text: res.error });
         } else {
@@ -664,10 +737,15 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           playBeep('success');
           setSuccessFlash(true);
           setTimeout(() => setSuccessFlash(false), 500);
-          setStatusMessage({ type: 'success', text: `Marked as Depleted: ${updated.serial_number}` });
+          setStatusMessage({
+            type: 'success',
+            text: `Marked as Depleted: ${updated.serial_number} ${res.isOfflinePending ? '(Mod Luar Talian / Disimpan Tempatan)' : ''}`
+          });
           setMatchedCylinder(null);
           setQrInput('');
-          onSuccess();
+          if (isNetworkAvailable()) {
+            setTimeout(() => onSuccess(), 50);
+          }
         }
       }
     } catch (err) {
@@ -686,7 +764,8 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     try {
       const ids = cylsToDeplete.map(c => c.id);
       const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
-      const res = await markMultipleCylindersAsEmpty(hospitalId, ids, creatorId);
+      const res = await offlineAwareMarkMultipleCylindersAsEmpty(hospitalId, ids, creatorId);
+      if (res.isOfflinePending) setIsOperatingOffline(true);
       if (!res.error) {
         const updatedList = cylsToDeplete.map(c => ({
           ...c,
@@ -704,9 +783,11 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
         setTimeout(() => setSuccessFlash(false), 500);
         setStatusMessage({
           type: 'success',
-          text: `Successfully marked ${cylsToDeplete.length} cylinders as depleted`
+          text: `Successfully marked ${cylsToDeplete.length} cylinders as depleted ${res.isOfflinePending ? '(Mod Luar Talian / Disimpan Tempatan)' : ''}`
         });
-        onSuccess();
+        if (isNetworkAvailable()) {
+          setTimeout(() => onSuccess(), 50);
+        }
       } else {
         playBeep('error');
         setStatusMessage({ type: 'error', text: res.error || `Failed to mark cylinders depleted.` });
@@ -728,14 +809,15 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     setIsCorrectingValveType(true);
     try {
       const userId = user?.id || localStorage.getItem('userId') || undefined;
-      const res = await updateCylinderValveType(hospitalId, lastScannedCylinder.id, targetCode, userId);
+      const res = await offlineAwareUpdateValveType(hospitalId, lastScannedCylinder.id, targetCode, userId);
+      if (res.isOfflinePending) setIsOperatingOffline(true);
       if (res.error) {
         setStatusMessage({ type: 'error', text: `Valve type correction failed: ${res.error}` });
       } else {
         const valveLabel = targetCode === 'BN' ? 'Bullnose (BN)' : 'Pin Index (PI)';
         setStatusMessage({
           type: 'success',
-          text: `✓ Valve type corrected → ${valveLabel} for ${lastScannedCylinder.serial_number}`
+          text: `✓ Valve type corrected → ${valveLabel} for ${lastScannedCylinder.serial_number} ${res.isOfflinePending ? '(Mod Luar Talian)' : ''}`
         });
         // Update the cylinder in scanned session list
         const corrected: OxygenCylinderWithRelations = { ...lastScannedCylinder, type_info: { ...lastScannedCylinder.type_info, code: targetCode } as any };
@@ -854,10 +936,36 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                 <span className="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full">
                   {sessionScannedCylinders.length} Scanned
                 </span>
+                {(!isOnline || isOperatingOffline) ? (
+                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-amber-500/25 border border-amber-400/40 rounded-full text-amber-300 text-[10px] font-bold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                    <span>{language === 'ms' ? 'Mod Luar Talian' : 'Offline Mode'}</span>
+                    {cachedCount > 0 && (
+                      <span className="text-[9px] font-mono text-amber-200/90 bg-amber-950/60 px-1 py-0.2 rounded">
+                        {cachedCount} cached
+                      </span>
+                    )}
+                  </div>
+                ) : pendingCount > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => syncNow()}
+                    disabled={isSyncing}
+                    className="flex items-center gap-1 px-2.5 py-0.5 bg-blue-500/25 border border-blue-400/40 rounded-full text-blue-300 text-[10px] font-bold hover:bg-blue-500/40 transition-all cursor-pointer"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
+                    <span>{pendingCount} {language === 'ms' ? 'belum sync' : 'pending sync'}</span>
+                  </button>
+                ) : (
+                  <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-500/15 border border-emerald-400/30 rounded-full text-emerald-300 text-[10px] font-bold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <span>{cachedCount > 0 ? `${cachedCount} Memory Ready` : 'Online'}</span>
+                  </div>
+                )}
               </div>
               <p className="text-slate-300 text-xs font-medium mt-0.5">
                 {language === 'ms' 
-                  ? 'Imbas kod QR silinder untuk jana Senarai Silinder Kosong' 
+                  ? 'Imbas kod QR silinder untuk jana Empty Cylinder Register' 
                   : 'Scan empty cylinders to create official Empty Cylinder List'}
               </p>
             </div>
@@ -875,8 +983,40 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
         <div className="flex-1 overflow-y-auto p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 min-h-0">
           
           {/* Left Column: Console Inputs & Viewports (col-span-6) */}
-          <div className="col-span-1 md:col-span-6 space-y-6 border-b md:border-b-0 md:border-r border-slate-200/50 pb-6 md:pb-0 pr-0 md:pr-6">
+          <div className="col-span-1 md:col-span-6 space-y-5 border-b md:border-b-0 md:border-r border-slate-200/50 pb-6 md:pb-0 pr-0 md:pr-6">
             
+            {/* Offline Mode Alert / Assurance Banner */}
+            {(!isOnline || isOperatingOffline) && (
+              <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center justify-between text-amber-800 text-xs shadow-2xs">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-7 h-7 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0 text-amber-600">
+                    <WifiOff className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-bold text-amber-900 leading-tight">
+                      {language === 'ms' ? 'Mod Luar Talian Aktif (Tanpa Internet / Signal Lemah)' : 'Offline Mode Active (Zero Network Lag)'}
+                    </span>
+                    <span className="text-[11px] text-amber-700 leading-tight mt-0.5">
+                      {language === 'ms'
+                        ? `Imbasan diproses terus dari memori peranti (${cachedCount} silinder sedia). Auto-sync apabila talian kembali.`
+                        : `Instant scanning from device storage (${cachedCount} cylinders primed). Will auto-sync when online.`}
+                    </span>
+                  </div>
+                </div>
+                {pendingCount > 0 && isOnline && (
+                  <button
+                    type="button"
+                    onClick={() => syncNow()}
+                    disabled={isSyncing}
+                    className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[10px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 shadow-xs"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
+                    <span>Sync ({pendingCount})</span>
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Bulk Scan Mode Header Switcher */}
             <div className="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-xs">
               <div className="flex flex-col gap-0.5">
@@ -1003,8 +1143,14 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                 ) : (
                   <div className="h-40 border border-dashed border-slate-700/60 rounded-2xl flex flex-col items-center justify-center text-center p-4 bg-slate-950/20 text-slate-500">
                     <Camera className="w-8 h-8 mb-2 opacity-40 text-slate-400" />
-                    <span className="text-[10px] font-bold font-mono tracking-wide uppercase">Console View Offline</span>
-                    <span className="text-[9px] text-slate-600 mt-1 leading-normal">Click ACTIVATE CAMERA above to start scanner lens.</span>
+                    <span className="text-[10px] font-bold font-mono tracking-wide uppercase text-slate-300">
+                      {language === 'ms' ? 'Lensa Kamera Bersedia' : 'Camera Lens Standby'}
+                    </span>
+                    <span className="text-[9px] text-slate-500 mt-1 leading-normal max-w-xs">
+                      {language === 'ms'
+                        ? 'Klik AKTIFKAN KAMERA di atas untuk mengimbas kod bar/QR secara terus.'
+                        : 'Click ACTIVATE CAMERA above to start scanning barcodes directly.'}
+                    </span>
                   </div>
                 )}
               </div>
@@ -1362,7 +1508,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                     {language === 'ms' ? 'Silinder Diimbas (Sesi Ini)' : 'Scanned Cylinders (Current Session)'}
                   </h4>
                   <p className="text-[10px] text-slate-500 font-medium">
-                    {language === 'ms' ? 'Silinder sedia dimasukkan ke Senarai Silinder Kosong' : 'Cylinders ready to build Empty Cylinder List'}
+                    {language === 'ms' ? 'Silinder sedia dimasukkan ke Empty Cylinder Register' : 'Cylinders ready to build Empty Cylinder List'}
                   </p>
                 </div>
               </div>
@@ -1539,7 +1685,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
             onClick={onClose}
             className="px-5 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer text-center"
           >
-            {language === 'ms' ? 'Tutup Pengimbas' : 'Close Scanner'}
+            {language === 'ms' ? 'Close Scanner' : 'Close Scanner'}
           </button>
           
           <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5">
@@ -1553,10 +1699,10 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                 onClick={handleProceedToEmptyList}
                 disabled={sessionScannedCylinders.length === 0}
                 className="px-3.5 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                title={language === 'ms' ? 'Lihat atau cetak senarai manifest silinder kosong' : 'View or print empty cylinder manifest'}
+                title={language === 'ms' ? 'View or print empty cylinder manifest' : 'View or print empty cylinder manifest'}
               >
                 <FileText className="w-3.5 h-3.5 text-indigo-600" />
-                <span>{language === 'ms' ? 'Senarai Manifest' : 'View Manifest'}</span>
+                <span>{language === 'ms' ? 'Manifest Register' : 'View Manifest'}</span>
               </button>
             )}
 

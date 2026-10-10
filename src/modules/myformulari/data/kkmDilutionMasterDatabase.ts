@@ -61,7 +61,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Alfasigma S.p.A. N-Acetylcysteine (Hidonac) Product Leaflet. Revised 18 Jan 2016.",
@@ -276,7 +276,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Fresenius Kabi. Aminophylline IV Fresenius Product Leaflet. Revised",
@@ -355,7 +355,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Reconstitution - 4 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Kementerian Kesihatan Malaysia (KKM) Dilution Guide for Fluid Restricted Critically Ill Adults."
@@ -497,7 +497,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution 48 hours 8 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Product Leaflet. Revised 23 January 2018."
@@ -564,7 +564,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 1 hour",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Guilin Pharmaceutical Co. Ltd. Artesunate Powder for Injection 60 mg",
@@ -630,7 +630,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Hua-Huat S, Lee-Gong L, Peng-Hong C, Hu M. Sarawak Handbook of",
@@ -663,7 +663,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution 7 days 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Leaflet. Revised 27 April 2017."
@@ -693,7 +693,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - Use immediately",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Gahart BL, Nazareno AR. 2011 intravenous medications: A handbook for",
@@ -727,7 +727,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Dec 2020."
@@ -757,7 +757,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Product Leaflet. Revised Nov 2017."
@@ -854,7 +854,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - Use immediately",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Kementerian Kesihatan Malaysia (KKM) Dilution Guide for Fluid Restricted Critically Ill Adults."
@@ -884,7 +884,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution 7 days 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Kementerian Kesihatan Malaysia (KKM) Dilution Guide for Fluid Restricted Critically Ill Adults."
@@ -1007,7 +1007,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution 7 days 12 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Duopharma (M) Sdn. Bhd. Cefatum Ceftazidime Product Leaflet.",
@@ -1100,7 +1100,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Gray AH. Injectable Drugs Guide. London: Pharmaceutical Press; 2011.",
@@ -1199,7 +1199,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Product Leaflet. Revised 27 April 2019."
@@ -1230,7 +1230,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 24 hours",
     "comments": [
       "Extending infusion over 60 minutes is recommended for peripheral administration to decrease risk of phlebitis.",
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Karnataka Antibiotics & Pharmaceuticals Ltd. Cloxabiotic Injection",
@@ -1267,7 +1267,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Lexi-Comp Inc. Lexi-Drug©. Version 6.4.0.",
@@ -1299,7 +1299,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 2 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Deva Holding A.S. Product Leaftlet Bactrim Inj 400 mg/80 mg.",
@@ -1429,7 +1429,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Ferring Pharmaceuticals. Minirin Product Leaftlet. Revised 1 May 2015.",
@@ -1664,7 +1664,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "2. Pharmaniaga. Ephedrine Product Leaflet. Revised 16 May 2017."
@@ -1694,7 +1694,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution 24 hours 6 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. McAuley D. [Internet]. Ertapenem Dilution. GlobalRPh; 2017. Available",
@@ -1802,7 +1802,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 6 hours (D5),\n12 hours (NS)",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Kotra Pharma. Esomeprazole Product Leaflet (Vaxcel). Revised 26 Feb",
@@ -1837,7 +1837,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Reconstitution: 8 – 12 hours (Beriate/MYVATE) or up to 24 hours (Fanhdi)",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan.",
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique.",
       "Kadar suntikan IV tidak melebihi 2 – 3 mL seminit bagi mengelakkan tindak balas vasomotor."
     ],
     "references": [
@@ -1874,7 +1874,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Reconstitution - 8 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan.",
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique.",
       "Kadar pemberian tidak boleh melebihi 2 – 3 mL/min bagi mengelakkan tindak balas vasomotor."
     ],
     "references": [
@@ -1912,7 +1912,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Reconstitution - 3 hours",
     "comments": [
       "Use immediately and within three hours after reconstitution to avoid potential ill effect of any inadvertent bacterial contamination occurring after reconstitution.",
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Grifols Biologicals Inc. Factor IX (AlphaNineⓇSD) 500 IU, 1000 IU, 1500 IU Product Leaflet. Revised Dec 2017.",
@@ -2065,7 +2065,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Ain Medicare Sdn Bhd. Fluconazole (Fluconol®) 100 mg/50 ml, 200",
@@ -2100,7 +2100,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. SM Pharmaceuticals Sdn Bhd. Fusix (Frusemide) Injection 20 mg/2 ml",
@@ -2133,7 +2133,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Fusidic acid: Indication, Dosage, Side Effect, Precaution. MIMS Malaysia; [cited",
@@ -2305,7 +2305,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Lexi-Comp Inc. Lexi-Drug©. Version 6.4.0.",
@@ -2340,7 +2340,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Duopharma (M) Sdn Bhd. Kytron Product Leaflet. Revised 15 Oct 2019.",
@@ -2374,7 +2374,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "2019."
@@ -2404,7 +2404,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Ain Medicare Sdn Bhd. Heparinol Product Leaflet. Revised 1 Aug 2020.",
@@ -2436,7 +2436,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. CSL Behring Australia Pty Ltd. Albumex® 20 Human Albumin 20% (200",
@@ -2470,7 +2470,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Grifols (M) Sdn Bhd. Product Insert for Human Albumin 25% by",
@@ -2504,7 +2504,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Ciron Drugs & Pharmaceuticals Pvt. Ltd. Hydralazine Hydrochloride 20",
@@ -2603,7 +2603,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution 24 hours 4 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Fresenius Kabi Malaysia Sdn. Bhd. Imipenem/cilastatin Kabi Product",
@@ -2672,7 +2672,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Kementerian Kesihatan Malaysia (KKM) Dilution Guide for Fluid Restricted Critically Ill Adults."
@@ -2808,7 +2808,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "comments": [
       "Avoid use of PVC infusion containers, administration sets and in-line filters if possible.",
       "Rigid plastics, i.e. polyethylene (PE), polytetrafluoroethylene (PTFE) or polypropylene (PP) sets and syringes should be used if available.",
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Isosorbide Dinitrate 0.05% w/v Solution for Injection or Infusion. Torbay",
@@ -2953,7 +2953,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Averroes Pharmaceuticals. Epitech Product Leaflet. Revised 5 Nov",
@@ -2987,7 +2987,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "500mg/100ml. Revised 9 Feb 2009."
@@ -3228,7 +3228,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - 48 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. McAuley D. [Internet]. Solu Medrol-Methylprednisolone Dilution.",
@@ -3294,7 +3294,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Revised 1 Jul 2019."
@@ -3324,7 +3324,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 6 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Astellas Pharma Tech Co. Ltd. Package Insert Mycamine 50 mg.",
@@ -3392,7 +3392,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Volumes for Critically Ill Patients. 4th ed. December 2012."
@@ -3455,7 +3455,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Bayer. Package Insert Avelox. Revised 27 Nov 2020.",
@@ -3551,7 +3551,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - Use immediately",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Kementerian Kesihatan Malaysia (KKM) Dilution Guide for Fluid Restricted Critically Ill Adults."
@@ -3896,7 +3896,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Lexi-Comp Inc. Version 6.4.0. Lexi-Drug©. [cited 2023 Apr 18].",
@@ -3928,7 +3928,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Micromedex Drug Reference. Version 4.0.0 (881) Merative US L.P. [cited",
@@ -4103,7 +4103,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. MIMS Online. Knowful-Piracetam [Internet]. MIMS. [cited 2023 Apr 18].",
@@ -4137,7 +4137,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution 24 hours 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Bharat Serums and Vaccines Ltd. Poly-MxB Product Leaflet. Revised",
@@ -4250,7 +4250,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "ml. Revised 22 Nov 2017."
@@ -4280,7 +4280,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Injection."
@@ -4475,7 +4475,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. GlaxoSmithKline. Remifentanil (ULTIVA®) Product Leaflet. Revised 15",
@@ -4547,7 +4547,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Graham-Clarke E. Minimum Infusion Volumes [Internet]. 4.4 ed. Vol. 4.",
@@ -4619,7 +4619,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Fresenius Kabi. Glycophos Product Leaflet. Revised 3 Dec 2019.",
@@ -4656,7 +4656,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "comments": [
       "Product should always be protected from light, even during administration (wrap bag and tubing in aluminum foil).",
       "Monitor for thiocyanate / cyanide toxicity during prolonged infusion (> 72 hours) or renal failure.",
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Graham-Clarke E. Minimum Infusion Volumes [Internet]. 4.4 ed. Vol. 4.",
@@ -4773,7 +4773,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "[cited 2023 Apr 18]."
@@ -4943,7 +4943,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "comments": [
       "Should not be administered intravenously (IV contraindicated).",
       "Give concurrent active immunisation (tetanus vaccine) at a separate anatomical injection site using a separate syringe.",
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Kementerian Kesihatan Malaysia (KKM) Dilution Guide for Fluid Restricted Critically Ill Adults."
@@ -5096,7 +5096,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "Fridge (2 – 8°C) RT (< 25°C)\nAfter Dilution 24 hours 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Chungai Pharma Manufacturing Co. Ltd.",
@@ -5131,7 +5131,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Duopharma (M) Sdn. Bhd. Product Leaftlet Tramadol Hydrochloride.",
@@ -5203,7 +5203,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - -",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "Suspension For Injection Product Leaftlet. Revised 2017."
@@ -5266,7 +5266,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     "comments": [
       "Infusion-related events (Red Man Syndrome, hypotension, flushing) are related to both concentration and rate of administration of vancomycin.",
       "Monitor serum trough concentration (target 15 – 20 mcg/mL in severe infections) and renal function regularly.",
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. Gland Pharma Ltd. Vivocin Product Leaflet. Revised 5 Sept 2019.",
@@ -5344,7 +5344,7 @@ export const KKM_DILUTION_MASTER_DATABASE: KkmDilutionMonograph[] = [
     ],
     "stabilityRaw": "After Dilution - 24 hours",
     "comments": [
-      "Patuhi 7 Hak Pemberian Ubat Parenteral & Teknik Aseptik Kebangsaan."
+      "Adhere to the 7 Rights of Parenteral Medication Administration & National Aseptic Technique."
     ],
     "references": [
       "1. McAuley D. Verapamil [Internet]. GlobalRPH. 2017 [cited 2023 Apr 18].",

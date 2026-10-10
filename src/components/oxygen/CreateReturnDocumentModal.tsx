@@ -1,9 +1,16 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Edit3, CheckSquare, Square, ChevronDown, ChevronRight, AlertCircle, RefreshCw, Trash2, Plus, QrCode, CheckCircle2, ChevronLeft, Search } from 'lucide-react';
+import { X, Calendar, Edit3, CheckSquare, Square, ChevronDown, ChevronRight, AlertCircle, RefreshCw, Trash2, Plus, QrCode, CheckCircle2, ChevronLeft, Search, WifiOff } from 'lucide-react';
 import { supabase } from '@/services/supabase';
 import { useAuthStore } from '@/stores/authStore';
-import { getEmptyCylindersInStore, createReturnDocument, getCylinderByQrOrSerial, markCylinderAsEmpty } from '@/services/pharmacy/oxygenService';
+import { getCylinderByQrOrSerial, markCylinderAsEmpty } from '@/services/pharmacy/oxygenService';
+import {
+  offlineAwareGetSuppliers,
+  offlineAwareGetEmptyCylindersInStore,
+  offlineAwareReturnDocument,
+  isNetworkAvailable,
+  withTimeout,
+} from '@/modules/mycylinder/services/cylinderOfflineService';
 import type { OxygenCylinderWithRelations } from '@/types/pharmacy';
 
 const parseTypeAndSize = (typeName: string) => {
@@ -72,11 +79,49 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
       const code = innerSearchTerm.trim().toUpperCase();
       if (!code) return;
 
-      const found = emptyCylinders.find(c => {
+      // Extract valve hint if present (e.g. "P101-E-0011 pi", "P101-F-0178 BN")
+      let baseCode = code;
+      let preferredValve: string | undefined = undefined;
+      const vMatch = code.match(/^(.*?)(?:[\s_/(]+|-)(PI|PIN\s*INDEX|PIN|BN|BULLNOSE|BULL)[\s_/)]*$/i);
+      if (vMatch && vMatch[1].trim().length >= 3) {
+        baseCode = vMatch[1].trim();
+        const vRaw = vMatch[2].toUpperCase().trim();
+        preferredValve = (vRaw.startsWith('PI') || vRaw.startsWith('PIN')) ? 'PI' : 'BN';
+      }
+
+      const strippedCode = code.replace(/^(?:O2-|02-)/i, '');
+      const strippedBase = baseCode.replace(/^(?:O2-|02-)/i, '');
+
+      // Find all matching candidates in empty inventory
+      const matches = emptyCylinders.filter(c => {
         const sn = (c.serial_number || '').toUpperCase();
         const qr = (c.qr_code || '').toUpperCase();
-        return sn === code || qr === code;
+        const strippedSn = sn.replace(/^(?:O2-|02-)/i, '');
+        const strippedQr = qr.replace(/^(?:O2-|02-)/i, '');
+
+        if (sn === code || qr === code || sn === baseCode || qr === baseCode) return true;
+        if (strippedSn === strippedCode || strippedQr === strippedCode || strippedSn === strippedBase || strippedQr === strippedBase) return true;
+        if (sn.startsWith(`${code}-`) || qr.startsWith(`${code}-`) || sn.startsWith(`${baseCode}-`) || qr.startsWith(`${baseCode}-`)) return true;
+        if (strippedBase.startsWith('101-') && (strippedSn === `P${strippedBase}` || strippedSn.startsWith(`P${strippedBase}-`))) return true;
+        return false;
       });
+
+      // Prefer candidate not yet scanned
+      const unscannedMatches = matches.filter(c => !scannedCylinders.some(sc => sc.id === c.id));
+      const candidates = unscannedMatches.length > 0 ? unscannedMatches : matches;
+
+      // Sort by preferred valve
+      if (preferredValve && candidates.length > 1) {
+        candidates.sort((a, b) => {
+          const aValve = (a.type_info?.code || '').toUpperCase();
+          const bValve = (b.type_info?.code || '').toUpperCase();
+          const aIsPref = aValve === preferredValve || (a.serial_number && a.serial_number.toUpperCase().includes(`-${preferredValve}`)) ? 1 : 0;
+          const bIsPref = bValve === preferredValve || (b.serial_number && b.serial_number.toUpperCase().includes(`-${preferredValve}`)) ? 1 : 0;
+          return bIsPref - aIsPref;
+        });
+      }
+
+      const found = candidates[0];
 
       if (found) {
         if (!scannedCylinders.some(c => c.id === found.id)) {
@@ -136,23 +181,17 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
     setStep('scan');
     setScannedCylinders(sessionScannedCylinders);
     try {
-      // 1. Fetch active suppliers (Only show Linde & Borneo Indah)
-      const { data: sups, error: supErr } = await supabase
-        .from('suppliers')
-        .select('id, company_name, supplier_code')
-        .eq('status', 'active');
-
-      if (supErr) throw supErr;
-      
+      // 1. Fetch active suppliers (offline-aware)
+      const sups = await offlineAwareGetSuppliers();
       const filteredSuppliers = (sups || []).filter(s => {
         const name = (s.company_name || '').toLowerCase();
         return name.includes('linde') || name.includes('borneo indah');
       });
 
-      setSuppliers(filteredSuppliers);
+      setSuppliers(filteredSuppliers.length > 0 ? filteredSuppliers : sups || []);
       
-      const linde = filteredSuppliers.find(s => s.company_name.toLowerCase().includes('linde'));
-      const borneo = filteredSuppliers.find(s => s.company_name.toLowerCase().includes('borneo indah'));
+      const linde = (filteredSuppliers || []).find(s => s.company_name.toLowerCase().includes('linde'));
+      const borneo = (filteredSuppliers || []).find(s => s.company_name.toLowerCase().includes('borneo indah'));
       if (linde) {
         setSelectedSupplier(linde.id);
       } else if (borneo) {
@@ -161,9 +200,8 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
         setSelectedSupplier(filteredSuppliers[0].id);
       }
 
-      // 2. Fetch empty cylinders in store
-      const res = await getEmptyCylindersInStore(hospitalId);
-      if (res.error) throw new Error(res.error);
+      // 2. Fetch empty cylinders in store (offline-aware)
+      const res = await offlineAwareGetEmptyCylindersInStore(hospitalId);
       setEmptyCylinders(res.data || []);
       
       // Reset selections
@@ -171,30 +209,52 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
       setRemarks('');
       setReturnDate(new Date().toISOString().split('T')[0]);
 
-      // 3. Fetch supplier-tagged / Saboxy cylinders directly from database (active or returned)
-      const { data: supCyls, error: supCylsErr } = await supabase
-        .from('pharmacy_oxygen_cylinder_inventory')
-        .select(`
-          *,
-          size_info:pharmacy_oxygen_cylinder_sizes(*),
-          type_info:pharmacy_oxygen_cylinder_types(*)
-        `)
-        .eq('hospital_id', hospitalId)
-        .neq('status', 'deactivated')
-        .eq('is_active', true)
-        .or('supplier_tagged.eq.true,serial_number.ilike.%saboxy%,qr_code.ilike.%saboxy%')
-        .order('serial_number', { ascending: true });
+      // 3. Fetch supplier-tagged / Saboxy cylinders (offline-aware)
+      if (isNetworkAvailable()) {
+        try {
+          const { data: supCyls, error: supCylsErr } = await withTimeout(
+            Promise.resolve(
+              supabase
+                .from('pharmacy_oxygen_cylinder_inventory')
+                .select(`
+                  *,
+                  size_info:pharmacy_oxygen_cylinder_sizes(*),
+                  type_info:pharmacy_oxygen_cylinder_types(*)
+                `)
+                .eq('hospital_id', hospitalId)
+                .neq('status', 'deactivated')
+                .eq('is_active', true)
+                .or('supplier_tagged.eq.true,serial_number.ilike.%saboxy%,qr_code.ilike.%saboxy%')
+                .order('serial_number', { ascending: true })
+            ),
+            1500,
+            'Supplier cylinders fetch timed out'
+          );
 
-      if (!supCylsErr && Array.isArray(supCyls)) {
-        const saboxyOnly = supCyls.filter((c: any) => {
-          if (c?.status === 'deactivated' || c?.is_active === false) return false;
+          if (!supCylsErr && Array.isArray(supCyls)) {
+            const saboxyOnly = supCyls.filter((c: any) => {
+              if (c?.status === 'deactivated' || c?.is_active === false) return false;
+              const serial = String(c?.serial_number || '').toLowerCase();
+              const qr = String(c?.qr_code || '').toLowerCase();
+              return c?.supplier_tagged === true || serial.includes('saboxy') || qr.includes('saboxy');
+            });
+            setSupplierCylinders(saboxyOnly);
+          }
+        } catch (supErr) {
+          const cachedSaboxy = (res.data || []).filter((c: any) => {
+            const serial = String(c?.serial_number || '').toLowerCase();
+            const qr = String(c?.qr_code || '').toLowerCase();
+            return c?.supplier_tagged === true || serial.includes('saboxy') || qr.includes('saboxy');
+          });
+          setSupplierCylinders(cachedSaboxy);
+        }
+      } else {
+        const cachedSaboxy = (res.data || []).filter((c: any) => {
           const serial = String(c?.serial_number || '').toLowerCase();
           const qr = String(c?.qr_code || '').toLowerCase();
           return c?.supplier_tagged === true || serial.includes('saboxy') || qr.includes('saboxy');
         });
-        setSupplierCylinders(saboxyOnly);
-      } else {
-        setSupplierCylinders([]);
+        setSupplierCylinders(cachedSaboxy);
       }
     } catch (err) {
       console.error(err);
@@ -310,7 +370,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
     try {
       const creatorId = user?.id || localStorage.getItem('userId') || 'fbbd44d1-f322-4fdb-a367-a18e5371e205';
 
-      const res = await createReturnDocument(
+      const res = await offlineAwareReturnDocument(
         hospitalId,
         selectedSupplier,
         returnDate,
@@ -360,9 +420,17 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
               )}
             </div>
             <div>
-              <h3 className="text-xl font-bold text-slate-800">
-                {step === 'scan' ? 'Select Cylinders to Return' : 'Create Return Document'}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl font-bold text-slate-800">
+                  {step === 'scan' ? 'Select Cylinders to Return' : 'Create Return Document'}
+                </h3>
+                {!isNetworkAvailable() && (
+                  <span className="px-2.5 py-0.5 bg-amber-100 text-amber-800 border border-amber-300 rounded-full text-[10px] font-bold flex items-center gap-1">
+                    <WifiOff className="w-3 h-3" />
+                    Offline Mode
+                  </span>
+                )}
+              </div>
               <p className="text-slate-500 text-xs font-semibold">
                 {step === 'scan' ? 'Select available empty cylinders in inventory to return' : 'Sent when returning empty cylinders to supplier'}
               </p>

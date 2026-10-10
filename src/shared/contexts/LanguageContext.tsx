@@ -78,6 +78,7 @@ const dictionary: Record<string, Record<Language, string>> = {
   'sidebar.myformulari': { en: 'MyFormulari', ms: 'MyFormulari' },
   'sidebar.myformulari.lawas': { en: 'Hospital Lawas Formulary', ms: 'Formulari Hospital Lawas' },
   'sidebar.myformulari.search': { en: 'Drug Search & Catalog', ms: 'Carian & Katalog Ubat' },
+  'sidebar.myformulari.paediatric': { en: 'Paediatric Catalogue', ms: 'Katalog Pediatrik' },
   'sidebar.myformulari.ham': { en: 'High Alert Medications (HAM)', ms: 'Ubat Berisiko Tinggi (HAM)' },
   'sidebar.myformulari.lasa': { en: 'LASA & TALL-Man Register', ms: 'Daftar LASA & TALL-Man' },
   'sidebar.myformulari.dilution': { en: 'IV Dilution Protocols', ms: 'Protokol Pelarutan IV' },
@@ -259,13 +260,11 @@ const dictionary: Record<string, Record<Language, string>> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Always default strictly to English ('en')
+  // Official system language strictly English ('en')
   const [language, setLanguageState] = useState<Language>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('app_language')
-      if (saved === 'en' || saved === 'ms') {
-        return saved
-      }
+      if (saved === 'en') return 'en'
     }
     return 'en'
   })
@@ -284,8 +283,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }
 
   const t = (key: string, fallback?: string): string => {
-    if (dictionary[key] && dictionary[key][language]) {
-      return dictionary[key][language]
+    if (dictionary[key] && dictionary[key]['en']) {
+      return dictionary[key]['en']
     }
     if (fallback !== undefined) return fallback
     return key

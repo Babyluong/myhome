@@ -63,6 +63,8 @@ interface OxygenPdfOptions {
   balanceAfter?: number | null
   /** Per-cylinder-size loan rates keyed by size code, e.g. { '101-N': 15, '101-F': 13.1 } */
   loanRates?: Record<string, number>
+  loanVoteCode?: string
+  loanVoteActivity?: string
 }
 
 /**
@@ -139,63 +141,85 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
 
   const blocks: PoBlock[] = []
 
-  // 1. Group Refills by Size (filter out explicit loan items, or group all refills)
+  // 1. Group Refills by Size (filter out explicit loan items)
   const refillItems = items.filter(itm => !itm.is_loan)
   const refillGroups: Record<string, { quantity: number; unitPrice: number }[]> = {}
   
-  const targetItems = refillItems.length > 0 ? refillItems : items
-  targetItems.forEach(itm => {
-    const isLiquid = (itm.size_code || '').toLowerCase().includes('liquid') || (itm.size_code || '').toLowerCase().includes('vie')
-    const size = isLiquid ? 'Liquid Medical Oxygen (VIE Tank)' : (itm.size_code === '101-F' ? 'P101-F' : itm.size_code)
-    const refillPrice = isLiquid ? (itm.unit_price > 0 ? itm.unit_price : 3.60) : (itm.unit_price > 30 ? itm.unit_price : 250.00)
-    
-    if (!refillGroups[size]) refillGroups[size] = []
-    refillGroups[size].push({
-      quantity: itm.quantity,
-      unitPrice: refillPrice
+  if (refillItems.length > 0) {
+    refillItems.forEach(itm => {
+      const isLiquid = (itm.size_code || '').toLowerCase().includes('liquid') || (itm.size_code || '').toLowerCase().includes('vie')
+      const size = isLiquid ? 'Liquid Medical Oxygen (VIE Tank)' : (itm.size_code === '101-F' ? 'P101-F' : itm.size_code)
+      const refillPrice = isLiquid ? (itm.unit_price > 0 ? itm.unit_price : 3.60) : (itm.unit_price > 30 ? itm.unit_price : 250.00)
+      
+      if (!refillGroups[size]) refillGroups[size] = []
+      refillGroups[size].push({
+        quantity: itm.quantity,
+        unitPrice: refillPrice
+      })
     })
-  })
 
-  // Add Refill PO block for each size
-  Object.keys(refillGroups).sort().forEach(size => {
-    const groupItems = refillGroups[size]
-    const totalQty = groupItems.reduce((sum, g) => sum + g.quantity, 0)
-    const refillPrice = groupItems[0].unitPrice
-    
-    blocks.push({
-      type: 'refill',
-      items: [{
-        size_code: size,
-        is_loan: false,
-        quantity: totalQty,
-        unit_price: refillPrice,
-        total_price: refillPrice * totalQty
-      }],
-      totalPrice: refillPrice * totalQty,
-      balanceBefore: null,
-      balanceAfter: null
+    // Add Refill PO block for each size
+    Object.keys(refillGroups).sort().forEach(size => {
+      const groupItems = refillGroups[size]
+      const totalQty = groupItems.reduce((sum, g) => sum + g.quantity, 0)
+      const refillPrice = groupItems[0].unitPrice
+      
+      blocks.push({
+        type: 'refill',
+        items: [{
+          size_code: size,
+          is_loan: false,
+          quantity: totalQty,
+          unit_price: refillPrice,
+          total_price: refillPrice * totalQty
+        }],
+        totalPrice: refillPrice * totalQty,
+        balanceBefore: null,
+        balanceAfter: null
+      })
     })
-  })
+  }
 
   // 2. Build Loan PO block for loan items
-  const loanMap: Record<string, number> = {}
+  const loanMap: Record<string, { qty: number; unitPrice?: number }> = {}
   const loanItems = items.filter(itm => itm.is_loan)
-  const targetLoanItems = loanItems.length > 0 
-    ? loanItems 
-    : items.filter(itm => {
-        const rawSize = itm.size_code
-        return rawSize.startsWith('101-') || rawSize === '101-N' || rawSize === '101-F'
-      })
   
-  targetLoanItems.forEach(itm => {
-    const rawSize = itm.size_code
-    const displaySize = rawSize === '101-F' ? 'P101-F' : rawSize
-    loanMap[displaySize] = (loanMap[displaySize] || 0) + itm.quantity
-  })
+  if (loanItems.length > 0) {
+    loanItems.forEach(itm => {
+      const rawSize = itm.size_code
+      const displaySize = rawSize === '101-F' ? 'P101-F' : rawSize
+      if (!loanMap[displaySize]) {
+        loanMap[displaySize] = { qty: itm.quantity, unitPrice: itm.unit_price }
+      } else {
+        loanMap[displaySize].qty += itm.quantity
+      }
+    })
+  } else if (Number(reception?.loan_amount || 0) > 0) {
+    // If no explicit is_loan items were passed, but reception has loan charges recorded:
+    // Match loanable cylinder sizes in items (e.g. 101-N, 101-F)
+    const loanCandidates = items.filter(itm => {
+      const rawSize = itm.size_code || ''
+      return rawSize.startsWith('101-') || rawSize === '101-N' || rawSize === '101-F'
+    })
+
+    if (loanCandidates.length > 0) {
+      loanCandidates.forEach(itm => {
+        const rawSize = itm.size_code
+        const displaySize = rawSize === '101-F' ? 'P101-F' : rawSize
+        if (!loanMap[displaySize]) {
+          loanMap[displaySize] = { qty: itm.quantity }
+        } else {
+          loanMap[displaySize].qty += itm.quantity
+        }
+      })
+    }
+  }
 
   const consolidatedLoanItems = Object.keys(loanMap).map(sizeCode => {
-    const itemLoanRate = getLoanRateForSize(sizeCode)
-    const qty = loanMap[sizeCode]
+    const itemLoanRate = (loanMap[sizeCode].unitPrice && loanMap[sizeCode].unitPrice! > 0)
+      ? loanMap[sizeCode].unitPrice!
+      : getLoanRateForSize(sizeCode)
+    const qty = loanMap[sizeCode].qty
     return {
       size_code: sizeCode,
       is_loan: true,
@@ -204,6 +228,24 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
       total_price: itemLoanRate * qty
     }
   })
+
+  // Fallback for un-itemized loan charges invoice (or when loan amount is recorded without individual loan rows)
+  if (consolidatedLoanItems.length === 0 && Number(reception?.loan_amount || 0) > 0) {
+    const defaultRate = defaultLoanFallback
+    const totalLoan = Number(reception.loan_amount)
+    const qtyEstimate = totalLoan >= defaultRate && totalLoan % defaultRate === 0 
+      ? Math.round(totalLoan / defaultRate) 
+      : 1
+    const unitPriceEstimate = qtyEstimate > 1 ? defaultRate : totalLoan
+
+    consolidatedLoanItems.push({
+      size_code: '101-N / 101-F (Pinjaman)',
+      is_loan: true,
+      quantity: qtyEstimate,
+      unit_price: unitPriceEstimate,
+      total_price: totalLoan
+    })
+  }
 
   if (consolidatedLoanItems.length > 0) {
     const totalPrice = consolidatedLoanItems.reduce((sum, itm) => sum + itm.total_price, 0)
@@ -216,10 +258,10 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
     })
   }
 
-  // 3. Calculate sequential budget balance deductions for refills
+  // 3. Calculate sequential budget balance deductions for refills ONLY
+  // Pharmacy unit only pays for gas refills; cylinder loan charges fall under admin budget
   const refillBlocks = blocks.filter(b => b.type === 'refill')
-  
-  const totalRefillAmount = reception?.refill_amount || items.filter(itm => !itm.is_loan).reduce((sum, itm) => sum + itm.total_price, 0)
+  const totalRefillAmount = refillBlocks.reduce((sum, b) => sum + b.totalPrice, 0)
 
   let runningBalance: number
   if (balanceBefore !== null && balanceBefore !== undefined) {
@@ -234,6 +276,13 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
     b.balanceBefore = runningBalance
     b.balanceAfter = runningBalance - b.totalPrice
     runningBalance = b.balanceAfter
+  })
+
+  // Loan PO: falls under admin budget, so keep balanceBefore & balanceAfter as null
+  // This causes the Loan PO to display only "JUMLAH KESELURUHAN / TOTAL AMOUNT: RM ..." without pharmacy budget balance deduction
+  blocks.filter(b => b.type === 'loan').forEach(b => {
+    b.balanceBefore = null
+    b.balanceAfter = null
   })
 
   for (let sIdx = 0; sIdx < blocks.length; sIdx++) {
@@ -251,11 +300,14 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
     // 6. Document Titles
     doc.setFont('times', 'bold')
     doc.setFontSize(11)
-    doc.text('BORANG PERMOHONAN UNTUK PENGELUARAN PESANAN KERAJAAN', pageWidth / 2, 45, { align: 'center' })
+    doc.text('GOVERNMENT PURCHASE ORDER REQUISITION FORM', pageWidth / 2, 45, { align: 'center' })
     doc.setFont('times', 'italic')
     doc.setFontSize(9)
     doc.setTextColor(75, 85, 99)
-    doc.text('Application Form for Government Purchase Order (Oxygen Supply)', pageWidth / 2, 49, { align: 'center' })
+    const poSubtitle = block.type === 'loan'
+      ? 'Application Form for Government Purchase Order (Cylinder Rental / Loan Charges - Admin Account)'
+      : 'Application Form for Government Purchase Order (Oxygen Supply)'
+    doc.text(poSubtitle, pageWidth / 2, 49, { align: 'center' })
 
     // Divider
     doc.setLineWidth(0.3)
@@ -302,7 +354,8 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
 
     // Rows
     const firstDo = (reception.delivery_order_no || '').split(/[\s/]+/)[0] || 'REC'
-    const poNo = `PO-O2-${firstDo.substring(0, 8).toUpperCase()}`
+    const poPrefix = block.type === 'loan' ? 'PO-LN-' : 'PO-O2-'
+    const poNo = `${poPrefix}${firstDo.substring(0, 10).toUpperCase()}`
     const isValidDate = !isNaN(new Date(reception.reception_date).getTime())
     const formattedDate = isValidDate
       ? new Date(reception.reception_date).toLocaleDateString('ms-MY', {
@@ -312,13 +365,24 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
         }).toUpperCase()
       : String(reception.reception_date || '').toUpperCase()
 
-    drawGridRow(gridY, 'NO. REKOD PENERIMAAN / REC NO.', poNo, 'JABATAN / DEPARTMENT', 'FARMASI LOGISTIK')
+    const poDept = block.type === 'loan' ? 'BAHAGIAN PENGURUSAN / PENTADBIRAN' : 'FARMASI LOGISTIK'
+    drawGridRow(gridY, 'NO. REKOD PENERIMAAN / REC NO.', poNo, 'JABATAN / DEPARTMENT', poDept)
     gridY += rowHeight
 
-    drawGridRow(gridY, 'KOD UNDI / VOTE CODE', reception.vote_code, 'TARIKH TERIMA / RECEIVED DATE', formattedDate)
+    const blockVoteCode = block.type === 'loan'
+      ? (options.loanVoteCode || reception.loan_vote_code || (reception.vote_code && !reception.vote_code.startsWith('080') ? reception.vote_code : '24000'))
+      : (reception.vote_code || '080702')
+
+    drawGridRow(gridY, 'KOD UNDI / VOTE CODE', blockVoteCode, 'RECEIVED DATE', formattedDate)
     gridY += rowHeight
 
-    drawGridRow(gridY, 'AKTIVITI UNDI / VOTE ACTIVITY', reception.vote_activity, 'KATEGORI / CATEGORY', 'OKSIGEN PERUBATAN (MEDICAL OXYGEN)')
+    const categoryText = block.type === 'loan'
+      ? 'CAJ PINJAMAN / SEWAAN SILINDER (AKAUN PENTADBIRAN)'
+      : 'OKSIGEN PERUBATAN (MEDICAL OXYGEN)'
+    const blockVoteActivity = block.type === 'loan'
+      ? (options.loanVoteActivity || reception.loan_vote_activity || (reception.vote_activity && reception.vote_activity !== '27402' ? reception.vote_activity : '020200'))
+      : (reception.vote_activity || '27402')
+    drawGridRow(gridY, 'AKTIVITI UNDI / VOTE ACTIVITY', blockVoteActivity, 'KATEGORI / CATEGORY', categoryText)
     gridY += rowHeight
 
     drawGridRow(gridY, 'DELIVERY ORDER NO.', reception.delivery_order_no, 'SALES ORDER NO.', reception.sales_order_no || '-')
@@ -330,7 +394,7 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
     doc.setFont('times', 'bold')
     doc.setFontSize(9.5)
     doc.setTextColor(17, 24, 39)
-    doc.text('MAKLUMAT PEMBEKAL / SUPPLIER INFORMATION', col1, gridY)
+    doc.text('SUPPLIER INFORMATION', col1, gridY)
     gridY += 3.5
 
     doc.setLineWidth(0.25)
@@ -443,7 +507,7 @@ export async function generateOxygenPoPdf(options: OxygenPdfOptions): Promise<Bl
       doc.setFont('times', 'bold')
       doc.setFontSize(8.5)
       doc.setTextColor(17, 24, 39)
-      doc.text('JUMLAH KESELURUHAN / TOTAL AMOUNT:', boxX + 2, finalY + 19.5, { maxWidth: 46 })
+      doc.text('JUMLAH KESELURUHAN (AKAUN PENTADBIRAN):', boxX + 2, finalY + 19.5, { maxWidth: 46 })
 
       doc.setFont('times', 'bold')
       doc.setFontSize(10.5)
@@ -812,8 +876,16 @@ export async function generateOxygenReceptionReportPdf(options: OxygenPdfOptions
   y += 10
 
   // 3. Items list
+  const isVieReport = Boolean(
+    reception.is_vie_tank ||
+    (reception.monthKey && String(reception.monthKey).endsWith('_vie')) ||
+    items.some(i => (i.size_code || '').toLowerCase().includes('vie') || (i.size_code || '').toLowerCase().includes('liquid'))
+  )
   doc.setFont('times', 'bold')
-  doc.text('B. ANALISIS SILINDER YANG DITERIMA / DELIVERED CYLINDER ANALYSIS', margin + 5, y)
+  const sectionBTitle = isVieReport
+    ? 'B. ANALISIS BEKALAN TANGKI VIE (CECAIR) YANG DITERIMA / DELIVERED VIE LIQUID OXYGEN ANALYSIS'
+    : 'B. ANALISIS SILINDER YANG DITERIMA / DELIVERED CYLINDER ANALYSIS'
+  doc.text(sectionBTitle, margin + 5, y)
   y += 5
 
   const tableData: any[] = []
@@ -914,7 +986,10 @@ export async function generateOxygenReceptionReportPdf(options: OxygenPdfOptions
 
   doc.setFont('times', 'normal')
   doc.setFontSize(8.5)
-  doc.text('[ X ]  1. Spesifikasi & Saiz: Menepati jenis, saiz, dan kapasiti silinder oksigen yang dipesan.', margin + 9, y + 6)
+  const checklistSpec = isVieReport
+    ? '[ X ]  1. Spesifikasi & Saiz: Menepati jenis, kualiti cecair pukal, dan kapasiti Tangki VIE oksigen yang dipesan.'
+    : '[ X ]  1. Spesifikasi & Saiz: Menepati jenis, saiz, dan kapasiti silinder oksigen yang dipesan.'
+  doc.text(checklistSpec, margin + 9, y + 6)
   doc.text('[ X ]  2. Pengesahan Kuantiti: Kuantiti fizikal yang diterima adalah sama seperti di dalam Nota Serahan (DO).', margin + 9, y + 13)
   doc.text('[ X ]  3. Pemeriksaan Fizikal: Keadaan fizikal bekalan adalah elok, bersih, tiada kecacatan, dan memuaskan.', margin + 9, y + 20)
   doc.text('[ X ]  4. Kelengkapan Dokumen: Nota Serahan (DO) dan dokumen pengesahan pembekal lengkap dilampirkan.', margin + 9, y + 27)

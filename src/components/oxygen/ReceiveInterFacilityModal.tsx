@@ -236,7 +236,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
     const rawQuery = queryOverride !== undefined ? queryOverride : (searchQueries[itemIdx] || '');
     const query = rawQuery.trim();
     if (!query) {
-      setSearchMessage(prev => ({ ...prev, [itemIdx]: 'Sila taip nombor siri atau sebahagian nombor siri (cth: 7072).' }));
+      setSearchMessage(prev => ({ ...prev, [itemIdx]: 'Please type the serial number or suffix (e.g. 7072).' }));
       return;
     }
 
@@ -275,12 +275,12 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
 
       setSearchResults(prev => ({ ...prev, [itemIdx]: found }));
       if (found.length === 0) {
-        setSearchMessage(prev => ({ ...prev, [itemIdx]: `Tiada silinder ditemui dengan carian "${query}".` }));
+        setSearchMessage(prev => ({ ...prev, [itemIdx]: `No cylinder found matching search "${query}".` }));
       }
     } catch (err) {
       console.warn('Search error:', err);
       setSearchResults(prev => ({ ...prev, [itemIdx]: [] }));
-      setSearchMessage(prev => ({ ...prev, [itemIdx]: `Ralat carian. Cuba semula.` }));
+      setSearchMessage(prev => ({ ...prev, [itemIdx]: `Search error. Please try again.` }));
     } finally {
       setIsSearching(prev => ({ ...prev, [itemIdx]: false }));
     }
@@ -353,7 +353,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
 
     const facilityName = isManualFacility ? manualFacilityName.trim() : selectedFacility.trim();
     if (!facilityName) {
-      setError('Sila nyatakan atau pilih nama Fasiliti Luar Pembekal.');
+      setError('Please specify or select External Supplier Facility.');
       return;
     }
 
@@ -370,7 +370,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
     const effectiveReceivedAt = receivedDate ? new Date(receivedDate).toISOString() : new Date().toISOString();
 
     if (!effectiveDeptId) {
-      setError('Sila pilih Stor / Jabatan Simpanan Penerima.');
+      setError('Please select Receiving Storage Unit / Department.');
       return;
     }
 
@@ -937,7 +937,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                                     {cyl.current_location && (
                                       <>
                                         <span>•</span>
-                                        <span>{typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name : cyl.current_location}</span>
+                                        <span>{typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name || 'Stor Farmasi' : cyl.current_location || 'Stor Farmasi'}</span>
                                       </>
                                     )}
                                   </div>

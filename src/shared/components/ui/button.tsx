@@ -27,21 +27,21 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantClasses: Record<ButtonVariant, string> = {
   default:
-    "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 shadow-md hover:shadow-lg active:shadow-sm focus-visible:ring-blue-500 disabled:bg-blue-300 disabled:shadow-none hover:scale-[1.02] active:scale-[0.98]",
+    "bg-teal-700 text-white hover:bg-teal-800 active:bg-teal-900 dark:bg-teal-600 dark:hover:bg-teal-500 dark:text-slate-950 border border-teal-800/30 dark:border-teal-500/30 focus-visible:ring-teal-500 shadow-xs active:scale-[0.98]",
   primary:
-    "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl active:shadow-md focus-visible:ring-purple-500 disabled:from-blue-300 disabled:via-indigo-300 disabled:to-purple-300 disabled:shadow-none hover:scale-[1.02] active:scale-[0.98]",
+    "bg-teal-700 text-white hover:bg-teal-800 active:bg-teal-900 dark:bg-teal-600 dark:hover:bg-teal-500 dark:text-slate-950 border border-teal-800/30 dark:border-teal-500/30 focus-visible:ring-teal-500 shadow-xs active:scale-[0.98]",
   secondary:
-    "bg-slate-100 text-slate-900 hover:bg-slate-200 active:bg-slate-300 border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md active:shadow-sm disabled:bg-slate-50 disabled:text-slate-400 hover:scale-[1.02] active:scale-[0.98]",
+    "bg-surface text-text-secondary hover:bg-subtle active:bg-muted-surface border border-border-default hover:border-border-strong text-slate-800 dark:text-slate-200 focus-visible:ring-slate-400 shadow-xs active:scale-[0.98]",
   outline:
-    "border-2 border-blue-600 text-blue-600 hover:bg-blue-50 active:bg-blue-100 hover:border-blue-700 shadow-sm hover:shadow-md active:shadow-sm disabled:border-blue-300 disabled:text-blue-300 hover:scale-[1.02] active:scale-[0.98]",
+    "bg-transparent text-text-primary border border-border-default hover:bg-subtle active:bg-muted-surface hover:border-border-strong focus-visible:ring-teal-500 shadow-xs active:scale-[0.98]",
   ghost: 
-    "text-slate-700 hover:bg-slate-100 active:bg-slate-200 hover:text-slate-900 disabled:text-slate-400 hover:scale-[1.02] active:scale-[0.98]",
+    "bg-transparent text-text-secondary hover:bg-subtle active:bg-muted-surface hover:text-text-primary focus-visible:ring-teal-500 active:scale-[0.98]",
   destructive:
-    "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-md hover:shadow-lg active:shadow-sm focus-visible:ring-red-500 disabled:bg-red-300 disabled:shadow-none hover:scale-[1.02] active:scale-[0.98]",
+    "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 border border-red-700/40 focus-visible:ring-red-500 shadow-xs active:scale-[0.98]",
   success:
-    "bg-green-600 text-white hover:bg-green-700 active:bg-green-800 shadow-md hover:shadow-lg active:shadow-sm focus-visible:ring-green-500 disabled:bg-green-300 disabled:shadow-none hover:scale-[1.02] active:scale-[0.98]",
+    "bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 border border-emerald-700/40 focus-visible:ring-emerald-500 shadow-xs active:scale-[0.98]",
   warning:
-    "bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 shadow-md hover:shadow-lg active:shadow-sm focus-visible:ring-amber-500 disabled:bg-amber-300 disabled:shadow-none hover:scale-[1.02] active:scale-[0.98]",
+    "bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-800 border border-amber-700/40 focus-visible:ring-amber-500 shadow-xs active:scale-[0.98]",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -102,7 +102,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const spinnerSize = size === "xs" ? "xs" : size === "sm" ? "sm" : size === "lg" || size === "xl" ? "lg" : "md";
     
     const buttonClasses = cn(
-      "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 disabled:transform-none",
+      "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none select-none",
       variantClasses[variant],
       sizeClasses[size],
       className

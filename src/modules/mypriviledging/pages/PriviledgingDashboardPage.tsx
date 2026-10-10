@@ -130,24 +130,24 @@ export const PriviledgingDashboardPage: React.FC = () => {
       />
 
       {/* Staff Profile Switcher Bar */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 mb-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="bg-surface border border-border-default rounded-xl p-4 mb-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-800 dark:text-slate-200 font-bold text-sm">
+          <div className="w-10 h-10 rounded-xl bg-subtle border border-border-default flex items-center justify-center text-text-primary font-bold text-sm">
             {activeStaff?.fullName.slice(0, 2).toUpperCase() || 'ST'}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500 uppercase font-semibold tracking-wider">
+              <span className="text-xs text-text-muted uppercase font-semibold tracking-wider">
                 Active Profile:
               </span>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+              <h3 className="text-sm font-bold text-text-primary">
                 {activeStaff?.fullName}
               </h3>
-              <span className="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-md bg-accent-base/10 text-accent-base border border-accent-base/20 text-[10px] font-bold">
                 {activeStaff?.grade}
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-text-muted">
               {activeStaff?.position} • {activeStaff?.department}
             </p>
           </div>
@@ -158,7 +158,7 @@ export const PriviledgingDashboardPage: React.FC = () => {
           <select
             value={activeStaff?.id || ''}
             onChange={(e) => handleSelectStaff(e.target.value)}
-            className="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+            className="px-3 py-1.5 bg-canvas border border-border-default rounded-lg text-xs font-medium text-text-primary focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
           >
             {staffProfiles.map((st) => (
               <option key={st.id} value={st.id}>
@@ -182,7 +182,7 @@ export const PriviledgingDashboardPage: React.FC = () => {
         {/* Card 1: Credentialing Criteria */}
         <div
           onClick={() => navigate('/priviledging/criteria')}
-          className="group p-4 md:p-5 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
+          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-sky-700 dark:text-sky-400 border border-slate-200 dark:border-slate-700">
@@ -190,10 +190,10 @@ export const PriviledgingDashboardPage: React.FC = () => {
             </div>
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-sky-700 transition-all" />
           </div>
-          <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+          <h4 className="text-sm font-bold text-text-primary">
             Credentialing Criteria
           </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             Eligibility criteria, required supporting documentation & clinical checklists for Staff Nurses & Assistant Medical Officers.
           </p>
         </div>
@@ -201,7 +201,7 @@ export const PriviledgingDashboardPage: React.FC = () => {
         {/* Card 2: Catalog Explorer */}
         <div
           onClick={() => navigate('/priviledging/catalog')}
-          className="group p-4 md:p-5 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
+          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700">
@@ -209,10 +209,10 @@ export const PriviledgingDashboardPage: React.FC = () => {
             </div>
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-700 transition-all" />
           </div>
-          <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+          <h4 className="text-sm font-bold text-text-primary">
             Procedure Catalog (500+)
           </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             Explore 14 clinical procedure categories and select items for your competency logbook.
           </p>
         </div>
@@ -220,7 +220,7 @@ export const PriviledgingDashboardPage: React.FC = () => {
         {/* Card 3: Admin Queue or My Submissions */}
         <div
           onClick={() => navigate(isAdminMode ? '/priviledging/review-queue' : '/priviledging/my-submissions')}
-          className="group p-4 md:p-5 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
+          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-amber-700 dark:text-amber-400 border border-slate-200 dark:border-slate-700">
@@ -228,10 +228,10 @@ export const PriviledgingDashboardPage: React.FC = () => {
             </div>
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-amber-700 transition-all" />
           </div>
-          <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+          <h4 className="text-sm font-bold text-text-primary">
             {isAdminMode ? 'JKCP Committee Review Queue' : 'My Submissions & Logbook'}
           </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             {isAdminMode
               ? `${kpis.pendingSubmissions} procedures awaiting clinical assessment & endorsement.`
               : 'Track drafts, active submissions, approved privileges and amendment requests.'}
@@ -241,7 +241,7 @@ export const PriviledgingDashboardPage: React.FC = () => {
         {/* Card 4: Print Privileging Certificate */}
         <div
           onClick={() => navigate('/priviledging/print')}
-          className="group p-4 md:p-5 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
+          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
@@ -249,10 +249,10 @@ export const PriviledgingDashboardPage: React.FC = () => {
             </div>
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-slate-900 transition-all" />
           </div>
-          <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+          <h4 className="text-sm font-bold text-text-primary">
             Print Privileging Certificate
           </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             Official MOH credentialing certificate & letters of authorization with national crest for approved privileges.
           </p>
         </div>
@@ -261,13 +261,13 @@ export const PriviledgingDashboardPage: React.FC = () => {
       {/* Recent Submissions Section */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <FileText className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
+          <h3 className="text-base font-bold text-text-primary flex items-center gap-2">
+            <FileText className="w-4 h-4 text-accent-base" />
             {isAdminMode ? 'Hospital Privileging Registry' : 'Your Clinical Procedures Logbook'}
           </h3>
           <button
             onClick={() => navigate(isAdminMode ? '/priviledging/review-queue' : '/priviledging/my-submissions')}
-            className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline font-semibold flex items-center gap-1"
+            className="text-xs text-accent-base hover:underline font-semibold flex items-center gap-1"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />

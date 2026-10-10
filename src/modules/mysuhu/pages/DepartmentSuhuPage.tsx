@@ -24,8 +24,7 @@ import {
   X,
   Image as ImageIcon
 } from 'lucide-react'
-import { useAuthStore } from '@/stores/authStore'
-import { Badge, Spinner, SlideOver } from '@/components/ui'
+import { Badge, Spinner, SlideOver, ModulePageHeader } from '@/components/ui'
 import { 
   LineChart, 
   Line, 
@@ -55,6 +54,7 @@ import {
   deleteEquipmentPhoto
 } from '@/modules/mysuhu/services/suhuService'
 import { getDepartmentsByHospital } from '@/services/departmentService'
+import { useAuthStore } from '@/stores/authStore'
 import { downloadPdfReport } from '@/modules/mysuhu/services/suhuReportService'
 import type { UnitPemantauanWithRelations, Lokasi } from '@/types/mysuhu'
 import type { Department } from '@/types'
@@ -62,7 +62,7 @@ import type { Department } from '@/types'
 export const DepartmentSuhuPage: React.FC = () => {
   const { departmentId } = useParams<{ departmentId: string }>()
   const navigate = useNavigate()
-  const user = useAuthStore((state) => state.user)
+  const user = useAuthStore((state: any) => state.user)
   const hospitalId = user?.hospital_id || 'hosp-1'
 
   const [department, setDepartment] = useState<Department | null>(null)
@@ -938,92 +938,99 @@ export const DepartmentSuhuPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-8 text-slate-800 relative">
+    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6 relative">
       {/* Toast Notification */}
       {successMsg && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-2.5 border border-slate-800 max-w-sm animate-in fade-in slide-in-from-bottom-5 duration-300">
-          <CheckCircle className="w-4 h-4 text-[#00a68a]" />
-          <span className="text-xs font-black">{successMsg}</span>
+        <div className="fixed bottom-6 right-6 z-50 bg-ink text-ink-text px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5 border border-border-default max-w-sm animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <CheckCircle className="w-4 h-4 text-accent-base" />
+          <span className="text-xs font-semibold">{successMsg}</span>
         </div>
       )}
 
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-[#00a68a] to-emerald-500" />
-        
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => navigate('/suhu/dashboard')}
-            className="p-3 hover:bg-slate-50 border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-700 transition-all shadow-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-black tracking-tight text-slate-800">
-                {department.department_name}
-              </h1>
-              <Badge variant="gray" className="font-mono text-[9px] font-bold py-0.5 px-2">
-                {department.department_code}
-              </Badge>
-            </div>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">Configure and record temperature logs for this department's units</p>
-          </div>
-        </div>
-
-        <div className="flex gap-2.5">
-          <button 
-            onClick={() => setIsSettingsOpen(true)}
-            className="p-3 bg-white border border-slate-200 text-slate-600 hover:text-[#00a68a] hover:border-[#00a68a]/30 rounded-xl transition-all shadow-sm"
-            title="Department Settings"
-          >
-            <Settings className="w-4 h-4" />
-          </button>
-          <button 
-            onClick={() => setIsRegisterOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black shadow-md transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Equipment</span>
-          </button>
-        </div>
-      </div>
+      <ModulePageHeader
+        icon={Thermometer}
+        title={department.department_name}
+        description="Configure and record temperature logs for this department's cold chain storage devices."
+        badges={[
+          { label: department.department_code, variant: 'neutral' },
+          { label: 'Active Department', variant: 'accent' },
+        ]}
+        actions={
+          <>
+            <button 
+              onClick={() => navigate('/suhu/dashboard')}
+              className="p-2.5 bg-subtle hover:bg-hover border border-border-default text-text-primary rounded-lg transition-all shadow-2xs flex items-center gap-1.5 text-xs font-semibold"
+              title="Return to departments list"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Departments</span>
+            </button>
+            <button 
+              onClick={() => setIsSettingsOpen(true)}
+              className="p-2.5 bg-subtle hover:bg-hover border border-border-default text-text-muted hover:text-text-primary rounded-lg transition-all shadow-2xs"
+              title="Department Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => setIsRegisterOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2.5 bg-accent-base hover:bg-accent-hover text-accent-foreground rounded-lg text-xs font-semibold shadow-2xs transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Equipment</span>
+            </button>
+          </>
+        }
+      />
 
       {/* KPI Cards Section */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Units</span>
-          <p className="text-3xl font-black font-mono text-slate-800 mt-2">{stats.total}</p>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">Total Units</span>
+          <p className="text-2xl sm:text-3xl font-bold font-mono text-text-primary mt-1 tabular-nums">{stats.total}</p>
         </div>
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-emerald-500">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Normal</span>
-          <p className="text-3xl font-black font-mono text-emerald-600 mt-2">{stats.normal}</p>
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+          <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            Normal
+          </span>
+          <p className="text-2xl sm:text-3xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1 tabular-nums">{stats.normal}</p>
         </div>
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-amber-500">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Warning</span>
-          <p className="text-3xl font-black font-mono text-amber-600 mt-2">{stats.warning}</p>
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+          <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+            Warning
+          </span>
+          <p className="text-2xl sm:text-3xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1 tabular-nums">{stats.warning}</p>
         </div>
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-rose-500">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Breach</span>
-          <p className="text-3xl font-black font-mono text-rose-600 mt-2">{stats.breach}</p>
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+          <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+            Breach
+          </span>
+          <p className="text-2xl sm:text-3xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1 tabular-nums">{stats.breach}</p>
         </div>
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-slate-400">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">No Readings</span>
-          <p className="text-3xl font-black font-mono text-slate-500 mt-2">{stats.noReading}</p>
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-text-muted" />
+            No Readings
+          </span>
+          <p className="text-2xl sm:text-3xl font-bold font-mono text-text-muted mt-1 tabular-nums">{stats.noReading}</p>
         </div>
       </div>
 
       {/* Locations and Monitoring Points List */}
       {locations.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-3xl border border-slate-100 shadow-xl p-8">
-          <MapPin className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-base font-bold text-slate-600 mb-1">No Locations Configured</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed mb-4">
+        <div className="text-center py-16 bg-surface rounded-xl border border-dashed border-border-strong shadow-2xs p-8">
+          <MapPin className="w-12 h-12 text-text-muted opacity-40 mx-auto mb-3" />
+          <h3 className="text-base font-semibold text-text-primary mb-1">No Locations Configured</h3>
+          <p className="text-xs text-text-muted max-w-sm mx-auto leading-relaxed mb-4">
             You need to create a physical placement location inside this department before registering monitoring equipment.
           </p>
           <button 
             onClick={() => setIsSettingsOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#00a68a] hover:bg-[#008f76] text-white text-xs font-black rounded-xl transition-all shadow-md"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-accent-base hover:bg-accent-hover text-accent-foreground text-xs font-semibold rounded-lg transition-all shadow-2xs"
           >
             <Settings className="w-4 h-4" />
             <span>Configure Locations</span>
@@ -1044,7 +1051,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                   <span className="text-xs text-slate-400 font-bold">({group.units.length} Equipment)</span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5">
                   {group.units.map(unit => {
                     const latestReading = unit.latest_reading
                     const latestTemp = latestReading?.suhu
@@ -1099,10 +1106,11 @@ export const DepartmentSuhuPage: React.FC = () => {
                         }}
                         className={`bg-white border rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group relative overflow-hidden cursor-pointer ${cardBorder}`}
                       >
-                        {/* TOP HERO PHOTO SECTION - FILLS ENTIRE CARD TOP EDGE-TO-EDGE */}
+                        {/* TOP HERO PHOTO SECTION - PORTRAIT VIEW (3:4) TO CLEARLY DISPLAY UPRIGHT FREEZERS */}
                         <div 
                           onClick={(e) => e.stopPropagation()} 
-                          className="relative w-full h-52 sm:h-56 bg-slate-100 overflow-hidden flex-shrink-0"
+                          className="relative w-full aspect-[3/4] bg-slate-100 overflow-hidden flex-shrink-0"
+                          style={{ aspectRatio: '3/4' }}
                         >
                           {uploadingUnitId === unit.id ? (
                             <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-slate-100">
@@ -1119,7 +1127,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                                 title="Klik untuk lihat foto penuh"
                               />
                               {/* Contrast Gradient Overlay */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-slate-950/30 pointer-events-none" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-slate-950/20 pointer-events-none" />
 
                               {/* Floating Top Badges */}
                               <div className="absolute top-3.5 left-3.5 right-3.5 flex justify-between items-center pointer-events-none">
@@ -1143,7 +1151,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                                 </button>
                                 <label 
                                   className="p-2 bg-[#00a68a]/90 hover:bg-[#00a68a] text-white rounded-xl shadow cursor-pointer transition-colors" 
-                                  title="Tukar Foto"
+                                  title="Change Photo"
                                 >
                                   <Camera className="w-4 h-4" />
                                   <input 
@@ -1160,10 +1168,10 @@ export const DepartmentSuhuPage: React.FC = () => {
                               </div>
                             </div>
                           ) : (
-                            /* No Photo Attached State - Full Width Prominent Dropzone */
+                            /* No Photo Attached State - Full Width Prominent Dropzone in Portrait View */
                             <label 
-                              className="w-full h-full border-b-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50/80 hover:bg-emerald-50/40 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all text-slate-400 hover:text-[#00a68a] p-4 text-center group/btn relative"
-                              title="Klik untuk muat naik atau tangkap foto freezer/bilik ini"
+                              className="w-full h-full border-b-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50/80 hover:bg-emerald-50/40 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all text-slate-400 hover:text-[#00a68a] p-6 text-center group/btn relative"
+                              title="Click to upload or capture a photo of this chiller/room"
                             >
                               {/* Floating Top Badges */}
                               <div className="absolute top-3.5 left-3.5 right-3.5 flex justify-between items-center pointer-events-none">
@@ -1175,12 +1183,12 @@ export const DepartmentSuhuPage: React.FC = () => {
                                 </Badge>
                               </div>
 
-                              <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center group-hover/btn:border-[#00a68a] transition-colors mt-4">
-                                <Camera className="w-6 h-6 text-slate-400 group-hover/btn:text-[#00a68a] transition-colors" />
+                              <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center group-hover/btn:border-[#00a68a] group-hover/btn:scale-105 transition-all mt-4">
+                                <Camera className="w-7 h-7 text-slate-400 group-hover/btn:text-[#00a68a] transition-colors" />
                               </div>
                               <div>
-                                <span className="text-xs font-extrabold text-slate-700 block">Lampirkan Foto</span>
-                                <span className="text-[10px] text-slate-400 font-medium">Tangkap atau muat naik foto peti / bilik</span>
+                                <span className="text-xs font-extrabold text-slate-700 block">Attach Photo</span>
+                                <span className="text-[10px] text-slate-400 font-medium">Capture or upload chiller / room photo</span>
                               </div>
                               <input 
                                 type="file" 
@@ -1404,14 +1412,14 @@ export const DepartmentSuhuPage: React.FC = () => {
               </label>
 
               {registerPhotoPreview ? (
-                <div className="relative w-full h-36 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+                <div className="relative w-full aspect-[3/4] max-h-72 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 mx-auto" style={{ aspectRatio: '3/4' }}>
                   <img 
                     src={registerPhotoPreview} 
                     alt="Preview" 
                     className="w-full h-full object-cover"
                   />
                   <label 
-                    className="absolute bottom-2 right-2 px-2.5 py-1 bg-white/90 hover:bg-white text-slate-700 text-[10px] font-bold rounded-lg shadow cursor-pointer transition-colors"
+                    className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-white/95 hover:bg-white text-slate-700 text-[10px] font-bold rounded-xl shadow cursor-pointer transition-colors backdrop-blur-sm"
                   >
                     Change Photo
                     <input 
@@ -1716,7 +1724,8 @@ export const DepartmentSuhuPage: React.FC = () => {
                     <img 
                       src={loggingUnit.photo_url} 
                       alt={loggingUnit.nama_unit} 
-                      className="w-16 h-16 rounded-xl object-cover border border-slate-200 shadow-sm cursor-pointer hover:opacity-95 transition-opacity"
+                      className="w-14 h-[74px] sm:w-16 sm:h-[85px] rounded-xl object-cover border border-slate-200 shadow-sm cursor-pointer hover:opacity-95 transition-opacity"
+                      style={{ aspectRatio: '3/4' }}
                       onClick={() => setPreviewPhotoUrl(loggingUnit.photo_url!)}
                       title="Click to view full photo"
                     />
@@ -1730,7 +1739,8 @@ export const DepartmentSuhuPage: React.FC = () => {
                   </div>
                 ) : (
                   <label 
-                    className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#00a68a] bg-white flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 text-slate-400 hover:text-[#00a68a] transition-all"
+                    className="w-14 h-[74px] sm:w-16 sm:h-[85px] rounded-xl border-2 border-dashed border-slate-300 hover:border-[#00a68a] bg-white flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 text-slate-400 hover:text-[#00a68a] transition-all"
+                    style={{ aspectRatio: '3/4' }}
                     title="Attach photo for this freezer or room"
                   >
                     <Camera className="w-5 h-5 text-slate-300" />
@@ -1979,9 +1989,9 @@ export const DepartmentSuhuPage: React.FC = () => {
                 {/* 3. Unit Identity Header Bar (Phase 3) */}
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
                   <div className="flex items-start gap-3.5">
-                    {/* Equipment Photo or Icon */}
+                    {/* Equipment Photo or Icon in Portrait Ratio (3:4) */}
                     {activeDetailUnit.photo_url ? (
-                      <div className="relative group/detailphoto w-16 h-16 rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0 bg-slate-50">
+                      <div className="relative group/detailphoto w-16 h-[85px] rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0 bg-slate-50" style={{ aspectRatio: '3/4' }}>
                         <img 
                           src={activeDetailUnit.photo_url} 
                           alt={activeDetailUnit.nama_unit} 
@@ -2729,7 +2739,7 @@ export const DepartmentSuhuPage: React.FC = () => {
             <div className="flex justify-between items-center px-5 py-3 border-b border-slate-800 text-white">
               <div className="flex items-center gap-2">
                 <ImageIcon className="w-4 h-4 text-[#00a68a]" />
-                <span className="text-xs font-bold tracking-wide text-slate-200">Foto Peralatan / Bilik</span>
+                <span className="text-xs font-bold tracking-wide text-slate-200">Equipment / Room Photo</span>
               </div>
               <button
                 onClick={() => setPreviewPhotoUrl(null)}

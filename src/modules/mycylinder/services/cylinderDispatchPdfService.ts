@@ -101,10 +101,10 @@ export async function generateCylinderDispatchPdf(
     )
   );
   const docTitle = isReturn
-    ? 'BORANG PEMULANGAN SILINDER GAS (ANTARA FASILITI)'
+    ? 'GAS CYLINDER RETURN FORM (INTER-FACILITY)'
     : (request.is_external_facility
-        ? (request.indent_direction === 'inbound' ? 'NOTA PENERIMAAN SILINDER ANTARA FASILITI (INBOUND)' : 'BORANG PENGELUARAN / INDENT SILINDER GAS (ANTARA FASILITI)')
-        : 'BORANG PENGELUARAN / PERMINTAAN SILINDER GAS PERUBATAN');
+        ? (request.indent_direction === 'inbound' ? 'NOTA PENERIMAAN SILINDER ANTARA FASILITI (INBOUND)' : 'GAS CYLINDER ISSUANCE / INDENT FORM (INTER-FACILITY)')
+        : 'MEDICAL GAS CYLINDER REQUISITION / ISSUANCE FORM');
   doc.text(docTitle, pageWidth / 2, 40, { align: 'center' });
   doc.setFont('times', 'italic');
   doc.setFontSize(9.5);

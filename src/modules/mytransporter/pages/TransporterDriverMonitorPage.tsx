@@ -168,7 +168,7 @@ const TransporterDriverMonitorPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <Users className="w-8 h-8 text-indigo-600" />
-            {isEn ? 'Driver Supervision & Activity Monitoring' : 'Pemantauan & Aktiviti Pemandu (Driver Supervision)'}
+            {isEn ? 'Driver Supervision & Activity Monitoring' : 'Driver Activity & Supervision'}
           </h1>
           <p className="text-slate-500 text-sm">
             {isEn 
@@ -182,7 +182,7 @@ const TransporterDriverMonitorPage: React.FC = () => {
           className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-2 cursor-pointer"
         >
           <Printer className="w-4 h-4" />
-          <span>{isEn ? 'Print Activity Report' : 'Cetak Laporan Aktiviti'}</span>
+          <span>{isEn ? 'Print Activity Report' : 'Print Activity Report'}</span>
         </Button>
       </div>
 
@@ -193,7 +193,7 @@ const TransporterDriverMonitorPage: React.FC = () => {
           {/* Driver Selector */}
           <div className="space-y-1">
             <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
-              {isEn ? 'Select Driver' : 'Pilih Pemandu'}
+              {isEn ? 'Select Driver' : 'Select Driver'}
             </label>
             <select
               value={selectedDriverId}

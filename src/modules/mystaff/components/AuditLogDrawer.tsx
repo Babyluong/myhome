@@ -239,7 +239,7 @@ export const AuditLogDrawer: React.FC<AuditLogDrawerProps> = ({
             <div className="text-center py-16 text-slate-400 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
               <History className="w-8 h-8 text-slate-300 mx-auto mb-2" />
               <p className="font-bold text-slate-600 text-sm">
-                {isMs ? 'Tiada rekod audit ditemui' : 'No audit records found'}
+                {isMs ? 'No audit records found' : 'No audit records found'}
               </p>
               <p className="text-xs text-slate-400 mt-0.5">
                 {isMs

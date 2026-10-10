@@ -38,7 +38,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
   return (
     <div className="mb-6">
       {/* Top Header Card */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 md:p-5 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface border border-border-default rounded-xl p-4 md:p-5 shadow-xs">
         {/* Left: Crest, Title, Description */}
         <div className="flex items-center gap-3.5">
           <button
@@ -49,16 +49,16 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
             <ArrowLeft className="w-5 h-5" />
           </button>
           
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 flex items-center justify-center text-emerald-700 dark:text-emerald-300 shrink-0 shadow-2xs">
+          <div className="w-11 h-11 rounded-xl bg-accent-base/10 border border-accent-base/20 flex items-center justify-center text-accent-base shrink-0 shadow-xs">
             <UserCheck className="w-6 h-6" />
           </div>
 
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+              <h1 className="text-lg md:text-xl font-bold text-text-primary tracking-tight">
                 MyPriviledging
               </h1>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-accent-base/10 text-accent-base border border-accent-base/20">
                 {isMs ? 'Piawaian C&P KKM' : 'MOH C&P Standards'}
               </span>
               {pendingReviewsCount > 0 && isAdminMode && (
@@ -67,7 +67,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-text-muted mt-0.5">
               {isMs
                 ? 'Sistem Buku Log & Perakuan Penurunan Kuasa Klinikal Hospital Lawas'
                 : 'Hospital Lawas Clinical Credentialing, Logbook & Privileging System'}
@@ -79,7 +79,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
         <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
           {/* User/Admin Role Switcher */}
           {onToggleAdminMode && (
-            <div className="flex items-center bg-slate-100 dark:bg-slate-800/90 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/80 text-xs font-medium">
+            <div className="flex items-center bg-subtle p-1 rounded-lg border border-border-default text-xs font-medium">
               <button
                 type="button"
                 onClick={() => {
@@ -89,8 +89,8 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all',
                   !isAdminMode
-                    ? 'bg-white dark:bg-slate-700 text-emerald-800 dark:text-emerald-200 font-semibold shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-surface text-accent-base font-semibold shadow-xs'
+                    : 'text-text-muted hover:text-text-primary'
                 )}
               >
                 <User className="w-3.5 h-3.5" />

@@ -7,6 +7,11 @@ interface ModalConfig {
 }
 
 interface UIState {
+  // Theme
+  theme: 'light' | 'dark'
+  toggleTheme: () => void
+  setTheme: (theme: 'light' | 'dark') => void
+
   // Sidebar
   sidebarOpen: boolean
   sidebarCollapsed: boolean
@@ -31,7 +36,40 @@ interface UIState {
   setGlobalLoading: (loading: boolean, message?: string) => void
 }
 
+const getInitialTheme = (): 'light' | 'dark' => {
+  if (typeof window === 'undefined') return 'light'
+  const stored = localStorage.getItem('home_theme')
+  if (stored === 'light' || stored === 'dark') return stored
+  return 'light' // Default to light per design system mandate
+}
+
 export const useUIStore = create<UIState>((set, get) => ({
+  // Theme state
+  theme: getInitialTheme(),
+  toggleTheme: () => {
+    const nextTheme = get().theme === 'dark' ? 'light' : 'dark'
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('home_theme', nextTheme)
+      if (nextTheme === 'dark') {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    }
+    set({ theme: nextTheme })
+  },
+  setTheme: (theme) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('home_theme', theme)
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    }
+    set({ theme })
+  },
+
   // Initial state
   sidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
   sidebarCollapsed: false,

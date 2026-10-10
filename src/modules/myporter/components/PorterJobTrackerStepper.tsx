@@ -5,7 +5,7 @@ import {
   CheckCircle, 
   Clock, 
   MapPin, 
-  Truck, 
+  PersonStanding, 
   PackageCheck, 
   UserCheck,
   AlertCircle
@@ -74,7 +74,7 @@ export const PorterJobTrackerStepper: React.FC<Props> = ({ job, compact = false 
       key: 'in_transit', 
       label: language === 'ms' ? 'Dalam Perjalanan' : 'In Transit', 
       desc: language === 'ms' ? 'Sedang menuju ke destinasi' : 'Heading to destination', 
-      icon: Truck 
+      icon: PersonStanding 
     },
     { 
       key: 'pending_receiver_confirmation', 

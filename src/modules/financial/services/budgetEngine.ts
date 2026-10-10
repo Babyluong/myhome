@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
 import type { ApiResponse } from '@/types'
 import type {
@@ -13,6 +13,51 @@ import type {
 import { getSharedDepartments, getPrimaryDepartment, normalize } from './warrantService'
 
 /**
+ * Normalizes voteCode(s) and automatically handles special allocations like Duit Khas.
+ * E.g. When category is 'duit_khas' and voteCode is APPL/990102, includes '080600 (APPL)'.
+ * E.g. When category is 'duit_khas' and voteCode is CC/080702, includes '080600 (CC)'.
+ */
+export function resolveVoteCodes(voteCode?: string | string[], category?: string): string[] | undefined {
+  if (!voteCode) {
+    if (category === 'duit_khas') {
+      return ['080600 (APPL)', '080600 (CC)', '080600']
+    }
+    return undefined
+  }
+
+  const rawCodes = Array.isArray(voteCode) ? voteCode : [voteCode]
+  const resolved = new Set<string>()
+
+  for (const code of rawCodes) {
+    const clean = String(code).trim()
+    resolved.add(clean)
+
+    if (category === 'duit_khas' || !category || category === 'all') {
+      if (clean === '990102' || clean.toUpperCase().includes('APPL')) {
+        resolved.add('080600 (APPL)')
+      }
+      if (clean === '080702' || clean.toUpperCase().includes('CC')) {
+        resolved.add('080600 (CC)')
+      }
+    }
+  }
+
+  // If specific category is duit_khas, narrow to the appropriate Duit Khas vote family
+  if (category === 'duit_khas') {
+    const hasAppl = Array.from(resolved).some(c => c === '990102' || c.includes('APPL'))
+    const hasCc = Array.from(resolved).some(c => c === '080702' || c.includes('CC'))
+    if (hasAppl && !hasCc) {
+      return ['080600 (APPL)', '990102']
+    }
+    if (hasCc && !hasAppl) {
+      return ['080600 (CC)', '080702']
+    }
+  }
+
+  return Array.from(resolved)
+}
+
+/**
  * Unified Budget Engine
  * Single source of truth for all financial calculations in the pharmacy module.
  */
@@ -23,6 +68,7 @@ export async function getUnifiedBudgetSummary(
     const { hospitalId, fiscalYear, voteCode, voteActivity, category, department, excludePoId, asOfDate } = query
     const startDate = `${fiscalYear}-01-01`
     const endDate = `${fiscalYear}-12-31`
+    const resolvedVoteCodes = resolveVoteCodes(voteCode, category)
 
     if (!isSupabaseConfigured()) {
       return { data: null as any, error: 'Supabase not configured' }
@@ -38,7 +84,13 @@ export async function getUnifiedBudgetSummary(
       .gte('warrant_date', startDate)
       .lte('warrant_date', asOfDate || endDate)
 
-    if (voteCode) warrantQuery = warrantQuery.eq('vote_code', voteCode)
+    if (resolvedVoteCodes && resolvedVoteCodes.length > 0) {
+      if (resolvedVoteCodes.length === 1) {
+        warrantQuery = warrantQuery.eq('vote_code', resolvedVoteCodes[0])
+      } else {
+        warrantQuery = warrantQuery.in('vote_code', resolvedVoteCodes)
+      }
+    }
     if (voteActivity) warrantQuery = warrantQuery.eq('vote_activity', voteActivity)
     if (category) warrantQuery = warrantQuery.eq('category', category)
     
@@ -72,7 +124,13 @@ export async function getUnifiedBudgetSummary(
       .lte('order_date', asOfDate || endDate)
       .in('status', VALID_STATUSES) // Only fetch valid statuses
 
-    if (voteCode) poQuery = poQuery.eq('vote_code', voteCode)
+    if (resolvedVoteCodes && resolvedVoteCodes.length > 0) {
+      if (resolvedVoteCodes.length === 1) {
+        poQuery = poQuery.eq('vote_code', resolvedVoteCodes[0])
+      } else {
+        poQuery = poQuery.in('vote_code', resolvedVoteCodes)
+      }
+    }
     if (voteActivity) poQuery = poQuery.eq('vote_activity', voteActivity)
     if (category) poQuery = poQuery.eq('category', category)
     
@@ -313,12 +371,13 @@ export async function getExpenseList(
     const { hospitalId, fiscalYear, voteCode, voteActivity, category, department } = query
     const startDate = `${fiscalYear}-01-01`
     const endDate = `${fiscalYear}-12-31`
+    const resolvedVoteCodes = resolveVoteCodes(voteCode, category)
 
     if (!isSupabaseConfigured()) {
       return { data: [], error: 'Supabase not configured' }
     }
 
-    const VALID_STATUSES = ['approved', 'sent', 'partial_received', 'completed', 'cancelled']
+    const VALID_STATUSES = ['approved', 'sent', 'partial_received', 'completed', 'cancelled', 'pending_approval', 'draft']
 
     let poQuery = supabase
       .from('pharmacy_purchase_orders')
@@ -333,7 +392,13 @@ export async function getExpenseList(
       poQuery = poQuery.in('status', VALID_STATUSES)
     }
 
-    if (voteCode) poQuery = poQuery.eq('vote_code', voteCode)
+    if (resolvedVoteCodes && resolvedVoteCodes.length > 0) {
+      if (resolvedVoteCodes.length === 1) {
+        poQuery = poQuery.eq('vote_code', resolvedVoteCodes[0])
+      } else {
+        poQuery = poQuery.in('vote_code', resolvedVoteCodes)
+      }
+    }
     if (voteActivity) poQuery = poQuery.eq('vote_activity', voteActivity)
     if (category) poQuery = poQuery.eq('category', category)
     

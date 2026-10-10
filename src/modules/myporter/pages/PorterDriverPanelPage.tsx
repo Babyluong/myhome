@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  Truck, 
+  PersonStanding, 
   Radio, 
   MapPin, 
   Check, 
@@ -333,7 +333,7 @@ export const PorterDriverPanelPage: React.FC = () => {
           <div className="space-y-3">
             {poolJobs.length === 0 ? (
               <div className="p-16 text-center text-slate-500 bg-slate-900/60 rounded-3xl border border-slate-800">
-                <Truck className="w-12 h-12 mx-auto text-slate-700 mb-3" />
+                <PersonStanding className="w-12 h-12 mx-auto text-slate-700 mb-3" />
                 <p className="font-bold text-slate-400">No new tasks in pool.</p>
                 <p className="text-xs text-slate-500 mt-1">Radar is actively listening for ward requests.</p>
               </div>

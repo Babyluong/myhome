@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
+import { isCylinderPinIndex } from './StoreBalanceGrid';
 
 export interface UsageLedgerRow {
   combo_id: string;
@@ -142,7 +143,7 @@ export const StoreUsageBalanceTable: React.FC<StoreUsageBalanceTableProps> = ({
         <div className="col-span-2 md:col-span-1 bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-3.5 shadow-sm space-y-1 border border-slate-700">
           <div className="flex items-center justify-between text-slate-300">
             <span className="text-[11px] font-extrabold uppercase tracking-wider">
-              {language === 'ms' ? 'Jumlah Pegangan' : 'Total Hospital Fleet'}
+              {language === 'ms' ? 'Total Custody' : 'Total Hospital Fleet'}
             </span>
             <Layers className="w-4 h-4 text-teal-400" />
           </div>
@@ -301,7 +302,7 @@ export const StoreUsageBalanceTable: React.FC<StoreUsageBalanceTableProps> = ({
             </thead>
             <tbody className="divide-y divide-slate-200/40 text-slate-700 font-medium text-xs">
               {data.map((row) => {
-                const isPinIndex = row.display_name.toLowerCase().includes('pi') || row.display_name.toLowerCase().includes('- d') || row.display_name.toLowerCase().includes('- e');
+                const isPinIndex = isCylinderPinIndex(row);
                 const isLoan = row.display_name.toLowerCase().includes('loan');
 
                 return (

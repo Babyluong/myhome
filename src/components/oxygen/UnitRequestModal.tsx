@@ -62,15 +62,17 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
   const [isFacilityOpen, setIsFacilityOpen] = useState(false);
   const facilityRef = useRef<HTMLDivElement>(null);
 
-  // 7 Official hospital clinical departments/wards authorized for medical cylinder indents
+  // 9 Official hospital clinical departments/wards authorized for medical cylinder indents
   const ALLOWED_CYLINDER_DEPTS = useMemo(() => [
-    { key: 'general_ward', name: 'General ward', match: (n: string, c: string) => (n.includes('general') && n.includes('ward')) || c === 'GENERAL_WARD' },
+    { key: 'female_ward', name: 'Female Ward', match: (n: string, c: string) => (n.includes('female') && n.includes('ward')) || n.includes('perempuan') || c === 'FEMALE_WARD' || c === 'WAD_PEREMPUAN' },
+    { key: 'male_ward', name: 'Male Ward', match: (n: string, c: string) => ((n.includes('male') && !n.includes('female')) && n.includes('ward')) || n.includes('lelaki') || c === 'MALE_WARD' || c === 'WAD_LELAKI' },
     { key: 'paediatric_ward', name: 'Paediatric ward', match: (n: string, c: string) => n.includes('paediatric') || n.includes('pediatric') || c === 'PAEDIATRIC_WARD' },
     { key: 'maternity_ward', name: 'Maternity Ward', match: (n: string, c: string) => n.includes('maternity') || c === 'MATERNITY_WARD' },
     { key: 'emergency_trauma', name: 'Emergency and Trauma', match: (n: string, c: string) => (n.includes('emergency') && !n.includes('pharmacy')) || n.includes('trauma') || c === 'EMERGENCY_TRAUMA' },
     { key: 'radiology', name: 'Radiology and Radiography', match: (n: string, c: string) => n.includes('radiolog') || c === 'RADIOLOGY' },
     { key: 'nephrology', name: 'Nephrology', match: (n: string, c: string) => n.includes('nephrolog') || c === 'NEPHROLOGY' },
     { key: 'operation_theater', name: 'Operation Theater', match: (n: string, c: string) => n.includes('operation') || n.includes('theater') || n.includes('theatre') || c === 'OPERATION_THEATER' },
+    { key: 'klinik_pakar', name: 'Unit Klinik Pakar', match: (n: string, c: string) => n.includes('klinik pakar') || n.includes('specialist clinic') || c === 'KLINIK_PAKAR' },
   ], []);
 
   // Filter strictly to the 7 medical cylinder departments
@@ -213,12 +215,12 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
       : selectedDeptId;
 
     if (indentMode !== 'external' && !effectiveDeptId) {
-      setError('Sila pilih Wad / Unit Pemohon.');
+      setError('Please select Requesting Ward / Unit.');
       return;
     }
 
     if (indentMode === 'external' && !externalFacility.trim()) {
-      setError('Sila nyatakan atau pilih Fasiliti Luar (cth: Hospital Beaufort).');
+      setError('Please specify or select External Facility (e.g. Beaufort Hospital).');
       return;
     }
 
@@ -234,7 +236,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
 
     const invalidItem = items.some((item) => !item.quantity || item.quantity <= 0);
     if (invalidItem) {
-      setError('Sila pastikan kuantiti sekurang-kurangnya 1 untuk semua item.');
+      setError('Please ensure quantity is at least 1 for all items.');
       return;
     }
 
@@ -262,7 +264,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
       });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ralat semasa menghantar permohonan.');
+      setError(err instanceof Error ? err.message : 'Error submitting requisition.');
     } finally {
       setIsSubmitting(false);
     }
@@ -333,7 +335,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
               </div>
               <p className="text-[11px] sm:text-xs text-slate-500 font-medium truncate mt-0.5">
                 {indentMode === 'external'
-                  ? 'Permohonan inden bekalan oksigen antara fasiliti kesihatan KKM.'
+                  ? 'Inter-facility oxygen supply requisition between MOH healthcare facilities.'
                   : 'Inden bekalan silinder oksigen wad klinikal ke Unit Farmasi Logistik.'}
               </p>
             </div>
@@ -532,7 +534,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                   Requesting Department (Wad / Unit) *
                 </label>
                 <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/80">
-                  7 Wad Klinikal Dibenarkan
+                  {clinicalDepartments.length > 0 ? clinicalDepartments.length : 9} Wad & Unit Dibenarkan
                 </span>
               </div>
               <div className="relative">
@@ -909,7 +911,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
         <div className="px-4 py-3 sm:px-7 sm:py-4 border-t border-slate-200/80 flex items-center justify-between bg-white/95 backdrop-blur-md sticky bottom-0 z-20">
           {/* Summary info (desktop view) */}
           <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-slate-500">
-            <span>Jumlah Permohonan:</span>
+            <span>Total Requisitions:</span>
             <span className="font-extrabold text-slate-900 font-mono bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/80">
               {totalQuantity} {totalQuantity === 1 ? 'Silinder' : 'Silinder'}
             </span>
@@ -945,7 +947,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                 </>
               ) : (
                 <span>
-                  {indentMode === 'external' ? 'Hantar Inden Luar' : 'Hantar Permohonan'}
+                  {indentMode === 'external' ? 'Hantar Inden Luar' : 'Submit Requisition'}
                 </span>
               )}
             </button>

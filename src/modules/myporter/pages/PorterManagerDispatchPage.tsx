@@ -8,7 +8,6 @@ import {
   AlertTriangle, 
   CheckCircle2, 
   TrendingUp, 
-  Truck, 
   UserPlus, 
   ChevronRight, 
   RefreshCw,

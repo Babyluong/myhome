@@ -62,6 +62,7 @@ import {
 import { getDrugCatalog } from '@/services/pharmacy/drugCatalogService'
 import { getNonDrugCatalog } from '@/services/pharmacy/nonDrugCatalogService'
 import { cn, formatCurrency, isContractExpired, isApplVote, isCcVote } from '@/lib/utils'
+import { normalizeRealMdcCode, resolveGenuineItemCode, isSyntheticMockCode } from '@/shared/utils/itemCodeUtils'
 import type { 
   PurchaseOrderWithRelations, 
   Supplier, 
@@ -111,6 +112,8 @@ const WARD_DEPARTMENTS = [
   'cssu_cssd', 
   'wound_care', 
   'general_ward', 
+  'female_ward', 
+  'male_ward', 
   'paediatric_ward', 
   'maternity_ward', 
   'emergency_trauma', 
@@ -368,24 +371,8 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                       .maybeSingle()
                     
                     if (stdData) {
-                      let realCode = stdData[codeCol] || item.item_code;
-                      if (realCode?.toUpperCase().startsWith('CC-') && (stdData[nameCol] || item.item_name)) {
-                        try {
-                          const normName = (stdData[nameCol] || item.item_name).replace(/\+/g, 'dan').toLowerCase().trim();
-                          const { data: realCandidates } = await supabase
-                            .from(table)
-                            .select('*')
-                            .not(codeCol, 'ilike', 'CC-%')
-                            .limit(250);
-                          const realMatch = realCandidates?.find((c: any) => {
-                            const cName = (c[nameCol] || '').replace(/\+/g, 'dan').toLowerCase().trim();
-                            return cName === normName || cName.includes(normName) || normName.includes(cName);
-                          });
-                          if (realMatch && (realMatch[codeCol] || realMatch.drug_code || realMatch.item_code)) {
-                            realCode = realMatch[codeCol] || realMatch.drug_code || realMatch.item_code;
-                          }
-                        } catch (_err) {}
-                      }
+                      const candidateCode = stdData[codeCol] || item.item_code;
+                      const realCode = normalizeRealMdcCode(candidateCode, stdData[nameCol] || item.item_name) || (!isSyntheticMockCode(candidateCode) ? candidateCode : '');
 
                       return {
                         ...item,
@@ -1073,34 +1060,32 @@ export const PurchaseOrderCreatePage: React.FC = () => {
       return
     }
 
+    const rawName = ('drug_name' in item ? item.drug_name : item.item_name) || '';
     let itemCodeStr = ('drug_code' in item ? item.drug_code : item.item_code) || '';
-    if (itemCodeStr.toUpperCase().startsWith('CC-') && ('drug_name' in item || 'item_name' in item)) {
-      const rawName = ('drug_name' in item ? item.drug_name : item.item_name) || '';
-      const currentItemId = item.id;
-      void (async () => {
-        try {
-          const normName = rawName.replace(/\+/g, 'dan').toLowerCase().trim();
-          const table = item.item_type === 'drug' ? 'drugs' : 'non_drugs';
-          const codeCol = item.item_type === 'drug' ? 'drug_code' : 'item_code';
-          const nameCol = item.item_type === 'drug' ? 'drug_name' : 'item_name';
-          const { data: realCandidates } = await supabase
-            .from(table)
-            .select('*')
-            .not(codeCol, 'ilike', 'CC-%')
-            .limit(200);
-          const realMatch = realCandidates?.find((c: any) => {
-            const cName = (c[nameCol] || '').replace(/\+/g, 'dan').toLowerCase().trim();
-            return cName === normName || cName.includes(normName) || normName.includes(cName);
-          });
-          if (realMatch && realMatch[codeCol]) {
-            setFormData(prev => ({
-              ...prev,
-              items: (prev.items || []).map(it => it.item_id === currentItemId ? { ...it, item_code: realMatch[codeCol], item_id: realMatch.id } : it)
-            }));
-          }
-        } catch (_err) {}
-      })();
+    const cleanNormalized = normalizeRealMdcCode(itemCodeStr, rawName);
+    if (cleanNormalized) {
+      itemCodeStr = cleanNormalized;
+    } else if (isSyntheticMockCode(itemCodeStr)) {
+      itemCodeStr = '';
     }
+
+    const currentItemId = item.id;
+    void (async () => {
+      try {
+        const genuineCode = await resolveGenuineItemCode(supabase, {
+          item_code: itemCodeStr,
+          item_name: rawName,
+          item_type: item.item_type,
+          item_id: currentItemId
+        });
+        if (genuineCode && !isSyntheticMockCode(genuineCode)) {
+          setFormData(prev => ({
+            ...prev,
+            items: (prev.items || []).map(it => it.item_id === currentItemId ? { ...it, item_code: genuineCode } : it)
+          }));
+        }
+      } catch (_err) {}
+    })();
     const isCc = isCcVote(formData.vote_code) || (item as any).procurement_vote === 'cc';
     
     const supplierName = (item as any).cc_supplier_name || (item as any).supplier?.company_name || (item as any).supplier_name || (item as any).supplier?.name || '';
@@ -2377,7 +2362,12 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                   </div>
                                   <div className="flex items-center gap-2 mt-1">
                                     <span className="text-[10px] font-bold text-slate-400 font-mono tracking-tighter">
-                                      {('drug_code' in item ? item.drug_code : item.item_code)}
+                                      {(() => {
+                                        const rawCode = ('drug_code' in item ? item.drug_code : item.item_code) || '';
+                                        const rawName = ('drug_name' in item ? item.drug_name : item.item_name) || '';
+                                        const cleanCode = normalizeRealMdcCode(rawCode, rawName);
+                                        return cleanCode || (!isSyntheticMockCode(rawCode) ? rawCode : '—');
+                                      })()}
                                     </span>
                                     <span className="text-slate-300">•</span>
                                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
@@ -2555,7 +2545,12 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
                                   <div className="flex items-center gap-1.5 text-slate-400 shrink-0">
                                     <IconActivity className="w-3.5 h-3.5" />
-                                    <span className="text-[10px] font-bold uppercase tracking-wider font-mono truncate max-w-[150px]" title={item.item_code}>{item.item_code}</span>
+                                    <span className="text-[10px] font-bold uppercase tracking-wider font-mono truncate max-w-[150px]" title={item.item_code}>
+                                      {(() => {
+                                        const cleanCode = normalizeRealMdcCode(item.item_code, item.item_name);
+                                        return cleanCode || (!isSyntheticMockCode(item.item_code) ? item.item_code : '—');
+                                      })()}
+                                    </span>
                                   </div>
                                   <span className="text-slate-200 hidden sm:block">|</span>
                                   <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-[0.1em] ${item.item_type === 'drug' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-indigo-50 text-indigo-600 border border-indigo-100'}`}>

@@ -56,6 +56,8 @@ export function normalize(d: string | null): string {
   
   // Strict matching to prevent "General Surgery" from being counted as "General Ward"
   if (lower === 'general ward' || lower === 'general_ward' || lower === 'wad general' || lower === 'general') return 'general_ward'
+  if (lower === 'female ward' || lower === 'female_ward' || lower === 'wad perempuan' || lower === 'female') return 'female_ward'
+  if (lower === 'male ward' || lower === 'male_ward' || lower === 'wad lelaki' || lower === 'male') return 'male_ward'
   if (lower === 'maternity ward' || lower === 'maternity_ward' || lower === 'wad maternity' || lower === 'wad bersalin' || lower === 'maternity') return 'maternity_ward'
   if (lower === 'paediatric ward' || lower === 'paediatric_ward' || lower === 'wad pediatrik' || lower === 'paediatric' || lower === 'paed') return 'paediatric_ward'
   if (lower === 'emergency' || lower === 'trauma' || lower === 'emergency_trauma' || lower === 'kecemasan') return 'emergency_trauma'
@@ -348,7 +350,7 @@ export async function getWarrantSummary(
         if (oxyError) {
           console.error('Error fetching oxygen receptions for warrant summary:', oxyError)
         } else if (oxyData) {
-          oxygenExpensesAsOrders = oxyData.map((rec: any) => {
+          oxygenExpensesAsOrders = oxyData.filter((rec: any) => !String(rec.vote_code || '').trim().startsWith('24') && String(rec.vote_code || '').trim() !== '020200').map((rec: any) => {
             const rawVote = String(rec.vote_code || '080702').trim()
             let normalizedCode = rawVote
             if (rawVote.startsWith('080600')) normalizedCode = '080600 (CC)'
@@ -356,7 +358,7 @@ export async function getWarrantSummary(
 
             return {
               id: rec.id,
-              total_amount: Number(rec.total_amount || 0),
+              total_amount: Number(rec.refill_amount != null ? rec.refill_amount : rec.total_amount || 0),
               status: rec.status === 'completed' ? 'completed' : 'sent',
               category: 'medical_oxygen',
               department: 'pharmacy',
@@ -672,6 +674,8 @@ export const WARRANT_DEPARTMENTS = [
   { value: 'operation_theater', label: 'Operation Theater' },
   { value: 'laboratory_pathology', label: 'Laboratory & Pathology' },
   { value: 'general_ward', label: 'General Ward' },
+  { value: 'female_ward', label: 'Female Ward' },
+  { value: 'male_ward', label: 'Male Ward' },
   { value: 'wound_care', label: 'Wound Care' },
   { value: 'rehabilitation', label: 'Rehabilitation' },
   { value: 'anaesthesiology', label: 'Anaesthesiology' },

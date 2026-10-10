@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from './table';
-import { Spinner } from './Spinner';
+import { SkeletonTable, SkeletonMobileCardList } from './skeleton';
 
 export interface DataTableColumn<T> {
   key: string;
@@ -34,9 +34,15 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 sm:py-20 bg-slate-900/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-dashed border-slate-800/80">
-        <Spinner size="lg" className="text-teal-400 mb-4" />
-        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Memuatkan data...</p>
+      <div className={`w-full ${className}`}>
+        {/* Desktop View Skeleton */}
+        <div className="hidden md:block">
+          <SkeletonTable columns={columns.length || 4} rows={5} />
+        </div>
+        {/* Mobile View Skeleton */}
+        <div className="md:hidden">
+          <SkeletonMobileCardList count={4} />
+        </div>
       </div>
     );
   }

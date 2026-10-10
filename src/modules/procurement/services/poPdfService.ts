@@ -4,6 +4,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { isContractExpired, isApplOrder } from '@/shared/lib/utils'
 import { drawHospitalHeader } from '@/lib/pdfHeader'
+import { normalizeRealMdcCode, isSyntheticMockCode } from '@/shared/utils/itemCodeUtils'
 
 console.error('!!! PO_PDF_SERVICE_LOADED !!!');
 
@@ -338,7 +339,11 @@ async function compileVectorPO(options: VectorPDFOptions): Promise<ArrayBuffer> 
     return [
       idx + 1,
       { content: `${itemNameText}${contractInfo}`, styles: { fontStyle: contractInfo ? 'normal' : 'bold' } },
-      (item.item_code === (item.contract_number || order.kkm_contract_number || order.supplier?.contract_number)) ? '—' : (item.item_code || '—'),
+      (() => {
+        const cleanCode = normalizeRealMdcCode(item.item_code, item.item_name);
+        const finalCode = cleanCode || (!isSyntheticMockCode(item.item_code) ? item.item_code : '');
+        return (!finalCode || isSyntheticMockCode(finalCode) || finalCode === (item.contract_number || order.kkm_contract_number || order.supplier?.contract_number)) ? '—' : finalCode;
+      })(),
       qty,
       `RM ${price.toFixed(2)}`,
       item.packaging_description || '—',

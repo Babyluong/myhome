@@ -118,7 +118,7 @@ export const DeleteCylinderModal: React.FC<DeleteCylinderModalProps> = ({
               <h2 className="text-base font-black text-slate-900 mt-0.5">
                 {isBulk 
                   ? (language === 'ms' ? `Padam ${cylinders.length} Silinder Dipilih` : `Delete ${cylinders.length} Selected Cylinders`)
-                  : (language === 'ms' ? 'Padam Rekod Silinder' : 'Delete Cylinder Record')}
+                  : (language === 'ms' ? 'Delete Cylinder Record' : 'Delete Cylinder Record')}
               </h2>
             </div>
           </div>
@@ -175,7 +175,7 @@ export const DeleteCylinderModal: React.FC<DeleteCylinderModalProps> = ({
                   </span>
                   <span className="font-bold text-slate-700 flex items-center gap-1">
                     <Building2 className="w-3 h-3 text-slate-400" />
-                    {singleCyl.scanned_location || singleCyl.current_location || 'Pharmacy Store'}
+                    {singleCyl.scanned_location || (typeof singleCyl.current_location === 'object' ? (singleCyl.current_location as any)?.location_name : singleCyl.current_location) || 'Pharmacy Store'}
                   </span>
                 </div>
               </div>

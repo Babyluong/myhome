@@ -564,11 +564,11 @@ export const AdminSetupPage: React.FC = () => {
                     <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-4 py-3">
                         {uploadingUnitId === u.id ? (
-                          <div className="w-10 h-10 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center">
+                          <div className="w-10 h-[52px] rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center" style={{ aspectRatio: '3/4' }}>
                             <Spinner size="sm" />
                           </div>
                         ) : u.photo_url ? (
-                          <div className="relative group/tblimg w-10 h-10 rounded-lg overflow-hidden border border-slate-200 shadow-sm flex-shrink-0">
+                          <div className="relative group/tblimg w-10 h-[52px] rounded-lg overflow-hidden border border-slate-200 shadow-sm flex-shrink-0" style={{ aspectRatio: '3/4' }}>
                             <img 
                               src={u.photo_url} 
                               alt={u.nama_unit} 
@@ -595,7 +595,8 @@ export const AdminSetupPage: React.FC = () => {
                           </div>
                         ) : (
                           <label 
-                            className="w-10 h-10 rounded-lg border border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50 hover:bg-emerald-50/40 flex items-center justify-center cursor-pointer text-slate-300 hover:text-[#00a68a] transition-colors"
+                            className="w-10 h-[52px] rounded-lg border border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50 hover:bg-emerald-50/40 flex items-center justify-center cursor-pointer text-slate-300 hover:text-[#00a68a] transition-colors"
+                            style={{ aspectRatio: '3/4' }}
                             title="Attach Photo"
                           >
                             <Camera className="w-4 h-4" />
@@ -836,7 +837,7 @@ export const AdminSetupPage: React.FC = () => {
             <div className="flex justify-between items-center px-5 py-3 border-b border-slate-800 text-white">
               <div className="flex items-center gap-2">
                 <ImageIcon className="w-4 h-4 text-[#00a68a]" />
-                <span className="text-xs font-bold tracking-wide text-slate-200">Foto Peralatan / Bilik</span>
+                <span className="text-xs font-bold tracking-wide text-slate-200">Equipment / Room Photo</span>
               </div>
               <button
                 onClick={() => setPreviewPhotoUrl(null)}

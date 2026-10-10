@@ -543,14 +543,14 @@ export const PaediatricDoseCalculatorModal: React.FC<PaediatricDoseCalculatorMod
               <div>
                 <div className="flex items-center flex-wrap gap-2">
                   <h3 className="text-base sm:text-lg font-black tracking-tight">
-                    Kalkulator Dos Pediatrik H.O.M.E.
+                    H.O.M.E. Paediatric Dose Calculator
                   </h3>
                   <span className="text-[10px] bg-emerald-400/20 text-emerald-100 px-2.5 py-0.5 rounded-full font-bold border border-emerald-300/30">
                     NAG 2024 &amp; Amalan Hospital
                   </span>
                 </div>
                 <p className="text-xs text-emerald-100/80 mt-0.5">
-                  Pengiraan dos berat badan (mg/kg) mengikut Standard KKM &amp; amalan khusus hospital tempatan
+                  Weight-based dose calculation (mg/kg) according to MOH Standards &amp; local hospital practice
                 </p>
               </div>
             </div>
@@ -607,7 +607,7 @@ export const PaediatricDoseCalculatorModal: React.FC<PaediatricDoseCalculatorMod
               }`}
             >
               <Zap className="w-3.5 h-3.5 text-amber-500" />
-              <span>Kiraan Manual Pantas (Custom Ad-Hoc)</span>
+              <span>Quick Manual Calculation (Custom Ad-Hoc)</span>
             </button>
           </div>
         </div>
@@ -635,7 +635,7 @@ export const PaediatricDoseCalculatorModal: React.FC<PaediatricDoseCalculatorMod
             <div className="space-y-0.5">
               <label className="text-xs font-black text-slate-800 flex items-center gap-1.5 uppercase tracking-wide">
                 <Scale className="w-4 h-4 text-emerald-600" />
-                <span>1. Masukkan Berat Badan Pesakit Kanak-Kanak:</span>
+                <span>1. Enter Paediatric Patient Body Weight:</span>
               </label>
               <p className="text-[11px] text-slate-500">
                 Gunakan berat sebenar pesakit (kg) untuk pengiraan dos selamat.
@@ -928,7 +928,7 @@ export const PaediatricDoseCalculatorModal: React.FC<PaediatricDoseCalculatorMod
                     {/* Total Daily Dose Box */}
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/10 space-y-1.5">
                       <div className="text-[11px] font-bold text-emerald-200 uppercase tracking-wide">
-                        Jumlah Dos Harian (Total Daily Dose):
+                        Total Daily Dose:
                       </div>
                       <div className="text-2xl sm:text-3xl font-black text-white flex items-baseline gap-1.5">
                         <span>{presetCalculationResults.dailyMg}</span>
@@ -964,7 +964,7 @@ export const PaediatricDoseCalculatorModal: React.FC<PaediatricDoseCalculatorMod
                 </div>
               ) : (
                 <div className="p-6 text-center bg-white rounded-2xl border border-slate-200 text-slate-500 text-xs">
-                  Sila masukkan berat badan pesakit kanak-kanak di atas untuk memaparkan pengiraan dos.
+                  Please enter paediatric patient body weight above to display dose calculations.
                 </div>
               )}
             </div>
@@ -976,7 +976,7 @@ export const PaediatricDoseCalculatorModal: React.FC<PaediatricDoseCalculatorMod
               <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 flex items-start gap-3 text-xs text-amber-900">
                 <Zap className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <span className="font-black">Mod Kiraan Manual Pantas (Custom Hospital Practice)</span>
+                  <span className="font-black">Quick Manual Calculation Mode (Custom Hospital Practice)</span>
                   <p className="text-amber-800 text-[11px]">
                     Gunakan borang pantas ini untuk memasukkan formula dos (mg/kg/dos atau mg/kg/hari) mengikut amalan wad atau panduan hospital anda secara langsung tanpa perlu simpan terlebih dahulu. Anda juga boleh klik &apos;Simpan Sebagai Protokol&apos; untuk kegunaan semula.
                   </p>
@@ -1011,7 +1011,7 @@ export const PaediatricDoseCalculatorModal: React.FC<PaediatricDoseCalculatorMod
                       className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500 focus:bg-white"
                     >
                       <option value="daily_divided">
-                        Jumlah Dos Harian (mg/kg/hari) dibahagikan mengikut kekerapan
+                        Total Daily Dose (mg/kg/day) divided by frequency
                       </option>
                       <option value="per_dose">
                         Dos Sekali Pemberian (mg/kg/dos) setiap selang masa
@@ -1067,7 +1067,7 @@ export const PaediatricDoseCalculatorModal: React.FC<PaediatricDoseCalculatorMod
                 <div className="space-y-2 pt-2 border-t border-slate-100">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-slate-700">
-                      Kiraan Isipadu Cecair / Sirap (mL):
+                      Liquid / Syrup Volume Calculation (mL):
                     </label>
                     <div className="flex items-center gap-1 text-xs">
                       <button
@@ -1217,7 +1217,7 @@ export const PaediatricDoseCalculatorModal: React.FC<PaediatricDoseCalculatorMod
                     <div className="flex items-center gap-2">
                       <Zap className="w-5 h-5 text-amber-400" />
                       <span className="text-xs font-extrabold uppercase tracking-wider text-amber-300">
-                        Hasil Kiraan Manual ({manualCalculationResults.weight} kg)
+                        Manual Calculation Result ({manualCalculationResults.weight} kg)
                       </span>
                     </div>
                     <span className="text-xs bg-white/15 px-3 py-1 rounded-full font-bold text-emerald-200 border border-white/10">
@@ -1250,7 +1250,7 @@ export const PaediatricDoseCalculatorModal: React.FC<PaediatricDoseCalculatorMod
                     {/* Total Daily Dose Box */}
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/10 space-y-1.5">
                       <div className="text-[11px] font-bold text-amber-200 uppercase tracking-wide">
-                        Jumlah Dos Harian (Total Daily Dose):
+                        Total Daily Dose:
                       </div>
                       <div className="text-2xl sm:text-3xl font-black text-white flex items-baseline gap-1.5">
                         <span>{manualCalculationResults.dailyMg}</span>

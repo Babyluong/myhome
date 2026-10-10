@@ -10,7 +10,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. INFECTIVE ENDOCARDITIS",
     "topicNumber": 1,
     "bodySystem": "Cardiovascular Infections",
-    "conditionName": "Infective Endocarditis - Native Valve Empiric Therapy (Endokarditis Injap Asli Empirik)",
+    "conditionName": "Infective Endocarditis - Native Valve Empiric Therapy",
     "setting": "Community-Acquired",
     "primaryPathogens": [
       "Viridans group Streptococci (S. oralis, S. mitis)",
@@ -27,7 +27,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     ],
     "firstLineTherapy": {
       "regimen": "IV Ampicillin 2g Q4H + IV Cloxacillin 2g Q4H + IV Gentamicin 1mg/kg Q8H (or IV Benzylpenicillin 4 MU Q4H + Gentamicin)",
-      "routeAndDose": "IV Ampicillin 2g 4-hourly + IV Cloxacillin 2g 4-hourly + IV Gentamicin 1mg/kg 8-hourly (infusi perlahan).",
+      "routeAndDose": "IV Ampicillin 2g 4-hourly + IV Cloxacillin 2g 4-hourly + IV Gentamicin 1mg/kg 8-hourly (slow infusion).",
       "durationDays": "4 - 6 weeks",
       "remarks": "Ambil 3 set Kultur Darah dari tapak berbeza sebelum antibiotik dimulakan. Pantau paras palung Gentamicin dan fungsi renal (serum kreatinin)."
     },
@@ -40,15 +40,15 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Vancomycin 15-20mg/kg (loading 25-30mg/kg) Q8H-Q12H + IV Gentamicin 1mg/kg Q8H",
       "routeAndDose": "IV Vancomycin disasarkan kepada paras palung (trough) 15-20 mcg/mL.",
       "durationDays": "4 - 6 weeks",
-      "remarks": "Untuk pesakit dengan risiko MRSA tinggi, hemodialisis, atau pesakit alahan penisilin teruk."
+      "remarks": "Untuk pesakit dengan risiko MRSA tinggi, hemodialisis, or pesakit alahan penisilin teruk."
     },
     "allergyDrugs": [
       "vancomycin",
       "gentamicin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IV Vancomycin 15-20mg/kg Q12H (target trough 15-20 mcg/mL) + IV Gentamicin 1mg/kg Q8H x 2 minggu",
-      "routeAndDose": "IV Vancomycin infusi perlahan sekurang-kurangnya 60-120 minit untuk elak Red Man Syndrome.",
+      "regimen": "IV Vancomycin 15-20mg/kg Q12H (target trough 15-20 mcg/mL) + IV Gentamicin 1mg/kg Q8H x 2 weeks",
+      "routeAndDose": "IV Vancomycin slow infusion sekurang-kurangnya 60-120 minit untuk elak Red Man Syndrome.",
       "remarks": "Wajib pantau TDM Vancomycin sebelum dos ke-4."
     },
     "stepDownDrugs": [
@@ -56,11 +56,11 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ceftriaxone"
     ],
     "oralStepDownOption": {
-      "regimen": "Kekal parenteral sekurang-kurangnya 2-3 minggu pertama. Pertimbangan oral (Amoxicillin 1g Q6H + Rifampicin) hanya jika pesakit stabil sepenuhnya mengikut kriteria POET trial.",
-      "criteria": "Pesakit afebril >7 hari, tiada abses paravalvular pada TEE, kultur darah steril berulang, CRP turun >50%."
+      "regimen": "Kekal parenteral sekurang-kurangnya 2-3 weeks pertama. Pertimbangan oral (Amoxicillin 1g Q6H + Rifampicin) hanya jika pesakit stabil sepenuhnya mengikut kriteria POET trial.",
+      "criteria": "Pesakit afebril >7 days, tiada abses paravalvular pada TEE, kultur darah steril berulang, CRP turun >50%."
     },
     "amsNotes": [
-      "Wajib rujuk Pakar Kardiologi & Pakar Bedah Kardiotorasik seawal mungkin untuk penilaian pembedahan (indikasi: kegagalan jantung akut, abses akar aorta, emboli berulang, atau vegetasi besar >10mm).",
+      "Wajib rujuk Pakar Kardiologi & Pakar Bedah Kardiotorasik seawal mungkin untuk penilaian pembedahan (indikasi: kegagalan jantung akut, abses akar aorta, emboli berulang, or vegetasi besar >10mm).",
       "Ujian Ekokardiogram Transesofagus (TEE) wajib dilakukan jika TTE tidak konklusif."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / AHA-ESC Guidelines)"
@@ -73,7 +73,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. INFECTIVE ENDOCARDITIS",
     "topicNumber": 1,
     "bodySystem": "Cardiovascular Infections",
-    "conditionName": "Prosthetic Valve Endocarditis - Early & Late (Endokarditis Injap Prostetik)",
+    "conditionName": "Prosthetic Valve Endocarditis - Early & Late",
     "setting": "Hospital-Acquired (HAP/VAP)",
     "primaryPathogens": [
       "Staphylococcus epidermidis & CoNS (Methicillin-resistant)",
@@ -88,10 +88,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "rifampin"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Vancomycin 15-20mg/kg Q8H-Q12H + IV Gentamicin 1mg/kg Q8H (2 minggu) + Oral Rifampicin 300mg Q8H (atau 600mg BD)",
+      "regimen": "IV Vancomycin 15-20mg/kg Q8H-Q12H + IV Gentamicin 1mg/kg Q8H (2 weeks) + Oral Rifampicin 300mg Q8H (or 600mg BD)",
       "routeAndDose": "IV Vancomycin (trough 15-20 mcg/mL) + IV Gentamicin + Oral Rifampicin.",
       "durationDays": "Minimum 6 weeks",
-      "remarks": "Mulakan Rifampicin 3-5 hari SELEPAS Vancomycin bagi mengelakkan kemunculan rintangan Rifampicin yang pantas semasa beban bakteria tinggi."
+      "remarks": "Mulakan Rifampicin 3-5 days SELEPAS Vancomycin bagi mengelakkan kemunculan rintangan Rifampicin yang pantas semasa beban bakteria tinggi."
     },
     "secondLineDrugs": [
       "daptomycin",
@@ -103,7 +103,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Daptomycin 10-12mg/kg OD + IV Ceftaroline 600mg Q8H + Oral Rifampicin 300mg Q8H",
       "routeAndDose": "IV Daptomycin dos tinggi dengan pemantauan CPK mingguan.",
       "durationDays": "6 weeks",
-      "remarks": "Digunakan jika terdapat kegagalan Vancomycin atau rintangan glikopeptida (VISA/VRSA)."
+      "remarks": "Digunakan jika terdapat kegagalan Vancomycin or rintangan glikopeptida (VISA/VRSA)."
     },
     "allergyDrugs": [
       "vancomycin",
@@ -147,8 +147,8 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     ],
     "firstLineTherapy": {
       "regimen": "IV Vancomycin 15-20mg/kg Q12H (target trough 15-20 mcg/mL) + IV Cefepime 2g Q8H (or IV Tazocin 4.5g Q6H)",
-      "routeAndDose": "IV Vancomycin infusi perlahan + IV Cefepime infusi 3 jam untuk liputan gram-positif dan gram-negatif.",
-      "durationDays": "7 - 14 days (panjangkan ke 4-6 minggu jika ada komplikasi endokarditis/osteomielitis)",
+      "routeAndDose": "IV Vancomycin slow infusion + IV Cefepime infusi 3 jam untuk liputan gram-positif dan gram-negatif.",
+      "durationDays": "7 - 14 days (panjangkan ke 4-6 weeks jika ada komplikasi endokarditis/osteomielitis)",
       "remarks": "Ambil kultur darah berpasangan (paired blood culture): 1 set dari lumen talian kateter dan 1 set dari vena periferi dengan catatan DTP (Differential Time to Positivity)."
     },
     "secondLineDrugs": [
@@ -158,7 +158,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     ],
     "secondLineTherapy": {
       "regimen": "IV Daptomycin 8-10mg/kg OD + IV Meropenem 1g Q8H",
-      "routeAndDose": "IV Daptomycin bolus 2 minit atau infusi 30 minit + IV Meropenem.",
+      "routeAndDose": "IV Daptomycin bolus 2 minit or infusi 30 minit + IV Meropenem.",
       "durationDays": "10 - 14 days",
       "remarks": "Untuk pesakit septik di ICU dengan riwayat organisma MDR (ESBL / CRE / VRE)."
     },
@@ -178,11 +178,11 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Ciprofloxacin 500-750mg BD atau Oral Augmentin 625mg TDS selepas talian dicabut dan kultur darah steril >48 jam.",
+      "regimen": "Oral Ciprofloxacin 500-750mg BD or Oral Augmentin 625mg TDS selepas talian dicabut dan kultur darah steril >48 jam.",
       "criteria": "Kultur darah negatif 48 jam berturut-turut, kateter telah dikeluarkan, tiada demam, tiada emboli sekunder."
     },
     "amsNotes": [
-      "Wajib KELUARKAN TALIAN SEGERA bagi: S. aureus, Candida spp., Pseudomonas aeruginosa, syok septik, infeksi terowong bernanah, atau bakteremia berterusan >72 jam.",
+      "Wajib KELUARKAN TALIAN SEGERA bagi: S. aureus, Candida spp., Pseudomonas aeruginosa, syok septik, infeksi terowong bernanah, or bakteremia berterusan >72 jam.",
       "Pertimbangkan 'Antibiotic Lock Therapy' hanya jika kateter dialisis jangka panjang perlu dikekalkan dan organisma adalah CoNS bertahap rendah."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / IDSA CRBSI Guidelines)"
@@ -209,9 +209,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "daptomycin"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Vancomycin 15-20mg/kg Q12H (trough 15-20 mcg/mL) +/- IV Cefepime 2g Q8H (jika jangkitan awal <30 hari)",
+      "regimen": "IV Vancomycin 15-20mg/kg Q12H (trough 15-20 mcg/mL) +/- IV Cefepime 2g Q8H (jika jangkitan awal <30 days)",
       "routeAndDose": "IV Vancomycin parenteral.",
-      "durationDays": "10-14 hari (infeksi poket sahaja) atau 4-6 minggu (jika melibatkan wayar plumbum / vegetasi endokarditis)",
+      "durationDays": "10-14 days (infeksi poket sahaja) or 4-6 weeks (jika melibatkan wayar plumbum / vegetasi endokarditis)",
       "remarks": "Pencabutan lengkap keseluruhan peranti CIED (generator + semua wayar plumbum) adalah RAWATAN WAJIB PALING UTAMA untuk kesembuhan."
     },
     "secondLineDrugs": [
@@ -222,20 +222,20 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Daptomycin 10-12mg/kg OD + Oral Rifampicin 300mg Q8H",
       "routeAndDose": "IV Daptomycin dos tinggi.",
       "durationDays": "2 - 4 weeks post-device removal",
-      "remarks": "Digunakan bagi jangkitan Staph refraktori atau kegagalan Vancomycin."
+      "remarks": "Digunakan bagi jangkitan Staph refraktori or kegagalan Vancomycin."
     },
     "allergyDrugs": [
       "vancomycin",
       "daptomycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IV Vancomycin 15-20mg/kg Q12H atau IV Daptomycin 10mg/kg OD",
+      "regimen": "IV Vancomycin 15-20mg/kg Q12H or IV Daptomycin 10mg/kg OD",
       "routeAndDose": "Parenteral monoterapi sasaran Staphylococcal.",
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
     "amsNotes": [
-      "Jangan sesekali menangguhkan pembedahan pengekstrakan peranti jika terdapat hakisan poket atau bakteremia S. aureus berulang.",
-      "Penanaman semula peranti baharu hanya boleh dibuat di tapak kontralateral sekurang-kurangnya 7-14 hari selepas kultur darah steril."
+      "Jangan sesekali menangguhkan pembedahan pengekstrakan peranti jika terdapat hakisan poket or bakteremia S. aureus berulang.",
+      "Penanaman semula peranti baharu hanya boleh dibuat di tapak kontralateral sekurang-kurangnya 7-14 days selepas kultur darah steril."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / HRS CIED Infection Consensus)"
   },
@@ -247,7 +247,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. ACUTE BACTERIAL MENINGITIS",
     "topicNumber": 1,
     "bodySystem": "Central Nervous Infections",
-    "conditionName": "Community-Acquired Acute Bacterial Meningitis (Meningitis Bakteria Akut Komuniti)",
+    "conditionName": "Community-Acquired Acute Bacterial Meningitis",
     "setting": "ICU / Severe",
     "primaryPathogens": [
       "Streptococcus pneumoniae (Pneumococcus)",
@@ -265,8 +265,8 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "firstLineTherapy": {
       "regimen": "IV Ceftriaxone 2g Q12H (or IV Cefotaxime 2g Q4H) + IV Vancomycin 15-20mg/kg Q8H-Q12H (+ IV Ampicillin 2g Q4H jika umur >50 thn) + IV Dexamethasone 10mg Q6H",
       "routeAndDose": "IV Ceftriaxone dos meningitis tinggi (4g sehari dibahagi 2g BD) + IV Vancomycin (trough 15-20) + IV Ampicillin.",
-      "durationDays": "10 - 14 days (7 hari N. meningitidis, 10-14 hari S. pneumoniae, 21 hari Listeria)",
-      "remarks": "Berikan IV Dexamethasone 10mg 15-20 MINIT SEBELUM atau bersamaan dengan dos pertama antibiotik untuk mengurangkan risiko pekak dan sekuela neurologi."
+      "durationDays": "10 - 14 days (7 days N. meningitidis, 10-14 days S. pneumoniae, 21 days Listeria)",
+      "remarks": "Berikan IV Dexamethasone 10mg 15-20 MINIT SEBELUM or bersamaan dengan dos pertama antibiotik untuk mengurangkan risiko pekak dan sekuela neurologi."
     },
     "secondLineDrugs": [
       "meropenem",
@@ -278,7 +278,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Meropenem 2g Q8H + IV Vancomycin 15-20mg/kg Q8H-Q12H (+ IV Bactrim jika Listeria)",
       "routeAndDose": "IV Meropenem dos tinggi infusi 3 jam menembusi sawar darah-otak (BBB).",
       "durationDays": "14 - 21 days",
-      "remarks": "Untuk pesakit alahan teruk sefalosporin atau disyaki organisma gram-negatif kebal."
+      "remarks": "Untuk pesakit alahan teruk sefalosporin or disyaki organisma gram-negatif kebal."
     },
     "allergyDrugs": [
       "chloramphenicol",
@@ -306,7 +306,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "2. BRAIN ABSCESS & SUBDURAL EMPYEMA",
     "topicNumber": 2,
     "bodySystem": "Central Nervous Infections",
-    "conditionName": "Brain Abscess & Subdural Empyema (Abses Otak & Empiema Subdural)",
+    "conditionName": "Brain Abscess & Subdural Empyema",
     "setting": "ICU / Severe",
     "primaryPathogens": [
       "Streptococcus anginosus group (milleri)",
@@ -324,7 +324,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Ceftriaxone 2g Q12H + IV Metronidazole 500mg Q8H (+/- IV Vancomycin 15-20mg/kg Q12H jika post-trauma/neurosurgery)",
       "routeAndDose": "IV Ceftriaxone 2g BD + IV Metronidazole 500mg TDS untuk liputan anaerobik intrakranial optimum.",
       "durationDays": "4 - 8 weeks",
-      "remarks": "Rujuk Pakar Bedah Neurosains dengan kadar segera untuk aspirasi jarum stereotaktik atau kraniotomi penyaliran nanah."
+      "remarks": "Rujuk Pakar Bedah Neurosains dengan kadar segera untuk aspirasi jarum stereotaktik or kraniotomi penyaliran nanah."
     },
     "secondLineDrugs": [
       "meropenem",
@@ -334,7 +334,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Meropenem 2g Q8H + IV Vancomycin 15-20mg/kg Q8H-Q12H",
       "routeAndDose": "IV Meropenem dos tinggi infusi panjang.",
       "durationDays": "6 - 8 weeks",
-      "remarks": "Bagi punca otogenik Pseudomonas atau abses pasca-pembedahan otak hospital-acquired."
+      "remarks": "Bagi punca otogenik Pseudomonas or abses pasca-pembedahan otak hospital-acquired."
     },
     "allergyDrugs": [
       "chloramphenicol",
@@ -347,7 +347,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "remarks": "Pantau profil hematologi FBC berkala."
     },
     "amsNotes": [
-      "Imbasan MRI Otak berkontras berulang disyorkan setiap 2-4 minggu untuk menilai pengecutan kaviti abses sebelum menukar kepada terapi oral.",
+      "Imbasan MRI Otak berkontras berulang disyorkan setiap 2-4 weeks untuk menilai pengecutan kaviti abses sebelum menukar kepada terapi oral.",
       "Rawatan wajib diteruskan sehingga resolusi radiologi lengkap."
     ],
     "evidenceLevel": "Grade B (NAG 2024 / EFNS Guidelines)"
@@ -374,17 +374,17 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "fluconazole"
     ],
     "firstLineTherapy": {
-      "regimen": "Ensefalitis Viral: IV Acyclovir 10mg/kg Q8H x 14-21 hari. Meningitis Kriptokokus: IV Liposomal Amphotericin B 3-4 mg/kg OD + Oral Flucytosine 25mg/kg Q6H x 2 minggu kemudian Oral Fluconazole 400-800mg OD x 8 minggu.",
-      "routeAndDose": "IV Acyclovir infusi perlahan sekurang-kurangnya 1 jam bersama hidrasi cecair IV yang mencukupi untuk mencegah nefropati kristal.",
+      "regimen": "Ensefalitis Viral: IV Acyclovir 10mg/kg Q8H x 14-21 days. Meningitis Kriptokokus: IV Liposomal Amphotericin B 3-4 mg/kg OD + Oral Flucytosine 25mg/kg Q6H x 2 weeks kemudian Oral Fluconazole 400-800mg OD x 8 weeks.",
+      "routeAndDose": "IV Acyclovir slow infusion sekurang-kurangnya 1 jam bersama hidrasi cecair IV yang mencukupi untuk mencegah nefropati kristal.",
       "durationDays": "14 - 21 days (Ensefalitis) / 10 weeks total (Kriptokokus)",
-      "remarks": "Mulakan IV Acyclovir SERTA-MERTA sekiranya pesakit datang dengan demam berserta kekeliruan, perubahan personaliti, atau sawan tanpa menunggu keputusan CSF PCR."
+      "remarks": "Mulakan IV Acyclovir SERTA-MERTA sekiranya pesakit datang dengan demam berserta kekeliruan, perubahan personaliti, or sawan tanpa menunggu keputusan CSF PCR."
     },
     "secondLineDrugs": [
       "fluconazole",
       "amphotericin b"
     ],
     "secondLineTherapy": {
-      "regimen": "Kriptokokus (tanpa Flucytosine): IV Amphotericin B deoxycholate 0.7-1.0 mg/kg OD + Oral Fluconazole 800mg-1200mg OD x 2 minggu.",
+      "regimen": "Kriptokokus (tanpa Flucytosine): IV Amphotericin B deoxycholate 0.7-1.0 mg/kg OD + Oral Fluconazole 800mg-1200mg OD x 2 weeks.",
       "routeAndDose": "Terapi alternatif induksi jika Flucytosine tidak tersedia.",
       "durationDays": "2 weeks induction + 8 weeks consolidation",
       "remarks": "Pantau elektrolit kalium dan magnesium harian."
@@ -420,10 +420,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "unasyn"
     ],
     "firstLineTherapy": {
-      "regimen": "Pembedahan Bersih/Ortopedik/Hernia: IV Cefazolin 2g stat (3g jika berat >120kg). Pembedahan Kolorektal/Apendiks/Ginekologi: IV Cefazolin 2g + IV Metronidazole 500mg stat (atau IV Co-Amoxiclav 1.2g stat).",
-      "routeAndDose": "IV dos tunggal diberikan dalam masa 30 - 60 MINIT SEBELUM torehan kulit (surgical incision).",
+      "regimen": "Pembedahan Bersih/Ortopedik/Hernia: IV Cefazolin 2g stat (3g jika berat >120kg). Pembedahan Kolorektal/Apendiks/Ginekologi: IV Cefazolin 2g + IV Metronidazole 500mg stat (or IV Co-Amoxiclav 1.2g stat).",
+      "routeAndDose": "IV single dose diberikan dalam masa 30 - 60 MINIT SEBELUM torehan kulit (surgical incision).",
       "durationDays": "Single Dose (Maksimum 24 jam sahaja jika pembedahan terbuka tercemar)",
-      "remarks": "Dos ulangan intra-operasi (re-dosing) wajib diberikan jika pembedahan berlanjutan melebihi 3-4 jam (separuh hayat Cefazolin) atau berlaku pendarahan >1500 mL."
+      "remarks": "Dos ulangan intra-operasi (re-dosing) wajib diberikan jika pembedahan berlanjutan melebihi 3-4 jam (separuh hayat Cefazolin) or berlaku pendarahan >1500 mL."
     },
     "secondLineDrugs": [
       "vancomycin",
@@ -432,7 +432,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     ],
     "secondLineTherapy": {
       "regimen": "IV Vancomycin 1g-1.5g (15mg/kg) infusi tamat dalam 60-120 minit sebelum torehan + IV Gentamicin 5mg/kg stat",
-      "routeAndDose": "Untuk pesakit yang diketahui pembawa MRSA atau unit dengan kadar wabak MRSA tinggi.",
+      "routeAndDose": "Untuk pesakit yang diketahui pembawa MRSA or unit dengan kadar wabak MRSA tinggi.",
       "durationDays": "Single dose",
       "remarks": "Mulakan Vancomycin 60-120 minit lebih awal kerana tempoh infusi yang panjang."
     },
@@ -478,8 +478,8 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "penicillin v"
     ],
     "firstLineTherapy": {
-      "regimen": "Kontak Rapat Meningokokus: Oral Ciprofloxacin 500mg stat (atau IM Ceftriaxone 250mg stat / Oral Rifampicin 600mg BD x 2 hari). Kontak Pertussis: Oral Azithromycin 500mg OD x 5 hari. Asplenia/Pasca-Splenektomi: Oral Penicillin V 250-500mg BD berterusan.",
-      "routeAndDose": "Oral dos tunggal atau rejimen pendek mengikut indikasi pendedahan.",
+      "regimen": "Kontak Rapat Meningokokus: Oral Ciprofloxacin 500mg stat (or IM Ceftriaxone 250mg stat / Oral Rifampicin 600mg BD x 2 days). Kontak Pertussis: Oral Azithromycin 500mg OD x 5 days. Asplenia/Pasca-Splenektomi: Oral Penicillin V 250-500mg BD berterusan.",
+      "routeAndDose": "Oral single dose or rejimen pendek mengikut indikasi pendedahan.",
       "durationDays": "Stat dose sehingga profilaksis jangka panjang (Asplenia)",
       "remarks": "Berikan profilaksis kontak meningokokus dalam tempoh <24 jam dari pengesanan kes indeks bagi membasmi kolonisasi nasofarinks."
     },
@@ -489,7 +489,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clarithromycin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Azithromycin 500mg OD (hari 1) kemudian 250mg OD (hari 2-5) atau Oral Clarithromycin 500mg BD x 7 hari.",
+      "regimen": "Oral Azithromycin 500mg OD (hari 1) kemudian 250mg OD (hari 2-5) or Oral Clarithromycin 500mg BD x 7 days.",
       "routeAndDose": "Oral.",
       "durationDays": "5 - 7 days",
       "remarks": "Alternatif bagi kontak pertussis dan profilaksis asplenia."
@@ -501,7 +501,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "erythromycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Meningokokus: Oral Ciprofloxacin 500mg stat. Profilaksis Asplenia: Oral Erythromycin 250-500mg BD atau Azithromycin 250mg 3 kali seminggu.",
+      "regimen": "Meningokokus: Oral Ciprofloxacin 500mg stat. Profilaksis Asplenia: Oral Erythromycin 250-500mg BD or Azithromycin 250mg 3 kali seminggu.",
       "routeAndDose": "Oral.",
       "remarks": "Pilihan utama sekiranya pesakit alah kepada kumpulan penisilin."
     },
@@ -519,7 +519,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. ACUTE GASTROENTERITIS & INFECTIOUS DIARRHOEA",
     "topicNumber": 1,
     "bodySystem": "Gastrointestinal Infections",
-    "conditionName": "Severe Invasive Bacterial Gastroenteritis & Dysentery (Cirit-Birit Bernanah/Berdarah Teruk)",
+    "conditionName": "Severe Invasive Bacterial Gastroenteritis & Dysentery",
     "setting": "Outpatient (OPD/KK)",
     "primaryPathogens": [
       "Shigella dysenteriae & Shigella flexneri",
@@ -535,9 +535,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "firstLineTherapy": {
-      "regimen": "Disenteri invasif / Shigellosis: Oral Azithromycin 500mg OD x 3 hari (atau Oral Ciprofloxacin 500mg BD x 3 hari). Kolera: Oral Doxycycline 300mg stat (atau Oral Azithromycin 1g stat).",
-      "routeAndDose": "Oral (tukar ke IV Ceftriaxone 2g OD jika pesakit muntah berterusan atau mengalami sepsis).",
-      "durationDays": "3 days (Azithromycin) atau 1 hari stat (Kolera)",
+      "regimen": "Disenteri invasif / Shigellosis: Oral Azithromycin 500mg OD x 3 days (or Oral Ciprofloxacin 500mg BD x 3 days). Kolera: Oral Doxycycline 300mg stat (or Oral Azithromycin 1g stat).",
+      "routeAndDose": "Oral (tukar ke IV Ceftriaxone 2g OD jika pesakit muntah berterusan or mengalami sepsis).",
+      "durationDays": "3 days (Azithromycin) or 1 days stat (Kolera)",
       "remarks": "FOKUS RAWATAN UTAMA: Terapi Penghidratan Semula Oral (ORS) dan pemulihan cecair elektrolit intravena. Antibiotik hanya untuk kes berdarah/demam/sepsis."
     },
     "secondLineDrugs": [
@@ -546,10 +546,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Ceftriaxone 1g-2g OD x 3-5 hari atau Oral Bactrim Forte (160/800mg) 1 tab BD x 5 hari.",
-      "routeAndDose": "IV atau Oral mengikut kestabilan.",
+      "regimen": "IV Ceftriaxone 1g-2g OD x 3-5 days or Oral Bactrim Forte (160/800mg) 1 tab BD x 5 days.",
+      "routeAndDose": "IV or Oral mengikut kestabilan.",
       "durationDays": "3 - 5 days",
-      "remarks": "Digunakan jika terdapat kegagalan klinikal terhadap rawatan awal atau rintangan fluoroquinolone."
+      "remarks": "Digunakan jika terdapat kegagalan klinikal terhadap rawatan awal or rintangan fluoroquinolone."
     },
     "allergyDrugs": [
       "azithromycin",
@@ -557,7 +557,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Azithromycin 500mg OD x 3 hari atau Oral Ciprofloxacin 500mg BD x 3 hari",
+      "regimen": "Oral Azithromycin 500mg OD x 3 days or Oral Ciprofloxacin 500mg BD x 3 days",
       "routeAndDose": "Oral.",
       "remarks": "Tiada silang alahan dengan beta-laktam."
     },
@@ -585,7 +585,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "firstLineTherapy": {
-      "regimen": "Episod Pertama (Bukan Teruk / Teruk): Oral Vancomycin 125mg Q6H x 10 hari. (Jika tiada Oral Vancomycin, alternatif bukan teruk: Oral Metronidazole 500mg TDS x 10-14 hari).",
+      "regimen": "Episod Pertama (Bukan Teruk / Teruk): Oral Vancomycin 125mg Q6H x 10 days. (Jika tiada Oral Vancomycin, alternatif bukan teruk: Oral Metronidazole 500mg TDS x 10-14 days).",
       "routeAndDose": "ORAL SAHAJA (IV Vancomycin TIDAK dirembeskan ke dalam lumen usus dan TIDAK berkesan untuk CDI!).",
       "durationDays": "10 days",
       "remarks": "HENTIKAN serta-merta antibiotik penyebab terdahulu yang mencetuskan CDI sekiranya keadaan klinikal pesakit mengizinkan."
@@ -605,7 +605,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Vancomycin 125mg Q6H x 10 hari",
+      "regimen": "Oral Vancomycin 125mg Q6H x 10 days",
       "routeAndDose": "Oral.",
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
@@ -643,7 +643,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "Ringan/Sederhana: IV Co-Amoxiclav 1.2g TDS (or IV Ampicillin-Sulbactam 1.5g-3g Q6H). Teruk/Sepsis: IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS (or IV Tazocin 4.5g Q6H).",
       "routeAndDose": "IV infusi.",
       "durationDays": "4 - 7 days (pendekkan ke 24-48 jam jika apendiks tidak pecah dan kawalan punca pembedahan berjaya sepenuhnya)",
-      "remarks": "KAWALAN PUNCA (Source Control): Pembedahan apendisektomi, kolesistektomi, dekompresi ERCP saluran hempedu, atau penyaliran abses adalah kunci utama kesembuhan."
+      "remarks": "KAWALAN PUNCA (Source Control): Pembedahan apendisektomi, kolesistektomi, dekompresi ERCP saluran hempedu, or penyaliran abses adalah kunci utama kesembuhan."
     },
     "secondLineDrugs": [
       "piperacillin/tazobactam",
@@ -653,10 +653,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Piperacillin/Tazobactam 4.5g Q6H infusi 3 jam atau IV Meropenem 1g Q8H",
+      "regimen": "IV Piperacillin/Tazobactam 4.5g Q6H infusi 3 jam or IV Meropenem 1g Q8H",
       "routeAndDose": "IV.",
       "durationDays": "5 - 7 days",
-      "remarks": "Bagi peritonitis nosokomial, kebocoran anastomotik, atau pesakit dengan risiko kuman penghasil ESBL."
+      "remarks": "Bagi peritonitis nosokomial, kebocoran anastomotik, or pesakit dengan risiko kuman penghasil ESBL."
     },
     "allergyDrugs": [
       "ciprofloxacin",
@@ -675,12 +675,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Augmentin 625mg TDS atau (Oral Ciprofloxacin 500mg BD + Oral Metronidazole 400mg TDS).",
+      "regimen": "Oral Augmentin 625mg TDS or (Oral Ciprofloxacin 500mg BD + Oral Metronidazole 400mg TDS).",
       "criteria": "Pesakit afebril >24 jam, tiada tanda peritonitis pada abdomen, toleransi diet oral baik, kiraan sel darah putih (WBC) kembali normal."
     },
     "amsNotes": [
       "Kultur cecair peritoneal / nanah intra-abdomen wajib diambil secara intra-operasi (elakkan mengambil sapuan swab permukaan).",
-      "Hentikan antibiotik dalam masa 4 hari selepas punca jangkitan dibersihkan mengikut bukti STOP-IT trial."
+      "Hentikan antibiotik dalam masa 4 days selepas punca jangkitan dibersihkan mengikut bukti STOP-IT trial."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / SIS-IDSA Intra-abdominal Guidelines)"
   },
@@ -705,10 +705,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "firstLineTherapy": {
-      "regimen": "Terapi Tiga Serangkai Standard (14 Hari): PPI Dos Tinggi (cth: Esomeprazole 40mg BD atau Pantoprazole 40mg BD) + Oral Amoxicillin 1g BD + Oral Clarithromycin 500mg BD (atau Metronidazole 400mg TDS).",
+      "regimen": "Terapi Tiga Serangkai Standard (14 Hari): PPI Dos Tinggi (cth: Esomeprazole 40mg BD or Pantoprazole 40mg BD) + Oral Amoxicillin 1g BD + Oral Clarithromycin 500mg BD (or Metronidazole 400mg TDS).",
       "routeAndDose": "Oral diambil 30-60 minit sebelum makan.",
       "durationDays": "14 days",
-      "remarks": "Tempoh 14 hari menghasilkan kadar pembasmian (eradication rate) yang terbukti jauh lebih tinggi berbanding rejimen lapuk 7 hari."
+      "remarks": "Tempoh 14 days menghasilkan kadar pembasmian (eradication rate) yang terbukti jauh lebih tinggi berbanding rejimen lapuk 7 days."
     },
     "secondLineDrugs": [
       "bismuth",
@@ -718,10 +718,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amoxicillin"
     ],
     "secondLineTherapy": {
-      "regimen": "Terapi Empat Serangkai Bismuth (Bismuth Quadruple - 14 Hari): PPI Dos Tinggi BD + Bismuth Subcitrate 120mg-240mg QDS + Tetracycline 500mg QDS + Metronidazole 400mg TDS (atau Rejimen Levofloxacin: PPI BD + Amoxicillin 1g BD + Levofloxacin 500mg OD x 14 hari).",
+      "regimen": "Terapi Empat Serangkai Bismuth (Bismuth Quadruple - 14 Hari): PPI Dos Tinggi BD + Bismuth Subcitrate 120mg-240mg QDS + Tetracycline 500mg QDS + Metronidazole 400mg TDS (or Rejimen Levofloxacin: PPI BD + Amoxicillin 1g BD + Levofloxacin 500mg OD x 14 days).",
       "routeAndDose": "Oral.",
       "durationDays": "14 days",
-      "remarks": "Pilihan utama bagi kegagalan rawatan barisan pertama atau kawasan dengan kadar rintangan Clarithromycin >15%."
+      "remarks": "Pilihan utama bagi kegagalan rawatan barisan pertama or kawasan dengan kadar rintangan Clarithromycin >15%."
     },
     "allergyDrugs": [
       "clarithromycin",
@@ -730,13 +730,13 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "tetracycline"
     ],
     "penicillinAllergyOption": {
-      "regimen": "PPI Dos Tinggi BD + Bismuth Subcitrate 240mg BD + Oral Metronidazole 400mg TDS + Oral Tetracycline 500mg QDS x 14 hari",
+      "regimen": "PPI Dos Tinggi BD + Bismuth Subcitrate 240mg BD + Oral Metronidazole 400mg TDS + Oral Tetracycline 500mg QDS x 14 days",
       "routeAndDose": "Oral.",
       "remarks": "Rejimen bebas penisilin standard antarabangsa."
     },
     "amsNotes": [
-      "Wajib lakukan ujian pengesahan pembasmian (Urea Breath Test atau Stool Antigen Test) sekurang-kurangnya 4 MINGGU SELEPAS tamat antibiotik dan 2 MINGGU selepas berhenti PPI.",
-      "Kepatuhan pesakit kepada jadual ubat 14 hari adalah faktor terpenting mengelakkan kegagalan terapi."
+      "Wajib lakukan ujian pengesahan pembasmian (Urea Breath Test or Stool Antigen Test) sekurang-kurangnya 4 MINGGU SELEPAS tamat antibiotik dan 2 MINGGU selepas berhenti PPI.",
+      "Kepatuhan pesakit kepada jadual ubat 14 days adalah faktor terpenting mengelakkan kegagalan terapi."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / Maastricht VI Consensus)"
   },
@@ -748,7 +748,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. FEBRILE NEUTROPENIA",
     "topicNumber": 1,
     "bodySystem": "Infections In Immunocompromised Patients",
-    "conditionName": "High-Risk Febrile Neutropenia (Neutropenia Berdemam Berisiko Tinggi - MASCC < 21)",
+    "conditionName": "High-Risk Febrile Neutropenia (MASCC < 21)",
     "setting": "ICU / Severe",
     "primaryPathogens": [
       "Pseudomonas aeruginosa",
@@ -767,7 +767,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Cefepime 2g Q8H (or IV Tazocin 4.5g Q6H infusi berpanjangan 3-4 jam) sebagai Monoterapi Antipseudomonal Empirik.",
       "routeAndDose": "IV dos pertama WAJIB diberikan dalam masa 30 - 60 MINIT dari ketibaan pesakit (Medical Emergency).",
       "durationDays": "Sehingga neutrofil pulih (ANC >500/mcL) dan pesakit afebril sekurang-kurangnya 48-72 jam berturut-turut",
-      "remarks": "Takrifan: Suhu oral tunggal ≥38.3°C (atau ≥38.0°C berterusan >1 jam) berserta Kiraan Neutrofil Mutlak (ANC) <500 sel/mcL (atau dijangka jatuh <500 sel/mcL)."
+      "remarks": "Takrifan: Suhu oral tunggal ≥38.3°C (or ≥38.0°C berterusan >1 jam) berserta Kiraan Neutrofil Mutlak (ANC) <500 sel/mcL (or dijangka jatuh <500 sel/mcL)."
     },
     "secondLineDrugs": [
       "meropenem",
@@ -778,10 +778,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "liposomal amphotericin b"
     ],
     "secondLineTherapy": {
-      "regimen": "Demam Berterusan >72-96 Jam / Ketidakstabilan Hemodinamik: IV Meropenem 1g-2g Q8H + IV Vancomycin 15-20mg/kg Q12H (+/- IV Amikacin 15mg/kg OD). Tambah IV Caspofungin 70mg loading kemudian 50mg OD jika demam >4-7 hari.",
+      "regimen": "Demam Berterusan >72-96 Jam / Ketidakstabilan Hemodinamik: IV Meropenem 1g-2g Q8H + IV Vancomycin 15-20mg/kg Q12H (+/- IV Amikacin 15mg/kg OD). Tambah IV Caspofungin 70mg loading kemudian 50mg OD jika demam >4-7 days.",
       "routeAndDose": "Eskalasi spektrum luas merangkumi MDR dan antikulat.",
       "durationDays": "7 - 14 days",
-      "remarks": "Tambah Vancomycin hanya jika ada bukti infeksi kateter, hipotensi/syok septik, radiograf infiltrat pneumonia, atau kultur gram-positif."
+      "remarks": "Tambah Vancomycin hanya jika ada bukti infeksi kateter, hipotensi/syok septik, radiograf infiltrat pneumonia, or kultur gram-positif."
     },
     "allergyDrugs": [
       "ciprofloxacin",
@@ -821,10 +821,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "methylprednisolone"
     ],
     "firstLineTherapy": {
-      "regimen": "Rawatan PJP Teruk/Sederhana: IV/Oral Co-Trimoxazole (Bactrim) pada dos TMP 15 - 20 mg/kg/hari (dibahagi kepada 3-4 dos setiap 6-8 jam) x 21 hari + STEROID ADJUNCT: Oral/IV Prednisolone (40mg BD hari 1-5, 40mg OD hari 6-10, 20mg OD hari 11-21).",
+      "regimen": "Rawatan PJP Teruk/Sederhana: IV/Oral Co-Trimoxazole (Bactrim) pada dos TMP 15 - 20 mg/kg/hari (dibahagi kepada 3-4 dos setiap 6-8 jam) x 21 days + STEROID ADJUNCT: Oral/IV Prednisolone (40mg BD hari 1-5, 40mg OD hari 6-10, 20mg OD hari 11-21).",
       "routeAndDose": "IV infusi dicairkan dalam Dextrose 5% sekurang-kurangnya 250ml setiap dos.",
       "durationDays": "21 days",
-      "remarks": "Steroid wajib dimulakan dalam masa 72 jam jika PaO2 <70 mmHg pada udara bilik atau A-a gradient ≥35 mmHg untuk mencegah kegagalan pernafasan akibat keradangan lisis kulat."
+      "remarks": "Steroid wajib dimulakan dalam masa 72 jam jika PaO2 <70 mmHg pada udara bilik or A-a gradient ≥35 mmHg untuk mencegah kegagalan pernafasan akibat keradangan lisis kulat."
     },
     "secondLineDrugs": [
       "clindamycin",
@@ -833,7 +833,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "atovaquone"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Clindamycin 600-900mg Q8H + Oral Primaquine 30mg OD (base) x 21 hari (atau IV Pentamidine isethionate 4mg/kg OD).",
+      "regimen": "IV Clindamycin 600-900mg Q8H + Oral Primaquine 30mg OD (base) x 21 days (or IV Pentamidine isethionate 4mg/kg OD).",
       "routeAndDose": "IV + Oral.",
       "durationDays": "21 days",
       "remarks": "Saring status G6PD sebelum memulakan Primaquine bagi mengelakkan krisis hemolisis akut."
@@ -844,7 +844,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "atovaquone"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IV/Oral Co-Trimoxazole (tiada kereaktifan silang dengan penisilin) atau IV Clindamycin 600mg Q8H + Oral Primaquine 30mg OD",
+      "regimen": "IV/Oral Co-Trimoxazole (tiada kereaktifan silang dengan penisilin) or IV Clindamycin 600mg Q8H + Oral Primaquine 30mg OD",
       "routeAndDose": "Oral/IV.",
       "remarks": "Gunakan protokol desensitisasi Bactrim sekiranya alahan sulfa ringan."
     },
@@ -853,11 +853,11 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Bactrim Forte 2 tablet TDS (jumlah 21 hari) diteruskan dengan PROFILAKSIS SEKUNDER: Oral Bactrim Forte 1 tablet OD (atau 1 tab 3 kali seminggu) sehingga CD4 >200 sel/mcL selama >3-6 bulan.",
+      "regimen": "Oral Bactrim Forte 2 tablet TDS (jumlah 21 days) diteruskan dengan PROFILAKSIS SEKUNDER: Oral Bactrim Forte 1 tablet OD (or 1 tab 3 kali seminggu) sehingga CD4 >200 sel/mcL selama >3-6 bulan.",
       "criteria": "Pesakit stabil, tidak memerlukan oksigen tambahan, dan tiada loya/muntah."
     },
     "amsNotes": [
-      "Hantar kahak teraruh (induced sputum) atau cecair BAL (Bronchoalveolar Lavage) untuk pewarnaan Giemsa/GMS dan ujian PJP PCR.",
+      "Hantar kahak teraruh (induced sputum) or cecair BAL (Bronchoalveolar Lavage) untuk pewarnaan Giemsa/GMS dan ujian PJP PCR.",
       "Pantau paras kalium (risiko hiperkalemia akibat kesan amiloride-like TMP) dan fungsi ginjal setiap 48-72 jam."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / NIH-CDC-IDSA Opportunistic Infection Guidelines)"
@@ -885,9 +885,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "liposomal amphotericin b"
     ],
     "firstLineTherapy": {
-      "regimen": "Kandidiasis Invasif / Kandidemia: IV Anidulafungin 200mg loading kemudian 100mg OD (or IV Caspofungin 70mg loading kemudian 50mg OD). Aspergillosis Invasif Pulmonari: IV Voriconazole 6mg/kg Q12H (hari 1) kemudian 4mg/kg Q12H (atau Oral 200-300mg BD).",
-      "routeAndDose": "IV infusi perlahan.",
-      "durationDays": "Kandidemia: Minimum 14 hari selepas kultur darah pertama disahkan negatif; Aspergillosis: 6 - 12 minggu",
+      "regimen": "Kandidiasis Invasif / Kandidemia: IV Anidulafungin 200mg loading kemudian 100mg OD (or IV Caspofungin 70mg loading kemudian 50mg OD). Aspergillosis Invasif Pulmonari: IV Voriconazole 6mg/kg Q12H (hari 1) kemudian 4mg/kg Q12H (or Oral 200-300mg BD).",
+      "routeAndDose": "IV slow infusion.",
+      "durationDays": "Kandidemia: Minimum 14 days selepas kultur darah pertama disahkan negatif; Aspergillosis: 6 - 12 weeks",
       "remarks": "Echinocandin (Anidulafungin/Caspofungin) adalah barisan pertama pilihan untuk kandidemia kerana spektrum luas merangkumi spesies rintang-Fluconazole."
     },
     "secondLineDrugs": [
@@ -897,7 +897,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "fluconazole"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Liposomal Amphotericin B 3-5 mg/kg OD (tingkatkan ke 5-10 mg/kg bagi Mucormycosis) atau IV/Oral Isavuconazole 200mg TDS (hari 1-2) kemudian 200mg OD.",
+      "regimen": "IV Liposomal Amphotericin B 3-5 mg/kg OD (tingkatkan ke 5-10 mg/kg bagi Mucormycosis) or IV/Oral Isavuconazole 200mg TDS (hari 1-2) kemudian 200mg OD.",
       "routeAndDose": "IV infusi.",
       "durationDays": "Berdasarkan tindak balas klinikal dan radiologi",
       "remarks": "Liposomal Amphotericin B mempunyai profil ketoksikan renal yang jauh lebih rendah berbanding formulasi deoxycholate."
@@ -907,11 +907,11 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "voriconazole"
     ],
     "oralStepDownOption": {
-      "regimen": "Kandidemia: Oral Fluconazole 400-800mg OD selepas 5-7 hari parenteral jika spesies adalah C. albicans sensitif dan pesakit stabil.",
+      "regimen": "Kandidemia: Oral Fluconazole 400-800mg OD selepas 5-7 days parenteral jika spesies adalah C. albicans sensitif dan pesakit stabil.",
       "criteria": "Kultur darah bersiri negatif, afebril, hemodinamik stabil, dan tiada endokarditis/endoftalmitis pada pemeriksaan mata."
     },
     "amsNotes": [
-      "SEMUA pesakit kandidemia WAJIB menjalani pemeriksaan funduskopi mata oleh Pakar Oftalmologi dalam masa 1 minggu untuk menolak endoftalmitis kulat.",
+      "SEMUA pesakit kandidemia WAJIB menjalani pemeriksaan funduskopi mata oleh Pakar Oftalmologi dalam masa 1 weeks untuk menolak endoftalmitis kulat.",
       "Keluarkan semua talian kateter vena sentral (CVC) seawal mungkin bagi pesakit kandidemia."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / IDSA Candidiasis & Aspergillosis Guidelines)"
@@ -939,7 +939,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "firstLineTherapy": {
-      "regimen": "Pesakit Luar (Ringan/Sederhana): IM Ceftriaxone 500mg stat + Oral Doxycycline 100mg BD x 14 hari + Oral Metronidazole 400mg-500mg BD x 14 hari. Pesakit Dalam (Teruk/Abses Tubo-Ovarian): IV Ceftriaxone 2g OD + IV Doxycycline 100mg BD + IV Metronidazole 500mg TDS sehingga 48 jam afebril kemudian tukar oral lengkapkan 14 hari.",
+      "regimen": "Pesakit Luar (Ringan/Sederhana): IM Ceftriaxone 500mg stat + Oral Doxycycline 100mg BD x 14 days + Oral Metronidazole 400mg-500mg BD x 14 days. Pesakit Dalam (Teruk/Abses Tubo-Ovarian): IV Ceftriaxone 2g OD + IV Doxycycline 100mg BD + IV Metronidazole 500mg TDS sehingga 48 jam afebril kemudian tukar oral lengkapkan 14 days.",
       "routeAndDose": "IM suntikan stat + rejimen oral.",
       "durationDays": "14 days total",
       "remarks": "Metronidazole wajib dimasukkan untuk merawat vaginitis bakteria yang lazim menyertai PID dan melindungi daripada kuman anaerobik."
@@ -952,10 +952,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "gentamicin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Ampicillin/Sulbactam 3g Q6H + Oral Doxycycline 100mg BD x 14 hari (atau IV Clindamycin 900mg Q8H + IV Gentamicin 2mg/kg loading kemudian 1.5mg/kg Q8H).",
+      "regimen": "IV Ampicillin/Sulbactam 3g Q6H + Oral Doxycycline 100mg BD x 14 days (or IV Clindamycin 900mg Q8H + IV Gentamicin 2mg/kg loading kemudian 1.5mg/kg Q8H).",
       "routeAndDose": "IV.",
       "durationDays": "14 days",
-      "remarks": "Untuk pesakit yang tidak bertindak balas terhadap sefalosporin atau mengalami abses pelvis kompleks."
+      "remarks": "Untuk pesakit yang tidak bertindak balas terhadap sefalosporin or mengalami abses pelvis kompleks."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -964,12 +964,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Moxifloxacin 400mg OD x 14 hari (or IV Clindamycin 900mg Q8H + IV Gentamicin 2mg/kg loading kemudian 1.5mg/kg Q8H x 14 hari)",
+      "regimen": "Oral Moxifloxacin 400mg OD x 14 days (or IV Clindamycin 900mg Q8H + IV Gentamicin 2mg/kg loading kemudian 1.5mg/kg Q8H x 14 days)",
       "routeAndDose": "Oral/IV.",
       "remarks": "Moxifloxacin memberi liputan intrapelvis luas termasuk kuman atipikal."
     },
     "amsNotes": [
-      "NOTIFIKASI DAN RAWATAN PASANGAN SEKSUAL: Semua pasangan seksual dalam tempoh 60 hari lepas wajib dirawat untuk Chlamydia dan Gonorrhoea bagi mengelakkan jangkitan semula (ping-pong transmission).",
+      "NOTIFIKASI DAN RAWATAN PASANGAN SEKSUAL: Semua pasangan seksual dalam tempoh 60 days lepas wajib dirawat untuk Chlamydia dan Gonorrhoea bagi mengelakkan jangkitan semula (ping-pong transmission).",
       "Keluarkan alat dalam rahim (IUCD) jika tiada pemulihan klinikal selepas 48-72 jam terapi antibiotik."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / CDC STI Treatment Guidelines 2021)"
@@ -1001,7 +1001,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "firstLineTherapy": {
       "regimen": "Endometritis Pasca-Pembedahan Caesarean (Gold Standard): IV Clindamycin 900mg Q8H + IV Gentamicin 5mg/kg OD (+ IV Ampicillin 2g Q6H jika disyaki Enterococcus / sepsis). Alternatif: IV Co-Amoxiclav 1.2g TDS. Korioamnionitis Semasa Bersalin: IV Ampicillin 2g Q6H + IV Gentamicin 5mg/kg OD.",
       "routeAndDose": "IV diteruskan sehingga pesakit afebril dan tiada sakit rahim selama sekurang-kurangnya 24 - 48 jam.",
-      "durationDays": "Sehingga 48 jam afebril (biasanya 3 - 5 hari; terapi oral susulan di rumah TIDAK diperlukan jika pulih)",
+      "durationDays": "Sehingga 48 jam afebril (biasanya 3 - 5 days; terapi oral susulan di rumah TIDAK diperlukan jika pulih)",
       "remarks": "Suntikan antibiotik profilaksis pra-pembedahan C-section (Cefazolin 2g stat) terbukti mengurangkan kadar endometritis sehingga 70%."
     },
     "secondLineDrugs": [
@@ -1010,10 +1010,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Piperacillin/Tazobactam 4.5g Q8H atau IV Meropenem 1g Q8H",
+      "regimen": "IV Piperacillin/Tazobactam 4.5g Q8H or IV Meropenem 1g Q8H",
       "routeAndDose": "IV.",
       "durationDays": "5 - 7 days",
-      "remarks": "Untuk kes komplikasi septik pelvik tromboflebitis atau abses luka pembedahan yang meluas."
+      "remarks": "Untuk kes komplikasi septik pelvik tromboflebitis or abses luka pembedahan yang meluas."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -1026,7 +1026,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "remarks": "Rejimen standard emas Clindamycin + Gentamicin sememangnya selamat untuk pesakit alahan penisilin."
     },
     "amsNotes": [
-      "Jika demam berterusan >48-72 jam walaupun dengan antibiotik optimum, lakukan pemeriksaan CT pelvis untuk menyingkirkan Hematoma Terinfeksi, Abses Pelvis, atau Septic Pelvic Thrombophlebitis (SPT).",
+      "Jika demam berterusan >48-72 jam walaupun dengan antibiotik optimum, lakukan pemeriksaan CT pelvis untuk menyingkirkan Hematoma Terinfeksi, Abses Pelvis, or Septic Pelvic Thrombophlebitis (SPT).",
       "Ibu digalakkan meneruskan penyusuan susu ibu (kedua-dua Clindamycin dan Gentamicin serasi dengan penyusuan)."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / ACOG Clinical Practice Guidelines)"
@@ -1053,10 +1053,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "firstLineTherapy": {
-      "regimen": "Oral Cloxacillin 500mg Q6H x 10-14 hari (atau Oral Cephalexin 500mg Q6H x 10-14 hari / Oral Augmentin 625mg TDS).",
-      "routeAndDose": "Oral diambil semasa perut kosong (1 jam sebelum atau 2 jam selepas makan bagi Cloxacillin).",
+      "regimen": "Oral Cloxacillin 500mg Q6H x 10-14 days (or Oral Cephalexin 500mg Q6H x 10-14 days / Oral Augmentin 625mg TDS).",
+      "routeAndDose": "Oral diambil semasa perut kosong (1 jam sebelum or 2 jam selepas makan bagi Cloxacillin).",
       "durationDays": "10 - 14 days",
-      "remarks": "NASIHAT PENYUSUAN KRITIKAL: Teruskan penyusuan susu ibu atau perahan susu dari payudara yang terjejas secara kerap untuk mengosongkan duktus susu yang tersumbat."
+      "remarks": "NASIHAT PENYUSUAN KRITIKAL: Teruskan penyusuan susu ibu or perahan susu dari payudara yang terjejas secara kerap untuk mengosongkan duktus susu yang tersumbat."
     },
     "secondLineDrugs": [
       "clindamycin",
@@ -1065,7 +1065,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "vancomycin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Clindamycin 300-450mg TDS x 10-14 hari atau Oral Bactrim Forte 1 tab BD (jika bayi sihat berumur >2 bulan dan tiada jaundis/G6PD).",
+      "regimen": "Oral Clindamycin 300-450mg TDS x 10-14 days or Oral Bactrim Forte 1 tab BD (jika bayi sihat berumur >2 bulan dan tiada jaundis/G6PD).",
       "routeAndDose": "Oral.",
       "durationDays": "10 - 14 days",
       "remarks": "Bagi kes mastitis dengan risiko jangkitan Community-Acquired MRSA."
@@ -1076,13 +1076,13 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Erythromycin Ethylsuccinate (EES) 400mg QID x 10-14 hari atau Oral Azithromycin 500mg OD x 3 hari atau Oral Clindamycin 300mg TDS",
+      "regimen": "Oral Erythromycin Ethylsuccinate (EES) 400mg QID x 10-14 days or Oral Azithromycin 500mg OD x 3 days or Oral Clindamycin 300mg TDS",
       "routeAndDose": "Oral.",
       "remarks": "Sesuai untuk ibu yang mempunyai sejarah alergi penisilin."
     },
     "amsNotes": [
-      "Lakukan Ultrasound Payudara jika terdapat jisim berfluktuasi atau tiada tindak balas selepas 48 jam untuk mengesan Pembentukan Abses Payudara.",
-      "Abses payudara wajib dirawat dengan aspirasi jarum bersiri berpandukan USG atau insisi dan penyaliran (I&D) kecil."
+      "Lakukan Ultrasound Payudara jika terdapat jisim berfluktuasi or tiada tindak balas selepas 48 jam untuk mengesan Pembentukan Abses Payudara.",
+      "Abses payudara wajib dirawat dengan aspirasi jarum bersiri berpandukan USG or insisi dan penyaliran (I&D) kecil."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / ABM Clinical Protocol #4)"
   },
@@ -1107,20 +1107,20 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "fluconazole"
     ],
     "firstLineTherapy": {
-      "regimen": "Vaginosis Bakteria (BV): Oral Metronidazole 400-500mg BD x 7 hari. Trichomoniasis: Oral Metronidazole 400-500mg BD x 7 hari (atau 2g stat) + RAWAT PASANGAN SEKSUAL. Kandidiasis Faraj: Pessari Clotrimazole 500mg intravagina stat (atau Oral Fluconazole 150mg stat).",
-      "routeAndDose": "Oral atau Pessari Intravagina malam.",
-      "durationDays": "Stat dose sehingga 7 hari",
-      "remarks": "Wanita hamil dengan Kandidiasis Faraj HANYA BOLEH menggunakan Pessari Clotrimazole topikal selama 7 hari (Oral Fluconazole TIDAK disyorkan semasa trimester pertama kehamilan)."
+      "regimen": "Vaginosis Bakteria (BV): Oral Metronidazole 400-500mg BD x 7 days. Trichomoniasis: Oral Metronidazole 400-500mg BD x 7 days (or 2g stat) + RAWAT PASANGAN SEKSUAL. Kandidiasis Faraj: Pessari Clotrimazole 500mg intravagina stat (or Oral Fluconazole 150mg stat).",
+      "routeAndDose": "Oral or Pessari Intravagina malam.",
+      "durationDays": "Stat dose sehingga 7 days",
+      "remarks": "Wanita hamil dengan Kandidiasis Faraj HANYA BOLEH menggunakan Pessari Clotrimazole topikal selama 7 days (Oral Fluconazole TIDAK disyorkan semasa trimester pertama kehamilan)."
     },
     "secondLineDrugs": [
       "clindamycin",
       "tinidazole"
     ],
     "secondLineTherapy": {
-      "regimen": "Krim Vagina Clindamycin 2% waktu malam x 7 hari atau Oral Tinidazole 2g stat.",
+      "regimen": "Krim Vagina Clindamycin 2% waktu malam x 7 days or Oral Tinidazole 2g stat.",
       "routeAndDose": "Topikal / Oral.",
       "durationDays": "1 - 7 days",
-      "remarks": "Untuk kes alahan atau intoleransi gastrik teruk terhadap Metronidazole."
+      "remarks": "Untuk kes alahan or intoleransi gastrik teruk terhadap Metronidazole."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -1160,7 +1160,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "firstLineTherapy": {
-      "regimen": "Konjunktivitis Bakteria Lazim: Titisan Mata Chloramphenicol 0.5% 1-2 titis setiap 2 jam (fasa akut 48 jam) kemudian QID x 5-7 hari (atau Titisan Gentamicin 0.3%). Oftalmia Gonokokal Dewasa: IM Ceftriaxone 1g stat + Oral Azithromycin 1g stat + Cuci mata kerap dengan larutan salin steril.",
+      "regimen": "Konjunktivitis Bakteria Lazim: Titisan Mata Chloramphenicol 0.5% 1-2 titis setiap 2 jam (fasa akut 48 jam) kemudian QID x 5-7 days (or Titisan Gentamicin 0.3%). Oftalmia Gonokokal Dewasa: IM Ceftriaxone 1g stat + Oral Azithromycin 1g stat + Cuci mata kerap dengan larutan salin steril.",
       "routeAndDose": "Topikal titisan mata / IM suntikan parenteral.",
       "durationDays": "5 - 7 days (Topikal) / Stat dose (Gonococcal)",
       "remarks": "Oftalmia gonokokal adalah kecemasan oftalmologi kerana boleh menyebabkan pencairan kornea (corneal ulceration & perforation) dalam masa 24-48 jam jika lewat dirawat."
@@ -1171,10 +1171,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "secondLineTherapy": {
-      "regimen": "Titisan Mata Ciprofloxacin 0.3% atau Titisan Levofloxacin 0.5% QID x 7 hari (Chlamydia: Oral Doxycycline 100mg BD x 7 hari).",
+      "regimen": "Titisan Mata Ciprofloxacin 0.3% or Titisan Levofloxacin 0.5% QID x 7 days (Chlamydia: Oral Doxycycline 100mg BD x 7 days).",
       "routeAndDose": "Topikal / Oral.",
       "durationDays": "7 days",
-      "remarks": "Untuk kes alahan atau rintangan terhadap Chloramphenicol."
+      "remarks": "Untuk kes alahan or rintangan terhadap Chloramphenicol."
     },
     "allergyDrugs": [
       "ciprofloxacin",
@@ -1187,7 +1187,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
     "amsNotes": [
-      "Nasihatkan pesakit mencuci tangan dengan teliti dan TIDAK berkongsi tuala atau bantal untuk mengelakkan penularan kepada ahli keluarga.",
+      "Nasihatkan pesakit mencuci tangan dengan teliti dan TIDAK berkongsi tuala or bantal untuk mengelakkan penularan kepada ahli keluarga.",
       "Elakkan pemakaian kanta lekap (contact lens) sehingga mata pulih sepenuhnya sekurang-kurangnya 48 jam selepas tamat rawatan."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / AAO Preferred Practice Pattern)"
@@ -1200,7 +1200,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "2. MICROBIAL KERATITIS & CORNEAL ULCER",
     "topicNumber": 2,
     "bodySystem": "Ocular Infections",
-    "conditionName": "Bacterial & Fungal Microbial Keratitis (Ulser Kornea)",
+    "conditionName": "Bacterial & Fungal Microbial Keratitis (Corneal Ulcer)",
     "setting": "Outpatient (OPD/KK)",
     "primaryPathogens": [
       "Pseudomonas aeruginosa (terutamanya pemakai kanta lekap)",
@@ -1216,7 +1216,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "natamycin"
     ],
     "firstLineTherapy": {
-      "regimen": "Keratitis Bakteria (Ulser Kecil Bukan Pusat): Titisan Moxifloxacin 0.5% atau Levofloxacin 1.5% setiap 1 jam siang dan malam. Keratitis Teruk / Melibatkan Paksi Visual: Titisan Mata Diperkukuh (Fortified Eye Drops): Fortified Cefazolin 5% (50mg/mL) berselang-seli setiap 1 jam dengan Fortified Gentamicin 1.4% (atau Fortified Ceftazidime 5%). Keratitis Kulat: Titisan Natamycin 5% setiap 1 jam.",
+      "regimen": "Keratitis Bakteria (Ulser Kecil Bukan Pusat): Titisan Moxifloxacin 0.5% or Levofloxacin 1.5% setiap 1 jam siang dan malam. Keratitis Teruk / Melibatkan Paksi Visual: Titisan Mata Diperkukuh (Fortified Eye Drops): Fortified Cefazolin 5% (50mg/mL) berselang-seli setiap 1 jam dengan Fortified Gentamicin 1.4% (or Fortified Ceftazidime 5%). Keratitis Kulat: Titisan Natamycin 5% setiap 1 jam.",
       "routeAndDose": "Topikal mata dos intensif setiap jam.",
       "durationDays": "14 - 28 days (dipantau rapat oleh Pakar Mata)",
       "remarks": "RUJUK SEGERA KEPADA PAKAR OFTALMOLOGI DALAM MASA 24 JAM. Ambil kikisan kornea (corneal scraping) untuk pewarnaan Gram, KOH, dan Kultur C&S sebelum titisan dimulakan."
@@ -1226,7 +1226,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amphotericin b"
     ],
     "secondLineTherapy": {
-      "regimen": "Titisan Mata Fortified Voriconazole 1% atau Amphotericin B 0.15% setiap 1 jam untuk keratitis kulat refraktori.",
+      "regimen": "Titisan Mata Fortified Voriconazole 1% or Amphotericin B 0.15% setiap 1 jam untuk keratitis kulat refraktori.",
       "routeAndDose": "Topikal diperkukuh.",
       "durationDays": "4 - 6 weeks",
       "remarks": "Disediakan di bawah pengawasan Farmasi Bilik Bersih Aseptik Hospital."
@@ -1237,7 +1237,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "gentamicin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Titisan Moxifloxacin 0.5% + Titisan Fortified Gentamicin 1.4% atau Fortified Amikacin 2.5%",
+      "regimen": "Titisan Moxifloxacin 0.5% + Titisan Fortified Gentamicin 1.4% or Fortified Amikacin 2.5%",
       "routeAndDose": "Topikal intensif.",
       "remarks": "Bebas kompaun sefalosporin/penisilin."
     },
@@ -1281,10 +1281,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "Endoftalmitis Kulat: Intravitreal Voriconazole 100mcg / 0.1mL (atau Amphotericin B 5-10mcg / 0.1mL) + Sistemik Oral/IV Voriconazole 200mg BD.",
+      "regimen": "Endoftalmitis Kulat: Intravitreal Voriconazole 100mcg / 0.1mL (or Amphotericin B 5-10mcg / 0.1mL) + Sistemik Oral/IV Voriconazole 200mg BD.",
       "routeAndDose": "Intravitreal + Sistemik.",
       "durationDays": "Berdasarkan pemantauan retina",
-      "remarks": "Wajib rawat punca primer (seperti abses hepar Klebsiella atau fungemia)."
+      "remarks": "Wajib rawat punca primer (seperti abses hepar Klebsiella or fungemia)."
     },
     "allergyDrugs": [
       "vancomycin",
@@ -1293,7 +1293,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "penicillinAllergyOption": {
       "regimen": "Intravitreal Vancomycin 1.0mg / 0.1mL + Intravitreal Amikacin 0.4mg / 0.1mL",
       "routeAndDose": "Intravitreal.",
-      "remarks": "Gantikan Ceftazidime dengan Amikacin jika alahan teruk sefalosporin."
+      "remarks": "Gantikan Ceftazidime dengan Amikacin if severe allergy sefalosporin."
     },
     "amsNotes": [
       "Ambil sampel biopsi/aspirat vitreous dan cecair aqueous humor untuk pewarnaan serta kultur mikrobiologi sebelum suntikan intravitreal.",
@@ -1326,9 +1326,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ampicillin/sulbactam"
     ],
     "firstLineTherapy": {
-      "regimen": "Selulitis Preseptal: Oral Augmentin 625mg TDS x 7-10 hari. Selulitis Orbital (Kecemasan): IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS (atau IV Co-Amoxiclav 1.2g TDS / IV Ampicillin-Sulbactam 3g Q6H) + IV Cloxacillin 2g Q4H.",
+      "regimen": "Selulitis Preseptal: Oral Augmentin 625mg TDS x 7-10 days. Selulitis Orbital (Kecemasan): IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS (or IV Co-Amoxiclav 1.2g TDS / IV Ampicillin-Sulbactam 3g Q6H) + IV Cloxacillin 2g Q4H.",
       "routeAndDose": "IV parenteral dos tinggi.",
-      "durationDays": "10 - 14 days (panjangkan ke 3-4 minggu jika ada pembentukan abses subperiosteal)",
+      "durationDays": "10 - 14 days (panjangkan ke 3-4 weeks jika ada pembentukan abses subperiosteal)",
       "remarks": "Selulitis Orbital ditandakan oleh proptosis, sakit semasa pergerakan bola mata, ophthalmoplegia, dan penurunan ketajaman penglihatan; WAJIB lakukan CT Orbit & Paranasal Sinus berkontras segera."
     },
     "secondLineDrugs": [
@@ -1338,10 +1338,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "vancomycin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Tazocin 4.5g Q6H + IV Vancomycin 15-20mg/kg Q12H (atau IV Meropenem 1g-2g Q8H)",
+      "regimen": "IV Tazocin 4.5g Q6H + IV Vancomycin 15-20mg/kg Q12H (or IV Meropenem 1g-2g Q8H)",
       "routeAndDose": "IV infusi.",
       "durationDays": "14 days",
-      "remarks": "Untuk jangkitan sinus odontogenik teruk, pesakit imunokompromais, atau ancaman trombosis sinus kavernosus."
+      "remarks": "Untuk jangkitan sinus odontogenik teruk, pesakit imunokompromais, or ancaman trombosis sinus kavernosus."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -1354,7 +1354,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
     "amsNotes": [
-      "Rujuk bersama Pakar ENT dan Pakar Oftalmologi untuk penilaian penyaliran endoskopik sinus (FESS) atau penyaliran abses subperiosteal.",
+      "Rujuk bersama Pakar ENT dan Pakar Oftalmologi untuk penilaian penyaliran endoskopik sinus (FESS) or penyaliran abses subperiosteal.",
       "Pantau tindak balas pupil (RAPD) dan penglihatan warna setiap 4 jam untuk mengesan mampatan saraf optik."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / ENT-Ophthalmology Consensus)"
@@ -1384,10 +1384,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amoxicillin"
     ],
     "firstLineTherapy": {
-      "regimen": "Abses Periapikal Ringan: Oral Amoxicillin 500mg TDS + Oral Metronidazole 400mg TDS x 5-7 hari (atau Oral Augmentin 625mg TDS). Jangkitan Ruang Fasial Dalam / Ludwig's Angina: IV Co-Amoxiclav 1.2g TDS (or IV Ampicillin-Sulbactam 1.5g-3g Q6H) + PENGAWALAN SALURAN PERNAFASAN SEGERA & PENYALIRAN PEMBEDAHAN.",
+      "regimen": "Abses Periapikal Ringan: Oral Amoxicillin 500mg TDS + Oral Metronidazole 400mg TDS x 5-7 days (or Oral Augmentin 625mg TDS). Jangkitan Ruang Fasial Dalam / Ludwig's Angina: IV Co-Amoxiclav 1.2g TDS (or IV Ampicillin-Sulbactam 1.5g-3g Q6H) + PENGAWALAN SALURAN PERNAFASAN SEGERA & PENYALIRAN PEMBEDAHAN.",
       "routeAndDose": "Oral untuk abses terlokalisasi; IV untuk selulitis submandibular/Ludwig's angina.",
       "durationDays": "5 - 7 days (ringan) / 7 - 14 days (ruang fasial dalam)",
-      "remarks": "Ludwig's Angina adalah kecemasan saluran pernafasan; utamakan intubasi fiberoptik atau trakeostomi kecemasan sebelum manipulasi pembedahan."
+      "remarks": "Ludwig's Angina adalah kecemasan saluran pernafasan; utamakan intubasi fiberoptik or trakeostomi kecemasan sebelum manipulasi pembedahan."
     },
     "secondLineDrugs": [
       "piperacillin/tazobactam",
@@ -1396,10 +1396,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Piperacillin/Tazobactam 4.5g Q6H atau IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS",
+      "regimen": "IV Piperacillin/Tazobactam 4.5g Q6H or IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS",
       "routeAndDose": "IV.",
       "durationDays": "7 - 14 days",
-      "remarks": "Bagi kes merebak ke ruang parafaringeal atau mediastinum (mediastinitis menurun)."
+      "remarks": "Bagi kes merebak ke ruang parafaringeal or mediastinum (mediastinitis menurun)."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -1407,12 +1407,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clarithromycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral/IV Clindamycin 300-600mg Q8H x 7 hari (atau Oral Clarithromycin 500mg BD + Oral Metronidazole 400mg TDS)",
+      "regimen": "Oral/IV Clindamycin 300-600mg Q8H x 7 days (or Oral Clarithromycin 500mg BD + Oral Metronidazole 400mg TDS)",
       "routeAndDose": "Oral/IV.",
       "remarks": "Clindamycin mempunyai penembusan tisu tulang dan ruang fasial mulut yang sangat cemerlang."
     },
     "amsNotes": [
-      "RAWATAN DENTIS UTAMA: Rawatan akar gigi (Root Canal Treatment) atau cabutan gigi penyebab (extraction) berserta insisi nanah adalah syarat wajib penyembuhan.",
+      "RAWATAN DENTIS UTAMA: Rawatan akar gigi (Root Canal Treatment) or cabutan gigi penyebab (extraction) berserta insisi nanah adalah syarat wajib penyembuhan.",
       "Antibiotik tanpa rawatan pembedahan pergigian akan menyebabkan abses berulang."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / Malaysian Dental Association Guidelines)"
@@ -1439,7 +1439,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "chlorhexidine"
     ],
     "firstLineTherapy": {
-      "regimen": "Oral Metronidazole 400mg TDS x 5 hari + Oral Amoxicillin 500mg TDS x 5 hari + Kumuran Mulut Chlorhexidine Gluconate 0.2% 15mL BD + Debridement Ultrasonik Karang Gigi.",
+      "regimen": "Oral Metronidazole 400mg TDS x 5 days + Oral Amoxicillin 500mg TDS x 5 days + Kumuran Mulut Chlorhexidine Gluconate 0.2% 15mL BD + Debridement Ultrasonik Karang Gigi.",
       "routeAndDose": "Oral + Kumuran mulut antiseptik topikal.",
       "durationDays": "5 days",
       "remarks": "Metronidazole adalah ubat pilihan utama kerana aktiviti pembasmian spiroket dan anaerobik fusiform yang amat kuat."
@@ -1450,7 +1450,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Doxycycline 100mg BD x 7 hari atau Oral Augmentin 625mg TDS x 5 hari.",
+      "regimen": "Oral Doxycycline 100mg BD x 7 days or Oral Augmentin 625mg TDS x 5 days.",
       "routeAndDose": "Oral.",
       "durationDays": "5 - 7 days",
       "remarks": "Alternatif untuk periodontitis refraktori agresif."
@@ -1461,7 +1461,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Metronidazole 400mg TDS x 5 hari + Oral Doxycycline 100mg BD x 7 hari",
+      "regimen": "Oral Metronidazole 400mg TDS x 5 days + Oral Doxycycline 100mg BD x 7 days",
       "routeAndDose": "Oral.",
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
@@ -1479,7 +1479,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. ACUTE & CHRONIC OSTEOMYELITIS",
     "topicNumber": 1,
     "bodySystem": "Orthopaedic Infections",
-    "conditionName": "Acute & Chronic Osteomyelitis (Osteomielitis Akut & Kronik)",
+    "conditionName": "Acute & Chronic Osteomyelitis",
     "setting": "Community-Acquired",
     "primaryPathogens": [
       "Staphylococcus aureus (MSSA & MRSA)",
@@ -1495,9 +1495,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ciprofloxacin"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Cloxacillin 2g Q4H (or IV Cefazolin 2g Q8H) selama 2-3 minggu pertama, diikuti pertukaran oral sasaran (Oral Cephalexin 1g Q6H atau Cloxacillin 1g Q6H) untuk melengkapkan jumlah 6 MINGGU.",
+      "regimen": "IV Cloxacillin 2g Q4H (or IV Cefazolin 2g Q8H) selama 2-3 weeks pertama, diikuti pertukaran oral sasaran (Oral Cephalexin 1g Q6H or Cloxacillin 1g Q6H) untuk melengkapkan jumlah 6 MINGGU.",
       "routeAndDose": "IV dos tinggi parenteral diikuti terapi oral bertindak balas.",
-      "durationDays": "Minimum 6 weeks total (4-6 minggu osteomielitis akut, 6-12 minggu osteomielitis kronik)",
+      "durationDays": "Minimum 6 weeks total (4-6 weeks osteomielitis akut, 6-12 weeks osteomielitis kronik)",
       "remarks": "Pembedahan Sekuestrektomi & Debridement Tulang Mati (Debridement of necrotic bone) adalah WAJIB untuk osteomielitis kronik kerana antibiotik tidak mampu menembusi sekuestrum tulang avaskular."
     },
     "secondLineDrugs": [
@@ -1507,10 +1507,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "piperacillin/tazobactam"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Vancomycin 15-20mg/kg Q12H (trough 15-20 mcg/mL) + Oral Rifampicin 300-450mg BD (atau IV Daptomycin 8-10mg/kg OD)",
+      "regimen": "IV Vancomycin 15-20mg/kg Q12H (trough 15-20 mcg/mL) + Oral Rifampicin 300-450mg BD (or IV Daptomycin 8-10mg/kg OD)",
       "routeAndDose": "IV infusi + Oral.",
       "durationDays": "6 - 12 weeks",
-      "remarks": "Untuk jangkitan MRSA disahkan atau pesakit dengan implan logam osteosintesis."
+      "remarks": "Untuk jangkitan MRSA disahkan or pesakit dengan implan logam osteosintesis."
     },
     "allergyDrugs": [
       "vancomycin",
@@ -1520,9 +1520,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IV Vancomycin 15-20mg/kg Q12H (trough 15-20) kemudian Oral Clindamycin 450mg Q6H atau Oral Bactrim Forte 2 tabs BD x 6 minggu",
+      "regimen": "IV Vancomycin 15-20mg/kg Q12H (trough 15-20) kemudian Oral Clindamycin 450mg Q6H or Oral Bactrim Forte 2 tabs BD x 6 weeks",
       "routeAndDose": "IV bertukar ke Oral.",
-      "remarks": "Sesuai untuk pesakit alahan penisilin."
+      "remarks": "Suitable for patients with penicillin allergy."
     },
     "stepDownDrugs": [
       "cephalexin",
@@ -1532,12 +1532,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Cephalexin 1g Q6H atau Oral Cloxacillin 1g Q6H (atau Ciprofloxacin 750mg BD jika Gram-negatif) selepas 2 minggu parenteral.",
+      "regimen": "Oral Cephalexin 1g Q6H or Oral Cloxacillin 1g Q6H (or Ciprofloxacin 750mg BD jika Gram-negatif) selepas 2 weeks parenteral.",
       "criteria": "Penurunan konsisten penanda radang ESR / CRP >50%, luka pembedahan kering dan sembuh, pesakit afebril, tiada sekuestrum residual pada radiograf."
     },
     "amsNotes": [
       "Ambil biopsi tisu tulang / kuretaj dalam semasa pembedahan untuk kultur mikrobiologi dan histopatologi; JANGAN bergantung pada kultur sapuan swab luka cetek (superficial swab sering kali hanya menunjukkan kolonisasi kulit).",
-      "Pantau ESR dan CRP secara bersiri setiap 2 minggu untuk menilai respons terapi."
+      "Pantau ESR dan CRP secara bersiri setiap 2 weeks untuk menilai respons terapi."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / IDSA Osteomyelitis Guidelines / OVIVA Trial)"
   },
@@ -1565,7 +1565,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "firstLineTherapy": {
       "regimen": "Artritis Septik Bukan Gonokokal: IV Cloxacillin 2g Q4H (or IV Cefazolin 2g Q8H) + ASPIRASI JARUM SENDI HARIAN / ARTROTOMI PENYALIRAN KECEMASAN. Artritis Gonokokal: IV Ceftriaxone 1g-2g OD + Oral Azithromycin 1g stat.",
       "routeAndDose": "IV dos tinggi parenteral.",
-      "durationDays": "3 - 4 weeks total (14 hari untuk Gonococcal; 3-4 minggu untuk Staphylococcal)",
+      "durationDays": "3 - 4 weeks total (14 days untuk Gonococcal; 3-4 weeks untuk Staphylococcal)",
       "remarks": "Sendi bernanah adalah KECEMASAN ORTOPEDIK kerana enzim lisosom granulosit boleh memusnahkan rawan sendi (articular cartilage lysis) secara kekal dalam masa beberapa hari."
     },
     "secondLineDrugs": [
@@ -1577,7 +1577,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Vancomycin 15-20mg/kg Q12H (+ IV Ceftriaxone 2g OD jika risiko kuman Gram-negatif tinggi)",
       "routeAndDose": "IV.",
       "durationDays": "3 - 4 weeks",
-      "remarks": "Bagi pesakit septik dengan risiko MRSA atau alahan sefalosporin."
+      "remarks": "Bagi pesakit septik dengan risiko MRSA or alahan sefalosporin."
     },
     "allergyDrugs": [
       "vancomycin",
@@ -1585,7 +1585,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ciprofloxacin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IV Vancomycin 15-20mg/kg Q12H (atau IV Clindamycin 900mg Q8H)",
+      "regimen": "IV Vancomycin 15-20mg/kg Q12H (or IV Clindamycin 900mg Q8H)",
       "routeAndDose": "IV.",
       "remarks": "Bebas beta-laktam."
     },
@@ -1596,7 +1596,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Cephalexin 1g Q6H atau Oral Augmentin 625mg TDS selepas sekurang-kurangnya 1-2 minggu parenteral.",
+      "regimen": "Oral Cephalexin 1g Q6H or Oral Augmentin 625mg TDS selepas sekurang-kurangnya 1-2 weeks parenteral.",
       "criteria": "Cecair sinovial jernih dan steril pada aspirasi ulangan, bengkak sendi surut, julat pergerakan sendi pulih tanpa sakit akut, CRP menurun."
     },
     "amsNotes": [
@@ -1640,10 +1640,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "rifampicin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Daptomycin 10mg/kg OD + Oral Rifampicin 450mg BD (atau Ciprofloxacin 750mg BD + Rifampicin bagi kuman Gram-negatif biofilm).",
+      "regimen": "IV Daptomycin 10mg/kg OD + Oral Rifampicin 450mg BD (or Ciprofloxacin 750mg BD + Rifampicin bagi kuman Gram-negatif biofilm).",
       "routeAndDose": "IV + Oral.",
       "durationDays": "3 - 6 months",
-      "remarks": "Untuk kes PJI rintang atau pesakit yang mengalami ketoksikan Vancomycin."
+      "remarks": "Untuk kes PJI rintang or pesakit yang mengalami ketoksikan Vancomycin."
     },
     "allergyDrugs": [
       "vancomycin",
@@ -1657,7 +1657,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     },
     "amsNotes": [
       "Pembedahan Semakan Dua Peringkat (Two-Stage Revision with Antibiotic-loaded Bone Cement Spacer) adalah pilihan terbaik untuk jangkitan kronik lewat (>3 bulan) dengan implan longgar.",
-      "Hentikan semua antibiotik sekurang-kurangnya 2 MINGGU sebelum aspirasi diagnostik sendi atau pembedahan semakan bagi memaksimumkan kadar positif kultur mikrobiologi."
+      "Hentikan semua antibiotik sekurang-kurangnya 2 MINGGU sebelum aspirasi diagnostik sendi or pembedahan semakan bagi memaksimumkan kadar positif kultur mikrobiologi."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / IDSA PJI Guidelines / EBJIS Consensus)"
   },
@@ -1684,7 +1684,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ceftriaxone"
     ],
     "firstLineTherapy": {
-      "regimen": "AOM Dewasa: Oral Amoxicillin 1g TDS x 7 hari (atau Oral Augmentin 625mg TDS x 7 hari). Mastoiditis Akut: IV Ceftriaxone 2g OD (or IV Co-Amoxiclav 1.2g TDS) + RUJUKAN KECEMASAN ENT UNTUK MIRINGOTOMI / MASTOIDEKTOMI.",
+      "regimen": "AOM Dewasa: Oral Amoxicillin 1g TDS x 7 days (or Oral Augmentin 625mg TDS x 7 days). Mastoiditis Akut: IV Ceftriaxone 2g OD (or IV Co-Amoxiclav 1.2g TDS) + RUJUKAN KECEMASAN ENT UNTUK MIRINGOTOMI / MASTOIDEKTOMI.",
       "routeAndDose": "Oral untuk AOM; IV untuk mastoiditis.",
       "durationDays": "7 - 10 days (AOM) / 14 - 21 days (Mastoiditis)",
       "remarks": "Jika terdapat nanah keluar dari telinga akibat perforasi membran timpanik, ambil swab cecair untuk ujian C&S dan pastikan telinga sentiasa kering."
@@ -1695,7 +1695,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Cefuroxime Axetil 500mg BD x 7-10 hari atau Oral Azithromycin 500mg OD (hari 1) kemudian 250mg OD (hari 2-5).",
+      "regimen": "Oral Cefuroxime Axetil 500mg BD x 7-10 days or Oral Azithromycin 500mg OD (hari 1) kemudian 250mg OD (hari 2-5).",
       "routeAndDose": "Oral.",
       "durationDays": "5 - 10 days",
       "remarks": "Bagi pesakit yang gagal bertindak balas terhadap Amoxicillin selepas 48-72 jam."
@@ -1707,13 +1707,13 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "levofloxacin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Clarithromycin 500mg BD x 7 hari atau Oral Doxycycline 100mg BD x 7 hari atau Oral Levofloxacin 500mg OD",
+      "regimen": "Oral Clarithromycin 500mg BD x 7 days or Oral Doxycycline 100mg BD x 7 days or Oral Levofloxacin 500mg OD",
       "routeAndDose": "Oral.",
-      "remarks": "Sesuai untuk pesakit alahan penisilin."
+      "remarks": "Suitable for patients with penicillin allergy."
     },
     "amsNotes": [
       "Jangan gunakan ubat titis telinga aminoglikosida (Gentamicin) jika membran timpanik telah bocor/perforasi kerana risiko ketoksikan koklea dan organ vestibular (ototoxicity).",
-      "Lakukan imbasan CT Tulang Temporal jika mastoiditis disyaki untuk menolak abses subperiosteal Bezold atau trombosis sinus sigmoid."
+      "Lakukan imbasan CT Tulang Temporal jika mastoiditis disyaki untuk menolak abses subperiosteal Bezold or trombosis sinus sigmoid."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / AAO-HNS AOM Guidelines)"
   },
@@ -1740,7 +1740,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "tazocin"
     ],
     "firstLineTherapy": {
-      "regimen": "Otitis Externa Biasa: Titisan Telinga Ciprofloxacin 0.3% + Dexamethasone 0.1% 4 titis BD x 7 hari + Cuci liang telinga (aural toilet). Malignant Otitis Externa (Pesakit Diabetes/Warga Emas): IV Ceftazidime 2g Q8H (or IV Tazocin 4.5g Q6H / IV Ciprofloxacin 400mg Q8H) selama 2-4 minggu diikuti Oral Ciprofloxacin 750mg BD sehingga 6-8 MINGGU.",
+      "regimen": "Otitis Externa Biasa: Titisan Telinga Ciprofloxacin 0.3% + Dexamethasone 0.1% 4 titis BD x 7 days + Cuci liang telinga (aural toilet). Malignant Otitis Externa (Pesakit Diabetes/Warga Emas): IV Ceftazidime 2g Q8H (or IV Tazocin 4.5g Q6H / IV Ciprofloxacin 400mg Q8H) selama 2-4 weeks diikuti Oral Ciprofloxacin 750mg BD sehingga 6-8 MINGGU.",
       "routeAndDose": "Topikal titisan telinga untuk kes biasa; IV bertukar Oral jangka panjang untuk Malignant Otitis Externa.",
       "durationDays": "7 days (Topikal) / 6 - 8 weeks (Malignant Otitis Externa)",
       "remarks": "Malignant Otitis Externa adalah osteomielitis pangkal tengkorak (skull base osteomyelitis) yang mengancam nyawa; disahkan dengan kehadiran tisu granulasi di dasar liang telinga luar dan kelumpuhan saraf kranial (CN VII)."
@@ -1751,21 +1751,21 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clotrimazole"
     ],
     "secondLineTherapy": {
-      "regimen": "MOE: IV Meropenem 1g-2g Q8H x 6-8 minggu. Otomikosis (Kulat): Titisan Telinga Clotrimazole 1% TDS x 14 hari.",
+      "regimen": "MOE: IV Meropenem 1g-2g Q8H x 6-8 weeks. Otomikosis (Kulat): Titisan Telinga Clotrimazole 1% TDS x 14 days.",
       "routeAndDose": "IV / Topikal.",
       "durationDays": "14 days - 8 weeks",
-      "remarks": "Bagi jangkitan Pseudomonas rintang ciprofloxacin atau jangkitan kulat aspergillus."
+      "remarks": "Bagi jangkitan Pseudomonas rintang ciprofloxacin or jangkitan kulat aspergillus."
     },
     "allergyDrugs": [
       "ciprofloxacin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IV Ciprofloxacin 400mg Q8H bertukar ke Oral Ciprofloxacin 750mg BD x 6-8 minggu",
+      "regimen": "IV Ciprofloxacin 400mg Q8H bertukar ke Oral Ciprofloxacin 750mg BD x 6-8 weeks",
       "routeAndDose": "IV/Oral.",
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
     "amsNotes": [
-      "Pantau ESR / CRP berkala setiap 2-4 minggu; terapi perlu diteruskan sehingga penanda radang kembali normal dan imbasan MRI / Gallium scan menunjukkan resolusi keradangan tulang.",
+      "Pantau ESR / CRP berkala setiap 2-4 weeks; terapi perlu diteruskan sehingga penanda radang kembali normal dan imbasan MRI / Gallium scan menunjukkan resolusi keradangan tulang.",
       "Kawalan ketat paras gula dalam darah (glisemik) adalah pra-syarat mutlak untuk penyembuhan MOE."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / ENT UK Guidelines)"
@@ -1795,10 +1795,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ampicillin/sulbactam"
     ],
     "firstLineTherapy": {
-      "regimen": "Rinosinusitis Bakteria: Oral Augmentin 625mg TDS x 5-7 hari (atau Oral Amoxicillin 1g TDS). Abses Peritonsilar (Quinsy): ASPIRASI JARUM / INSISI & PENYALIRAN NANAH SEGERA + IV Benzylpenicillin 2-4 MU Q4H + IV Metronidazole 500mg TDS (atau IV Co-Amoxiclav 1.2g TDS).",
+      "regimen": "Rinosinusitis Bakteria: Oral Augmentin 625mg TDS x 5-7 days (or Oral Amoxicillin 1g TDS). Abses Peritonsilar (Quinsy): ASPIRASI JARUM / INSISI & PENYALIRAN NANAH SEGERA + IV Benzylpenicillin 2-4 MU Q4H + IV Metronidazole 500mg TDS (or IV Co-Amoxiclav 1.2g TDS).",
       "routeAndDose": "Oral untuk sinus; Prosedur penyaliran jarum + IV parenteral untuk Quinsy.",
       "durationDays": "5 - 7 days (Sinusitis) / 7 - 10 days (Quinsy)",
-      "remarks": "Hampir 90% kes rinosinusitis akut adalah berpunca daripada VIRUS; antibiotik HANYA diberikan jika gejala berlanjutan >10 hari tanpa tanda pemulihan atau mengalami fenomena 'double sickening' (demam memuncak semula)."
+      "remarks": "Hampir 90% kes rinosinusitis akut adalah berpunca daripada VIRUS; antibiotik HANYA diberikan jika gejala berlanjutan >10 days tanpa tanda pemulihan or mengalami fenomena 'double sickening' (demam memuncak semula)."
     },
     "secondLineDrugs": [
       "ceftriaxone",
@@ -1806,10 +1806,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "moxifloxacin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS (atau Oral Moxifloxacin 400mg OD x 7 hari).",
+      "regimen": "IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS (or Oral Moxifloxacin 400mg OD x 7 days).",
       "routeAndDose": "IV / Oral.",
       "durationDays": "7 - 10 days",
-      "remarks": "Untuk kes komplikasi sinus (seperti selulitis periorbital) atau alahan penisilin ringan."
+      "remarks": "Untuk kes komplikasi sinus (seperti selulitis periorbital) or alahan penisilin ringan."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -1818,7 +1818,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral/IV Clindamycin 600mg Q8H atau Oral Moxifloxacin 400mg OD x 7 hari (atau Oral Doxycycline 100mg BD x 7 hari)",
+      "regimen": "Oral/IV Clindamycin 600mg Q8H or Oral Moxifloxacin 400mg OD x 7 days (or Oral Doxycycline 100mg BD x 7 days)",
       "routeAndDose": "Oral/IV.",
       "remarks": "Sesuai untuk pesakit yang mempunyai rekod anafilaksis penisilin."
     },
@@ -1828,7 +1828,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Augmentin 625mg TDS atau Oral Clindamycin 300-450mg TDS selepas pesakit boleh menelan tanpa sakit tekak yang teruk.",
+      "regimen": "Oral Augmentin 625mg TDS or Oral Clindamycin 300-450mg TDS selepas pesakit boleh menelan tanpa sakit tekak yang teruk.",
       "criteria": "Nanah peritonsilar telah dialirkan sepenuhnya, pesakit boleh bertolak ansur dengan cecair dan makanan lembut, afebril >24 jam."
     },
     "amsNotes": [
@@ -1862,7 +1862,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "unasyn"
     ],
     "firstLineTherapy": {
-      "regimen": "Epiglottitis Akut: PENILAIAN & PERLINDUNGAN SALURAN PERNAFASAN DI DEWAN BEDAH + IV Ceftriaxone 2g OD + IV Dexamethasone 4-8mg Q8H. Jangkitan Ruang Leher Dalam: IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS (atau IV Co-Amoxiclav 1.2g TDS / IV Ampicillin-Sulbactam 3g Q6H).",
+      "regimen": "Epiglottitis Akut: PENILAIAN & PERLINDUNGAN SALURAN PERNAFASAN DI DEWAN BEDAH + IV Ceftriaxone 2g OD + IV Dexamethasone 4-8mg Q8H. Jangkitan Ruang Leher Dalam: IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS (or IV Co-Amoxiclav 1.2g TDS / IV Ampicillin-Sulbactam 3g Q6H).",
       "routeAndDose": "IV infusi dos tinggi.",
       "durationDays": "7 - 14 days (Epiglottitis) / 14 - 21 days (Ruang leher dalam)",
       "remarks": "KECEMASAN AIRWAY: Jangan lakukan pemeriksaan tekak dengan tongue depressor pada epiglottitis tanpa persediaan intubasi kecemasan di dewan bedah."
@@ -1874,10 +1874,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "vancomycin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Tazocin 4.5g Q6H + IV Vancomycin 15-20mg/kg Q12H (atau IV Meropenem 1g Q8H)",
+      "regimen": "IV Tazocin 4.5g Q6H + IV Vancomycin 15-20mg/kg Q12H (or IV Meropenem 1g Q8H)",
       "routeAndDose": "IV.",
       "durationDays": "14 - 21 days",
-      "remarks": "Untuk kes mediastinitis menurun (descending necrotising mediastinitis) atau septik trombosis vena jugular (Lemierre's syndrome)."
+      "remarks": "Untuk kes mediastinitis menurun (descending necrotising mediastinitis) or septik trombosis vena jugular (Lemierre's syndrome)."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -1891,7 +1891,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     },
     "amsNotes": [
       "Lakukan Imbasan CT Leher dan Toraks berkontras (Neck & Thorax CT) dengan segera untuk memetakan saiz abses dan mengesan penyebaran ke mediastinum.",
-      "Pembedahan penyaliran abses leher dalam secara terbuka atau endoskopik oleh Pakar ENT adalah wajib."
+      "Pembedahan penyaliran abses leher dalam secara terbuka or endoskopik oleh Pakar ENT adalah wajib."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / ASENT Airway Infection Guidelines)"
   },
@@ -1903,7 +1903,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. COMMUNITY ACQUIRED PNEUMONIA (CAP)",
     "topicNumber": 1,
     "bodySystem": "Respiratory Infections",
-    "conditionName": "Mild Community-Acquired Pneumonia (CAP Ringan / CURB-65 0-1 / Rawatan Pesakit Luar)",
+    "conditionName": "Mild Community-Acquired Pneumonia (Mild CAP / CURB-65 0-1 / Outpatient)",
     "setting": "Outpatient (OPD/KK)",
     "primaryPathogens": [
       "Streptococcus pneumoniae (Pneumococcus)",
@@ -1920,10 +1920,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "firstLineTherapy": {
-      "regimen": "Oral Amoxicillin 1g TDS x 5 hari (atau Oral Augmentin 625mg TDS x 5 hari) +/- Oral Azithromycin 500mg OD x 3 hari (atau Oral Doxycycline 100mg BD x 5 hari jika disyaki patogen atipikal).",
+      "regimen": "Oral Amoxicillin 1g TDS x 5 days (or Oral Augmentin 625mg TDS x 5 days) +/- Oral Azithromycin 500mg OD x 3 days (or Oral Doxycycline 100mg BD x 5 days if atypical pathogen suspected).",
       "routeAndDose": "Oral.",
       "durationDays": "5 days",
-      "remarks": "Skor CURB-65 = 0 atau 1 (kadar mortaliti <1.5%). Pesakit boleh dirawat dengan selamat di klinik kesihatan / pesakit luar dengan nasihat pemantauan tanda bahaya (red flags)."
+      "remarks": "CURB-65 score = 0 or 1 (mortality rate <1.5%). Patients can be treated safely in health clinics / outpatient with red flag warning signs advice."
     },
     "secondLineDrugs": [
       "cefuroxime",
@@ -1931,10 +1931,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "levofloxacin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Cefuroxime Axetil 500mg BD + Oral Azithromycin 500mg OD x 5 hari atau Oral Levofloxacin 500mg OD x 5 hari.",
+      "regimen": "Oral Cefuroxime Axetil 500mg BD + Oral Azithromycin 500mg OD x 5 days or Oral Levofloxacin 500mg OD x 5 days.",
       "routeAndDose": "Oral.",
       "durationDays": "5 days",
-      "remarks": "Untuk pesakit yang mempunyai komorbiditi kronik (COPD, diabetes, kegagalan jantung) atau kegagalan dos pertama."
+      "remarks": "For patients with chronic comorbidities (COPD, diabetes, heart failure) or first-line treatment failure."
     },
     "allergyDrugs": [
       "azithromycin",
@@ -1943,13 +1943,13 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "levofloxacin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Doxycycline 100mg BD x 5 hari atau Oral Azithromycin 500mg OD x 3-5 hari atau Oral Levofloxacin 500mg OD x 5 hari",
+      "regimen": "Oral Doxycycline 100mg BD x 5 days or Oral Azithromycin 500mg OD x 3-5 days or Oral Levofloxacin 500mg OD x 5 days",
       "routeAndDose": "Oral.",
-      "remarks": "Sesuai untuk pesakit alahan penisilin."
+      "remarks": "Suitable for patients with penicillin allergy."
     },
     "amsNotes": [
-      "Tempoh rawatan 5 hari adalah mencukupi sekiranya pesakit afebril >48 jam dan tiada tanda ketidakstabilan klinikal.",
-      "Ujian X-ray dada ulangan segera tidak diperlukan jika pesakit pulih secara klinikal."
+      "A 5-day treatment duration is sufficient if patient is afebrile >48 hours and shows no signs of clinical instability.",
+      "Immediate repeat chest X-ray is not required if patient has recovered clinically."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / BTS & ATS-IDSA Guidelines)"
   },
@@ -1961,7 +1961,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. COMMUNITY ACQUIRED PNEUMONIA (CAP)",
     "topicNumber": 1,
     "bodySystem": "Respiratory Infections",
-    "conditionName": "Moderate Community-Acquired Pneumonia (CAP Sederhana / CURB-65 = 2 / Wad Am)",
+    "conditionName": "Moderate Community-Acquired Pneumonia (Moderate CAP / CURB-65 = 2 / General Ward)",
     "setting": "Community-Acquired",
     "primaryPathogens": [
       "Streptococcus pneumoniae",
@@ -1989,10 +1989,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "unasyn"
     ],
     "secondLineTherapy": {
-      "regimen": "IV/Oral Levofloxacin 750mg OD atau IV Moxifloxacin 400mg OD (sebagai Monoterapi Respiratory Fluoroquinolone) atau IV Ampicillin-Sulbactam 1.5g-3g Q6H + Azithromycin.",
+      "regimen": "IV/Oral Levofloxacin 750mg OD or IV Moxifloxacin 400mg OD (sebagai Monoterapi Respiratory Fluoroquinolone) or IV Ampicillin-Sulbactam 1.5g-3g Q6H + Azithromycin.",
       "routeAndDose": "IV / Oral.",
       "durationDays": "5 - 7 days",
-      "remarks": "Untuk pesakit yang mempunyai risiko kegagalan sefalosporin atau intoleransi makrolida."
+      "remarks": "Untuk pesakit yang mempunyai risiko kegagalan sefalosporin or intoleransi makrolida."
     },
     "allergyDrugs": [
       "levofloxacin",
@@ -2000,7 +2000,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IV/Oral Levofloxacin 750mg OD atau IV Moxifloxacin 400mg OD x 5-7 hari",
+      "regimen": "IV/Oral Levofloxacin 750mg OD or IV Moxifloxacin 400mg OD x 5-7 days",
       "routeAndDose": "Oral/IV monoterapi.",
       "remarks": "Liputan lengkap tanpa sebarang beta-laktam."
     },
@@ -2011,12 +2011,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "levofloxacin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Augmentin 625mg TDS + Oral Azithromycin 500mg OD (jumlah 5-7 hari)",
+      "regimen": "Oral Augmentin 625mg TDS + Oral Azithromycin 500mg OD (jumlah 5-7 days)",
       "criteria": "Pesakit afebril >24 jam, kadar pernafasan <24/min, nadi <100 bpm, tekanan darah stabil, SpO2 ≥92% pada udara bilik, boleh makan ubat oral."
     },
     "amsNotes": [
       "Ambil 2 set Kultur Darah dan Sputum C&S sebelum dos pertama antibiotik dimulakan.",
-      "Tukar ke terapi oral (IV-to-oral switch) seawal hari ke-2 atau ke-3 apabila pesakit stabil secara klinikal."
+      "Tukar ke terapi oral (IV-to-oral switch) seawal hari ke-2 or ke-3 apabila pesakit stabil secara klinikal."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / ATS-IDSA CAP Guidelines)"
   },
@@ -2028,7 +2028,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. COMMUNITY ACQUIRED PNEUMONIA (CAP)",
     "topicNumber": 1,
     "bodySystem": "Respiratory Infections",
-    "conditionName": "Severe Community-Acquired Pneumonia (CAP Teruk / CURB-65 ≥ 3 / ICU)",
+    "conditionName": "Severe Community-Acquired Pneumonia (Severe CAP / CURB-65 ≥ 3 / ICU)",
     "setting": "ICU / Severe",
     "primaryPathogens": [
       "Streptococcus pneumoniae (Pneumococcus)",
@@ -2047,9 +2047,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     ],
     "firstLineTherapy": {
       "regimen": "IV Ceftriaxone 2g OD (or IV Co-Amoxiclav 1.2g TDS) + IV Azithromycin 500mg OD (or IV Levofloxacin 750mg OD)",
-      "routeAndDose": "IV Ceftriaxone 2g OD + IV Azithromycin 500mg OD infusi perlahan.",
-      "durationDays": "7 - 10 days (panjangkan ke 10-14 hari jika Legionella positif)",
-      "remarks": "DOS PERTAMA ANTIBIOTIK WAJIB DIBERIKAN DALAM MASA 1 JAM dari masa ketibaan pesakit di Jabatan Kecemasan. Skor CURB-65 ≥3 atau SMART-COP ≥5 memerlukan rujukan ICU/HDW segera."
+      "routeAndDose": "IV Ceftriaxone 2g OD + IV Azithromycin 500mg OD slow infusion.",
+      "durationDays": "7 - 10 days (panjangkan ke 10-14 days jika Legionella positif)",
+      "remarks": "DOS PERTAMA ANTIBIOTIK WAJIB DIBERIKAN DALAM MASA 1 JAM dari masa ketibaan pesakit di Jabatan Kecemasan. Skor CURB-65 ≥3 or SMART-COP ≥5 memerlukan rujukan ICU/HDW segera."
     },
     "secondLineDrugs": [
       "piperacillin/tazobactam",
@@ -2081,8 +2081,8 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "levofloxacin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Augmentin 625mg TDS + Oral Azithromycin 500mg OD (atau Oral Levofloxacin 750mg OD)",
-      "criteria": "Pesakit berjaya diekstubasi atau tidak lagi memerlukan sokongan inotropik/ventilasi, afebril >48 jam, SpO2 stabil."
+      "regimen": "Oral Augmentin 625mg TDS + Oral Azithromycin 500mg OD (or Oral Levofloxacin 750mg OD)",
+      "criteria": "Pesakit berjaya diekstubasi or tidak lagi memerlukan sokongan inotropik/ventilasi, afebril >48 jam, SpO2 stabil."
     },
     "amsNotes": [
       "Lakukan Ujian Antigen Urin bagi Streptococcus pneumoniae dan Legionella pneumophila serogroup 1 untuk de-eskalasi terapi sasaran.",
@@ -2117,9 +2117,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "vancomycin"
     ],
     "firstLineTherapy": {
-      "regimen": "Pneumonia Influenza Teruk: Oral Oseltamivir 75mg BD x 5 hari (tingkatkan ke 150mg BD jika pesakit ICU berventilasi mekanikal) + IV Ceftriaxone 2g OD + IV Cloxacillin 2g Q4H (or IV Vancomycin 15mg/kg Q12H jika disyaki MRSA pasca-influenza).",
+      "regimen": "Pneumonia Influenza Teruk: Oral Oseltamivir 75mg BD x 5 days (tingkatkan ke 150mg BD jika pesakit ICU berventilasi mekanikal) + IV Ceftriaxone 2g OD + IV Cloxacillin 2g Q4H (or IV Vancomycin 15mg/kg Q12H jika disyaki MRSA pasca-influenza).",
       "routeAndDose": "Oral/Nasogastrik antiviral + IV antibiotik liputan superinfeksi bakteria.",
-      "durationDays": "5 days (Oseltamivir; boleh dipanjangkan ke 10 hari pada imunokompromais) / 7 days (Antibiotik)",
+      "durationDays": "5 days (Oseltamivir; boleh dipanjangkan ke 10 days pada imunokompromais) / 7 days (Antibiotik)",
       "remarks": "Mulakan Oseltamivir SEAWAL MUNGKIN dalam masa 48 jam dari onset simptom. Pada kes teruk/ICU, Oseltamivir TETAP BERMANFAAT walaupun dimulakan melebihi 48 jam."
     },
     "secondLineDrugs": [
@@ -2128,7 +2128,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "piperacillin/tazobactam"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Peramivir 600mg infusi dos tunggal (atau Zanamivir sedutan) jika intoleransi enteral gastrik + IV Tazocin 4.5g Q6H.",
+      "regimen": "IV Peramivir 600mg infusi single dose (or Zanamivir sedutan) jika intoleransi enteral gastrik + IV Tazocin 4.5g Q6H.",
       "routeAndDose": "IV infusi.",
       "durationDays": "5 - 7 days",
       "remarks": "Alternatif untuk pesakit ICU dengan masalah penyerapan gastrousus."
@@ -2141,7 +2141,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "penicillinAllergyOption": {
       "regimen": "Oral Oseltamivir 75mg BD + IV Levofloxacin 750mg OD + IV Vancomycin 15mg/kg Q12H",
       "routeAndDose": "Oral + IV.",
-      "remarks": "Sesuai untuk pesakit alahan penisilin."
+      "remarks": "Suitable for patients with penicillin allergy."
     },
     "amsNotes": [
       "Ambil Swab Nasofarinks/Orofarinks untuk Ujian RT-PCR Influenza A/B & Panel Virus Respiratori (NPA PCR) sebelum memulakan antiviral.",
@@ -2176,10 +2176,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "tazocin"
     ],
     "firstLineTherapy": {
-      "regimen": "Empiema / Efusi Parapneumonik Kompleks: PENYALIRAN TIUB DADA SEGERA (Chest Tube Drainage / ICT bersaiz 12-28F) + IV Co-Amoxiclav 1.2g TDS (or IV Ampicillin-Sulbactam 1.5g-3g Q6H / IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS). Abses Paru-Paru: IV Co-Amoxiclav 1.2g TDS selama 2-3 minggu diikuti pertukaran oral melengkapkan 4-6 MINGGU.",
+      "regimen": "Empiema / Efusi Parapneumonik Kompleks: PENYALIRAN TIUB DADA SEGERA (Chest Tube Drainage / ICT bersaiz 12-28F) + IV Co-Amoxiclav 1.2g TDS (or IV Ampicillin-Sulbactam 1.5g-3g Q6H / IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS). Abses Paru-Paru: IV Co-Amoxiclav 1.2g TDS selama 2-3 weeks diikuti pertukaran oral melengkapkan 4-6 MINGGU.",
       "routeAndDose": "IV parenteral awal diikuti terapi oral berpanjangan.",
       "durationDays": "2 - 4 weeks (Empiema selepas tiub dada dicabut) / 4 - 6 weeks (Abses Paru-paru)",
-      "remarks": "EMPIEMA WAJIB DIALIRKAN (Pleural Space Drainage): Antibiotik sahaja TIDAK AKAN MENYEMBUHKAN empiema tertutup; kriteria penyaliran: cecair bernanah (frank pus), pH <7.20, glukosa <2.2 mmol/L, atau bakteria dikesan pada pewarnaan Gram/Kultur."
+      "remarks": "EMPIEMA WAJIB DIALIRKAN (Pleural Space Drainage): Antibiotik sahaja TIDAK AKAN MENYEMBUHKAN empiema tertutup; kriteria penyaliran: cecair bernanah (frank pus), pH <7.20, glukosa <2.2 mmol/L, or bakteria dikesan pada pewarnaan Gram/Kultur."
     },
     "secondLineDrugs": [
       "piperacillin/tazobactam",
@@ -2189,7 +2189,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Tazocin 4.5g Q6H infusi 3 jam atau IV Meropenem 1g Q8H + IV Vancomycin 15-20mg/kg Q12H (+ Fibrinolitik Intrapleural: tPA + DNase jika lokulasi tebal)",
+      "regimen": "IV Tazocin 4.5g Q6H infusi 3 jam or IV Meropenem 1g Q8H + IV Vancomycin 15-20mg/kg Q12H (+ Fibrinolitik Intrapleural: tPA + DNase jika lokulasi tebal)",
       "routeAndDose": "IV + Intrapleural.",
       "durationDays": "3 - 6 weeks",
       "remarks": "Rujuk Pakar Bedah Kardiotorasik untuk pembedahan VATS (Video-Assisted Thoracoscopic Decortication) jika penyaliran tiub dada gagal selepas 48-72 jam."
@@ -2210,7 +2210,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Augmentin 625mg TDS atau Oral Clindamycin 300-450mg TDS diteruskan selama 4-6 minggu sehingga kaviti abses mengecut pada X-ray dada.",
+      "regimen": "Oral Augmentin 625mg TDS or Oral Clindamycin 300-450mg TDS diteruskan selama 4-6 weeks sehingga kaviti abses mengecut pada X-ray dada.",
       "criteria": "Tiub dada telah dicabut (aliran <50mL/24h), tiada demam >48 jam, sel darah putih normal, tiada lokulasi pleura residual pada USG Toraks."
     },
     "amsNotes": [
@@ -2244,10 +2244,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ciprofloxacin"
     ],
     "firstLineTherapy": {
-      "regimen": "AECOPD Standard (Kriteria Anthonisen Type 1/2): Oral Augmentin 625mg TDS x 5 hari (atau Oral Amoxicillin 1g TDS x 5 hari / Oral Azithromycin 500mg OD x 3 hari / Oral Doxycycline 100mg BD x 5 hari). Eksaserbasi dengan Risiko Pseudomonas / Bronkiektasis: Oral Ciprofloxacin 750mg BD x 7-10 hari (atau IV Tazocin 4.5g Q6H / IV Ceftazidime 2g Q8H).",
+      "regimen": "AECOPD Standard (Kriteria Anthonisen Type 1/2): Oral Augmentin 625mg TDS x 5 days (or Oral Amoxicillin 1g TDS x 5 days / Oral Azithromycin 500mg OD x 3 days / Oral Doxycycline 100mg BD x 5 days). Eksaserbasi dengan Risiko Pseudomonas / Bronkiektasis: Oral Ciprofloxacin 750mg BD x 7-10 days (or IV Tazocin 4.5g Q6H / IV Ceftazidime 2g Q8H).",
       "routeAndDose": "Oral untuk kes sederhana; IV untuk kegagalan pernafasan dimasukkan ke wad.",
       "durationDays": "5 days (Standard AECOPD) / 7 - 10 days (Pseudomonas / Bronkiektasis)",
-      "remarks": "KRITERIA ANTHONISEN: Antibiotik diindikasikan jika pesakit mengalami peningkatan kahak bernanah (sputum purulence - tanda kardinal) BERSAMA peningkatan sesak nafas atau peningkatan isipadu kahak."
+      "remarks": "KRITERIA ANTHONISEN: Antibiotik diindikasikan jika pesakit mengalami peningkatan kahak bernanah (sputum purulence - tanda kardinal) BERSAMA peningkatan sesak nafas or peningkatan isipadu kahak."
     },
     "secondLineDrugs": [
       "cefuroxime",
@@ -2257,7 +2257,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ceftazidime"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Cefuroxime Axetil 500mg BD x 5-7 hari atau Oral Levofloxacin 500mg OD x 5 hari (atau IV Piperacillin/Tazobactam 4.5g Q6H jika di wad).",
+      "regimen": "Oral Cefuroxime Axetil 500mg BD x 5-7 days or Oral Levofloxacin 500mg OD x 5 days (or IV Piperacillin/Tazobactam 4.5g Q6H jika di wad).",
       "routeAndDose": "Oral / IV.",
       "durationDays": "5 - 7 days",
       "remarks": "Bagi pesakit COPD teruk dengan komorbiditi kerap mengalami eksaserbasi berulang (>2 kali setahun)."
@@ -2269,12 +2269,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "levofloxacin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Doxycycline 100mg BD x 5 hari atau Oral Azithromycin 500mg OD x 3 hari atau Oral Ciprofloxacin 500mg BD",
+      "regimen": "Oral Doxycycline 100mg BD x 5 days or Oral Azithromycin 500mg OD x 3 days or Oral Ciprofloxacin 500mg BD",
       "routeAndDose": "Oral.",
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
     "amsNotes": [
-      "TERAPI BUKAN ANTIBIOTIK: Pastikan pesakit menerima Nebulisasi Bronkodilator (Salbutamol + Ipratropium) dan Terapi Kortikosteroid Sistemik (Oral Prednisolone 30-40mg OD x 5 hari).",
+      "TERAPI BUKAN ANTIBIOTIK: Pastikan pesakit menerima Nebulisasi Bronkodilator (Salbutamol + Ipratropium) dan Terapi Kortikosteroid Sistemik (Oral Prednisolone 30-40mg OD x 5 days).",
       "Antibiotik TIDAK DIPERLUKAN jika tiada peningkatan kekuningan/kehijauan kahak (Anthonisen Type 3 bukan bernanah)."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / GOLD COPD Report 2024)"
@@ -2305,9 +2305,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amikacin"
     ],
     "firstLineTherapy": {
-      "regimen": "HAP Awal (<5 hari, tiada faktor risiko MDR): IV Co-Amoxiclav 1.2g TDS (or IV Ceftriaxone 2g OD). HAP Lewat (≥5 hari) / VAP / Risiko MDR: IV Piperacillin/Tazobactam 4.5g Q6H infusi 3 jam (or IV Cefepime 2g Q8H / IV Meropenem 1g Q8H) + IV Vancomycin 15-20mg/kg Q8H-Q12H (+/- IV Amikacin 15-20mg/kg OD jika syok septik).",
+      "regimen": "HAP Awal (<5 days, tiada faktor risiko MDR): IV Co-Amoxiclav 1.2g TDS (or IV Ceftriaxone 2g OD). HAP Lewat (≥5 days) / VAP / Risiko MDR: IV Piperacillin/Tazobactam 4.5g Q6H infusi 3 jam (or IV Cefepime 2g Q8H / IV Meropenem 1g Q8H) + IV Vancomycin 15-20mg/kg Q8H-Q12H (+/- IV Amikacin 15-20mg/kg OD jika syok septik).",
       "routeAndDose": "IV infusi berpanjangan (Extended Infusion Beta-Lactam) untuk mengoptimumkan parameter farmakodinamik T>MIC.",
-      "durationDays": "7 days (Tempoh 7 hari terbukti sama berkesan dengan 14 hari dan mengurangkan rintangan AMR)",
+      "durationDays": "7 days (Tempoh 7 days terbukti sama berkesan dengan 14 days dan mengurangkan rintangan AMR)",
       "remarks": "Takrifan HAP: Pneumonia berlaku ≥48 jam selepas kemasukan ke hospital; VAP: Pneumonia berlaku ≥48 jam selepas intubasi endotrakeal."
     },
     "secondLineDrugs": [
@@ -2318,7 +2318,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "linezolid"
     ],
     "secondLineTherapy": {
-      "regimen": "Organisma MDR Disahkan: IV Meropenem 2g Q8H infusi 3 jam + IV Colistin (Loading 9 MU kemudian 4.5 MU BD) atau IV Ceftazidime/Avibactam 2.5g Q8H (untuk KPC/OXA-48 CRE) + IV Linezolid 600mg BD.",
+      "regimen": "Organisma MDR Disahkan: IV Meropenem 2g Q8H infusi 3 jam + IV Colistin (Loading 9 MU kemudian 4.5 MU BD) or IV Ceftazidime/Avibactam 2.5g Q8H (untuk KPC/OXA-48 CRE) + IV Linezolid 600mg BD.",
       "routeAndDose": "IV kombinasi sasaran patogen MDR.",
       "durationDays": "7 - 10 days",
       "remarks": "Wajib rujuk Pakar Penyakit Berjangkit (ID Physician) dan Pegawai AMS Hospital untuk kelulusan antibiotik reserve."
@@ -2342,11 +2342,11 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Ciprofloxacin 750mg BD atau Oral Augmentin 625mg TDS (jika HAP awal) selepas pesakit afebril dan kultur menunjukkan sensitiviti.",
+      "regimen": "Oral Ciprofloxacin 750mg BD or Oral Augmentin 625mg TDS (jika HAP awal) selepas pesakit afebril dan kultur menunjukkan sensitiviti.",
       "criteria": "Pesakit diekstubasi, oksigenasi pulih, tiada demam >48 jam, parameter radang leukosit dan procalcitonin menurun."
     },
     "amsNotes": [
-      "Ambil Aspirat Endotrakeal (ETA C&S) atau Bronchoalveolar Lavage (BAL) secara kuantitatif SEBELUM menukar antibiotik.",
+      "Ambil Aspirat Endotrakeal (ETA C&S) or Bronchoalveolar Lavage (BAL) secara kuantitatif SEBELUM menukar antibiotik.",
       "Amalkan Protokol Pencegahan VAP (VAP Bundle): Kepala katil dinaikkan 30-45 darjah, kebersihan mulut dengan chlorhexidine, sedutan subglotik berterusan, dan penilaian kesediaan ekstubasi harian."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / IDSA-ATS HAP/VAP Guidelines 2016)"
@@ -2388,10 +2388,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "moxifloxacin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Tazocin 4.5g Q6H atau IV Meropenem 1g Q8H (atau Oral/IV Moxifloxacin 400mg OD)",
+      "regimen": "IV Tazocin 4.5g Q6H or IV Meropenem 1g Q8H (or Oral/IV Moxifloxacin 400mg OD)",
       "routeAndDose": "IV.",
       "durationDays": "7 days",
-      "remarks": "Untuk pesakit terlantar dengan aspirasi nosokomial di hospital atau pusat jagaan kejururawatan (nursing home)."
+      "remarks": "Untuk pesakit terlantar dengan aspirasi nosokomial di hospital or pusat jagaan kejururawatan (nursing home)."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -2400,7 +2400,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IV/Oral Clindamycin 600mg Q8H atau IV/Oral Moxifloxacin 400mg OD (or IV Levofloxacin 750mg OD + IV Metronidazole 500mg TDS)",
+      "regimen": "IV/Oral Clindamycin 600mg Q8H or IV/Oral Moxifloxacin 400mg OD (or IV Levofloxacin 750mg OD + IV Metronidazole 500mg TDS)",
       "routeAndDose": "IV bertukar ke Oral.",
       "remarks": "Memberi liputan anaerobik dan gram-negatif yang lengkap."
     },
@@ -2410,12 +2410,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Augmentin 625mg TDS atau Oral Clindamycin 300-450mg TDS selama baki rawatan 5-7 hari.",
+      "regimen": "Oral Augmentin 625mg TDS or Oral Clindamycin 300-450mg TDS selama baki rawatan 5-7 days.",
       "criteria": "Pesakit stabil, tiada demam, fungsi menelan telah dinilai oleh Terapis Pertuturan (Speech Therapist) dengan modifikasi diet selamat."
     },
     "amsNotes": [
       "Lakukan penilaian menelan (Swallowing Assessment) dan latih posisi makan tegak 90 darjah untuk mencegah aspirasi berulang.",
-      "Elakkan penggunaan rutin Metronidazole tambahan jika sudah menggunakan Ampicillin-Sulbactam atau Co-Amoxiclav kerana kedua-dua ubat tersebut sudah mempunyai aktiviti anaerobik yang mencukupi."
+      "Elakkan penggunaan rutin Metronidazole tambahan jika sudah menggunakan Ampicillin-Sulbactam or Co-Amoxiclav kerana kedua-dua ubat tersebut sudah mempunyai aktiviti anaerobik yang mencukupi."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / ATS Aspiration Guidelines)"
   },
@@ -2427,7 +2427,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. SEPSIS & SEPTIC SHOCK OF UNKNOWN ORIGIN",
     "topicNumber": 1,
     "bodySystem": "Sepsis",
-    "conditionName": "Sepsis & Septic Shock of Unknown Origin (Sepsis Teruk Tanpa Punca Jelas)",
+    "conditionName": "Sepsis & Septic Shock of Unknown Origin",
     "setting": "ICU / Severe",
     "primaryPathogens": [
       "Escherichia coli & Klebsiella pneumoniae",
@@ -2460,7 +2460,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Meropenem 2g Q8H + IV Colistin (Loading 9 MU kemudian 4.5 MU BD) + IV Caspofungin 70mg loading kemudian 50mg OD",
       "routeAndDose": "IV ICU.",
       "durationDays": "7 - 14 days",
-      "remarks": "Untuk syok septik refraktori di ICU dengan ancaman organisma MDR atau risiko jangkitan kulat invasif."
+      "remarks": "Untuk syok septik refraktori di ICU dengan ancaman organisma MDR or risiko jangkitan kulat invasif."
     },
     "allergyDrugs": [
       "ciprofloxacin",
@@ -2476,7 +2476,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     },
     "amsNotes": [
       "Lakukan penilaian semula (Time-out 48-72 jam) sebaik keputusan kultur darah dan punca jangkitan dikenal pasti untuk de-eskalasi kepada antibiotik berspektrum sempit sasaran.",
-      "Hentikan Vancomycin dan Amikacin serta-merta jika tiada kuman MRSA atau Gram-negatif kebal dikesan."
+      "Hentikan Vancomycin dan Amikacin serta-merta jika tiada kuman MRSA or Gram-negatif kebal dikesan."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / Surviving Sepsis Campaign Guidelines 2021)"
   },
@@ -2504,7 +2504,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "vancomycin"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Cefepime 2g Q8H (or IV Tazocin 4.5g Q6H / IV Meropenem 1g Q8H) + IV Vancomycin 15-20mg/kg Q12H (jika ada ketidakstabilan hemodinamik atau disyaki sepsis kateter).",
+      "regimen": "IV Cefepime 2g Q8H (or IV Tazocin 4.5g Q6H / IV Meropenem 1g Q8H) + IV Vancomycin 15-20mg/kg Q12H (jika ada ketidakstabilan hemodinamik or disyaki sepsis kateter).",
       "routeAndDose": "IV infusi diberikan dalam masa <30 minit.",
       "durationDays": "Sehingga neutrofil pulih (ANC >500/mcL) dan afebril >48 jam",
       "remarks": "Neutropenic Sepsis adalah KECEMASAN ONKOLOGI MUTLAK. Jangan tangguhkan antibiotik untuk prosedur pengimejan."
@@ -2519,7 +2519,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Meropenem 2g Q8H + IV Amikacin 15-20mg/kg OD + IV Caspofungin 70mg loading kemudian 50mg OD",
       "routeAndDose": "IV ICU.",
       "durationDays": "7 - 14 days",
-      "remarks": "Bagi demam refraktori hari ke-4-7 atau syok septik neutropenik."
+      "remarks": "Bagi demam refraktori hari ke-4-7 or syok septik neutropenik."
     },
     "allergyDrugs": [
       "aztreonam",
@@ -2533,7 +2533,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
     "amsNotes": [
-      "Elakkan sebarang suntikan intramuskular (IM) atau pemeriksaan rektum (DRE/enema) bagi mengelakkan trauma tisu dan translokasi bakteria usus semasa neutropenia teruk.",
+      "Elakkan sebarang suntikan intramuskular (IM) or pemeriksaan rektum (DRE/enema) bagi mengelakkan trauma tisu dan translokasi bakteria usus semasa neutropenia teruk.",
       "Kultur darah bersiri wajib diambil dari semua saluran talian IV dan darah periferi."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / IDSA-ASCO Guidelines)"
@@ -2573,7 +2573,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amikacin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Meropenem 1g Q8H atau IV Ertapenem 1g OD (+/- IV Amikacin 15mg/kg OD)",
+      "regimen": "IV Meropenem 1g Q8H or IV Ertapenem 1g OD (+/- IV Amikacin 15mg/kg OD)",
       "routeAndDose": "IV.",
       "durationDays": "7 - 10 days",
       "remarks": "Untuk jangkitan urosepsis/biliari yang disebabkan oleh bakteria Gram-negatif penghasil ESBL."
@@ -2596,11 +2596,11 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Ciprofloxacin 500-750mg BD atau Oral Augmentin 625mg TDS selepas saliran biliari/urologi lancar dan pesakit stabil >48 jam.",
+      "regimen": "Oral Ciprofloxacin 500-750mg BD or Oral Augmentin 625mg TDS selepas saliran biliari/urologi lancar dan pesakit stabil >48 jam.",
       "criteria": "Punca halangan urologi/biliari telah dibebaskan, afebril, laktat darah normal, toleransi oral baik."
     },
     "amsNotes": [
-      "Lakukan Ultrasound Hepatosplenik / KUB dan CT Abdomen segera untuk mengesan batu karang tersumbat, hidronefrosis, atau dilatasi duktus hempedu.",
+      "Lakukan Ultrasound Hepatosplenik / KUB dan CT Abdomen segera untuk mengesan batu karang tersumbat, hidronefrosis, or dilatasi duktus hempedu.",
       "Kultur darah dan cecair hempedu/urin wajib dihantar ke makmal."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / Tokyo Guidelines 2018 for Cholangitis)"
@@ -2623,8 +2623,8 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "firstLineTherapy": {
-      "regimen": "IM Ceftriaxone 500mg-1g stat (dilarutkan dalam 2-3mL Lignocaine 1%) + Oral Azithromycin 1g stat dos tunggal.",
-      "routeAndDose": "IM dos tunggal + Oral dos tunggal.",
+      "regimen": "IM Ceftriaxone 500mg-1g stat (dilarutkan dalam 2-3mL Lignocaine 1%) + Oral Azithromycin 1g stat single dose.",
+      "routeAndDose": "IM single dose + Oral single dose.",
       "durationDays": "Single Dose",
       "remarks": "Rawatan berganda (Dual therapy) dengan Azithromycin 1g adalah wajib bagi merawat kemungkinan ko-infeksi Chlamydia trachomatis dan merencat kemunculan rintangan sefalosporin."
     },
@@ -2634,7 +2634,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefixime"
     ],
     "secondLineTherapy": {
-      "regimen": "IM Gentamicin 240mg stat + Oral Azithromycin 2g stat (atau Oral Cefixime 800mg stat + Azithromycin 1g stat).",
+      "regimen": "IM Gentamicin 240mg stat + Oral Azithromycin 2g stat (or Oral Cefixime 800mg stat + Azithromycin 1g stat).",
       "routeAndDose": "IM + Oral.",
       "durationDays": "Single Dose",
       "remarks": "Pilihan kedua sekiranya Ceftriaxone tidak tersedia."
@@ -2645,12 +2645,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "spectinomycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IM Gentamicin 240mg stat + Oral Azithromycin 2g stat (atau IM Spectinomycin 2g stat + Oral Azithromycin 1g stat)",
+      "regimen": "IM Gentamicin 240mg stat + Oral Azithromycin 2g stat (or IM Spectinomycin 2g stat + Oral Azithromycin 1g stat)",
       "routeAndDose": "IM + Oral.",
       "remarks": "Bebas sefalosporin dan penisilin sepenuhnya."
     },
     "amsNotes": [
-      "NOTIFIKASI STI & CONTACT TRACING: Semua pasangan seks dalam tempoh 60 hari lepas WAJIB disaring dan dirawat serta-merta.",
+      "NOTIFIKASI STI & CONTACT TRACING: Semua pasangan seks dalam tempoh 60 days lepas WAJIB disaring dan dirawat serta-merta.",
       "Nasihatkan pesakit berpantang seks (abstinens) selama sekurang-kurangnya 7 HARI selepas rawatan kedua-dua pasangan selesai."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / CDC STI Guidelines 2021)"
@@ -2676,10 +2676,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "firstLineTherapy": {
-      "regimen": "Oral Doxycycline 100mg BD x 7 hari (REJIMEN PILIHAN UTAMA). Alternatif: Oral Azithromycin 1g stat dos tunggal.",
+      "regimen": "Oral Doxycycline 100mg BD x 7 days (REJIMEN PILIHAN UTAMA). Alternatif: Oral Azithromycin 1g stat single dose.",
       "routeAndDose": "Oral.",
       "durationDays": "7 days (Doxycycline) / Single dose (Azithromycin)",
-      "remarks": "Doxycycline 7 hari terbukti mempunyai kadar kesembuhan mikrobiologi yang jauh lebih tinggi berbanding Azithromycin 1g dos tunggal terutamanya untuk jangkitan rektal dan Mycoplasma."
+      "remarks": "Doxycycline 7 days terbukti mempunyai kadar kesembuhan mikrobiologi yang jauh lebih tinggi berbanding Azithromycin 1g single dose terutamanya untuk jangkitan rektal dan Mycoplasma."
     },
     "secondLineDrugs": [
       "erythromycin",
@@ -2687,10 +2687,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "moxifloxacin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Erythromycin Ethylsuccinate (EES) 800mg QID x 7 hari atau Oral Levofloxacin 500mg OD x 7 hari (M. genitalium refraktori: Oral Moxifloxacin 400mg OD x 7-14 hari).",
+      "regimen": "Oral Erythromycin Ethylsuccinate (EES) 800mg QID x 7 days or Oral Levofloxacin 500mg OD x 7 days (M. genitalium refraktori: Oral Moxifloxacin 400mg OD x 7-14 days).",
       "routeAndDose": "Oral.",
       "durationDays": "7 - 14 days",
-      "remarks": "Untuk pesakit hamil yang tidak boleh mengambil Doxycycline (gunakan Erythromycin atau Azithromycin)."
+      "remarks": "Untuk pesakit hamil yang tidak boleh mengambil Doxycycline (gunakan Erythromycin or Azithromycin)."
     },
     "allergyDrugs": [
       "doxycycline",
@@ -2698,12 +2698,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "erythromycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Doxycycline 100mg BD x 7 hari atau Oral Azithromycin 1g stat",
+      "regimen": "Oral Doxycycline 100mg BD x 7 days or Oral Azithromycin 1g stat",
       "routeAndDose": "Oral.",
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
     "amsNotes": [
-      "Lakukan Ujian Penguatan Asid Nukleik (NAAT) pada spesimen urin pancutan awal (first-catch urine) untuk lelaki atau swab serviks/vagina untuk wanita.",
+      "Lakukan Ujian Penguatan Asid Nukleik (NAAT) pada spesimen urin pancutan awal (first-catch urine) untuk lelaki or swab serviks/vagina untuk wanita.",
       "Saring semua pesakit untuk jangkitan kelamin lain termasuk HIV, Sifilis (VDRL/TPHA), dan Hepatitis B."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / CDC STI Guidelines 2021)"
@@ -2727,10 +2727,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "procaine penicillin"
     ],
     "firstLineTherapy": {
-      "regimen": "Sifilis Primer, Sekunder & Awal Laten (<1 tahun): IM Benzathine Penicillin G 2.4 MU dos tunggal (disuntik 1.2 MU pada setiap punggung). Sifilis Lewat Laten (>1 tahun / Tempoh Tidak Diketahui): IM Benzathine Penicillin G 2.4 MU seminggu sekali x 3 MINGGU BERTURUT-TURUT (Jumlah 7.2 MU). Neurosifilis / Sifilis Okular: IV Aqueous Crystalline Penicillin G 18 - 24 MU sehari (diberikan 3-4 MU Q4H atau infusi berterusan) x 10-14 HARI.",
-      "routeAndDose": "IM suntikan dalam (Intragluteal) / IV infusi berterusan untuk neurosifilis.",
-      "durationDays": "Stat dose sehingga 3 minggu (Latent) / 10 - 14 days (Neurosyphilis)",
-      "remarks": "Suntikan Benzathine Penicillin G TIDAK BOLEH DIGANTIKAN dengan penisilin oral atau formulasi jangka pendek lain untuk rawatan sifilis."
+      "regimen": "Sifilis Primer, Sekunder & Awal Laten (<1 tahun): IM Benzathine Penicillin G 2.4 MU single dose (disuntik 1.2 MU pada setiap punggung). Sifilis Lewat Laten (>1 tahun / Tempoh Tidak Diketahui): IM Benzathine Penicillin G 2.4 MU seminggu sekali x 3 MINGGU BERTURUT-TURUT (Jumlah 7.2 MU). Neurosifilis / Sifilis Okular: IV Aqueous Crystalline Penicillin G 18 - 24 MU sehari (diberikan 3-4 MU Q4H or continuous infusion) x 10-14 HARI.",
+      "routeAndDose": "IM suntikan dalam (Intragluteal) / IV continuous infusion untuk neurosifilis.",
+      "durationDays": "Stat dose sehingga 3 weeks (Latent) / 10 - 14 days (Neurosyphilis)",
+      "remarks": "Suntikan Benzathine Penicillin G TIDAK BOLEH DIGANTIKAN dengan penisilin oral or formulasi jangka pendek lain untuk rawatan sifilis."
     },
     "secondLineDrugs": [
       "doxycycline",
@@ -2738,7 +2738,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "procaine penicillin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Doxycycline 100mg BD x 14 hari (Sifilis awal) atau x 28 hari (Sifilis lewat) atau IM Ceftriaxone 1g-2g OD x 10-14 hari.",
+      "regimen": "Oral Doxycycline 100mg BD x 14 days (Sifilis awal) or x 28 days (Sifilis lewat) or IM Ceftriaxone 1g-2g OD x 10-14 days.",
       "routeAndDose": "Oral / IM.",
       "durationDays": "14 - 28 days",
       "remarks": "Doxycycline adalah alternatif utama untuk pesakit bukan hamil yang alah kepada penisilin."
@@ -2749,7 +2749,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ceftriaxone"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Pesakit Bukan Hamil: Oral Doxycycline 100mg BD x 14 hari (awal) atau x 28 hari (lewat). WANITA HAMIL DENGAN SIFILIS: WAJIB DESENSITISASI PENISILIN dan rawat dengan Benzathine Penicillin G (tiada ubat lain yang terbukti mencegah sifilis kongenital janin!).",
+      "regimen": "Pesakit Bukan Hamil: Oral Doxycycline 100mg BD x 14 days (awal) or x 28 days (lewat). WANITA HAMIL DENGAN SIFILIS: WAJIB DESENSITISASI PENISILIN dan rawat dengan Benzathine Penicillin G (tiada ubat lain yang terbukti mencegah sifilis kongenital janin!).",
       "routeAndDose": "Oral / Desensitisasi Penisilin.",
       "remarks": "Wanita hamil yang alah penisilin mesti dimasukkan ke hospital untuk prosedur desensitisasi segera."
     },
@@ -2782,10 +2782,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "firstLineTherapy": {
-      "regimen": "Herpes Genital Episod Pertama: Oral Acyclovir 400mg TDS x 7-10 hari (atau 200mg 5 kali sehari / Oral Valacyclovir 1g BD x 7-10 hari). Herpes Genital Episod Berulang: Oral Acyclovir 800mg TDS x 2 hari (atau 400mg TDS x 5 hari). Chancroid: Oral Azithromycin 1g stat (atau IM Ceftriaxone 250mg stat). LGV: Oral Doxycycline 100mg BD x 21 hari.",
+      "regimen": "Herpes Genital Episod Pertama: Oral Acyclovir 400mg TDS x 7-10 days (or 200mg 5 kali sehari / Oral Valacyclovir 1g BD x 7-10 days). Herpes Genital Episod Berulang: Oral Acyclovir 800mg TDS x 2 days (or 400mg TDS x 5 days). Chancroid: Oral Azithromycin 1g stat (or IM Ceftriaxone 250mg stat). LGV: Oral Doxycycline 100mg BD x 21 days.",
       "routeAndDose": "Oral / IM.",
       "durationDays": "7 - 10 days (Herpes primer) / 2 - 5 days (Herpes berulang) / 21 days (LGV)",
-      "remarks": "Mulakan Acyclovir seawal mungkin semasa kemunculan lesi vesikel atau fasa prodromal (rasa kesemutan/terbakar) untuk memendekkan tempoh luka dan kesakitan."
+      "remarks": "Mulakan Acyclovir seawal mungkin semasa kemunculan lesi vesikel or fasa prodromal (rasa kesemutan/terbakar) untuk memendekkan tempoh luka dan kesakitan."
     },
     "secondLineDrugs": [
       "famciclovir",
@@ -2793,7 +2793,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "erythromycin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Famciclovir 250mg TDS x 5 hari atau Terapi Supresif Jangka Panjang: Oral Acyclovir 400mg BD berterusan jika episod berulang >6 kali setahun.",
+      "regimen": "Oral Famciclovir 250mg TDS x 5 days or Terapi Supresif Jangka Panjang: Oral Acyclovir 400mg BD berterusan jika episod berulang >6 kali setahun.",
       "routeAndDose": "Oral.",
       "durationDays": "5 days sehingga 12 bulan (Terapi Supresif)",
       "remarks": "Terapi supresif mengurangkan kekerapan serangan sebanyak 70-80% dan mengurangkan penularan kepada pasangan."
@@ -2809,7 +2809,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "remarks": "Tiada sebarang kontraindikasi alahan penisilin."
     },
     "amsNotes": [
-      "Ujian Titer HSV PCR atau kultur lesi vesikel adalah ujian diagnostik standard emas terpantas.",
+      "Ujian Titer HSV PCR or kultur lesi vesikel adalah ujian diagnostik standard emas terpantas.",
       "Ibu hamil dengan lesi aktif herpes genital semasa onset kelahiran disyorkan menjalani Pembedahan Caesarean untuk mencegah transmisi Neonatal Herpes yang boleh membawa maut."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / CDC STI Guidelines 2021)"
@@ -2837,10 +2837,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "firstLineTherapy": {
-      "regimen": "Abses Kulit Sederhana / Karbunkel: INSISI DAN PENYALIRAN NANAH (I&D) SEGERA + Oral Cloxacillin 500mg Q6H x 5-7 hari (atau Oral Cephalexin 500mg Q6H / Oral Augmentin 625mg TDS). Impetigo Terlokalisasi: Krim Asid Fusidik 2% atau Salap Mupirocin 2% sapu TDS x 5 hari.",
+      "regimen": "Abses Kulit Sederhana / Karbunkel: INSISI DAN PENYALIRAN NANAH (I&D) SEGERA + Oral Cloxacillin 500mg Q6H x 5-7 days (or Oral Cephalexin 500mg Q6H / Oral Augmentin 625mg TDS). Impetigo Terlokalisasi: Krim Asid Fusidik 2% or Salap Mupirocin 2% sapu TDS x 5 days.",
       "routeAndDose": "Prosedur I&D + Oral antibiotik.",
       "durationDays": "5 - 7 days",
-      "remarks": "Abses kulit kecil tanpa selulitis sekeliling atau demam HANYA MEMERLUKAN INSISI & PENYALIRAN NANAH (antibiotik sistemik tidak diperlukan jika tiada komorbiditi sistemik)."
+      "remarks": "Abses kulit kecil tanpa selulitis sekeliling or demam HANYA MEMERLUKAN INSISI & PENYALIRAN NANAH (antibiotik sistemik tidak diperlukan jika tiada komorbiditi sistemik)."
     },
     "secondLineDrugs": [
       "co-trimoxazole",
@@ -2849,7 +2849,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Bactrim Forte 1-2 tabs BD x 5-7 hari atau Oral Doxycycline 100mg BD x 5-7 hari atau Oral Clindamycin 300mg TDS.",
+      "regimen": "Oral Bactrim Forte 1-2 tabs BD x 5-7 days or Oral Doxycycline 100mg BD x 5-7 days or Oral Clindamycin 300mg TDS.",
       "routeAndDose": "Oral.",
       "durationDays": "5 - 7 days",
       "remarks": "Pilihan utama jika disyaki Community-Acquired MRSA (CA-MRSA)."
@@ -2861,13 +2861,13 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Clindamycin 300mg TDS atau Oral Doxycycline 100mg BD atau Oral Azithromycin 500mg OD x 3 hari",
+      "regimen": "Oral Clindamycin 300mg TDS or Oral Doxycycline 100mg BD or Oral Azithromycin 500mg OD x 3 days",
       "routeAndDose": "Oral.",
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
     "amsNotes": [
       "Teknik I&D yang betul: Buat torehan mencukupi, pecahkan semua lokulasi (loculations), bersihkan nanah dengan salin, dan masukkan wick kasa steril.",
-      "Ambil swab nanah untuk kultur C&S jika abses berulang atau gagal sembuh."
+      "Ambil swab nanah untuk kultur C&S jika abses berulang or gagal sembuh."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / IDSA SSTI Guidelines 2014)"
   },
@@ -2879,7 +2879,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "2. CELLULITIS & ERYSIPELAS",
     "topicNumber": 2,
     "bodySystem": "Skin & Soft Tissue Infections",
-    "conditionName": "Non-Purulent Cellulitis & Erysipelas (Selulitis & Erisipelas)",
+    "conditionName": "Non-Purulent Cellulitis & Erysipelas",
     "setting": "Community-Acquired",
     "primaryPathogens": [
       "Streptococcus pyogenes (Group A Strep - punca utama)",
@@ -2895,9 +2895,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amoxicillin"
     ],
     "firstLineTherapy": {
-      "regimen": "Selulitis Bukan Bernanah / Erisipelas Sederhana: IV Cloxacillin 1g-2g Q6H (or IV Cefazolin 1g-2g Q8H / IV Benzylpenicillin 2-4 MU Q6H) kemudian bertukar ke Oral Cephalexin 500mg-1g Q6H atau Oral Cloxacillin 500mg Q6H x 5-7 HARI JUMLAH.",
+      "regimen": "Selulitis Bukan Bernanah / Erisipelas Sederhana: IV Cloxacillin 1g-2g Q6H (or IV Cefazolin 1g-2g Q8H / IV Benzylpenicillin 2-4 MU Q6H) kemudian bertukar ke Oral Cephalexin 500mg-1g Q6H or Oral Cloxacillin 500mg Q6H x 5-7 HARI JUMLAH.",
       "routeAndDose": "IV bertukar ke Oral + TINGGIKAN ANGGOTA YANG TERJEJAS (Limb Elevation).",
-      "durationDays": "5 - 7 days (Tempoh 5 hari sama berkesan dengan 10 hari jika bengkak kemerahan terkawal)",
+      "durationDays": "5 - 7 days (Tempoh 5 days sama berkesan dengan 10 days jika bengkak kemerahan terkawal)",
       "remarks": "Tanda garisan sempadan eritema dengan pen marker pada kulit semasa kemasukan untuk memantau regresi kemerahan setiap hari."
     },
     "secondLineDrugs": [
@@ -2906,10 +2906,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "daptomycin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Ceftriaxone 2g OD atau IV Vancomycin 15-20mg/kg Q12H (jika ada faktor risiko MRSA atau sepsis).",
+      "regimen": "IV Ceftriaxone 2g OD or IV Vancomycin 15-20mg/kg Q12H (jika ada faktor risiko MRSA or sepsis).",
       "routeAndDose": "IV.",
       "durationDays": "5 - 7 days",
-      "remarks": "Untuk pesakit yang mempunyai tanda toksisiti sistemik atau kegagalan dos pertama."
+      "remarks": "Untuk pesakit yang mempunyai tanda toksisiti sistemik or kegagalan dos pertama."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -2918,9 +2918,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "levofloxacin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IV/Oral Clindamycin 600mg Q8H x 5-7 hari atau Oral Clarithromycin 500mg BD x 7 hari",
+      "regimen": "IV/Oral Clindamycin 600mg Q8H x 5-7 days or Oral Clarithromycin 500mg BD x 7 days",
       "routeAndDose": "Oral / IV.",
-      "remarks": "Sesuai untuk pesakit alahan penisilin."
+      "remarks": "Suitable for patients with penicillin allergy."
     },
     "stepDownDrugs": [
       "cephalexin",
@@ -2928,7 +2928,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amoxicillin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Cephalexin 500mg Q6H atau Oral Cloxacillin 500mg Q6H.",
+      "regimen": "Oral Cephalexin 500mg Q6H or Oral Cloxacillin 500mg Q6H.",
       "criteria": "Kemerahan kulit berhenti merebak dan mula pudar, pesakit afebril >24 jam, bengkak dan kesakitan reda."
     },
     "amsNotes": [
@@ -3035,10 +3035,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "vancomycin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Piperacillin/Tazobactam 4.5g Q6H atau IV Meropenem 1g Q8H (+/- IV Vancomycin)",
+      "regimen": "IV Piperacillin/Tazobactam 4.5g Q6H or IV Meropenem 1g Q8H (+/- IV Vancomycin)",
       "routeAndDose": "IV.",
       "durationDays": "2 - 4 weeks",
-      "remarks": "Untuk kes luka tercemar nosokomial atau ulser iskemia gangrenous."
+      "remarks": "Untuk kes luka tercemar nosokomial or ulser iskemia gangrenous."
     },
     "allergyDrugs": [
       "ciprofloxacin",
@@ -3049,7 +3049,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "penicillinAllergyOption": {
       "regimen": "Oral/IV Ciprofloxacin 500-750mg BD + Oral/IV Metronidazole 400-500mg TDS (+/- IV Vancomycin)",
       "routeAndDose": "Oral/IV.",
-      "remarks": "Sesuai untuk pesakit alahan penisilin."
+      "remarks": "Suitable for patients with penicillin allergy."
     },
     "stepDownDrugs": [
       "amoxicillin/clavulanic acid",
@@ -3058,7 +3058,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Augmentin 625mg TDS atau (Oral Ciprofloxacin 500mg BD + Oral Metronidazole 400mg TDS).",
+      "regimen": "Oral Augmentin 625mg TDS or (Oral Ciprofloxacin 500mg BD + Oral Metronidazole 400mg TDS).",
       "criteria": "Luka telah dibersihkan secara surgikal, tanda selulitis surut, tiada demam, kawalan gula darah stabil."
     },
     "amsNotes": [
@@ -3075,7 +3075,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "5. ANIMAL & HUMAN BITES",
     "topicNumber": 5,
     "bodySystem": "Skin & Soft Tissue Infections",
-    "conditionName": "Animal & Human Bite Wounds (Gigitan Anjing, Kucing & Manusia)",
+    "conditionName": "Animal & Human Bite Wounds",
     "setting": "Outpatient (OPD/KK)",
     "primaryPathogens": [
       "Pasteurella multocida & Pasteurella canis (Gigitan kucing/anjing)",
@@ -3091,7 +3091,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ampicillin/sulbactam"
     ],
     "firstLineTherapy": {
-      "regimen": "Profilaksis / Rawatan Gigitan Haiwan & Manusia: Oral Augmentin 625mg TDS x 5-7 hari (atau IV Co-Amoxiclav 1.2g TDS / IV Ampicillin-Sulbactam 1.5g-3g Q6H jika jangkitan teruk) + CUCI LUKA INTENSIF DENGAN AIR MENGALIR DAN SABUN + SUNTIKAN TOXOID TETANUS & PENILAIAN RISIKO RABIES.",
+      "regimen": "Profilaksis / Rawatan Gigitan Haiwan & Manusia: Oral Augmentin 625mg TDS x 5-7 days (or IV Co-Amoxiclav 1.2g TDS / IV Ampicillin-Sulbactam 1.5g-3g Q6H jika jangkitan teruk) + CUCI LUKA INTENSIF DENGAN AIR MENGALIR DAN SABUN + SUNTIKAN TOXOID TETANUS & PENILAIAN RISIKO RABIES.",
       "routeAndDose": "Oral / IV + Pencucian luka segera.",
       "durationDays": "3 - 5 days (Profilaksis luka baru berisiko) / 7 - 10 days (Luka telah dijangkiti)",
       "remarks": "JANGAN JAHIT LUKA GIGITAN SECARA PRIMER (kecuali luka muka kosmetik selepas pembersihan teliti); membiarkan luka terbuka mengurangkan risiko abses ruang tertutup dan tenosinovitis."
@@ -3102,7 +3102,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ciprofloxacin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Doxycycline 100mg BD + Oral Metronidazole 400mg TDS x 7 hari atau Oral Ciprofloxacin 500mg BD + Metronidazole 400mg TDS.",
+      "regimen": "Oral Doxycycline 100mg BD + Oral Metronidazole 400mg TDS x 7 days or Oral Ciprofloxacin 500mg BD + Metronidazole 400mg TDS.",
       "routeAndDose": "Oral.",
       "durationDays": "7 days",
       "remarks": "Alternatif untuk pesakit alahan penisilin (Perhatian: Cephalosporin generasi pertama, Clindamycin, dan Macrolide TIDAK boleh digunakan sebagai monoterapi kerana aktiviti lemah terhadap Pasteurella multocida)."
@@ -3115,7 +3115,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Doxycycline 100mg BD x 7 hari (or Oral Ciprofloxacin 500mg BD + Oral Metronidazole 400mg TDS / Oral Bactrim Forte 1 tab BD + Metronidazole)",
+      "regimen": "Oral Doxycycline 100mg BD x 7 days (or Oral Ciprofloxacin 500mg BD + Oral Metronidazole 400mg TDS / Oral Bactrim Forte 1 tab BD + Metronidazole)",
       "routeAndDose": "Oral kombinasi.",
       "remarks": "Kombinasi ini memberi liputan lengkap Pasteurella, Eikenella, dan kuman anaerobik mulut."
     },
@@ -3124,7 +3124,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "PROTOKOL PROFILAKSIS RABIES (KKM & WHO PEP PROTOCOL):",
       "• Cuci serta-merta semua luka gigitan/cakaran dengan air mengalir dan sabun selama sekurang-kurangnya 15 minit dan sapu Povidone Iodine 10%.",
       "• Kategori II (Cakaran/gigitan tanpa pendarahan): Vaksin Rabies 2-site Intradermal (ID) 0.1 mL bilateral deltoid pada Hari 0, 3, dan 7 (Jumlah 6 suntikan ID).",
-      "• Kategori III (Luka tembus pendarahan / gigitan dalam / air liur pada membran mukosa): Vaksin Rabies 2-site ID (Hari 0, 3, 7) + WAJIB infiltrasi Rabies Immunoglobulin (HRIG 20 IU/kg atau ERIG 40 IU/kg) di sekeliling semua luka pada Hari 0.",
+      "• Kategori III (Luka tembus pendarahan / gigitan dalam / air liur pada membran mukosa): Vaksin Rabies 2-site ID (Hari 0, 3, 7) + WAJIB infiltrasi Rabies Immunoglobulin (HRIG 20 IU/kg or ERIG 40 IU/kg) di sekeliling semua luka pada Hari 0.",
       "• Wajib lapor kes gigitan haiwan kepada Pusat Kesihatan Daerah / Pejabat Kesihatan untuk siasatan survelan rabies."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / KKM Rabies Guidelines / WHO 2018)"
@@ -3153,9 +3153,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "firstLineTherapy": {
-      "regimen": "Gustilo Gred I & II (<10cm luka bersih): IV Cefazolin 2g Q8H (or IV Cloxacillin 2g Q6H) x 24-48 jam. Gustilo Gred III (>10cm / Kerosakan Tisu Lemuk / Pencemaran Tanah / Kemalangan Pertanian): IV Cefazolin 2g Q8H + IV Gentamicin 5mg/kg OD (+ IV Benzylpenicillin 2-4 MU Q4H atau Metronidazole 500mg TDS jika tercemar najis/tanah) + DEBRIDEMENT PEMBEDAHAN KECEMASAN DI DEWAN BEDAH DALAM MASA <6-12 JAM.",
+      "regimen": "Gustilo Gred I & II (<10cm luka bersih): IV Cefazolin 2g Q8H (or IV Cloxacillin 2g Q6H) x 24-48 jam. Gustilo Gred III (>10cm / Kerosakan Tisu Lemuk / Pencemaran Tanah / Kemalangan Pertanian): IV Cefazolin 2g Q8H + IV Gentamicin 5mg/kg OD (+ IV Benzylpenicillin 2-4 MU Q4H or Metronidazole 500mg TDS jika tercemar najis/tanah) + DEBRIDEMENT PEMBEDAHAN KECEMASAN DI DEWAN BEDAH DALAM MASA <6-12 JAM.",
       "routeAndDose": "IV dos pertama diberikan SERTA-MERTA di Jabatan Kecemasan.",
-      "durationDays": "24 - 48 hours (Gred I/II) / Maksimum 72 jam atau 24 jam selepas penutupan luka definitif (Gred III)",
+      "durationDays": "24 - 48 hours (Gred I/II) / Maksimum 72 jam or 24 jam selepas penutupan luka definitif (Gred III)",
       "remarks": "Pemberian antibiotik dalam masa 3 JAM PERTAMA dari kecederaan adalah faktor terpenting mengurangkan risiko osteomielitis pasca-trauma."
     },
     "secondLineDrugs": [
@@ -3165,10 +3165,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Vancomycin 15-20mg/kg Q12H + IV Piperacillin/Tazobactam 4.5g Q6H (atau IV Meropenem 1g Q8H)",
+      "regimen": "IV Vancomycin 15-20mg/kg Q12H + IV Piperacillin/Tazobactam 4.5g Q6H (or IV Meropenem 1g Q8H)",
       "routeAndDose": "IV.",
       "durationDays": "72 hours",
-      "remarks": "Bagi fraktur terbuka dengan risiko tinggi MRSA atau trauma persekitaran air payau/laut."
+      "remarks": "Bagi fraktur terbuka dengan risiko tinggi MRSA or trauma persekitaran air payau/laut."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -3209,7 +3209,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ceftazidime"
     ],
     "firstLineTherapy": {
-      "regimen": "Kecederaan Tembus Kepala / Fraktur Tengkorak Terbuka: IV Ceftriaxone 2g Q12H + IV Vancomycin 15-20mg/kg Q12H + IV Metronidazole 500mg Q8H x 7-10 hari. Fraktur Dasar Tengkorak dengan Kebocoran CSF Akut: PEMERHATIAN RAPI & ELAK PROFILAKSIS ANTIBIOTIK RUTIN (kecuali disahkan meningitis bakteria: IV Ceftriaxone 2g Q12H).",
+      "regimen": "Kecederaan Tembus Kepala / Fraktur Tengkorak Terbuka: IV Ceftriaxone 2g Q12H + IV Vancomycin 15-20mg/kg Q12H + IV Metronidazole 500mg Q8H x 7-10 days. Fraktur Dasar Tengkorak dengan Kebocoran CSF Akut: PEMERHATIAN RAPI & ELAK PROFILAKSIS ANTIBIOTIK RUTIN (kecuali disahkan meningitis bakteria: IV Ceftriaxone 2g Q12H).",
       "routeAndDose": "IV menembusi sawar darah-otak dos penuh.",
       "durationDays": "7 - 10 days",
       "remarks": "Kajian menunjukkan profilaksis antibiotik berpanjangan pada kebocoran CSF tidak mencegah meningitis tetapi memilih kuman hospital yang kebal (pneumokokus resistan/Gram-negatif)."
@@ -3222,7 +3222,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Meropenem 2g Q8H + IV Vancomycin 15-20mg/kg Q8H-Q12H",
       "routeAndDose": "IV infusi.",
       "durationDays": "10 - 14 days",
-      "remarks": "Untuk kecederaan tembus otak tercemar teruk atau meningitis pasca-trauma nosokomial."
+      "remarks": "Untuk kecederaan tembus otak tercemar teruk or meningitis pasca-trauma nosokomial."
     },
     "allergyDrugs": [
       "chloramphenicol",
@@ -3248,7 +3248,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "3. PENETRATING ABDOMINAL & THORACIC TRAUMA",
     "topicNumber": 3,
     "bodySystem": "Trauma Related Infections",
-    "conditionName": "Penetrating Abdominal & Thoracic Trauma (Luka Tikaman/Tembakan Abdomen & Dada)",
+    "conditionName": "Penetrating Abdominal & Thoracic Trauma",
     "setting": "ICU / Severe",
     "primaryPathogens": [
       "Escherichia coli & Klebsiella pneumoniae",
@@ -3264,10 +3264,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefazolin"
     ],
     "firstLineTherapy": {
-      "regimen": "Trauma Tembus Abdomen (Perforasi Usus / Laparotomi Kecemasan): IV Co-Amoxiclav 1.2g TDS (or IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS) dimulakan sebelum pembedahan x 24 JAM SAHAJA. Trauma Tembus Toraks / Pemasangan Tiub Dada Hemotoraks: IV Cefazolin 2g stat dos tunggal (profilaksis tiub dada).",
+      "regimen": "Trauma Tembus Abdomen (Perforasi Usus / Laparotomi Kecemasan): IV Co-Amoxiclav 1.2g TDS (or IV Ceftriaxone 2g OD + IV Metronidazole 500mg TDS) dimulakan prior to surgery x 24 JAM SAHAJA. Trauma Tembus Toraks / Pemasangan Tiub Dada Hemotoraks: IV Cefazolin 2g stat single dose (profilaksis tiub dada).",
       "routeAndDose": "IV parenteral.",
-      "durationDays": "24 hours sahaja (panjangkan ke 3-5 hari hanya jika terdapat peritonitis fekal meluas)",
-      "remarks": "Kajian klinikal membuktikan antibiotik profilaksis selama 24 jam selepas laparotomi trauma adalah sama berkesan dengan rejimen 5 hari."
+      "durationDays": "24 hours sahaja (panjangkan ke 3-5 days hanya jika terdapat peritonitis fekal meluas)",
+      "remarks": "Kajian klinikal membuktikan antibiotik profilaksis selama 24 jam selepas laparotomi trauma adalah sama berkesan dengan rejimen 5 days."
     },
     "secondLineDrugs": [
       "piperacillin/tazobactam",
@@ -3275,7 +3275,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Piperacillin/Tazobactam 4.5g Q6H atau IV Meropenem 1g Q8H",
+      "regimen": "IV Piperacillin/Tazobactam 4.5g Q6H or IV Meropenem 1g Q8H",
       "routeAndDose": "IV.",
       "durationDays": "3 - 5 days",
       "remarks": "Bagi kes kejutan syok hemoragik berpanjangan dengan kontaminasi masif."
@@ -3304,7 +3304,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "4. BURN WOUND INFECTIONS & SEPSIS",
     "topicNumber": 4,
     "bodySystem": "Trauma Related Infections",
-    "conditionName": "Severe Burn Wound Infections & Burn Sepsis (Luka Kebakaran Teruk & Sepsis)",
+    "conditionName": "Severe Burn Wound Infections & Burn Sepsis",
     "setting": "ICU / Severe",
     "primaryPathogens": [
       "Pseudomonas aeruginosa",
@@ -3321,7 +3321,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "vancomycin"
     ],
     "firstLineTherapy": {
-      "regimen": "Penjagaan Luka Topikal: Krim Silver Sulfadiazine 1% (SSD) atau Balutan Antimikrobial Perak (Silver-impregnated dressings) + Eskaroteomi/Debridement pembedahan. Sepsis Melecur Sistemik: IV Piperacillin/Tazobactam 4.5g Q6H (or IV Meropenem 1g Q8H) + IV Vancomycin 15-20mg/kg Q12H.",
+      "regimen": "Penjagaan Luka Topikal: Krim Silver Sulfadiazine 1% (SSD) or Balutan Antimikrobial Perak (Silver-impregnated dressings) + Eskaroteomi/Debridement pembedahan. Sepsis Melecur Sistemik: IV Piperacillin/Tazobactam 4.5g Q6H (or IV Meropenem 1g Q8H) + IV Vancomycin 15-20mg/kg Q12H.",
       "routeAndDose": "Topikal untuk luka rutin; IV hanya jika terdapat tanda sepsis sistemik.",
       "durationDays": "7 days (Sepsis sistemik)",
       "remarks": "ELAKKAN PROFILAKSIS ANTIBIOTIK SISTEMIK RUTIN pada pesakit luka bakar tanpa tanda sepsis kerana hanya menggalakkan kolonisasi kuman MDR kebal ubat dan jangkitan kulat."
@@ -3336,7 +3336,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Colistin (Loading 9 MU kemudian 4.5 MU BD) + IV Meropenem 2g Q8H + IV Caspofungin 70mg loading kemudian 50mg OD",
       "routeAndDose": "IV ICU.",
       "durationDays": "7 - 14 days",
-      "remarks": "Bagi sepsis luka bakar akibat kuman Acinetobacter/Pseudomonas MDR atau rintangan karbapenem."
+      "remarks": "Bagi sepsis luka bakar akibat kuman Acinetobacter/Pseudomonas MDR or rintangan karbapenem."
     },
     "allergyDrugs": [
       "ciprofloxacin",
@@ -3374,10 +3374,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ceftriaxone"
     ],
     "firstLineTherapy": {
-      "regimen": "Leptospirosis Ringan (Pesakit Luar): Oral Doxycycline 100mg BD x 7 hari (atau Oral Amoxicillin 500mg-1g TDS x 7 hari / Oral Azithromycin 500mg OD x 3 hari). Leptospirosis Teruk / Penyakit Weil (Jaundis, Kegagalan Ginjal, Pendarahan Pulmonari): IV Benzylpenicillin 1.5 MU Q6H (or IV Ceftriaxone 2g OD) x 7 HARI.",
+      "regimen": "Leptospirosis Ringan (Pesakit Luar): Oral Doxycycline 100mg BD x 7 days (or Oral Amoxicillin 500mg-1g TDS x 7 days / Oral Azithromycin 500mg OD x 3 days). Leptospirosis Teruk / Penyakit Weil (Jaundis, Kegagalan Ginjal, Pendarahan Pulmonari): IV Benzylpenicillin 1.5 MU Q6H (or IV Ceftriaxone 2g OD) x 7 HARI.",
       "routeAndDose": "Oral untuk kes ringan; IV untuk kes teruk.",
       "durationDays": "7 days",
-      "remarks": "Mulakan antibiotik SEAWAL MUNGKIN sebaik diagnosis klinikal disyaki tanpa menunggu keputusan serologi MAT (Microscopic Agglutination Test) atau PCR."
+      "remarks": "Mulakan antibiotik SEAWAL MUNGKIN sebaik diagnosis klinikal disyaki tanpa menunggu keputusan serologi MAT (Microscopic Agglutination Test) or PCR."
     },
     "secondLineDrugs": [
       "ceftriaxone",
@@ -3386,7 +3386,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Ceftriaxone 2g OD atau IV Cefotaxime 1g-2g Q6H x 7 hari.",
+      "regimen": "IV Ceftriaxone 2g OD or IV Cefotaxime 1g-2g Q6H x 7 days.",
       "routeAndDose": "IV dos harian tunggal.",
       "durationDays": "7 days",
       "remarks": "Ceftriaxone terbukti sama berkesan dengan Benzylpenicillin dan lebih mudah diberikan secara sekali sehari (OD)."
@@ -3397,7 +3397,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ceftriaxone"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Ringan: Oral Doxycycline 100mg BD x 7 hari. Teruk: IV Ceftriaxone 2g OD (jika alahan ringan) atau IV Azithromycin 500mg OD x 7 hari (atau IV Doxycycline 100mg BD).",
+      "regimen": "Ringan: Oral Doxycycline 100mg BD x 7 days. Teruk: IV Ceftriaxone 2g OD (jika alahan ringan) or IV Azithromycin 500mg OD x 7 days (or IV Doxycycline 100mg BD).",
       "routeAndDose": "Oral / IV.",
       "remarks": "Doxycycline dan Azithromycin adalah pilihan utama bebas penisilin."
     },
@@ -3406,7 +3406,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amoxicillin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Doxycycline 100mg BD atau Oral Amoxicillin 500mg TDS selepas fasa akut parenteral terkawal.",
+      "regimen": "Oral Doxycycline 100mg BD or Oral Amoxicillin 500mg TDS selepas fasa akut parenteral terkawal.",
       "criteria": "Pesakit afebril >48 jam, tiada pendarahan, fungsi ginjal dan enzim hepar bertambah baik."
     },
     "amsNotes": [
@@ -3438,7 +3438,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "firstLineTherapy": {
       "regimen": "FASA INTENSIF AKUT (Minimum 14 - 28 Hari): IV Ceftazidime 2g Q8H infusi 3 jam (or IV Meropenem 1g-2g Q8H jika septik syok/ICU) (+/- Oral Bactrim jika ada abses organ/neurologi). FASA PEMBASMIAN ORAL (Eradication Phase - 3 hingga 6 BULAN): Oral Co-Trimoxazole (Bactrim) pada dos berdasarkan berat badan (Berat >60kg: Bactrim Forte 2 tablet BD; 40-60kg: 1.5 tablet BD) + Oral Asid Folik 5mg OD.",
       "routeAndDose": "IV infusi fasa akut diikuti Terapi Oral Berpanjangan.",
-      "durationDays": "Fasa Intensif: Min 14 hari (sehingga 4-8 minggu jika abses dalaman); Fasa Pembasmian: 3 hingga 6 BULAN",
+      "durationDays": "Fasa Intensif: Min 14 days (sehingga 4-8 weeks jika abses dalaman); Fasa Pembasmian: 3 hingga 6 BULAN",
       "remarks": "KEPATUHAN FASA ERADIKASI ADALAH KRITIKAL: Kegagalan melengkapkan rawatan oral Bactrim selama minimum 3 bulan mengakibatkan kadar jangkitan melioidosis berulang (relapse) setinggi 30-50%."
     },
     "secondLineDrugs": [
@@ -3448,7 +3448,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "secondLineTherapy": {
-      "regimen": "Fasa Intensif: IV Meropenem 1g-2g Q8H. Fasa Eradikasi Alternatif (jika alahan/intoleransi Bactrim): Oral Augmentin 1g TDS (atau Oral Augmentin 625mg Q6H) + Oral Doxycycline 100mg BD x 3-6 bulan.",
+      "regimen": "Fasa Intensif: IV Meropenem 1g-2g Q8H. Fasa Eradikasi Alternatif (jika alahan/intoleransi Bactrim): Oral Augmentin 1g TDS (or Oral Augmentin 625mg Q6H) + Oral Doxycycline 100mg BD x 3-6 bulan.",
       "routeAndDose": "IV / Oral.",
       "durationDays": "3 - 6 months",
       "remarks": "Augmentin adalah pilihan kedua terbaik untuk fasa pembasmian sekiranya pesakit alah sulfa."
@@ -3460,7 +3460,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Fasa Intensif: IV Meropenem 1g-2g Q8H (atau protokol desensitisasi Ceftazidime). Fasa Eradikasi: Oral Co-Trimoxazole + Folic Acid x 3-6 bulan",
+      "regimen": "Fasa Intensif: IV Meropenem 1g-2g Q8H (or protokol desensitisasi Ceftazidime). Fasa Eradikasi: Oral Co-Trimoxazole + Folic Acid x 3-6 bulan",
       "routeAndDose": "IV bertukar Oral.",
       "remarks": "Bactrim adalah ubat pembasmian utama bebas penisilin."
     },
@@ -3487,7 +3487,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "3. ENTERIC / TYPHOID FEVER",
     "topicNumber": 3,
     "bodySystem": "Tropical Infections",
-    "conditionName": "Enteric / Typhoid Fever (Demam Kepialu - Salmonella Typhi & Paratyphi)",
+    "conditionName": "Enteric / Typhoid Fever (Salmonella Typhi & Paratyphi)",
     "setting": "Community-Acquired",
     "primaryPathogens": [
       "Salmonella enterica serovar Typhi",
@@ -3499,10 +3499,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ciprofloxacin"
     ],
     "firstLineTherapy": {
-      "regimen": "Demam Tifoid Tidak Kompleks (Pesakit Luar): Oral Azithromycin 1g OD x 7 hari (atau Oral Ciprofloxacin 500-750mg BD x 7-10 hari jika strain disahkan sensitif). Demam Tifoid Teruk / Dimasukkan ke Wad: IV Ceftriaxone 2g OD x 10-14 hari (+ IV Dexamethasone 3mg/kg loading kemudian 1mg/kg Q6H x 48 jam jika mengalami delirium/stupor/syok).",
+      "regimen": "Demam Tifoid Tidak Kompleks (Pesakit Luar): Oral Azithromycin 1g OD x 7 days (or Oral Ciprofloxacin 500-750mg BD x 7-10 days jika strain disahkan sensitif). Demam Tifoid Teruk / Dimasukkan ke Wad: IV Ceftriaxone 2g OD x 10-14 days (+ IV Dexamethasone 3mg/kg loading kemudian 1mg/kg Q6H x 48 jam jika mengalami delirium/stupor/syok).",
       "routeAndDose": "Oral untuk kes ringan; IV untuk kes teruk/bakteremia.",
       "durationDays": "7 days (Azithromycin) / 10 - 14 days (Ceftriaxone)",
-      "remarks": "Steroid dos tinggi (Dexamethasone) terbukti mengurangkan kadar kematian pada demam kepialu teruk dengan ensefalopati atau kejutan septik."
+      "remarks": "Steroid dos tinggi (Dexamethasone) terbukti mengurangkan kadar kematian pada demam kepialu teruk dengan ensefalopati or kejutan septik."
     },
     "secondLineDrugs": [
       "cefotaxime",
@@ -3511,10 +3511,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Cefotaxime 2g Q8H x 10-14 hari atau IV Meropenem 1g Q8H (untuk strain XDR rintang-sefalosporin) atau Oral Bactrim Forte 2 tabs BD x 14 hari.",
+      "regimen": "IV Cefotaxime 2g Q8H x 10-14 days or IV Meropenem 1g Q8H (untuk strain XDR rintang-sefalosporin) or Oral Bactrim Forte 2 tabs BD x 14 days.",
       "routeAndDose": "IV / Oral.",
       "durationDays": "10 - 14 days",
-      "remarks": "Bagi kes kegagalan terapi atau strain resistan berbilang ubat (MDR/XDR)."
+      "remarks": "Bagi kes kegagalan terapi or strain resistan berbilang ubat (MDR/XDR)."
     },
     "allergyDrugs": [
       "azithromycin",
@@ -3523,7 +3523,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral/IV Azithromycin 1g OD (hari 1) kemudian 500mg OD x 7 hari atau Oral Ciprofloxacin 500mg BD x 10 hari",
+      "regimen": "Oral/IV Azithromycin 1g OD (hari 1) kemudian 500mg OD x 7 days or Oral Ciprofloxacin 500mg BD x 10 days",
       "routeAndDose": "Oral / IV.",
       "remarks": "Bebas beta-laktam."
     },
@@ -3532,7 +3532,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ciprofloxacin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Azithromycin 500mg-1g OD atau Oral Ciprofloxacin 500mg BD.",
+      "regimen": "Oral Azithromycin 500mg-1g OD or Oral Ciprofloxacin 500mg BD.",
       "criteria": "Pesakit afebril >48 jam, sakit perut reda, boleh makan ubat oral tanpa muntah."
     },
     "amsNotes": [
@@ -3562,7 +3562,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "firstLineTherapy": {
-      "regimen": "Oral Doxycycline 100mg BD x 7 hari (REJIMEN STANDARD EMAS). Pesakit Teruk Dimasukkan ke Wad: IV Doxycycline 100mg BD x 7 hari (atau Oral/IV Azithromycin 500mg OD x 3-5 hari).",
+      "regimen": "Oral Doxycycline 100mg BD x 7 days (REJIMEN STANDARD EMAS). Pesakit Teruk Dimasukkan ke Wad: IV Doxycycline 100mg BD x 7 days (or Oral/IV Azithromycin 500mg OD x 3-5 days).",
       "routeAndDose": "Oral / IV.",
       "durationDays": "7 days (Doxycycline) / 3 - 5 days (Azithromycin)",
       "remarks": "TANDA KLINIKAL PATOGNOMONIK: Periksa seluruh permukaan kulit pesakit (terutamanya ketiak, celah paha, bawah payudara, dan lipatan pinggang) untuk mengesan 'ESCHAR' (kudis nekrotik hitam menyerupai kesan puntung rokok)."
@@ -3572,7 +3572,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clarithromycin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral/IV Chloramphenicol 500mg Q6H x 7-10 hari atau Oral Clarithromycin 500mg BD x 7 hari.",
+      "regimen": "Oral/IV Chloramphenicol 500mg Q6H x 7-10 days or Oral Clarithromycin 500mg BD x 7 days.",
       "routeAndDose": "Oral / IV.",
       "durationDays": "7 - 10 days",
       "remarks": "Alternatif sekiranya Doxycycline dan Azithromycin tidak tersedia."
@@ -3582,12 +3582,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Doxycycline 100mg BD x 7 hari atau Oral Azithromycin 500mg OD x 5 hari",
+      "regimen": "Oral Doxycycline 100mg BD x 7 days or Oral Azithromycin 500mg OD x 5 days",
       "routeAndDose": "Oral.",
       "remarks": "Kedua-dua ubat adalah bebas daripada struktur penisilin."
     },
     "amsNotes": [
-      "Respons terhadap Doxycycline adalah amat pantas (defervescence biasanya berlaku dalam masa 24-48 jam); ketiadaan tindak balas selepas 48 jam memerlukan pertimbangan diagnosis alternatif seperti Leptospirosis atau Denggi.",
+      "Respons terhadap Doxycycline adalah amat pantas (defervescence biasanya berlaku dalam masa 24-48 jam); ketiadaan tindak balas selepas 48 jam memerlukan pertimbangan diagnosis alternatif seperti Leptospirosis or Denggi.",
       "Azithromycin adalah ubat pilihan utama yang selamat untuk wanita hamil dengan scrub typhus."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / CDC Rickettsial Guidelines)"
@@ -3615,10 +3615,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "dihydroartemisinin/piperaquine"
     ],
     "firstLineTherapy": {
-      "regimen": "Malaria Tidak Kompleks (Semua Spesies): Oral Artemether-Lumefantrine (Riamet: 20/120mg) 4 tablet pada jam 0, 8, 24, 36, 48, dan 60 (Jumlah 6 dos selama 3 hari) DIMAKAN BERSAMA MAKANAN BERLEMAK / SUSU + Oral Primaquine (0.25mg/kg dos tunggal untuk gametosida P. falciparum; ATAU 0.5mg/kg OD x 14 hari untuk hipnozoit P. vivax/ovale). Malaria Teruk / Parasitemia Tinggi (>20,000/mcL bagi P. knowlesi atau >2% bagi P. falciparum): IV Artesunate 2.4 mg/kg pada jam 0, 12, 24 kemudian OD sehingga boleh mengambil oral.",
+      "regimen": "Malaria Tidak Kompleks (Semua Spesies): Oral Artemether-Lumefantrine (Riamet: 20/120mg) 4 tablet pada jam 0, 8, 24, 36, 48, dan 60 (Jumlah 6 dos selama 3 days) DIMAKAN BERSAMA MAKANAN BERLEMAK / SUSU + Oral Primaquine (0.25mg/kg single dose untuk gametosida P. falciparum; or 0.5mg/kg OD x 14 days untuk hipnozoit P. vivax/ovale). Malaria Teruk / Parasitemia Tinggi (>20,000/mcL bagi P. knowlesi or >2% bagi P. falciparum): IV Artesunate 2.4 mg/kg pada jam 0, 12, 24 kemudian OD sehingga boleh mengambil oral.",
       "routeAndDose": "Oral untuk tidak kompleks; IV bolus perlahan untuk malaria teruk.",
       "durationDays": "3 days (Riamet) / Min 24 jam (IV Artesunate) / 14 days (Primaquine antiradikal vivax)",
-      "remarks": "PERINGATAN G6PD WAJIB: Saring status enzim G6PD sebelum memulakan Primaquine 14 hari bagi mengelakkan krisis hemolisis intravaskular akut."
+      "remarks": "PERINGATAN G6PD WAJIB: Saring status enzim G6PD sebelum memulakan Primaquine 14 days bagi mengelakkan krisis hemolisis intravaskular akut."
     },
     "secondLineDrugs": [
       "dihydroartemisinin/piperaquine",
@@ -3626,7 +3626,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Dihydroartemisinin-Piperaquine (DHA-PPQ) dos harian x 3 hari ATAU (IV Quinine Dihydrochloride loading 20mg/kg infusi 4 jam kemudian 10mg/kg Q8H + Oral Doxycycline 100mg BD x 7 hari).",
+      "regimen": "Oral Dihydroartemisinin-Piperaquine (DHA-PPQ) dos harian x 3 days or (IV Quinine Dihydrochloride loading 20mg/kg infusi 4 jam kemudian 10mg/kg Q8H + Oral Doxycycline 100mg BD x 7 days).",
       "routeAndDose": "Oral / IV infusi.",
       "durationDays": "3 - 7 days",
       "remarks": "Quinine memerlukan pemantauan ECG (risiko pemanjangan QT) dan paras glukosa darah (risiko hipoglisemia teruk)."
@@ -3662,7 +3662,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. ACUTE UNCOMPLICATED CYSTITIS",
     "topicNumber": 1,
     "bodySystem": "Urinary Tract Infections",
-    "conditionName": "Acute Uncomplicated Cystitis in Non-Pregnant Women (Sistitis Akut)",
+    "conditionName": "Acute Uncomplicated Cystitis in Non-Pregnant Women",
     "setting": "Outpatient (OPD/KK)",
     "primaryPathogens": [
       "Escherichia coli (Uropathogenic E. coli / UPEC - 80-90%)",
@@ -3675,10 +3675,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cephalexin"
     ],
     "firstLineTherapy": {
-      "regimen": "Oral Nitrofurantoin Makrokristal 100mg BD (or 50mg QID) x 5 hari (REJIMEN PILIHAN UTAMA). Alternatif: Oral Fosfomycin Trometamol 3g sachet dos tunggal (dilarutkan dalam segelas air sejuk). Wanita Hamil: Oral Cephalexin 500mg Q6H x 7 hari (or Oral Co-Amoxiclav 625mg BD x 5-7 hari).",
+      "regimen": "Oral Nitrofurantoin Makrokristal 100mg BD (or 50mg QID) x 5 days (REJIMEN PILIHAN UTAMA). Alternatif: Oral Fosfomycin Trometamol 3g sachet single dose (dilarutkan dalam segelas air sejuk). Wanita Hamil: Oral Cephalexin 500mg Q6H x 7 days (or Oral Co-Amoxiclav 625mg BD x 5-7 days).",
       "routeAndDose": "Oral.",
       "durationDays": "5 days (Nitrofurantoin) / Single dose (Fosfomycin) / 7 days (Kehamilan)",
-      "remarks": "DASAR AMS: JANGAN gunakan Ciprofloxacin, Levofloxacin atau Ampicillin sebagai barisan pertama untuk sistitis tidak kompleks bagi memelihara keberkesanan fluoroquinolone dan mengelakkan rintangan."
+      "remarks": "DASAR AMS: JANGAN gunakan Ciprofloxacin, Levofloxacin or Ampicillin sebagai barisan pertama untuk sistitis tidak kompleks bagi memelihara keberkesanan fluoroquinolone dan mengelakkan rintangan."
     },
     "secondLineDrugs": [
       "amoxicillin/clavulanic acid",
@@ -3687,7 +3687,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Augmentin 625mg BD x 5-7 hari atau Oral Bactrim Forte 1 tab BD x 3 hari (jika kadar rintangan tempatan E. coli <20%).",
+      "regimen": "Oral Augmentin 625mg BD x 5-7 days or Oral Bactrim Forte 1 tab BD x 3 days (jika kadar rintangan tempatan E. coli <20%).",
       "routeAndDose": "Oral.",
       "durationDays": "3 - 7 days",
       "remarks": "Pilihan kedua jika terdapat kontraindikasi kepada Nitrofurantoin dan Fosfomycin."
@@ -3699,13 +3699,13 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Nitrofurantoin 100mg BD x 5 hari atau Oral Fosfomycin Trometamol 3g stat sachet",
+      "regimen": "Oral Nitrofurantoin 100mg BD x 5 days or Oral Fosfomycin Trometamol 3g stat sachet",
       "routeAndDose": "Oral.",
       "remarks": "Pilihan utama bebas beta-laktam."
     },
     "amsNotes": [
-      "Nitrofurantoin TIDAK BERKESAN dan KONTRAINDIKASI jika anggaran kadar penapisan glomerulus (eGFR) <30 mL/min atau disyaki pielonefritis (kerana penembusan tisu ginjal yang rendah).",
-      "BAKTERIURIA ASIMPTOMATIK: JANGAN rawat bakteria dalam urin jika pesakit tiada sebarang simptom dysuria/kekerapan kencing, KECUALI wanita hamil atau sebelum prosedur pembedahan urologi invasif."
+      "Nitrofurantoin TIDAK BERKESAN dan KONTRAINDIKASI jika anggaran kadar penapisan glomerulus (eGFR) <30 mL/min or disyaki pielonefritis (kerana penembusan tisu ginjal yang rendah).",
+      "BAKTERIURIA ASIMPTOMATIK: JANGAN rawat bakteria dalam urin jika pesakit tiada sebarang simptom dysuria/kekerapan kencing, KECUALI wanita hamil or sebelum prosedur pembedahan urologi invasif."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / IDSA-ESCMID UTI Guidelines)"
   },
@@ -3717,7 +3717,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "2. ACUTE PYELONEPHRITIS",
     "topicNumber": 2,
     "bodySystem": "Urinary Tract Infections",
-    "conditionName": "Acute Uncomplicated & Inpatient Pyelonephritis (Pielonefritis Akut)",
+    "conditionName": "Acute Uncomplicated & Inpatient Pyelonephritis",
     "setting": "Community-Acquired",
     "primaryPathogens": [
       "Escherichia coli (termasuk strain ESBL)",
@@ -3734,7 +3734,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "firstLineTherapy": {
-      "regimen": "Pielonefritis Dimasukkan ke Wad: IV Ceftriaxone 1g-2g OD (or IV Gentamicin 5mg/kg OD / IV Co-Amoxiclav 1.2g TDS). Pielonefritis Ringan Pesakit Luar: Oral Ciprofloxacin 500mg BD x 7 hari (or Oral Augmentin 625mg TDS x 10-14 hari).",
+      "regimen": "Pielonefritis Dimasukkan ke Wad: IV Ceftriaxone 1g-2g OD (or IV Gentamicin 5mg/kg OD / IV Co-Amoxiclav 1.2g TDS). Pielonefritis Ringan Pesakit Luar: Oral Ciprofloxacin 500mg BD x 7 days (or Oral Augmentin 625mg TDS x 10-14 days).",
       "routeAndDose": "IV bertukar ke Oral.",
       "durationDays": "7 days (Fluoroquinolones) / 10 - 14 days (Beta-laktam)",
       "remarks": "Semua pesakit pielonefritis disyorkan mengambil Kultur Urin (Urine C&S) dan Kultur Darah sebelum memulakan antibiotik."
@@ -3747,10 +3747,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Tazocin 4.5g Q8H atau IV Ertapenem 1g OD atau IV Amikacin 15mg/kg OD",
+      "regimen": "IV Tazocin 4.5g Q8H or IV Ertapenem 1g OD or IV Amikacin 15mg/kg OD",
       "routeAndDose": "IV.",
       "durationDays": "7 - 14 days",
-      "remarks": "Untuk pesakit dengan risiko organisma penghasil ESBL atau kemasukan hospital terdahulu."
+      "remarks": "Untuk pesakit dengan risiko organisma penghasil ESBL or kemasukan hospital terdahulu."
     },
     "allergyDrugs": [
       "ciprofloxacin",
@@ -3769,11 +3769,11 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Ciprofloxacin 500mg BD (lengkapkan 7 hari) atau Oral Augmentin 625mg TDS (lengkapkan 10-14 hari).",
+      "regimen": "Oral Ciprofloxacin 500mg BD (lengkapkan 7 days) or Oral Augmentin 625mg TDS (lengkapkan 10-14 days).",
       "criteria": "Pesakit afebril >24-48 jam, sakit pinggang reda, toleransi oral baik, keputusan kultur urin sensitif."
     },
     "amsNotes": [
-      "Lakukan Ultrasound Saluran Kencing (USG KUB) jika demam berterusan >72 jam untuk menyingkirkan komplikasi Hidronefrosis Terhalang atau Abses Renal/Perinefrik.",
+      "Lakukan Ultrasound Saluran Kencing (USG KUB) jika demam berterusan >72 jam untuk menyingkirkan komplikasi Hidronefrosis Terhalang or Abses Renal/Perinefrik.",
       "Pertukaran ke antibiotik oral berspektrum sempit hendaklah berpandukan laporan sensitiviti kultur urin."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / EAU Guidelines on Urological Infections 2024)"
@@ -3803,10 +3803,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "gentamicin"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Piperacillin/Tazobactam 4.5g Q8H (or IV Ceftriaxone 2g OD / IV Amikacin 15mg/kg OD) + TUKAR ATAU CABUT TIUB KATETER URIN (CATHETER REMOVAL/EXCHANGE) SEGERA.",
+      "regimen": "IV Piperacillin/Tazobactam 4.5g Q8H (or IV Ceftriaxone 2g OD / IV Amikacin 15mg/kg OD) + TUKAR or CABUT TIUB KATETER URIN (CATHETER REMOVAL/EXCHANGE) SEGERA.",
       "routeAndDose": "IV parenteral.",
-      "durationDays": "7 days (jika punca halangan/kateter diselesaikan) sehingga 14 hari (jika terdapat komplikasi parenkima)",
-      "remarks": "PENCABUTAN KATETER: Tiub kateter kencing yang telah berada >14 hari mengandungi biofilm tebal; menggantikan kateter sebelum antibiotik mempercepatkan kesembuhan dan mengurangkan risiko relaps."
+      "durationDays": "7 days (jika punca halangan/kateter diselesaikan) sehingga 14 days (jika terdapat komplikasi parenkima)",
+      "remarks": "PENCABUTAN KATETER: Tiub kateter kencing yang telah berada >14 days mengandungi biofilm tebal; menggantikan kateter sebelum antibiotik mempercepatkan kesembuhan dan mengurangkan risiko relaps."
     },
     "secondLineDrugs": [
       "meropenem",
@@ -3814,7 +3814,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amikacin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Meropenem 1g Q8H atau IV Ertapenem 1g OD",
+      "regimen": "IV Meropenem 1g Q8H or IV Ertapenem 1g OD",
       "routeAndDose": "IV.",
       "durationDays": "7 - 14 days",
       "remarks": "Untuk jangkitan urosepsis berkomplikasi yang disebabkan oleh kuman ESBL."
@@ -3835,8 +3835,8 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Ciprofloxacin 500mg BD atau Oral Augmentin 625mg TDS selepas kateter diganti dan pesakit stabil.",
-      "criteria": "Kateter telah dicabut atau diganti baharu, afebril, kultur menunjukkan sensitiviti oral."
+      "regimen": "Oral Ciprofloxacin 500mg BD or Oral Augmentin 625mg TDS selepas kateter diganti dan pesakit stabil.",
+      "criteria": "Kateter telah dicabut or diganti baharu, afebril, kultur menunjukkan sensitiviti oral."
     },
     "amsNotes": [
       "Ambil sampel urin untuk kultur DARIPADA KATETER BAHARU yang baru dimasukkan, BUKAN dari beg takungan urin yang lama.",
@@ -3867,7 +3867,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "firstLineTherapy": {
-      "regimen": "Prostatitis Bakteria Akut: Oral/IV Ciprofloxacin 500mg BD (or Oral/IV Levofloxacin 500mg OD / IV Ceftriaxone 2g OD) x 2 hingga 4 MINGGU. Epididimitis Berkaitan STI (<35 tahun): IM Ceftriaxone 500mg-1g stat + Oral Doxycycline 100mg BD x 14 hari. Epididimitis Bakteria Enterik (>35 tahun): Oral Ciprofloxacin 500mg BD x 10-14 hari.",
+      "regimen": "Prostatitis Bakteria Akut: Oral/IV Ciprofloxacin 500mg BD (or Oral/IV Levofloxacin 500mg OD / IV Ceftriaxone 2g OD) x 2 hingga 4 MINGGU. Epididimitis Berkaitan STI (<35 tahun): IM Ceftriaxone 500mg-1g stat + Oral Doxycycline 100mg BD x 14 days. Epididimitis Bakteria Enterik (>35 tahun): Oral Ciprofloxacin 500mg BD x 10-14 days.",
       "routeAndDose": "Oral / IV parenteral.",
       "durationDays": "2 - 4 weeks (Prostatitis memerlukan rawatan panjang untuk menembusi stroma prostat) / 10 - 14 days (Epididimitis)",
       "remarks": "Fluoroquinolones (Ciprofloxacin/Levofloxacin) dan Bactrim mempunyai keterlarutan lemak (lipid solubility) tinggi yang membolehkan ubat menembusi kapsul kelenjar prostat secara berkesan."
@@ -3879,7 +3879,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "tazocin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Bactrim Forte 1-2 tabs BD x 4 minggu atau IV Tazocin 4.5g Q8H.",
+      "regimen": "Oral Bactrim Forte 1-2 tabs BD x 4 weeks or IV Tazocin 4.5g Q8H.",
       "routeAndDose": "Oral / IV.",
       "durationDays": "4 weeks",
       "remarks": "Alternatif untuk kes prostatitis rintang fluoroquinolone."
@@ -3891,7 +3891,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Prostatitis: Oral Ciprofloxacin 500mg BD x 4 minggu. Epididimitis STI: Oral Azithromycin 2g stat + Oral Doxycycline 100mg BD x 14 hari",
+      "regimen": "Prostatitis: Oral Ciprofloxacin 500mg BD x 4 weeks. Epididimitis STI: Oral Azithromycin 2g stat + Oral Doxycycline 100mg BD x 14 days",
       "routeAndDose": "Oral.",
       "remarks": "Bebas penisilin."
     },
@@ -3901,12 +3901,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Ciprofloxacin 500mg BD atau Oral Bactrim Forte 1 tab BD melengkapkan tempoh 4 minggu.",
+      "regimen": "Oral Ciprofloxacin 500mg BD or Oral Bactrim Forte 1 tab BD melengkapkan tempoh 4 weeks.",
       "criteria": "Pesakit boleh kencing lancar tanpa rasa terbakar yang teruk, tiada demam, bengkak epididimis mengecut."
     },
     "amsNotes": [
       "ELAKKAN URUTAN PROSTAT (Prostatic Massage) pada prostatitis akut kerana boleh mencetuskan bakteremia dan syok septik.",
-      "Lakukan Ultrasound Transrektal (TRUS) atau CT Pelvis jika demam berterusan untuk menolak Abses Prostat yang memerlukan aspirasi pembedahan."
+      "Lakukan Ultrasound Transrektal (TRUS) or CT Pelvis jika demam berterusan untuk menolak Abses Prostat yang memerlukan aspirasi pembedahan."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / EAU Urological Infections Guidelines)"
   },
@@ -3935,9 +3935,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     ],
     "firstLineTherapy": {
       "regimen": "Injap Asli / Jantung Kongenital: IV Ampicillin 200mg/kg/hari dibahagi Q6H + IV Cloxacillin 200mg/kg/hari dibahagi Q6H + IV Gentamicin 3mg/kg/hari dibahagi Q8H (or IV Benzylpenicillin 200,000 U/kg/hari dibahagi Q4H-Q6H + Gentamicin).",
-      "routeAndDose": "IV infusi perlahan dengan pemantauan TDM Gentamicin.",
+      "routeAndDose": "IV slow infusion dengan pemantauan TDM Gentamicin.",
       "durationDays": "4 - 6 weeks",
-      "remarks": "Kanak-kanak dengan Penyakit Jantung Kongenital Sianotik atau injap/shunts prostetik mempunyai risiko tertinggi endokarditis; ambil 3 set kultur darah sebelum antibiotik."
+      "remarks": "Kanak-kanak dengan Penyakit Jantung Kongenital Sianotik or injap/shunts prostetik mempunyai risiko tertinggi endokarditis; ambil 3 set kultur darah sebelum antibiotik."
     },
     "secondLineDrugs": [
       "vancomycin",
@@ -3948,7 +3948,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Vancomycin 40-60 mg/kg/hari dibahagi Q6H-Q8H (trough 15-20 mcg/mL) + IV Gentamicin 3mg/kg/hari dibahagi Q8H",
       "routeAndDose": "IV infusi.",
       "durationDays": "4 - 6 weeks",
-      "remarks": "Untuk pesakit dengan implan prostetik, MRSA disyaki, atau alahan teruk kepada penisilin."
+      "remarks": "Untuk pesakit dengan implan prostetik, MRSA disyaki, or alahan teruk kepada penisilin."
     },
     "allergyDrugs": [
       "vancomycin",
@@ -3959,7 +3959,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "routeAndDose": "IV.",
       "remarks": "Pantau fungsi ginjal dan paras ubat Vancomycin sebelum dos ke-4."
     },
-    "pediatricWeightDoseHint": "IV Ampicillin: 50 mg/kg/dos Q6H (maks 2g Q6H). IV Cloxacillin: 50 mg/kg/dos Q6H (maks 2g Q6H). IV Gentamicin: 1 mg/kg/dos Q8H (atau 3 mg/kg OD dos tunggal).",
+    "pediatricWeightDoseHint": "IV Ampicillin: 50 mg/kg/dos Q6H (maks 2g Q6H). IV Cloxacillin: 50 mg/kg/dos Q6H (maks 2g Q6H). IV Gentamicin: 1 mg/kg/dos Q8H (or 3 mg/kg OD single dose).",
     "maxDailyDose": "Ampicillin: maks 12g/hari; Cloxacillin: maks 12g/hari; Gentamicin: maks 300mg/hari",
     "amsNotes": [
       "Rujuk bersama Pakar Kardiologi Pediatrik dan Pakar Bedah Kardiotorasik Pediatrik untuk penilaian ekokardiografi bersiri dan pembedahan segera jika berlaku kegagalan jantung akut.",
@@ -3987,10 +3987,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amoxicillin"
     ],
     "firstLineTherapy": {
-      "regimen": "Pembasmian GAS Akut: IM Benzathine Penicillin G stat dos tunggal (Berat <27kg: 600,000 Unit; Berat ≥27kg: 1.2 Juta Unit) ATAU Oral Penicillin V 250-500mg TDS x 10 HARI (atau Oral Amoxicillin 50mg/kg OD x 10 hari). PROFILAKSIS SEKUNDER BERTERUSAN: IM Benzathine Penicillin G setiap 3 hingga 4 MINGGU (Berat <27kg: 600,000 U; Berat ≥27kg: 1.2 MU).",
+      "regimen": "Pembasmian GAS Akut: IM Benzathine Penicillin G stat single dose (Berat <27kg: 600,000 Unit; Berat ≥27kg: 1.2 Juta Unit) or Oral Penicillin V 250-500mg TDS x 10 HARI (or Oral Amoxicillin 50mg/kg OD x 10 days). PROFILAKSIS SEKUNDER BERTERUSAN: IM Benzathine Penicillin G setiap 3 hingga 4 MINGGU (Berat <27kg: 600,000 U; Berat ≥27kg: 1.2 MU).",
       "routeAndDose": "IM suntikan dalam / Oral.",
-      "durationDays": "10 days (Pembasmian primer) / Berterusan sehingga umur 21 tahun atau sekurang-kurangnya 10 tahun (Profilaksis)",
-      "remarks": "KRITERIA JONES: Diagnosis berasaskan 2 kriteria major (Karditis, Poliartritis, Chorea Sydenham, Erythema Marginatum, Nodul Subkutaneus) ATAU 1 major + 2 minor berserta bukti jangkitan GAS terdahulu (ASOT meningkat)."
+      "durationDays": "10 days (Pembasmian primer) / Berterusan sehingga umur 21 tahun or sekurang-kurangnya 10 tahun (Profilaksis)",
+      "remarks": "KRITERIA JONES: Diagnosis berasaskan 2 kriteria major (Karditis, Poliartritis, Chorea Sydenham, Erythema Marginatum, Nodul Subkutaneus) or 1 major + 2 minor berserta bukti jangkitan GAS terdahulu (ASOT meningkat)."
     },
     "secondLineDrugs": [
       "erythromycin",
@@ -3998,7 +3998,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cephalexin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Erythromycin Ethylsuccinate (EES) 40mg/kg/hari dibahagi QID x 10 hari atau Oral Azithromycin 12mg/kg OD x 5 hari.",
+      "regimen": "Oral Erythromycin Ethylsuccinate (EES) 40mg/kg/hari dibahagi QID x 10 days or Oral Azithromycin 12mg/kg OD x 5 days.",
       "routeAndDose": "Oral.",
       "durationDays": "5 - 10 days",
       "remarks": "Bagi pesakit yang mempunyai rekod alahan kepada kumpulan penisilin."
@@ -4009,14 +4009,14 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "sulfadiazine"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Pembasmian Akut: Oral Erythromycin 40mg/kg/hari dibahagi QID x 10 hari. Profilaksis Sekunder Alahan Penisilin: Oral Erythromycin 250mg BD atau Oral Sulfadiazine 500mg OD (<27kg) / 1g OD (≥27kg).",
+      "regimen": "Pembasmian Akut: Oral Erythromycin 40mg/kg/hari dibahagi QID x 10 days. Profilaksis Sekunder Alahan Penisilin: Oral Erythromycin 250mg BD or Oral Sulfadiazine 500mg OD (<27kg) / 1g OD (≥27kg).",
       "routeAndDose": "Oral.",
-      "remarks": "Sesuai untuk pesakit alahan penisilin."
+      "remarks": "Suitable for patients with penicillin allergy."
     },
-    "pediatricWeightDoseHint": "IM Benzathine Penicillin G: <27kg berikan 600,000 Unit IM stat; ≥27kg berikan 1,200,000 Unit IM stat. Oral Penicillin V: 25-50 mg/kg/hari dibahagi QID x 10 hari.",
+    "pediatricWeightDoseHint": "IM Benzathine Penicillin G: <27kg berikan 600,000 Unit IM stat; ≥27kg berikan 1,200,000 Unit IM stat. Oral Penicillin V: 25-50 mg/kg/hari dibahagi QID x 10 days.",
     "maxDailyDose": "Penicillin V: maks 2g/hari; Erythromycin: maks 2g/hari",
     "amsNotes": [
-      "PROFILAKSIS BERPANJANGAN: Tempoh profilaksis sekunder: (1) Demam reumatik tanpa karditis: 5 tahun atau sehingga umur 21 tahun; (2) Karditis tanpa penyakit injap residual: 10 tahun atau sehingga umur 21 tahun; (3) Karditis dengan penyakit injap jantung kekal (RHD): 10 tahun atau sehingga umur 40 tahun (kadang-kadang seumur hidup).",
+      "PROFILAKSIS BERPANJANGAN: Tempoh profilaksis sekunder: (1) Demam reumatik tanpa karditis: 5 tahun or sehingga umur 21 tahun; (2) Karditis tanpa penyakit injap residual: 10 tahun or sehingga umur 21 tahun; (3) Karditis dengan penyakit injap jantung kekal (RHD): 10 tahun or sehingga umur 40 tahun (kadang-kadang seumur hidup).",
       "Kepatuhan suntikan bulanan Benzathine Penicillin adalah benteng utama mencegah kerosakan injap jantung."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / WHO & AHA Rheumatic Fever Guidelines)"
@@ -4041,9 +4041,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "acetylsalicylic acid"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Immunoglobulin (IVIG) 2g/kg dos tunggal diinfusikan dalam masa 10 - 12 jam + Oral Aspirin Dos Tinggi 30 - 50 mg/kg/hari dibahagi Q6H sehingga pesakit afebril selama 48-72 jam, kemudian diturunkan kepada Oral Aspirin Dos Rendah 3 - 5 mg/kg OD (antiplatelet) selama 6 hingga 8 MINGGU.",
-      "routeAndDose": "IV infusi perlahan terkawal + Oral.",
-      "durationDays": "IVIG dos tunggal; Aspirin dos tinggi 48-72 jam afebril; Aspirin dos rendah 6 - 8 minggu",
+      "regimen": "IV Immunoglobulin (IVIG) 2g/kg single dose diinfusikan dalam masa 10 - 12 jam + Oral Aspirin Dos Tinggi 30 - 50 mg/kg/hari dibahagi Q6H sehingga pesakit afebril selama 48-72 jam, kemudian diturunkan kepada Oral Aspirin Dos Rendah 3 - 5 mg/kg OD (antiplatelet) selama 6 hingga 8 MINGGU.",
+      "routeAndDose": "IV slow infusion terkawal + Oral.",
+      "durationDays": "IVIG single dose; Aspirin dos tinggi 48-72 jam afebril; Aspirin dos rendah 6 - 8 weeks",
       "remarks": "Mulakan IVIG SEBELUM HARI KE-10 demam untuk mengurangkan risiko pembentukan Aneurisma Arteri Koronari (Coronary Aneurysm) daripada 25% kepada <5%."
     },
     "secondLineDrugs": [
@@ -4051,7 +4051,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "infliximab"
     ],
     "secondLineTherapy": {
-      "regimen": "Penyakit Kawasaki Refraktori (Demam berterusan/berulang ≥36 jam selepas IVIG pertama selesai): Dos kedua IVIG 2g/kg ATAU IV Methylprednisolone pulse 30mg/kg OD x 3 hari (atau IV Infliximab 5mg/kg).",
+      "regimen": "Penyakit Kawasaki Refraktori (Demam berterusan/berulang ≥36 jam selepas IVIG pertama selesai): Dos kedua IVIG 2g/kg or IV Methylprednisolone pulse 30mg/kg OD x 3 days (or IV Infliximab 5mg/kg).",
       "routeAndDose": "IV infusi.",
       "durationDays": "1 - 3 days",
       "remarks": "Rujuk Pakar Pediatrik Kardiologi dan Reumatologi Pediatrik."
@@ -4059,7 +4059,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "pediatricWeightDoseHint": "IVIG: 2 g/kg (isipadu 10% = 20 mL/kg) infusi bermula 0.5 mL/kg/jam dinaikkan beransur-ansur setiap 30 minit ke maks 4-6 mL/kg/jam jika tiada reaksi alahan. Aspirin: Fasa akut 30-50 mg/kg/hari dibahagi Q6H; Fasa pemulihan 3-5 mg/kg OD.",
     "maxDailyDose": "IVIG: dos berat badan 2g/kg; Aspirin fasa akut: maks 4g/hari",
     "amsNotes": [
-      "Lakukan Ujian Ekokardiogram pada masa diagnosis, pada 2 minggu, dan pada 6-8 minggu untuk mengukur skor-Z diameter arteri koronari (LAD & RCA).",
+      "Lakukan Ujian Ekokardiogram pada masa diagnosis, pada 2 weeks, dan pada 6-8 weeks untuk mengukur skor-Z diameter arteri koronari (LAD & RCA).",
       "Tangguhkan vaksinasi hidup (MMR, Varicella) selama sekurang-kurangnya 11 BULAN selepas penerimaan IVIG dos tinggi."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / AHA Kawasaki Disease Guidelines 2017)"
@@ -4072,7 +4072,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. ACUTE BACTERIAL MENINGITIS IN INFANTS & CHILDREN",
     "topicNumber": 1,
     "bodySystem": "Central Nervous Infections",
-    "conditionName": "Paediatric Acute Bacterial Meningitis (Meningitis Bakteria Akut Kanak-Kanak >1 Bulan)",
+    "conditionName": "Paediatric Acute Bacterial Meningitis (>1 Month)",
     "setting": "ICU / Severe",
     "primaryPathogens": [
       "Streptococcus pneumoniae (Pneumococcus)",
@@ -4086,10 +4086,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "dexamethasone"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Cefotaxime 200 - 300 mg/kg/hari dibahagi Q6H (or IV Ceftriaxone 100 mg/kg/hari OD atau dibahagi Q12H) + IV Vancomycin 60 mg/kg/hari dibahagi Q6H (trough 15-20 mcg/mL) + IV Dexamethasone 0.15 mg/kg Q6H x 4 HARI.",
+      "regimen": "IV Cefotaxime 200 - 300 mg/kg/hari dibahagi Q6H (or IV Ceftriaxone 100 mg/kg/hari OD or dibahagi Q12H) + IV Vancomycin 60 mg/kg/hari dibahagi Q6H (trough 15-20 mcg/mL) + IV Dexamethasone 0.15 mg/kg Q6H x 4 HARI.",
       "routeAndDose": "IV infusi menembusi sawar darah-otak dos tinggi.",
       "durationDays": "7 days (N. meningitidis) / 10 - 14 days (S. pneumoniae / Hib)",
-      "remarks": "Berikan dos pertama IV Dexamethasone SEBELUM atau bersama dos pertama antibiotik (terutamanya bermanfaat untuk mengurangkan risiko pekak pada meningitis H. influenzae type b dan Pneumokokus)."
+      "remarks": "Berikan dos pertama IV Dexamethasone SEBELUM or bersama dos pertama antibiotik (terutamanya bermanfaat untuk mengurangkan risiko pekak pada meningitis H. influenzae type b dan Pneumokokus)."
     },
     "secondLineDrugs": [
       "meropenem",
@@ -4099,7 +4099,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Meropenem 120 mg/kg/hari dibahagi Q8H (40 mg/kg/dos Q8H infusi 3 jam) + IV Vancomycin 15 mg/kg/dos Q6H",
       "routeAndDose": "IV dos meningitis tinggi.",
       "durationDays": "10 - 14 days",
-      "remarks": "Untuk kes alahan teruk sefalosporin atau isolat bakteria rintang karbapenem."
+      "remarks": "Untuk kes alahan teruk sefalosporin or isolat bakteria rintang karbapenem."
     },
     "allergyDrugs": [
       "chloramphenicol",
@@ -4110,7 +4110,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "routeAndDose": "IV.",
       "remarks": "Pantau paras ubat terapeutik dan kiraan darah FBC."
     },
-    "pediatricWeightDoseHint": "IV Cefotaxime: 50-75 mg/kg/dos Q6H (maks 2g Q6H / 12g/hari). IV Ceftriaxone: 50 mg/kg/dos Q12H atau 100 mg/kg OD (maks 4g/hari). IV Vancomycin: 15 mg/kg/dos Q6H. IV Dexamethasone: 0.15 mg/kg/dos Q6H x 4 hari.",
+    "pediatricWeightDoseHint": "IV Cefotaxime: 50-75 mg/kg/dos Q6H (maks 2g Q6H / 12g/hari). IV Ceftriaxone: 50 mg/kg/dos Q12H or 100 mg/kg OD (maks 4g/hari). IV Vancomycin: 15 mg/kg/dos Q6H. IV Dexamethasone: 0.15 mg/kg/dos Q6H x 4 days.",
     "maxDailyDose": "Cefotaxime: maks 12g/hari; Ceftriaxone: maks 4g/hari; Vancomycin: maks 2g/hari",
     "amsNotes": [
       "Lakukan Lumbar Puncture (LP) segera jika tiada kontraindikasi peningkatan tekanan intrakranial (GCS merosot, anak mata tidak simetri, posturing abnormal).",
@@ -4138,23 +4138,23 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "acyclovir"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Acyclovir pada dos mengikut umur/luas permukaan: Umur 3 bulan - 12 tahun: 500 mg/m2 Q8H (atau 20 mg/kg Q8H) x 14 - 21 HARI; Umur >12 tahun: 10 mg/kg Q8H x 14 - 21 HARI.",
-      "routeAndDose": "IV infusi perlahan dalam masa sekurang-kurangnya 1 JAM bersama hidrasi cecair intravena mencukupi.",
+      "regimen": "IV Acyclovir pada dos mengikut umur/luas permukaan: Umur 3 bulan - 12 tahun: 500 mg/m2 Q8H (or 20 mg/kg Q8H) x 14 - 21 HARI; Umur >12 tahun: 10 mg/kg Q8H x 14 - 21 HARI.",
+      "routeAndDose": "IV slow infusion dalam masa sekurang-kurangnya 1 JAM bersama hidrasi cecair intravena mencukupi.",
       "durationDays": "14 - 21 days",
-      "remarks": "Mulakan IV Acyclovir SERTA-MERTA sekiranya kanak-kanak mengalami demam berserta sawan berulang, perubahan tahap kesedaran, atau tanda fokal neurologi tanpa menunggu keputusan CSF HSV PCR."
+      "remarks": "Mulakan IV Acyclovir SERTA-MERTA sekiranya kanak-kanak mengalami demam berserta sawan berulang, perubahan tahap kesedaran, or tanda fokal neurologi tanpa menunggu keputusan CSF HSV PCR."
     },
     "secondLineDrugs": [
       "ganciclovir",
       "foscarnet"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Ganciclovir 5 mg/kg Q12H x 14-21 hari jika disyaki jangkitan CMV atau rintangan Acyclovir.",
+      "regimen": "IV Ganciclovir 5 mg/kg Q12H x 14-21 days jika disyaki jangkitan CMV or rintangan Acyclovir.",
       "routeAndDose": "IV infusi.",
       "durationDays": "14 - 21 days",
       "remarks": "Di bawah pengawasan Pakar Neurologi Pediatrik."
     },
-    "pediatricWeightDoseHint": "IV Acyclovir: 20 mg/kg/dos Q8H (umur <12 tahun) atau 500 mg/m2/dos Q8H infusi 60 minit.",
-    "maxDailyDose": "Acyclovir: maks 1.5g/m2/hari (atau 60 mg/kg/hari)",
+    "pediatricWeightDoseHint": "IV Acyclovir: 20 mg/kg/dos Q8H (umur <12 tahun) or 500 mg/m2/dos Q8H infusi 60 minit.",
+    "maxDailyDose": "Acyclovir: maks 1.5g/m2/hari (or 60 mg/kg/hari)",
     "amsNotes": [
       "Hantar CSF untuk Ujian Multiplex Viral Meningitis/Encephalitis PCR Panel (HSV-1, HSV-2, VZV, Enterovirus, Parechovirus).",
       "Lakukan EEG dan MRI Otak untuk mengesan keterlibatan lobus temporal/frontal."
@@ -4187,7 +4187,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Cefotaxime 200mg/kg/hari dibahagi Q6H (or IV Ceftriaxone 100mg/kg/hari dibahagi Q12H) + IV Metronidazole 30mg/kg/hari dibahagi Q8H (+ IV Vancomycin 60mg/kg/hari dibahagi Q6H jika post-trauma/pembedahan) + PENYALIRAN ASPIRASI JARUM NEUROSURGERI SEGERA.",
       "routeAndDose": "IV parenteral dos tinggi.",
       "durationDays": "4 - 8 weeks",
-      "remarks": "Penyaliran nanah intrakranial berpandukan imbasan CT atau stereotaktik adalah wajib untuk mengurangkan tekanan intrakranial dan memperoleh sampel mikrobiologi tepat."
+      "remarks": "Penyaliran nanah intrakranial berpandukan imbasan CT or stereotaktik adalah wajib untuk mengurangkan tekanan intrakranial dan memperoleh sampel mikrobiologi tepat."
     },
     "secondLineDrugs": [
       "meropenem",
@@ -4197,7 +4197,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Meropenem 120mg/kg/hari dibahagi Q8H + IV Vancomycin 15mg/kg/dos Q6H",
       "routeAndDose": "IV infusi.",
       "durationDays": "6 - 8 weeks",
-      "remarks": "Untuk abses otogenik kompleks melibatkan Pseudomonas atau kegagalan rejimen awal."
+      "remarks": "Untuk abses otogenik kompleks melibatkan Pseudomonas or kegagalan rejimen awal."
     },
     "allergyDrugs": [
       "chloramphenicol",
@@ -4212,8 +4212,8 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "pediatricWeightDoseHint": "IV Cefotaxime: 50 mg/kg/dos Q6H. IV Metronidazole: 10 mg/kg/dos Q8H (maks 500mg Q8H). IV Vancomycin: 15 mg/kg/dos Q6H.",
     "maxDailyDose": "Cefotaxime: maks 12g/hari; Metronidazole: maks 1.5g/hari",
     "amsNotes": [
-      "Lakukan MRI Otak berkontras setiap 2-3 minggu untuk memantau pengecutan saiz kaviti abses sebelum merancang penukaran terapi.",
-      "Cari dan rawat punca primer (otitis media kronik, mastoiditis, sinusitis, atau shunt jantung sianotik kanan-ke-kiri)."
+      "Lakukan MRI Otak berkontras setiap 2-3 weeks untuk memantau pengecutan saiz kaviti abses sebelum merancang penukaran terapi.",
+      "Cari dan rawat punca primer (otitis media kronik, mastoiditis, sinusitis, or shunt jantung sianotik kanan-ke-kiri)."
     ],
     "evidenceLevel": "Grade B (NAG 2024 / ESPID Brain Abscess Guidelines)"
   },
@@ -4239,10 +4239,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "firstLineTherapy": {
-      "regimen": "Pembedahan Bersih / Ortopedik / Herniotomi: IV Cefazolin 30 mg/kg stat (maks 2g). Pembedahan Abdomen / Apendisektomi: IV Cefazolin 30 mg/kg + IV Metronidazole 15 mg/kg stat (atau IV Co-Amoxiclav 30 mg/kg stat).",
-      "routeAndDose": "IV dos tunggal diberikan dalam masa 30 - 60 MINIT SEBELUM torehan kulit dewan bedah.",
+      "regimen": "Pembedahan Bersih / Ortopedik / Herniotomi: IV Cefazolin 30 mg/kg stat (maks 2g). Pembedahan Abdomen / Apendisektomi: IV Cefazolin 30 mg/kg + IV Metronidazole 15 mg/kg stat (or IV Co-Amoxiclav 30 mg/kg stat).",
+      "routeAndDose": "IV single dose diberikan dalam masa 30 - 60 MINIT SEBELUM torehan kulit dewan bedah.",
       "durationDays": "Single Dose (Maksimum 24 jam)",
-      "remarks": "Berikan dos ulangan intra-operasi jika pembedahan melebihi 3-4 jam atau kehilangan darah >20 mL/kg."
+      "remarks": "Berikan dos ulangan intra-operasi jika pembedahan melebihi 3-4 jam or kehilangan darah >20 mL/kg."
     },
     "secondLineDrugs": [
       "vancomycin",
@@ -4251,9 +4251,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     ],
     "secondLineTherapy": {
       "regimen": "IV Vancomycin 15 mg/kg stat infusi tamat sebelum torehan + IV Gentamicin 2.5 mg/kg stat",
-      "routeAndDose": "IV infusi perlahan.",
+      "routeAndDose": "IV slow infusion.",
       "durationDays": "Single dose",
-      "remarks": "Untuk pesakit yang diketahui pembawa MRSA atau alahan teruk kepada beta-laktam."
+      "remarks": "Untuk pesakit yang diketahui pembawa MRSA or alahan teruk kepada beta-laktam."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -4295,9 +4295,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "penicillin v"
     ],
     "firstLineTherapy": {
-      "regimen": "Kontak Rapat Meningokokus: Oral Rifampicin (Bayi <1 bulan: 5 mg/kg BD x 2 hari; Kanak-kanak ≥1 bulan: 10 mg/kg BD x 2 hari, maks 600mg BD) ATAU IM Ceftriaxone (Umur <15 tahun: 125mg stat; ≥15 tahun: 250mg stat). Kontak Pertussis: Oral Azithromycin 10 mg/kg OD x 5 hari (Bayi <6 bulan: 10 mg/kg OD x 5 hari). Asplenia / Pasca-Splenektomi: Oral Penicillin V (Umur <1 tahun: 62.5mg BD; 1-5 tahun: 125mg BD; >5 tahun: 250mg BD).",
+      "regimen": "Kontak Rapat Meningokokus: Oral Rifampicin (Bayi <1 bulan: 5 mg/kg BD x 2 days; Kanak-kanak ≥1 bulan: 10 mg/kg BD x 2 days, maks 600mg BD) or IM Ceftriaxone (Umur <15 tahun: 125mg stat; ≥15 tahun: 250mg stat). Kontak Pertussis: Oral Azithromycin 10 mg/kg OD x 5 days (Bayi <6 bulan: 10 mg/kg OD x 5 days). Asplenia / Pasca-Splenektomi: Oral Penicillin V (Umur <1 tahun: 62.5mg BD; 1-5 tahun: 125mg BD; >5 tahun: 250mg BD).",
       "routeAndDose": "Oral / IM.",
-      "durationDays": "2 days (Meningococcal) / 5 days (Pertussis) / Berterusan sehingga umur 5 tahun atau seumur hidup (Asplenia)",
+      "durationDays": "2 days (Meningococcal) / 5 days (Pertussis) / Berterusan sehingga umur 5 tahun or seumur hidup (Asplenia)",
       "remarks": "Berikan profilaksis kontak meningokokus secepat mungkin (<24 jam dari kes indeks)."
     },
     "secondLineDrugs": [
@@ -4306,7 +4306,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Clarithromycin 7.5 mg/kg BD x 7 hari atau Oral Erythromycin 10 mg/kg QID x 14 hari.",
+      "regimen": "Oral Clarithromycin 7.5 mg/kg BD x 7 days or Oral Erythromycin 10 mg/kg QID x 14 days.",
       "routeAndDose": "Oral.",
       "durationDays": "7 - 14 days",
       "remarks": "Alternatif untuk profilaksis pertussis."
@@ -4317,11 +4317,11 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "erythromycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Meningokokus: IM Ceftriaxone 125-250mg stat atau Oral Ciprofloxacin 20mg/kg stat. Asplenia: Oral Erythromycin 125-250mg BD.",
+      "regimen": "Meningokokus: IM Ceftriaxone 125-250mg stat or Oral Ciprofloxacin 20mg/kg stat. Asplenia: Oral Erythromycin 125-250mg BD.",
       "routeAndDose": "IM / Oral.",
       "remarks": "Pilihan utama bebas penisilin."
     },
-    "pediatricWeightDoseHint": "Oral Rifampicin: 10 mg/kg/dos BD x 2 hari (maks 600mg BD). Oral Azithromycin: 10 mg/kg OD x 5 hari (maks 500mg OD).",
+    "pediatricWeightDoseHint": "Oral Rifampicin: 10 mg/kg/dos BD x 2 days (maks 600mg BD). Oral Azithromycin: 10 mg/kg OD x 5 days (maks 500mg OD).",
     "maxDailyDose": "Rifampicin: maks 1.2g/hari; Azithromycin: maks 500mg/hari",
     "amsNotes": [
       "Beri amaran kepada ibu bapa bahawa Rifampicin akan mewarnakan air kencing, air liur, dan peluh menjadi warna jingga/merah cerah (tidak berbahaya).",
@@ -4354,7 +4354,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ors"
     ],
     "firstLineTherapy": {
-      "regimen": "AGE Viral / Cirit Air: TERAPI PENGHIDRATAN ORAL (ORS) + SUPLEMEN ZINC (Bayi <6 bulan: 10mg OD x 14 hari; Kanak-kanak ≥6 bulan: 20mg OD x 14 hari) + TERUSKAN PENYUSUAN SUSU IBU (ELAKKAN ANTIBIOTIK RUTIN). Disenteri Berdarah Invasif (Shigellosis): Oral Azithromycin 10-20 mg/kg OD x 3 hari (or IV Ceftriaxone 50-75 mg/kg OD x 3-5 hari jika dimasukkan ke wad).",
+      "regimen": "AGE Viral / Cirit Air: TERAPI PENGHIDRATAN ORAL (ORS) + SUPLEMEN ZINC (Bayi <6 bulan: 10mg OD x 14 days; Kanak-kanak ≥6 bulan: 20mg OD x 14 days) + TERUSKAN PENYUSUAN SUSU IBU (ELAKKAN ANTIBIOTIK RUTIN). Disenteri Berdarah Invasif (Shigellosis): Oral Azithromycin 10-20 mg/kg OD x 3 days (or IV Ceftriaxone 50-75 mg/kg OD x 3-5 days jika dimasukkan ke wad).",
       "routeAndDose": "Oral ORS + Zink; Antibiotik oral hanya untuk cirit-birit berdarah bernanah.",
       "durationDays": "3 days (Azithromycin) / 14 days (Suplemen Zink)",
       "remarks": "DASAR AMS KEBANGSAAN: 80% cirit-birit kanak-kanak adalah VIRUS dan swa-had (self-limiting); ANTIBIOTIK TIDAK DIPERLUKAN DAN DILARANG untuk cirit-birit berair biasa."
@@ -4364,21 +4364,21 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ciprofloxacin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Ceftriaxone 50-75 mg/kg OD x 3-5 hari atau Oral Ciprofloxacin 15 mg/kg BD x 3 hari (untuk kes Shigellosis rintang Azithromycin).",
+      "regimen": "IV Ceftriaxone 50-75 mg/kg OD x 3-5 days or Oral Ciprofloxacin 15 mg/kg BD x 3 days (untuk kes Shigellosis rintang Azithromycin).",
       "routeAndDose": "IV / Oral.",
       "durationDays": "3 - 5 days",
-      "remarks": "Gunakan jangka pendek jika perlu."
+      "remarks": "Gunakan jangka pendek if necessary."
     },
     "allergyDrugs": [
       "azithromycin",
       "ciprofloxacin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Azithromycin 10 mg/kg OD x 3 hari atau Oral Ciprofloxacin 15 mg/kg BD x 3 hari",
+      "regimen": "Oral Azithromycin 10 mg/kg OD x 3 days or Oral Ciprofloxacin 15 mg/kg BD x 3 days",
       "routeAndDose": "Oral.",
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
-    "pediatricWeightDoseHint": "Oral Azithromycin: 10 mg/kg OD (maks 500mg OD) x 3 hari. Suplemen Zink: <6 bulan = 10mg OD; ≥6 bulan = 20mg OD x 14 hari. IV Ceftriaxone: 50 mg/kg OD (maks 2g OD).",
+    "pediatricWeightDoseHint": "Oral Azithromycin: 10 mg/kg OD (maks 500mg OD) x 3 days. Suplemen Zink: <6 bulan = 10mg OD; ≥6 bulan = 20mg OD x 14 days. IV Ceftriaxone: 50 mg/kg OD (maks 2g OD).",
     "maxDailyDose": "Azithromycin: maks 500mg/hari; Ceftriaxone: maks 2g/hari",
     "amsNotes": [
       "JANGAN SESEKALI MEMBERIKAN UBAT ANTIDIARREAL/ANTIMOTILITI (seperti Loperamide, Diphenoxylate, Kaolin-Pectin) kepada kanak-kanak kerana boleh menyebabkan ileus paralitik, keracunan CNS, dan maut.",
@@ -4411,9 +4411,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefotaxime"
     ],
     "firstLineTherapy": {
-      "regimen": "Rejimen Tiga Serangkai (Triple Regimen): IV Ampicillin 100 mg/kg/hari dibahagi Q6H + IV Gentamicin 5-7.5 mg/kg OD + IV Metronidazole 30 mg/kg/hari dibahagi Q8H ATAU IV Co-Amoxiclav 30 mg/kg/dos TDS (or IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H + Metronidazole) + PEMBEDAHAN APENDISEKTOMI KECEMASAN.",
+      "regimen": "Rejimen Tiga Serangkai (Triple Regimen): IV Ampicillin 100 mg/kg/hari dibahagi Q6H + IV Gentamicin 5-7.5 mg/kg OD + IV Metronidazole 30 mg/kg/hari dibahagi Q8H or IV Co-Amoxiclav 30 mg/kg/dos TDS (or IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H + Metronidazole) + PEMBEDAHAN APENDISEKTOMI KECEMASAN.",
       "routeAndDose": "IV infusi parenteral.",
-      "durationDays": "Apendisitis Ringan/Tidak Pecah: 24 jam sahaja; Apendisitis Pecah / Peritonitis: 5 - 7 hari",
+      "durationDays": "Apendisitis Ringan/Tidak Pecah: 24 jam sahaja; Apendisitis Pecah / Peritonitis: 5 - 7 days",
       "remarks": "Apendisitis pecah (perforated appendicitis) memerlukan debridement peritoneal dan antibiotik sehingga pesakit afebril >24 jam dan tiada ileus."
     },
     "secondLineDrugs": [
@@ -4425,7 +4425,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Piperacillin/Tazobactam 80-100 mg/kg/dos Q6H-Q8H (or IV Meropenem 20 mg/kg/dos Q8H)",
       "routeAndDose": "IV.",
       "durationDays": "5 - 7 days",
-      "remarks": "Untuk kes peritonitis tertumpah najis teruk atau sepsis pasca-bedah."
+      "remarks": "Untuk kes peritonitis tertumpah najis teruk or sepsis pasca-bedah."
     },
     "allergyDrugs": [
       "gentamicin",
@@ -4445,7 +4445,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Augmentin 30-45 mg/kg/hari dibahagi BD/TDS melengkapkan jumlah 5-7 hari.",
+      "regimen": "Oral Augmentin 30-45 mg/kg/hari dibahagi BD/TDS melengkapkan jumlah 5-7 days.",
       "criteria": "Pesakit boleh minum/makan tanpa muntah, flatus hadir, tiada demam, luka pembedahan bersih."
     },
     "pediatricWeightDoseHint": "IV Ampicillin: 25-50 mg/kg/dos Q6H. IV Gentamicin: 5-7.5 mg/kg OD (maks 300mg OD). IV Metronidazole: 10 mg/kg/dos Q8H (maks 500mg Q8H). IV Co-Amoxiclav: 30 mg/kg/dos Q8H (maks 1.2g Q8H).",
@@ -4480,10 +4480,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amikacin"
     ],
     "firstLineTherapy": {
-      "regimen": "Kolangitis Pasca-Pembedahan Kasai (Biliary Atresia): IV Ceftriaxone 75 mg/kg OD + IV Metronidazole 30 mg/kg/hari dibahagi Q8H (atau IV Tazocin 80-100 mg/kg/dos Q6H-Q8H). Abses Hepar Piogenik: IV Co-Amoxiclav 30 mg/kg TDS (or IV Cefotaxime 150 mg/kg/hari + Metronidazole) + ASPIRASI / PENYALIRAN JARUM USG.",
+      "regimen": "Kolangitis Pasca-Pembedahan Kasai (Biliary Atresia): IV Ceftriaxone 75 mg/kg OD + IV Metronidazole 30 mg/kg/hari dibahagi Q8H (or IV Tazocin 80-100 mg/kg/dos Q6H-Q8H). Abses Hepar Piogenik: IV Co-Amoxiclav 30 mg/kg TDS (or IV Cefotaxime 150 mg/kg/hari + Metronidazole) + ASPIRASI / PENYALIRAN JARUM USG.",
       "routeAndDose": "IV infusi parenteral.",
       "durationDays": "10 - 14 days (Kolangitis Kasai) / 4 - 6 weeks (Abses Hepar)",
-      "remarks": "Kolangitis berulang selepas pembedahan Kasai boleh merosakkan saliran hempedu dan mempercepatkan kegagalan hepar; rawat demam dengan segera."
+      "remarks": "Kolangitis berulang post-surgery Kasai boleh merosakkan saliran hempedu dan mempercepatkan kegagalan hepar; rawat demam dengan segera."
     },
     "secondLineDrugs": [
       "meropenem",
@@ -4499,7 +4499,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "maxDailyDose": "Ceftriaxone: maks 2g/hari; Tazocin: maks 16g/hari",
     "amsNotes": [
       "Lakukan Ultrasound Hepar Kerap untuk mengesan dilatasi radiks biliari dan pembentukan abses hati baru.",
-      "Profilaksis oral jangka panjang (seperti Cephalexin atau Bactrim) kadangkala ditetapkan oleh Pakar Hepatologi Pediatrik bagi pesakit Kasai berisiko tinggi."
+      "Profilaksis oral jangka panjang (seperti Cephalexin or Bactrim) kadangkala ditetapkan oleh Pakar Hepatologi Pediatrik bagi pesakit Kasai berisiko tinggi."
     ],
     "evidenceLevel": "Grade B (NAG 2024 / ESPGHAN Hepatology Consensus)"
   },
@@ -4541,7 +4541,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "liposomal amphotericin b"
     ],
     "secondLineTherapy": {
-      "regimen": "Demam Berterusan Hari Ke-4-5 / Ketidakstabilan Sepsis: IV Meropenem 20-40 mg/kg/dos Q8H + IV Amikacin 15 mg/kg OD + IV Caspofungin 70 mg/m2 loading kemudian 50 mg/m2 OD (atau IV Liposomal Amphotericin B 3 mg/kg OD).",
+      "regimen": "Demam Berterusan Hari Ke-4-5 / Ketidakstabilan Sepsis: IV Meropenem 20-40 mg/kg/dos Q8H + IV Amikacin 15 mg/kg OD + IV Caspofungin 70 mg/m2 loading kemudian 50 mg/m2 OD (or IV Liposomal Amphotericin B 3 mg/kg OD).",
       "routeAndDose": "IV ICU.",
       "durationDays": "7 - 14 days",
       "remarks": "Eskalasi empirik antikulat wajib dimulakan sekiranya demam tidak reda selepas 96 jam terapi antibakteria spektrum luas."
@@ -4561,7 +4561,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "maxDailyDose": "Cefepime: maks 6g/hari; Tazocin: maks 18g/hari; Vancomycin: maks 2g/hari",
     "amsNotes": [
       "Ambil Kultur Darah Berpasangan (PICC lumen + periferi) sebelum dos pertama antibiotik dimulakan.",
-      "Elakkan mengambil suhu per rektum atau pemeriksaan rektum pada kanak-kanak neutropenik."
+      "Elakkan mengambil suhu per rektum or pemeriksaan rektum pada kanak-kanak neutropenik."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / International Paediatric Fever & Neutropenia Guidelines)"
   },
@@ -4585,8 +4585,8 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "prednisolone"
     ],
     "firstLineTherapy": {
-      "regimen": "Rawatan PJP Pediatrik: IV Co-Trimoxazole (Bactrim) pada dos TMP 15 - 20 mg/kg/hari dibahagi Q6H-Q8H x 21 HARI + STEROID ADJUNCT: Oral/IV Prednisolone (2 mg/kg/hari dibahagi BD x 5 hari, 1 mg/kg/hari x 5 hari, kemudian 0.5 mg/kg/hari x 11 hari). PROFILAKSIS PJP KANAK-KANAK: Oral Bactrim pada dos TMP 5 mg/kg/hari dibahagi BD selama 3 hari berturut-turut setiap minggu (atau dos tunggal harian).",
-      "routeAndDose": "IV infusi perlahan dalam Dextrose 5% / Oral.",
+      "regimen": "Rawatan PJP Pediatrik: IV Co-Trimoxazole (Bactrim) pada dos TMP 15 - 20 mg/kg/hari dibahagi Q6H-Q8H x 21 HARI + STEROID ADJUNCT: Oral/IV Prednisolone (2 mg/kg/hari dibahagi BD x 5 days, 1 mg/kg/hari x 5 days, kemudian 0.5 mg/kg/hari x 11 days). PROFILAKSIS PJP KANAK-KANAK: Oral Bactrim pada dos TMP 5 mg/kg/hari dibahagi BD selama 3 days berturut-turut setiap minggu (or single dose harian).",
+      "routeAndDose": "IV slow infusion dalam Dextrose 5% / Oral.",
       "durationDays": "21 days (Rawatan) / Berterusan semasa tempoh imunosupresi (Profilaksis)",
       "remarks": "Steroid adjunct mengurangkan risiko kegagalan pernafasan dan kematian pada kanak-kanak dengan hipoksia sederhana/teruk."
     },
@@ -4597,16 +4597,16 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "dapsone"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Clindamycin 10 mg/kg/dos Q8H + Oral Primaquine 0.3 mg/kg base OD x 21 hari (atau IV Pentamidine isethionate 4 mg/kg OD).",
+      "regimen": "IV Clindamycin 10 mg/kg/dos Q8H + Oral Primaquine 0.3 mg/kg base OD x 21 days (or IV Pentamidine isethionate 4 mg/kg OD).",
       "routeAndDose": "IV / Oral.",
       "durationDays": "21 days",
-      "remarks": "Saring status enzim G6PD sebelum memulakan Primaquine atau Dapsone."
+      "remarks": "Saring status enzim G6PD sebelum memulakan Primaquine or Dapsone."
     },
-    "pediatricWeightDoseHint": "IV Co-Trimoxazole (Rawatan): berasaskan komponen Trimethoprim (TMP) 5 mg/kg/dos Q6H-Q8H (maks 20 mg/kg/hari TMP) x 21 hari. Profilaksis: TMP 5 mg/kg/hari dibahagi BD pada hari Jumaat, Sabtu, Ahad.",
+    "pediatricWeightDoseHint": "IV Co-Trimoxazole (Rawatan): berasaskan komponen Trimethoprim (TMP) 5 mg/kg/dos Q6H-Q8H (maks 20 mg/kg/hari TMP) x 21 days. Profilaksis: TMP 5 mg/kg/hari dibahagi BD pada hari Jumaat, Sabtu, Ahad.",
     "maxDailyDose": "Bactrim: dos berat badan TMP 20 mg/kg/hari",
     "amsNotes": [
       "Pantau paras kalium darah (risiko hiperkalemia) dan fungsi buah pinggang setiap 48-72 jam.",
-      "Semua bayi yang terdedah kepada HIV wajib menerima profilaksis Bactrim bermula umur 4-6 minggu sehingga jangkitan HIV disahkan negatif."
+      "Semua bayi yang terdedah kepada HIV wajib menerima profilaksis Bactrim bermula umur 4-6 weeks sehingga jangkitan HIV disahkan negatif."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / CDC-NIH-AAP Paediatric Opportunistic Infection Guidelines)"
   },
@@ -4633,10 +4633,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "voriconazole"
     ],
     "firstLineTherapy": {
-      "regimen": "Kandidemia / Kandidiasis Invasif Pediatrik: IV Caspofungin 70 mg/m2 loading kemudian 50 mg/m2 OD (or IV Fluconazole 12 mg/kg loading kemudian 6-12 mg/kg OD / IV Liposomal Amphotericin B 3 mg/kg OD). Aspergillosis Pulmonari Invasif: IV/Oral Voriconazole (Umur 2-12 tahun: 9 mg/kg Q12H x 1 hari kemudian 8 mg/kg Q12H).",
-      "routeAndDose": "IV infusi perlahan.",
-      "durationDays": "Kandidemia: Minimum 14 hari selepas kultur darah steril pertama; Aspergillosis: 6 - 12 minggu",
-      "remarks": "Echinocandin (Caspofungin) atau Liposomal Amphotericin B adalah pilihan utama bagi kandidemia kanak-kanak yang tidak stabil di PICU."
+      "regimen": "Kandidemia / Kandidiasis Invasif Pediatrik: IV Caspofungin 70 mg/m2 loading kemudian 50 mg/m2 OD (or IV Fluconazole 12 mg/kg loading kemudian 6-12 mg/kg OD / IV Liposomal Amphotericin B 3 mg/kg OD). Aspergillosis Pulmonari Invasif: IV/Oral Voriconazole (Umur 2-12 tahun: 9 mg/kg Q12H x 1 days kemudian 8 mg/kg Q12H).",
+      "routeAndDose": "IV slow infusion.",
+      "durationDays": "Kandidemia: Minimum 14 days selepas kultur darah steril pertama; Aspergillosis: 6 - 12 weeks",
+      "remarks": "Echinocandin (Caspofungin) or Liposomal Amphotericin B adalah pilihan utama bagi kandidemia kanak-kanak yang tidak stabil di PICU."
     },
     "secondLineDrugs": [
       "liposomal amphotericin b",
@@ -4644,10 +4644,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "micafungin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Liposomal Amphotericin B 3-5 mg/kg OD atau IV Micafungin 2 mg/kg OD (tingkatkan ke 4-10 mg/kg pada neonat).",
+      "regimen": "IV Liposomal Amphotericin B 3-5 mg/kg OD or IV Micafungin 2 mg/kg OD (tingkatkan ke 4-10 mg/kg pada neonat).",
       "routeAndDose": "IV.",
       "durationDays": "Berdasarkan tindak balas klinikal",
-      "remarks": "Untuk kes rintangan azole atau penglibatan sistem saraf pusat."
+      "remarks": "Untuk kes rintangan azole or penglibatan sistem saraf pusat."
     },
     "pediatricWeightDoseHint": "IV Fluconazole: 12 mg/kg loading kemudian 6-12 mg/kg OD (maks 400-800mg OD). IV Caspofungin: 70 mg/m2 loading kemudian 50 mg/m2 OD (maks 70mg/hari). IV Liposomal Amphotericin B: 3-5 mg/kg OD.",
     "maxDailyDose": "Fluconazole: maks 800mg/hari; Caspofungin: maks 70mg/hari",
@@ -4665,7 +4665,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. EARLY-ONSET NEONATAL SEPSIS (EONS <72 HOURS)",
     "topicNumber": 1,
     "bodySystem": "Neonatal & Paediatric Syndromes",
-    "conditionName": "Early-Onset Neonatal Sepsis (EONS < 72 Jam Selepas Kelahiran)",
+    "conditionName": "Early-Onset Neonatal Sepsis (EONS < 72 Hours Post-Birth)",
     "setting": "Hospital-Acquired (HAP/VAP)",
     "primaryPathogens": [
       "Group B Streptococcus (Streptococcus agalactiae - GBS)",
@@ -4682,8 +4682,8 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     ],
     "firstLineTherapy": {
       "regimen": "IV Ampicillin 100 - 150 mg/kg/hari dibahagi Q12H (or IV Benzylpenicillin 100,000 U/kg/hari dibahagi Q12H) + IV Gentamicin 4 - 5 mg/kg OD dos harian tunggal.",
-      "routeAndDose": "IV infusi perlahan dengan pemantauan TDM Gentamicin.",
-      "durationDays": "Kultur Darah Negatif & Bayi Sihat: HENTIKAN PADA 36 - 48 JAM; Sepsis Disahkan: 7 - 10 hari",
+      "routeAndDose": "IV slow infusion dengan pemantauan TDM Gentamicin.",
+      "durationDays": "Kultur Darah Negatif & Bayi Sihat: HENTIKAN PADA 36 - 48 JAM; Sepsis Disahkan: 7 - 10 days",
       "remarks": "PERINGATAN KESELAMATAN NEONAT: JANGAN SESEKALI MENGGUNAKAN CEFTRIAXONE PADA NEONAT kerana boleh menyebabkan pemendakan garam kalsium-seftriakson dalam paru-paru/ginjal dan mencetuskan 'Bilirubin Encephalopathy / Kernicterus' akibat pengusiran bilirubin dari albumin."
     },
     "secondLineDrugs": [
@@ -4692,12 +4692,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "amikacin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Ampicillin 150 mg/kg/hari dibahagi Q8H + IV Cefotaxime 100 mg/kg/hari dibahagi Q12H (jika disyaki meningitis serentak atau renjatan sepsis teruk).",
+      "regimen": "IV Ampicillin 150 mg/kg/hari dibahagi Q8H + IV Cefotaxime 100 mg/kg/hari dibahagi Q12H (jika disyaki meningitis serentak or renjatan sepsis teruk).",
       "routeAndDose": "IV parenteral.",
       "durationDays": "7 - 14 days",
       "remarks": "Cefotaxime adalah sefalosporin generasi ketiga pilihan yang SELAMAT untuk neonat."
     },
-    "pediatricWeightDoseHint": "IV Ampicillin: Umur <7 hari = 50 mg/kg/dos Q12H; Umur ≥7 hari = 50 mg/kg/dos Q8H. IV Gentamicin: Bayi matang term = 4-5 mg/kg OD; Bayi pramatang <32 minggu = 4-5 mg/kg setiap 36-48 jam mengikut TDM.",
+    "pediatricWeightDoseHint": "IV Ampicillin: Umur <7 days = 50 mg/kg/dos Q12H; Umur ≥7 days = 50 mg/kg/dos Q8H. IV Gentamicin: Bayi matang term = 4-5 mg/kg OD; Bayi pramatang <32 weeks = 4-5 mg/kg setiap 36-48 jam mengikut TDM.",
     "maxDailyDose": "Ampicillin: maks 200 mg/kg/hari; Gentamicin: 5 mg/kg/dos",
     "amsNotes": [
       "DASAR AMS NICU: Hentikan antibiotik pada 36-48 jam sekiranya kultur darah negatif dan bayi kekal sihat secara klinikal tanpa tanda sepsis.",
@@ -4713,7 +4713,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "2. LATE-ONSET NEONATAL SEPSIS (LONS ≥72 HOURS)",
     "topicNumber": 2,
     "bodySystem": "Neonatal & Paediatric Syndromes",
-    "conditionName": "Late-Onset Neonatal Sepsis (LONS ≥ 72 Jam / NICU Nosocomial Sepsis)",
+    "conditionName": "Late-Onset Neonatal Sepsis (LONS ≥ 72 Hours / NICU Nosocomial Sepsis)",
     "setting": "Hospital-Acquired (HAP/VAP)",
     "primaryPathogens": [
       "Coagulase-Negative Staphylococci (S. epidermidis / CoNS - 50-60% kes NICU)",
@@ -4730,9 +4730,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefotaxime"
     ],
     "firstLineTherapy": {
-      "regimen": "LONS Diperolehi di Komuniti: IV Cloxacillin 100-200 mg/kg/hari dibahagi Q6H-Q8H + IV Gentamicin 4-5 mg/kg OD (atau IV Cefotaxime 100-150 mg/kg/hari). LONS Nosokomial di NICU / Bayi dengan Talian Vena Sentral: IV Vancomycin 15 mg/kg/dos Q8H-Q12H (trough 10-15 mcg/mL) + IV Amikacin 15 mg/kg OD (or IV Cefotaxime 150 mg/kg/hari).",
-      "routeAndDose": "IV infusi perlahan dengan pemantauan TDM berkala.",
-      "durationDays": "7 - 10 days (Bakteremia); 14 hari (S. aureus / Sepsis talian)",
+      "regimen": "LONS Diperolehi di Komuniti: IV Cloxacillin 100-200 mg/kg/hari dibahagi Q6H-Q8H + IV Gentamicin 4-5 mg/kg OD (or IV Cefotaxime 100-150 mg/kg/hari). LONS Nosokomial di NICU / Bayi dengan Talian Vena Sentral: IV Vancomycin 15 mg/kg/dos Q8H-Q12H (trough 10-15 mcg/mL) + IV Amikacin 15 mg/kg OD (or IV Cefotaxime 150 mg/kg/hari).",
+      "routeAndDose": "IV slow infusion dengan pemantauan TDM berkala.",
+      "durationDays": "7 - 10 days (Bakteremia); 14 days (S. aureus / Sepsis talian)",
       "remarks": "Vancomycin diindikasikan di NICU bagi sepsis lewat kerana prevalens CoNS pembina biofilm yang tinggi pada talian kateter arteri/vena umbilikal."
     },
     "secondLineDrugs": [
@@ -4747,10 +4747,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "durationDays": "10 - 14 days",
       "remarks": "Untuk syok septik refraktori dengan risiko kuman Gram-negatif penghasil ESBL di NICU."
     },
-    "pediatricWeightDoseHint": "IV Cloxacillin: 25-50 mg/kg/dos Q8H (neonat <7 hari) atau Q6H (≥7 hari). IV Vancomycin: 15 mg/kg/dos Q12H (<29 minggu PMA) atau Q8H (≥30 minggu PMA). IV Amikacin: 15 mg/kg OD.",
+    "pediatricWeightDoseHint": "IV Cloxacillin: 25-50 mg/kg/dos Q8H (neonat <7 days) or Q6H (≥7 days). IV Vancomycin: 15 mg/kg/dos Q12H (<29 weeks PMA) or Q8H (≥30 weeks PMA). IV Amikacin: 15 mg/kg OD.",
     "maxDailyDose": "Cloxacillin: maks 200 mg/kg/hari; Vancomycin: disasarkan kepada paras palung TDM",
     "amsNotes": [
-      "Keluarkan talian kateter umbilikal (UVC/UAC) atau PICC sekiranya kultur darah menunjukkan S. aureus, Candida spp., atau Pseudomonas.",
+      "Keluarkan talian kateter umbilikal (UVC/UAC) or PICC sekiranya kultur darah menunjukkan S. aureus, Candida spp., or Pseudomonas.",
       "Lakukan TDM Vancomycin dan Amikacin untuk mengelakkan ketoksikan renal dan pendengaran pada neonat pramatang."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / ESPID Neonatal Infection Guidelines)"
@@ -4763,7 +4763,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "3. NEONATAL MENINGITIS",
     "topicNumber": 3,
     "bodySystem": "Neonatal & Paediatric Syndromes",
-    "conditionName": "Neonatal Bacterial Meningitis (Meningitis Bakteria Neonat)",
+    "conditionName": "Neonatal Bacterial Meningitis",
     "setting": "ICU / Severe",
     "primaryPathogens": [
       "Group B Streptococcus (GBS)",
@@ -4779,7 +4779,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "firstLineTherapy": {
       "regimen": "IV Ampicillin 200 - 300 mg/kg/hari dibahagi Q6H-Q8H + IV Cefotaxime 150 - 200 mg/kg/hari dibahagi Q6H-Q8H (+/- IV Gentamicin 4-5 mg/kg OD untuk sinergi pembasmian GBS/Listeria fasa awal).",
       "routeAndDose": "IV dos meningitis tinggi.",
-      "durationDays": "14 days (GBS / Listeria) / Minimum 21 hari atau 14 hari selepas CSF steril (Gram-negatif E. coli / Klebsiella)",
+      "durationDays": "14 days (GBS / Listeria) / Minimum 21 days or 14 days selepas CSF steril (Gram-negatif E. coli / Klebsiella)",
       "remarks": "ELAKKAN CEFTRIAXONE PADA NEONAT; Cefotaxime adalah sefalosporin pilihan mutlak yang mempunyai penembusan CSF cemerlang dan selamat untuk neonat."
     },
     "secondLineDrugs": [
@@ -4790,13 +4790,13 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Meropenem 40 mg/kg/dos Q8H + IV Vancomycin 15 mg/kg/dos Q6H-Q8H",
       "routeAndDose": "IV.",
       "durationDays": "21 days",
-      "remarks": "Untuk meningitis neonatal akibat organisma Gram-negatif penghasil ESBL atau Pseudomonas."
+      "remarks": "Untuk meningitis neonatal akibat organisma Gram-negatif penghasil ESBL or Pseudomonas."
     },
-    "pediatricWeightDoseHint": "IV Ampicillin: 75-100 mg/kg/dos Q8H (<7 hari) atau Q6H (≥7 hari). IV Cefotaxime: 50 mg/kg/dos Q8H (<7 hari) atau Q6H (≥7 hari).",
+    "pediatricWeightDoseHint": "IV Ampicillin: 75-100 mg/kg/dos Q8H (<7 days) or Q6H (≥7 days). IV Cefotaxime: 50 mg/kg/dos Q8H (<7 days) or Q6H (≥7 days).",
     "maxDailyDose": "Ampicillin: maks 300 mg/kg/hari; Cefotaxime: maks 200 mg/kg/hari",
     "amsNotes": [
       "Lakukan Lumbar Puncture Ulangan (Repeat LP) pada 48-72 jam untuk mendokumentasikan pembersihan bakteria dari cecair serebrospinal (CSF sterilization).",
-      "Lakukan USG Kepala / MRI Otak untuk mengesan komplikasi ventrikulitis, abses serebral, atau hidrosefalus."
+      "Lakukan USG Kepala / MRI Otak untuk mengesan komplikasi ventrikulitis, abses serebral, or hidrosefalus."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / AAP Neonatal Meningitis Guidelines)"
   },
@@ -4824,22 +4824,22 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "valganciclovir"
     ],
     "firstLineTherapy": {
-      "regimen": "Sifilis Kongenital Disahkan / Simptomatik: IV Aqueous Crystalline Benzylpenicillin 100,000 - 150,000 U/kg/hari (diberikan 50,000 U/kg/dos Q12H pada 7 hari pertama, kemudian Q8H) x 10 HARI PENUH (atau IM Procaine Penicillin G 50,000 U/kg OD x 10 hari). Sifilis Kongenital Asimtomatik (Ibu dirawat tidak mencukupi): IM Benzathine Penicillin G 50,000 U/kg stat dos tunggal.",
-      "routeAndDose": "IV infusi perlahan / IM.",
+      "regimen": "Sifilis Kongenital Disahkan / Simptomatik: IV Aqueous Crystalline Benzylpenicillin 100,000 - 150,000 U/kg/hari (diberikan 50,000 U/kg/dos Q12H pada 7 days pertama, kemudian Q8H) x 10 HARI PENUH (or IM Procaine Penicillin G 50,000 U/kg OD x 10 days). Sifilis Kongenital Asimtomatik (Ibu dirawat tidak mencukupi): IM Benzathine Penicillin G 50,000 U/kg stat single dose.",
+      "routeAndDose": "IV slow infusion / IM.",
       "durationDays": "10 days (Simptomatik/CSF abnormal) / Single dose (Asimtomatik)",
-      "remarks": "Jika sebarang dos dalam rejimen 10 hari terlepas melebihi 24 jam, KESELURUHAN REJIMEN 10 HARI WAJIB DIULANG DARI HARI PERTAMA SEMULA."
+      "remarks": "Jika sebarang dos dalam rejimen 10 days terlepas melebihi 24 jam, KESELURUHAN REJIMEN 10 HARI WAJIB DIULANG DARI HARI PERTAMA SEMULA."
     },
     "secondLineDrugs": [
       "valganciclovir",
       "ganciclovir"
     ],
     "secondLineTherapy": {
-      "regimen": "Kongenital CMV Simptomatik: Oral Valganciclovir 16 mg/kg/dos BD x 6 BULAN (or IV Ganciclovir 6 mg/kg/dos Q12H x 6 minggu).",
+      "regimen": "Kongenital CMV Simptomatik: Oral Valganciclovir 16 mg/kg/dos BD x 6 BULAN (or IV Ganciclovir 6 mg/kg/dos Q12H x 6 weeks).",
       "routeAndDose": "Oral / IV.",
       "durationDays": "6 months (Valganciclovir untuk CMV)",
       "remarks": "Terapi awal valganciclovir mencegah kecacatan pendengaran neurosensorik dan kecacatan perkembangan otak pada bayi CMV."
     },
-    "pediatricWeightDoseHint": "IV Aqueous Benzylpenicillin: 50,000 Unit/kg/dos Q12H (hari 1-7) kemudian Q8H (hari 8-10). IM Benzathine Penicillin G: 50,000 Unit/kg stat dos tunggal.",
+    "pediatricWeightDoseHint": "IV Aqueous Benzylpenicillin: 50,000 Unit/kg/dos Q12H (hari 1-7) kemudian Q8H (hari 8-10). IM Benzathine Penicillin G: 50,000 Unit/kg stat single dose.",
     "maxDailyDose": "Benzylpenicillin: 150,000 Unit/kg/hari",
     "amsNotes": [
       "Lakukan penilaian lengkap: Ujian VDRL/RPR kuantitatif bayi (bandingkan dengan titer ibu), Lumbar Puncture CSF, X-ray Tulang Panjang, dan Pemeriksaan Mata/Pendengaran.",
@@ -4870,7 +4870,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefotaxime"
     ],
     "firstLineTherapy": {
-      "regimen": "Konjunktivitis Chlamydia: Oral Erythromycin Ethylsuccinate 50 mg/kg/hari dibahagi QID x 14 hari (atau Oral Azithromycin 20 mg/kg OD x 3 hari). Oftalmia Gonokokal Neonat: IM/IV Ceftriaxone 25-50 mg/kg stat dos tunggal (maks 125mg; ATAU IV Cefotaxime 100 mg/kg stat) + CUCI MATA DENGAN LARUTAN SALIN STERIL SETIAP JAM SEHINGGA DISCAJ BERSIH.",
+      "regimen": "Konjunktivitis Chlamydia: Oral Erythromycin Ethylsuccinate 50 mg/kg/hari dibahagi QID x 14 days (or Oral Azithromycin 20 mg/kg OD x 3 days). Oftalmia Gonokokal Neonat: IM/IV Ceftriaxone 25-50 mg/kg stat single dose (maks 125mg; or IV Cefotaxime 100 mg/kg stat) + CUCI MATA DENGAN LARUTAN SALIN STERIL SETIAP JAM SEHINGGA DISCAJ BERSIH.",
       "routeAndDose": "Oral untuk Chlamydia; IM/IV untuk Gonorrhoea.",
       "durationDays": "14 days (Chlamydia) / Single dose (Gonococcal)",
       "remarks": "Klamidia neonat memerlukan rawatan SISTEMIK ORAL (bukan titisan mata sahaja) untuk membasmi kolonisasi nasofarinks dan mencegah Pneumonia Klamidia Bayi."
@@ -4880,16 +4880,16 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "chloramphenicol"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Cefotaxime 100 mg/kg stat dos tunggal jika terdapat jaundis atau kontraindikasi Ceftriaxone.",
+      "regimen": "IV Cefotaxime 100 mg/kg stat single dose jika terdapat jaundis or kontraindikasi Ceftriaxone.",
       "routeAndDose": "IV.",
       "durationDays": "Single dose",
       "remarks": "Selamat untuk neonat."
     },
-    "pediatricWeightDoseHint": "Oral Erythromycin: 12.5 mg/kg/dos QID x 14 hari. IM Ceftriaxone: 25-50 mg/kg stat (maks 125mg). IV Cefotaxime: 100 mg/kg stat dos tunggal.",
+    "pediatricWeightDoseHint": "Oral Erythromycin: 12.5 mg/kg/dos QID x 14 days. IM Ceftriaxone: 25-50 mg/kg stat (maks 125mg). IV Cefotaxime: 100 mg/kg stat single dose.",
     "maxDailyDose": "Ceftriaxone: maks 125mg stat; Erythromycin: maks 2g/hari",
     "amsNotes": [
       "Ibu bapa dan pasangan seks ibu WAJIB diperiksa dan dirawat serentak untuk Gonorrhoea dan Chlamydia.",
-      "Pantau tanda Stenosis Pilorus Hipertrofik Infantil (IHPS) pada bayi yang menerima Erythromycin/Azithromycin pada 2 minggu pertama kehidupan."
+      "Pantau tanda Stenosis Pilorus Hipertrofik Infantil (IHPS) pada bayi yang menerima Erythromycin/Azithromycin pada 2 weeks pertama kehidupan."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / CDC Ophthalmia Neonatorum Guidelines)"
   },
@@ -4915,7 +4915,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "gentamicin"
     ],
     "firstLineTherapy": {
-      "regimen": "Titisan Mata Moxifloxacin 0.5% atau Levofloxacin 0.5% setiap 1 jam siang dan malam (atau Titisan Fortified Cefazolin 5% berselang-seli dengan Fortified Gentamicin 1.4% setiap jam) + RUJUKAN SEGERA KEPADA PAKAR MATA PEDIATRIK.",
+      "regimen": "Titisan Mata Moxifloxacin 0.5% or Levofloxacin 0.5% setiap 1 jam siang dan malam (or Titisan Fortified Cefazolin 5% berselang-seli dengan Fortified Gentamicin 1.4% setiap jam) + RUJUKAN SEGERA KEPADA PAKAR MATA PEDIATRIK.",
       "routeAndDose": "Topikal titisan mata intensif.",
       "durationDays": "14 - 21 days",
       "remarks": "Ulser kornea pada kanak-kanak boleh menyebabkan parut kornea kekal dan ambliopia jika lewat dirawat."
@@ -4961,7 +4961,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "metronidazole"
     ],
     "firstLineTherapy": {
-      "regimen": "Selulitis Preseptal (Ringan): Oral Augmentin 45-60 mg/kg/hari dibahagi TDS x 7-10 hari. Selulitis Orbital (Kecemasan Pediatrik): IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H (or IV Ceftriaxone 100 mg/kg/hari OD) + IV Cloxacillin 100-150 mg/kg/hari dibahagi Q6H (+/- IV Metronidazole jika sinus etmoid/maksila tersumbat teruk) + IMBAASAN CT ORBIT & PARANASAL SINUS SEGERA.",
+      "regimen": "Selulitis Preseptal (Ringan): Oral Augmentin 45-60 mg/kg/hari dibahagi TDS x 7-10 days. Selulitis Orbital (Kecemasan Pediatrik): IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H (or IV Ceftriaxone 100 mg/kg/hari OD) + IV Cloxacillin 100-150 mg/kg/hari dibahagi Q6H (+/- IV Metronidazole jika sinus etmoid/maksila tersumbat teruk) + IMBAASAN CT ORBIT & PARANASAL SINUS SEGERA.",
       "routeAndDose": "Oral untuk preseptal; IV parenteral dos tinggi untuk orbital.",
       "durationDays": "7 - 10 days (Preseptal) / 14 - 21 days (Orbital)",
       "remarks": "Tanda Selulitis Orbital: Proptosis, ophthalmoplegia (sakit/terhad pergerakan mata), kemosis konjunktiva, dan penurunan tindak balas pupil; perlukan rujukan kecemasan bersama Pakar Mata & Pakar ENT."
@@ -4973,10 +4973,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H + IV Piperacillin/Tazobactam 80 mg/kg/dos Q6H (atau IV Meropenem 20 mg/kg/dos Q8H)",
+      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H + IV Piperacillin/Tazobactam 80 mg/kg/dos Q6H (or IV Meropenem 20 mg/kg/dos Q8H)",
       "routeAndDose": "IV.",
       "durationDays": "14 - 21 days",
-      "remarks": "Untuk abses subperiosteal orbit atau ancaman trombosis sinus kavernosus."
+      "remarks": "Untuk abses subperiosteal orbit or ancaman trombosis sinus kavernosus."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -5013,7 +5013,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. PAEDIATRIC ACUTE HEMATOGENOUS OSTEOMYELITIS",
     "topicNumber": 1,
     "bodySystem": "Bone & Joint",
-    "conditionName": "Paediatric Acute Hematogenous Osteomyelitis (AHO - Osteomielitis Hematogenus Akut)",
+    "conditionName": "Paediatric Acute Hematogenous Osteomyelitis (AHO)",
     "setting": "Community-Acquired",
     "primaryPathogens": [
       "Staphylococcus aureus (MSSA & MRSA - 70-80%)",
@@ -5030,10 +5030,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Cloxacillin 150 - 200 mg/kg/hari dibahagi Q6H (or IV Cefazolin 100 - 150 mg/kg/hari dibahagi Q8H) selama 2-4 hari pertama parenteral, diikuti PERTUKARAN AWAL KEPADA ORAL DOS TINGGI: Oral Cephalexin 100 - 150 mg/kg/hari dibahagi Q6H-Q8H (atau Oral Cloxacillin 100 mg/kg/hari Q6H / Oral Augmentin 80 mg/kg/hari) untuk melengkapkan jumlah 3 HINGGA 4 MINGGU.",
+      "regimen": "IV Cloxacillin 150 - 200 mg/kg/hari dibahagi Q6H (or IV Cefazolin 100 - 150 mg/kg/hari dibahagi Q8H) selama 2-4 days pertama parenteral, diikuti PERTUKARAN AWAL KEPADA ORAL DOS TINGGI: Oral Cephalexin 100 - 150 mg/kg/hari dibahagi Q6H-Q8H (or Oral Cloxacillin 100 mg/kg/hari Q6H / Oral Augmentin 80 mg/kg/hari) untuk melengkapkan jumlah 3 HINGGA 4 MINGGU.",
       "routeAndDose": "IV fasa awal singkat bertukar cepat ke Terapi Oral Dos Tinggi.",
-      "durationDays": "3 - 4 weeks total (Tempoh 3-4 minggu sama berkesan dengan 6 minggu mengikut bukti terkini ESPID/AAP)",
-      "remarks": "PERTUKARAN ORAL AWAL (Early Oral Switch): Kanak-kanak boleh ditukar ke ubat oral seawal hari ke-3 atau ke-4 sebaik sahaja afebril >24 jam dan paras CRP menunjukkan trend penurunan konsisten >30-50%."
+      "durationDays": "3 - 4 weeks total (Tempoh 3-4 weeks sama berkesan dengan 6 weeks mengikut bukti terkini ESPID/AAP)",
+      "remarks": "PERTUKARAN ORAL AWAL (Early Oral Switch): Kanak-kanak boleh ditukar ke ubat oral seawal hari ke-3 or ke-4 sebaik sahaja afebril >24 jam dan paras CRP menunjukkan trend penurunan konsisten >30-50%."
     },
     "secondLineDrugs": [
       "vancomycin",
@@ -5041,10 +5041,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ceftriaxone"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H (trough 15-20 mcg/mL) atau IV/Oral Clindamycin 40 mg/kg/hari dibahagi Q8H (+ IV Ceftriaxone 75 mg/kg OD jika pesakit talasemia/Salmonella).",
+      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H (trough 15-20 mcg/mL) or IV/Oral Clindamycin 40 mg/kg/hari dibahagi Q8H (+ IV Ceftriaxone 75 mg/kg OD jika pesakit talasemia/Salmonella).",
       "routeAndDose": "IV / Oral.",
       "durationDays": "3 - 4 weeks",
-      "remarks": "Untuk kes Community-Acquired MRSA atau pesakit dengan alahan penisilin."
+      "remarks": "Untuk kes Community-Acquired MRSA or pesakit dengan alahan penisilin."
     },
     "allergyDrugs": [
       "clindamycin",
@@ -5065,13 +5065,13 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Cephalexin 100-150 mg/kg/hari dibahagi Q6H-Q8H (maks 4g/hari) atau Oral Clindamycin 40 mg/kg/hari dibahagi Q8H.",
+      "regimen": "Oral Cephalexin 100-150 mg/kg/hari dibahagi Q6H-Q8H (maks 4g/hari) or Oral Clindamycin 40 mg/kg/hari dibahagi Q8H.",
       "criteria": "Pesakit afebril >24-48 jam, kesakitan dan bengkak anggota berkurangan jelas, boleh menanggung berat/menggerakkan anggota, CRP turun >30-50% dari nilai puncak."
     },
     "pediatricWeightDoseHint": "IV Cloxacillin: 35-50 mg/kg/dos Q6H (maks 2g Q6H). Oral Cephalexin: 25-37.5 mg/kg/dos Q6H (maks 1g Q6H). Oral Clindamycin: 10-13 mg/kg/dos Q8H (maks 600mg Q8H).",
     "maxDailyDose": "Cloxacillin: maks 8g/hari; Cephalexin: maks 4g/hari; Clindamycin: maks 1.8g/hari",
     "amsNotes": [
-      "Pantau paras C-Reactive Protein (CRP) bersiri setiap 3-4 hari; CRP adalah penanda terbaik untuk menentukan masa pertukaran oral dan tempoh pemberhentian antibiotik.",
+      "Pantau paras C-Reactive Protein (CRP) bersiri setiap 3-4 days; CRP adalah penanda terbaik untuk menentukan masa pertukaran oral dan tempoh pemberhentian antibiotik.",
       "Lakukan X-ray dan USG Tulang/Sendi untuk mengesan abses subperiosteal yang memerlukan penyaliran pembedahan segera."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / ESPID Bone & Joint Infection Guidelines 2020)"
@@ -5084,7 +5084,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "2. PAEDIATRIC SEPTIC ARTHRITIS",
     "topicNumber": 2,
     "bodySystem": "Bone & Joint",
-    "conditionName": "Paediatric Septic Arthritis (Artritis Septik Pediatrik)",
+    "conditionName": "Paediatric Septic Arthritis",
     "setting": "Community-Acquired",
     "primaryPathogens": [
       "Staphylococcus aureus (MSSA & MRSA)",
@@ -5099,9 +5099,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefotaxime"
     ],
     "firstLineTherapy": {
-      "regimen": "ARTROTOMI PENYALIRAN / ASPIRASI JARUM SENDI KECEMASAN + IV Cloxacillin 150 mg/kg/hari dibahagi Q6H (or IV Cefazolin 100 mg/kg/hari dibahagi Q8H / IV Cefotaxime 150 mg/kg/hari jika umur <2 tahun untuk liputan Kingella) selama 2-4 hari, diikuti pertukaran ke Oral Cephalexin 100-150 mg/kg/hari dibahagi Q6H-Q8H melengkapkan 2 HINGGA 3 MINGGU JUMLAH.",
+      "regimen": "ARTROTOMI PENYALIRAN / ASPIRASI JARUM SENDI KECEMASAN + IV Cloxacillin 150 mg/kg/hari dibahagi Q6H (or IV Cefazolin 100 mg/kg/hari dibahagi Q8H / IV Cefotaxime 150 mg/kg/hari jika umur <2 tahun untuk liputan Kingella) selama 2-4 days, diikuti pertukaran ke Oral Cephalexin 100-150 mg/kg/hari dibahagi Q6H-Q8H melengkapkan 2 HINGGA 3 MINGGU JUMLAH.",
       "routeAndDose": "Penyaliran pembedahan kecemasan + IV fasa awal bertukar ke Oral.",
-      "durationDays": "2 - 3 weeks total (14-21 hari memadai untuk sendi tidak berkomplikasi)",
+      "durationDays": "2 - 3 weeks total (14-21 days memadai untuk sendi tidak berkomplikasi)",
       "remarks": "KECEMASAN BEDAH ORTOPEDIK PEDIATRIK: Sendi pinggul (hip septic arthritis) dan bahu bernanah memerlukan dekompresi pembedahan segera dalam beberapa jam untuk mengelakkan nekrosis avaskular kepala femur (AVN femoral head)."
     },
     "secondLineDrugs": [
@@ -5110,17 +5110,17 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ceftriaxone"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H atau IV Clindamycin 40 mg/kg/hari dibahagi Q8H",
+      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H or IV Clindamycin 40 mg/kg/hari dibahagi Q8H",
       "routeAndDose": "IV.",
       "durationDays": "2 - 3 weeks",
-      "remarks": "Untuk jangkitan MRSA disyaki atau alahan penisilin."
+      "remarks": "Untuk jangkitan MRSA disyaki or alahan penisilin."
     },
     "allergyDrugs": [
       "clindamycin",
       "vancomycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "IV bertukar ke Oral Clindamycin 40 mg/kg/hari dibahagi Q8H x 2-3 minggu",
+      "regimen": "IV bertukar ke Oral Clindamycin 40 mg/kg/hari dibahagi Q8H x 2-3 weeks",
       "routeAndDose": "IV/Oral.",
       "remarks": "Selamat untuk pesakit alahan penisilin."
     },
@@ -5130,7 +5130,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Cephalexin 100-150 mg/kg/hari dibahagi Q6H-Q8H atau Oral Clindamycin 40 mg/kg/hari dibahagi Q8H.",
+      "regimen": "Oral Cephalexin 100-150 mg/kg/hari dibahagi Q6H-Q8H or Oral Clindamycin 40 mg/kg/hari dibahagi Q8H.",
       "criteria": "Sendi tidak lagi panas/bengkak, julat pergerakan sendi pulih tanpa kesakitan, pesakit afebril, CRP menurun."
     },
     "pediatricWeightDoseHint": "IV Cloxacillin: 35-50 mg/kg/dos Q6H (maks 2g Q6H). Oral Cephalexin: 25-37.5 mg/kg/dos Q6H. IV Cefotaxime: 50 mg/kg/dos Q8H.",
@@ -5163,9 +5163,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Ampicillin 100-150 mg/kg/hari dibahagi Q6H (or IV Cefuroxime 100-150 mg/kg/hari / IV Ceftriaxone 50-75 mg/kg OD) selama 2-3 hari, diikuti pertukaran oral: Oral Amoxicillin 80-90 mg/kg/hari dibahagi BD/TDS (atau Oral Augmentin 45-60 mg/kg/hari) melengkapkan 2 HINGGA 3 MINGGU.",
+      "regimen": "IV Ampicillin 100-150 mg/kg/hari dibahagi Q6H (or IV Cefuroxime 100-150 mg/kg/hari / IV Ceftriaxone 50-75 mg/kg OD) selama 2-3 days, diikuti pertukaran oral: Oral Amoxicillin 80-90 mg/kg/hari dibahagi BD/TDS (or Oral Augmentin 45-60 mg/kg/hari) melengkapkan 2 HINGGA 3 MINGGU.",
       "routeAndDose": "IV bertukar ke Oral.",
-      "durationDays": "2 - 3 weeks (14 hari untuk artritis septik; 3 minggu untuk osteomielitis)",
+      "durationDays": "2 - 3 weeks (14 days untuk artritis septik; 3 weeks untuk osteomielitis)",
       "remarks": "Kingella kingae biasanya menyebabkan jangkitan tulang/sendi yang ringan (mild/subacute) pada kanak-kanak berumur 6 bulan hingga 4 tahun, selalunya dengan demam ringan dan penanda radang yang tidak terlalu tinggi."
     },
     "secondLineDrugs": [
@@ -5175,7 +5175,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Cefuroxime Axetil 30 mg/kg/hari dibahagi BD atau Oral Bactrim pada dos TMP 8 mg/kg/hari dibahagi BD.",
+      "regimen": "Oral Cefuroxime Axetil 30 mg/kg/hari dibahagi BD or Oral Bactrim pada dos TMP 8 mg/kg/hari dibahagi BD.",
       "routeAndDose": "Oral.",
       "durationDays": "2 - 3 weeks",
       "remarks": "Perhatian: Kingella kingae adalah RINTANG SECARA SEMULA JADI KEPADA CLINDAMYCIN DAN VANCOMYCIN!"
@@ -5187,9 +5187,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Bactrim (TMP 8 mg/kg/hari BD) atau Oral Azithromycin 10 mg/kg OD (or IV Ciprofloxacin 20 mg/kg/hari dibahagi Q12H)",
+      "regimen": "Oral Bactrim (TMP 8 mg/kg/hari BD) or Oral Azithromycin 10 mg/kg OD (or IV Ciprofloxacin 20 mg/kg/hari dibahagi Q12H)",
       "routeAndDose": "Oral / IV.",
-      "remarks": "JANGAN gunakan Clindamycin atau Vancomycin untuk Kingella."
+      "remarks": "JANGAN gunakan Clindamycin or Vancomycin untuk Kingella."
     },
     "pediatricWeightDoseHint": "Oral Amoxicillin: 40-45 mg/kg/dos BD (maks 1g BD). IV Ampicillin: 25-37.5 mg/kg/dos Q6H. Oral Cefuroxime: 15 mg/kg/dos BD.",
     "maxDailyDose": "Amoxicillin: maks 2g/hari; Ampicillin: maks 6g/hari",
@@ -5207,7 +5207,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. PAEDIATRIC ACUTE OTITIS MEDIA (AOM)",
     "topicNumber": 1,
     "bodySystem": "Ear, Nose & Throat (ENT)",
-    "conditionName": "Paediatric Acute Otitis Media (AOM - Jangkitan Telinga Tengah Kanak-Kanak)",
+    "conditionName": "Paediatric Acute Otitis Media (AOM)",
     "setting": "Outpatient (OPD/KK)",
     "primaryPathogens": [
       "Streptococcus pneumoniae (Pneumococcus)",
@@ -5221,7 +5221,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "firstLineTherapy": {
-      "regimen": "Oral Amoxicillin Dos Tinggi 80 - 90 mg/kg/hari dibahagi BD atau TDS x 5-7 hari (x 10 hari jika umur <2 tahun atau AOM teruk). Kegagalan Rawatan Awal selepas 48-72 jam: Oral Augmentin Dos Tinggi 80 - 90 mg/kg/hari (nisbah Amoxicillin/Clavulanate 7:1 atau 14:1) dibahagi BD x 7-10 hari.",
+      "regimen": "Oral Amoxicillin Dos Tinggi 80 - 90 mg/kg/hari dibahagi BD or TDS x 5-7 days (x 10 days jika umur <2 tahun or AOM teruk). Kegagalan Rawatan Awal selepas 48-72 jam: Oral Augmentin Dos Tinggi 80 - 90 mg/kg/hari (nisbah Amoxicillin/Clavulanate 7:1 or 14:1) dibahagi BD x 7-10 days.",
       "routeAndDose": "Oral.",
       "durationDays": "5 - 7 days (Umur ≥2 tahun / Ringan) / 10 days (Umur <2 tahun / Perforasi)",
       "remarks": "DOS TINGGI AMOXICILLIN (80-90 mg/kg/hari) adalah perlu untuk mengatasi rintangan perantaraan penisilin bagi Streptococcus pneumoniae dalam cecair telinga tengah."
@@ -5232,10 +5232,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "azithromycin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Cefuroxime Axetil 30 mg/kg/hari dibahagi BD x 10 hari atau IM Ceftriaxone 50 mg/kg OD x 1-3 hari.",
+      "regimen": "Oral Cefuroxime Axetil 30 mg/kg/hari dibahagi BD x 10 days or IM Ceftriaxone 50 mg/kg OD x 1-3 days.",
       "routeAndDose": "Oral / IM.",
       "durationDays": "1 - 3 days (IM Ceftriaxone) / 10 days (Oral)",
-      "remarks": "IM Ceftriaxone 50mg/kg OD x 3 hari adalah pilihan terbaik jika kanak-kanak kerap muntah atau tidak mahu menelan ubat oral."
+      "remarks": "IM Ceftriaxone 50mg/kg OD x 3 days adalah pilihan terbaik jika kanak-kanak kerap muntah or tidak mahu menelan ubat oral."
     },
     "allergyDrugs": [
       "azithromycin",
@@ -5244,14 +5244,14 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Azithromycin 10 mg/kg OD (hari 1) kemudian 5 mg/kg OD (hari 2-5) atau Oral Clarithromycin 15 mg/kg/hari dibahagi BD x 10 hari",
+      "regimen": "Oral Azithromycin 10 mg/kg OD (hari 1) kemudian 5 mg/kg OD (hari 2-5) or Oral Clarithromycin 15 mg/kg/hari dibahagi BD x 10 days",
       "routeAndDose": "Oral.",
       "remarks": "Sesuai untuk kanak-kanak alahan penisilin."
     },
     "pediatricWeightDoseHint": "Oral Amoxicillin: 40-45 mg/kg/dos BD (maks 1.5g BD / 3g/hari). Oral Augmentin: 40-45 mg/kg/dos BD (berasaskan komponen Amoxicillin).",
     "maxDailyDose": "Amoxicillin: maks 3g/hari; Augmentin: maks 3g/hari Amoxicillin",
     "amsNotes": [
-      "ANALGESIA ADALAH WAJIB: Berikan Paracetamol (15 mg/kg Q6H) atau Ibuprofen (10 mg/kg Q8H) secukupnya untuk meredakan sakit telinga akut.",
+      "ANALGESIA ADALAH WAJIB: Berikan Paracetamol (15 mg/kg Q6H) or Ibuprofen (10 mg/kg Q8H) secukupnya untuk meredakan sakit telinga akut.",
       "Pendekatan 'Watchful Waiting' selama 48 jam tanpa antibiotik boleh dipertimbangkan untuk kanak-kanak berumur >2 tahun dengan AOM sebelah telinga yang tidak teruk."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / AAP Clinical Practice Guideline on AOM)"
@@ -5291,10 +5291,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H + IV Tazocin 80 mg/kg/dos Q6H (atau IV Meropenem 20 mg/kg/dos Q8H)",
+      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H + IV Tazocin 80 mg/kg/dos Q6H (or IV Meropenem 20 mg/kg/dos Q8H)",
       "routeAndDose": "IV.",
       "durationDays": "14 - 21 days",
-      "remarks": "Untuk kes mastoiditis berkomplikasi dengan abses Bezold, kelumpuhan CN VII, atau trombosis sinus sigmoid."
+      "remarks": "Untuk kes mastoiditis berkomplikasi dengan abses Bezold, kelumpuhan CN VII, or trombosis sinus sigmoid."
     },
     "pediatricWeightDoseHint": "IV Ceftriaxone: 75-100 mg/kg OD (maks 2g OD). IV Co-Amoxiclav: 30 mg/kg/dos TDS (maks 1.2g TDS).",
     "maxDailyDose": "Ceftriaxone: maks 2g/hari; Co-Amoxiclav: maks 3.6g/hari",
@@ -5312,7 +5312,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "3. ACUTE STREPTOCOCCAL TONSILLOPHARYNGITIS",
     "topicNumber": 3,
     "bodySystem": "Ear, Nose & Throat (ENT)",
-    "conditionName": "Acute Group A Streptococcal (GAS) Tonsillopharyngitis (Tonsilitis Streptokokus)",
+    "conditionName": "Acute Group A Streptococcal (GAS) Tonsillopharyngitis",
     "setting": "Outpatient (OPD/KK)",
     "primaryPathogens": [
       "Streptococcus pyogenes (Group A Beta-Hemolytic Streptococcus - GAS)"
@@ -5324,10 +5324,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "benzathine penicillin g"
     ],
     "firstLineTherapy": {
-      "regimen": "Oral Penicillin V (Kanak-kanak <27kg: 250mg BD/TDS; ≥27kg: 500mg BD/TDS) x 10 HARI PENUH ATAU Oral Amoxicillin 50 mg/kg OD x 10 HARI PENUH (atau IM Benzathine Penicillin G stat dos tunggal: <27kg = 600,000 U; ≥27kg = 1.2 MU).",
+      "regimen": "Oral Penicillin V (Kanak-kanak <27kg: 250mg BD/TDS; ≥27kg: 500mg BD/TDS) x 10 HARI PENUH or Oral Amoxicillin 50 mg/kg OD x 10 HARI PENUH (or IM Benzathine Penicillin G stat single dose: <27kg = 600,000 U; ≥27kg = 1.2 MU).",
       "routeAndDose": "Oral diambil 1 jam sebelum makan.",
       "durationDays": "10 days (WAJIB 10 HARI PENUH)",
-      "remarks": "TUJUAN UTAMA RAWATAN 10 HARI: Rawatan antibiotik penuh 10 hari adalah KRITIKAL untuk membasmi kuman GAS sepenuhnya dari farinks bagi MENCEGAH DEMAM REUMATIK AKUT (Acute Rheumatic Fever). Menghentikan antibiotik awal meningkatkan risiko komplikasi jantung."
+      "remarks": "TUJUAN UTAMA RAWATAN 10 HARI: Rawatan antibiotik penuh 10 days adalah KRITIKAL untuk membasmi kuman GAS sepenuhnya dari farinks bagi MENCEGAH DEMAM REUMATIK AKUT (Acute Rheumatic Fever). Menghentikan antibiotik awal meningkatkan risiko komplikasi jantung."
     },
     "secondLineDrugs": [
       "cephalexin",
@@ -5336,7 +5336,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "erythromycin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Cephalexin 40 mg/kg/hari dibahagi BD x 10 hari atau Oral Azithromycin 12 mg/kg OD x 5 hari.",
+      "regimen": "Oral Cephalexin 40 mg/kg/hari dibahagi BD x 10 days or Oral Azithromycin 12 mg/kg OD x 5 days.",
       "routeAndDose": "Oral.",
       "durationDays": "5 days (Azithromycin) / 10 days (Cephalexin)",
       "remarks": "Bagi pesakit yang tidak bertolak ansur dengan rasa penisilin oral."
@@ -5348,15 +5348,15 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Azithromycin 12 mg/kg OD (maks 500mg) x 5 hari atau Oral Clarithromycin 15 mg/kg/hari dibahagi BD x 10 hari (atau Oral Clindamycin 20 mg/kg/hari dibahagi TDS x 10 hari)",
+      "regimen": "Oral Azithromycin 12 mg/kg OD (maks 500mg) x 5 days or Oral Clarithromycin 15 mg/kg/hari dibahagi BD x 10 days (or Oral Clindamycin 20 mg/kg/hari dibahagi TDS x 10 days)",
       "routeAndDose": "Oral.",
       "remarks": "Sesuai untuk kanak-kanak alahan penisilin."
     },
-    "pediatricWeightDoseHint": "Oral Amoxicillin: 50 mg/kg OD (maks 1g OD) x 10 hari. Oral Penicillin V: 25-50 mg/kg/hari dibahagi TDS-QID x 10 hari.",
+    "pediatricWeightDoseHint": "Oral Amoxicillin: 50 mg/kg OD (maks 1g OD) x 10 days. Oral Penicillin V: 25-50 mg/kg/hari dibahagi TDS-QID x 10 days.",
     "maxDailyDose": "Amoxicillin: maks 1g/hari; Penicillin V: maks 2g/hari",
     "amsNotes": [
       "Gunakan Skor Centor / McIsaac Modifikasi Pediatrik: Jangan beri antibiotik jika skor rendah (0-1); majoriti sakit tekak pada kanak-kanak <3 tahun adalah berpunca daripada VIRUS (Adenovirus, EBV, Enterovirus).",
-      "Lakukan Ujian Rapid Strep A Test (RADT) atau Swab Tekak jika skor Centor ≥3."
+      "Lakukan Ujian Rapid Strep A Test (RADT) or Swab Tekak jika skor Centor ≥3."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / IDSA Pharyngitis Guidelines / WHO Protocol)"
   },
@@ -5383,7 +5383,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefotaxime"
     ],
     "firstLineTherapy": {
-      "regimen": "Croup Viral (Batuk Menggonggong/Barking Cough + Stridor): Oral/IM Dexamethasone 0.15 - 0.60 mg/kg stat dos tunggal + Nebulisasi Adrenaline (Epinephrine 1:1000) 0.5 mL/kg (maks 5mL) jika stridor semasa rehat (ELAKKAN ANTIBIOTIK). Epiglottitis Bakteria (Drooling, Tripod position, Toksik): KAWAL AIRWAY DI DEWAN BEDAH + IV Ceftriaxone 100 mg/kg OD (or IV Cefotaxime 150 mg/kg/hari dibahagi Q6H).",
+      "regimen": "Croup Viral (Batuk Menggonggong/Barking Cough + Stridor): Oral/IM Dexamethasone 0.15 - 0.60 mg/kg stat single dose + Nebulisasi Adrenaline (Epinephrine 1:1000) 0.5 mL/kg (maks 5mL) jika stridor semasa rehat (ELAKKAN ANTIBIOTIK). Epiglottitis Bakteria (Drooling, Tripod position, Toksik): KAWAL AIRWAY DI DEWAN BEDAH + IV Ceftriaxone 100 mg/kg OD (or IV Cefotaxime 150 mg/kg/hari dibahagi Q6H).",
       "routeAndDose": "Oral/Nebulisasi untuk Croup; Intubasi + IV untuk Epiglottitis.",
       "durationDays": "Croup: Dos tunggal Dexamethasone; Epiglottitis: 7 - 10 days IV",
       "remarks": "CROUP TIDAK MEMERLUKAN ANTIBIOTIK; Dexamethasone adalah rawatan standard emas yang terbukti mengurangkan kemasukan ICU dan keperluan intubasi."
@@ -5415,7 +5415,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. PAEDIATRIC COMMUNITY-ACQUIRED PNEUMONIA (CAP)",
     "topicNumber": 1,
     "bodySystem": "Respiratory",
-    "conditionName": "Paediatric Community-Acquired Pneumonia (CAP Pesakit Luar & Dimasukkan Wad)",
+    "conditionName": "Paediatric Community-Acquired Pneumonia (Outpatient & Inpatient)",
     "setting": "Community-Acquired",
     "primaryPathogens": [
       "Streptococcus pneumoniae (Pneumococcus)",
@@ -5435,7 +5435,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "firstLineTherapy": {
       "regimen": "CAP Pesakit Luar (Bukan Teruk): Oral Amoxicillin Dos Tinggi 80 - 90 mg/kg/hari dibahagi BD x 5 HARI (PILIHAN UTAMA). CAP Dimasukkan ke Wad (Tidak Perlu Oksigen Tinggi): IV Ampicillin 150-200 mg/kg/hari dibahagi Q6H (or IV Benzylpenicillin 200,000 U/kg/hari dibahagi Q6H). Kanak-Kanak Umur >5 Tahun (Disyaki Atipikal): Tambah Oral Azithromycin 10 mg/kg OD (hari 1) kemudian 5 mg/kg OD (hari 2-5).",
       "routeAndDose": "Oral untuk pesakit luar; IV untuk pesakit wad.",
-      "durationDays": "5 days (Kajian SAFER trial membuktikan 5 hari sama berkesan dengan 10 hari)",
+      "durationDays": "5 days (Kajian SAFER trial membuktikan 5 days sama berkesan dengan 10 days)",
       "remarks": "Takrifan Takipnea WHO: Umur 2-11 bulan: RR ≥50/min; Umur 1-5 tahun: RR ≥40/min; Umur >5 tahun: RR ≥30/min."
     },
     "secondLineDrugs": [
@@ -5448,7 +5448,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "CAP Teruk Dimasukkan ke Wad / Kegagalan Barisan Pertama: IV Co-Amoxiclav 30 mg/kg/dos TDS (or IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H / IV Ceftriaxone 75-100 mg/kg OD).",
       "routeAndDose": "IV parenteral.",
       "durationDays": "5 - 7 days",
-      "remarks": "Untuk pneumonia lobar dengan demam tinggi berterusan atau tidak divaksin Pneumococcal."
+      "remarks": "Untuk pneumonia lobar dengan demam tinggi berterusan or tidak divaksin Pneumococcal."
     },
     "allergyDrugs": [
       "azithromycin",
@@ -5457,9 +5457,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "levofloxacin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Azithromycin 10 mg/kg OD (hari 1) kemudian 5 mg/kg OD x 4 hari atau Oral Clarithromycin 15 mg/kg/hari dibahagi BD x 5-7 hari",
+      "regimen": "Oral Azithromycin 10 mg/kg OD (hari 1) kemudian 5 mg/kg OD x 4 days or Oral Clarithromycin 15 mg/kg/hari dibahagi BD x 5-7 days",
       "routeAndDose": "Oral.",
-      "remarks": "Sesuai untuk pesakit alahan penisilin."
+      "remarks": "Suitable for patients with penicillin allergy."
     },
     "stepDownDrugs": [
       "amoxicillin",
@@ -5467,7 +5467,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Amoxicillin 80-90 mg/kg/hari dibahagi BD melengkapkan jumlah 5 hari.",
+      "regimen": "Oral Amoxicillin 80-90 mg/kg/hari dibahagi BD melengkapkan jumlah 5 days.",
       "criteria": "Kanak-kanak afebril >24 jam, kadar pernafasan normal mengikut umur, tiada 'chest indrawing', SpO2 ≥95% pada udara bilik, boleh minum susu/cecair."
     },
     "pediatricWeightDoseHint": "Oral Amoxicillin: 40-45 mg/kg/dos BD (maks 1.5g BD). IV Ampicillin: 35-50 mg/kg/dos Q6H (maks 2g Q6H). Oral Azithromycin: 10 mg/kg OD hari 1 (maks 500mg), kemudian 5 mg/kg OD hari 2-5 (maks 250mg).",
@@ -5502,9 +5502,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ceftriaxone"
     ],
     "firstLineTherapy": {
-      "regimen": "PENYALIRAN TIUB DADA PIGTAIL / CHEST DRAIN BERPANDUKAN USG (atau VATS awal) + IV Cefotaxime 150-200 mg/kg/hari dibahagi Q6H-Q8H (or IV Ceftriaxone 100 mg/kg OD) + IV Cloxacillin 150-200 mg/kg/hari dibahagi Q6H (atau IV Co-Amoxiclav 30 mg/kg/dos TDS).",
+      "regimen": "PENYALIRAN TIUB DADA PIGTAIL / CHEST DRAIN BERPANDUKAN USG (or VATS awal) + IV Cefotaxime 150-200 mg/kg/hari dibahagi Q6H-Q8H (or IV Ceftriaxone 100 mg/kg OD) + IV Cloxacillin 150-200 mg/kg/hari dibahagi Q6H (or IV Co-Amoxiclav 30 mg/kg/dos TDS).",
       "routeAndDose": "Penyaliran rongga pleura + IV parenteral dos tinggi.",
-      "durationDays": "2 - 4 weeks total (sekurang-kurangnya 10-14 hari selepas tiub dada dicabut dan pesakit afebril)",
+      "durationDays": "2 - 4 weeks total (sekurang-kurangnya 10-14 days selepas tiub dada dicabut dan pesakit afebril)",
       "remarks": "Pneumonia Nekrotik & Empiema: USG Toraks adalah modaliti pengimejan pilihan utama untuk menilai ketebalan lokulasi fibrin dan memandu peletakan tiub dada pigtail."
     },
     "secondLineDrugs": [
@@ -5515,7 +5515,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H + IV Clindamycin 40 mg/kg/hari dibahagi Q8H (merencat toksin PVL) + IV Tazocin 80 mg/kg/dos Q6H (atau Fibrinolitik Intrapleural: Urokinase)",
+      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H + IV Clindamycin 40 mg/kg/hari dibahagi Q8H (merencat toksin PVL) + IV Tazocin 80 mg/kg/dos Q6H (or Fibrinolitik Intrapleural: Urokinase)",
       "routeAndDose": "IV + Intrapleural.",
       "durationDays": "3 - 4 weeks",
       "remarks": "Clindamycin amat berguna untuk merencat penghasilan toksin Panton-Valentine Leukocidin (PVL) pada jangkitan Staph nekrotik."
@@ -5536,14 +5536,14 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Augmentin 60-80 mg/kg/hari dibahagi TDS atau Oral Clindamycin 30-40 mg/kg/hari dibahagi TDS melengkapkan jumlah 3-4 minggu.",
+      "regimen": "Oral Augmentin 60-80 mg/kg/hari dibahagi TDS or Oral Clindamycin 30-40 mg/kg/hari dibahagi TDS melengkapkan jumlah 3-4 weeks.",
       "criteria": "Tiub dada telah dicabut (tiada kebocoran udara/cecair <1mL/kg/hari), afebril >48 jam, tiada kesukaran bernafas, CRP menurun mendadak."
     },
     "pediatricWeightDoseHint": "IV Cefotaxime: 50 mg/kg/dos Q6H (maks 2g Q6H). IV Cloxacillin: 35-50 mg/kg/dos Q6H. IV Clindamycin: 10-13 mg/kg/dos Q8H (maks 600mg Q8H).",
     "maxDailyDose": "Cefotaxime: maks 8g/hari; Cloxacillin: maks 8g/hari; Clindamycin: maks 1.8g/hari",
     "amsNotes": [
       "Hantar Cecair Pleura untuk Analisis pH, Glukosa, LDH, Pewarnaan Gram, Kultur C&S, dan Pneumococcal PCR.",
-      "Instilasi Urokinase Intrapleural (40,000 Unit dalam 40mL salin BD x 3 hari) berkesan memecahkan lokulasi fibrin dan mengelakkan keperluan pembedahan torakotomi terbuka."
+      "Instilasi Urokinase Intrapleural (40,000 Unit dalam 40mL salin BD x 3 days) berkesan memecahkan lokulasi fibrin dan mengelakkan keperluan pembedahan torakotomi terbuka."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / BTS Pediatric Pleural Infection Guidelines)"
   },
@@ -5555,7 +5555,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "3. PERTUSSIS (WHOOPING COUGH)",
     "topicNumber": 3,
     "bodySystem": "Respiratory",
-    "conditionName": "Pertussis (Whooping Cough / Batuk Kokol - Bordetella pertussis)",
+    "conditionName": "Pertussis (Whooping Cough - Bordetella pertussis)",
     "setting": "Outpatient (OPD/KK)",
     "primaryPathogens": [
       "Bordetella pertussis",
@@ -5578,15 +5578,15 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Clarithromycin 15 mg/kg/hari dibahagi BD (maks 1g/hari) x 7 HARI atau Oral Bactrim pada dos TMP 8 mg/kg/hari dibahagi BD x 14 HARI (HANYA untuk bayi berumur >2 bulan).",
+      "regimen": "Oral Clarithromycin 15 mg/kg/hari dibahagi BD (maks 1g/hari) x 7 HARI or Oral Bactrim pada dos TMP 8 mg/kg/hari dibahagi BD x 14 HARI (HANYA untuk bayi berumur >2 bulan).",
       "routeAndDose": "Oral.",
       "durationDays": "7 days (Clarithromycin) / 14 days (Bactrim)",
       "remarks": "Co-Trimoxazole dikontraindikasikan pada bayi berumur <2 bulan kerana risiko kernicterus."
     },
-    "pediatricWeightDoseHint": "Oral Azithromycin: <6 bulan = 10 mg/kg OD x 5 hari; ≥6 bulan = 10 mg/kg OD hari 1 kemudian 5 mg/kg OD hari 2-5.",
+    "pediatricWeightDoseHint": "Oral Azithromycin: <6 bulan = 10 mg/kg OD x 5 days; ≥6 bulan = 10 mg/kg OD hari 1 kemudian 5 mg/kg OD hari 2-5.",
     "maxDailyDose": "Azithromycin: maks 500mg/hari (hari 1), maks 250mg/hari (hari 2-5)",
     "amsNotes": [
-      "PROFILAKSIS KONTAK SERUMAH: Semua ahli keluarga serumah dan kontak rapat bayi (tanpa mengira status vaksinasi) WAJIB diberikan profilaksis Azithromycin 5 hari untuk memutuskan rantaian penularan.",
+      "PROFILAKSIS KONTAK SERUMAH: Semua ahli keluarga serumah dan kontak rapat bayi (tanpa mengira status vaksinasi) WAJIB diberikan profilaksis Azithromycin 5 days untuk memutuskan rantaian penularan.",
       "Bayi muda <3 bulan dengan batuk kokol berisiko tinggi mengalami apnea teruk, ensefalopati, dan hipertensi pulmonari malignan (hiperleukositosis >50,000/mcL); rawat di wad HDW/PICU."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / CDC Pertussis Guidelines / AAP Red Book)"
@@ -5612,7 +5612,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cloxacillin"
     ],
     "firstLineTherapy": {
-      "regimen": "Impetigo Terhad / Sedikit Lesi: Salap Mupirocin 2% atau Krim Asid Fusidik 2% sapu TDS x 5-7 hari selepas membersihkan keruping madu dengan air suam. Impetigo Meluas / Berlepuh (Bullous Impetigo) / Disertai Demam: Oral Cephalexin 25-50 mg/kg/hari dibahagi TDS-QID x 7 hari (atau Oral Cloxacillin 50 mg/kg/hari dibahagi Q6H).",
+      "regimen": "Impetigo Terhad / Sedikit Lesi: Salap Mupirocin 2% or Krim Asid Fusidik 2% sapu TDS x 5-7 days selepas membersihkan keruping madu dengan air suam. Impetigo Meluas / Berlepuh (Bullous Impetigo) / Disertai Demam: Oral Cephalexin 25-50 mg/kg/hari dibahagi TDS-QID x 7 days (or Oral Cloxacillin 50 mg/kg/hari dibahagi Q6H).",
       "routeAndDose": "Topikal untuk lesi terhad; Oral untuk lesi meluas.",
       "durationDays": "5 - 7 days",
       "remarks": "Bullous Impetigo disebabkan oleh toksin eksfoliatif S. aureus yang memecahkan desmoglein-1 pada lapisan epidermis kulit."
@@ -5624,10 +5624,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Augmentin 30-45 mg/kg/hari dibahagi BD/TDS x 7 hari atau Oral Bactrim (TMP 8 mg/kg/hari dibahagi BD x 5-7 hari).",
+      "regimen": "Oral Augmentin 30-45 mg/kg/hari dibahagi BD/TDS x 7 days or Oral Bactrim (TMP 8 mg/kg/hari dibahagi BD x 5-7 days).",
       "routeAndDose": "Oral.",
       "durationDays": "5 - 7 days",
-      "remarks": "Untuk kes rintangan atau disyaki CA-MRSA."
+      "remarks": "Untuk kes rintangan or disyaki CA-MRSA."
     },
     "allergyDrugs": [
       "erythromycin",
@@ -5635,9 +5635,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "clindamycin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Azithromycin 10 mg/kg OD (hari 1) kemudian 5 mg/kg OD (hari 2-5) atau Oral Clindamycin 20 mg/kg/hari dibahagi TDS x 7 hari",
+      "regimen": "Oral Azithromycin 10 mg/kg OD (hari 1) kemudian 5 mg/kg OD (hari 2-5) or Oral Clindamycin 20 mg/kg/hari dibahagi TDS x 7 days",
       "routeAndDose": "Oral.",
-      "remarks": "Sesuai untuk pesakit alahan penisilin."
+      "remarks": "Suitable for patients with penicillin allergy."
     },
     "pediatricWeightDoseHint": "Oral Cephalexin: 12.5-25 mg/kg/dos TDS (maks 500mg TDS). Oral Cloxacillin: 12.5 mg/kg/dos Q6H (1 jam sebelum makan).",
     "maxDailyDose": "Cephalexin: maks 2g/hari; Cloxacillin: maks 2g/hari",
@@ -5670,7 +5670,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Cloxacillin 150 - 200 mg/kg/hari dibahagi Q6H (or IV Cefazolin 100 mg/kg/hari dibahagi Q8H) + IV Clindamycin 30-40 mg/kg/hari dibahagi Q8H (UNTUK MERENCAT PENGHASILAN TOKSIN EKSFOLIATIF) + PENJAGAAN KULIT HALUS & RESUSITASI CECAIR IV.",
       "routeAndDose": "IV parenteral dos tinggi.",
       "durationDays": "7 - 10 days total (tukar ke oral Cloxacillin/Cephalexin selepas kulit mula kering semula)",
-      "remarks": "Tanda Nikolsky Positif (lapisan kulit atas mengelupas dengan geseran lembut menyerupai kulit melecur air panas); punca fokus bakteria biasanya di nasofarinks, konjunktiva, atau umbilikus (bukan pada lepuhan kulit itu sendiri)."
+      "remarks": "Tanda Nikolsky Positif (lapisan kulit atas mengelupas dengan geseran lembut menyerupai kulit melecur air panas); punca fokus bakteria biasanya di nasofarinks, konjunktiva, or umbilikus (bukan pada lepuhan kulit itu sendiri)."
     },
     "secondLineDrugs": [
       "vancomycin",
@@ -5686,7 +5686,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "maxDailyDose": "Cloxacillin: maks 8g/hari; Clindamycin: maks 1.8g/hari",
     "amsNotes": [
       "PENJAGAAN KULIT KRITIKAL: Elakkan memakai pita pelekat (tape) pada kulit, rawat pesakit di atas cadar steril licin, sapu pelembap parafin lembut (liquid paraffin/white soft paraffin), dan kekalkan suhu bilik hangat.",
-      "Cecair lepuhan bullae adalah STERIL (toksin bawaan darah); kultur perlu diambil dari mata, hidung, tekak, atau umbilikus."
+      "Cecair lepuhan bullae adalah STERIL (toksin bawaan darah); kultur perlu diambil dari mata, hidung, tekak, or umbilikus."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / British Association of Dermatologists SSSS Guidelines)"
   },
@@ -5725,16 +5725,16 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "vancomycin"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Clindamycin 30-40 mg/kg/hari dibahagi Q8H atau IV Ceftriaxone 50-75 mg/kg OD (or IV Vancomycin 60 mg/kg/hari jika toksik).",
+      "regimen": "IV Clindamycin 30-40 mg/kg/hari dibahagi Q8H or IV Ceftriaxone 50-75 mg/kg OD (or IV Vancomycin 60 mg/kg/hari jika toksik).",
       "routeAndDose": "IV.",
       "durationDays": "5 - 7 days",
-      "remarks": "Bagi kes selulitis muka (facial cellulitis) atau disyaki MRSA."
+      "remarks": "Bagi kes selulitis muka (facial cellulitis) or disyaki MRSA."
     },
     "pediatricWeightDoseHint": "IV Cloxacillin: 25-37.5 mg/kg/dos Q6H. Oral Cephalexin: 15-25 mg/kg/dos TDS. IV Cefazolin: 25 mg/kg/dos Q8H.",
     "maxDailyDose": "Cloxacillin: maks 6g/hari; Cephalexin: maks 2g/hari",
     "amsNotes": [
       "Tinggikan anggota yang bengkak dan pastikan pesakit mendapat rehat yang mencukupi.",
-      "Periksa untuk mengesan gigitan serangga atau calar luka terdahulu sebagai pintu masuk kuman."
+      "Periksa untuk mengesan gigitan serangga or calar luka terdahulu sebagai pintu masuk kuman."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / IDSA SSTI Guidelines)"
   },
@@ -5759,17 +5759,17 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "doxycycline"
     ],
     "firstLineTherapy": {
-      "regimen": "Leptospirosis Ringan (Pesakit Luar): Oral Amoxicillin 50 mg/kg/hari dibahagi TDS x 7 hari (atau Oral Azithromycin 10 mg/kg OD x 3-5 hari; Oral Doxycycline 4 mg/kg/hari dibahagi BD x 7 hari bagi umur ≥8 tahun). Leptospirosis Teruk (Dimasukkan ke Wad): IV Benzylpenicillin 200,000 - 400,000 U/kg/hari dibahagi Q6H (or IV Ceftriaxone 80-100 mg/kg OD) x 7 HARI.",
+      "regimen": "Leptospirosis Ringan (Pesakit Luar): Oral Amoxicillin 50 mg/kg/hari dibahagi TDS x 7 days (or Oral Azithromycin 10 mg/kg OD x 3-5 days; Oral Doxycycline 4 mg/kg/hari dibahagi BD x 7 days bagi umur ≥8 tahun). Leptospirosis Teruk (Dimasukkan ke Wad): IV Benzylpenicillin 200,000 - 400,000 U/kg/hari dibahagi Q6H (or IV Ceftriaxone 80-100 mg/kg OD) x 7 HARI.",
       "routeAndDose": "Oral untuk ringan; IV parenteral untuk teruk.",
       "durationDays": "7 days",
-      "remarks": "Mulakan rawatan secepat mungkin sekiranya terdapat riwayat bermain di air sungai/berkelah atau pendedahan banjir."
+      "remarks": "Mulakan rawatan secepat mungkin sekiranya terdapat riwayat bermain di air sungai/berkelah or pendedahan banjir."
     },
     "secondLineDrugs": [
       "ceftriaxone",
       "cefotaxime"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Ceftriaxone 80-100 mg/kg OD atau IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H x 7 hari.",
+      "regimen": "IV Ceftriaxone 80-100 mg/kg OD or IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H x 7 days.",
       "routeAndDose": "IV.",
       "durationDays": "7 days",
       "remarks": "Pilihan yang sangat mudah dan berkesan tinggi."
@@ -5805,7 +5805,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "firstLineTherapy": {
       "regimen": "FASA INTENSIF AKUT (Minimum 14 - 21 Hari): IV Ceftazidime 50 mg/kg/dos Q8H infusi 3 jam (or IV Meropenem 25-40 mg/kg/dos Q8H jika septik syok/ICU). FASA ERADIKASI ORAL (3 hingga 6 BULAN): Oral Co-Trimoxazole (Bactrim) pada dos TMP 8 - 12 mg/kg/hari dibahagi BD + Oral Asid Folik 2.5-5 mg OD.",
       "routeAndDose": "IV infusi fasa akut diikuti Terapi Oral Berpanjangan.",
-      "durationDays": "Fasa Intensif: Min 14 hari; Fasa Pembasmian: 3 hingga 6 BULAN",
+      "durationDays": "Fasa Intensif: Min 14 days; Fasa Pembasmian: 3 hingga 6 BULAN",
       "remarks": "Pada kanak-kanak di Malaysia dan Asia Tenggara, Melioidosis kerap bermanifestasi sebagai Parotitis Bernanah Akut (Suppurative Parotitis); penyaliran nanah parotid dan rawatan penuh adalah wajib."
     },
     "secondLineDrugs": [
@@ -5835,7 +5835,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "3. ENTERIC / TYPHOID FEVER IN CHILDREN",
     "topicNumber": 3,
     "bodySystem": "Tropical Infections",
-    "conditionName": "Paediatric Enteric / Typhoid Fever (Demam Kepialu Kanak-Kanak)",
+    "conditionName": "Paediatric Enteric / Typhoid Fever",
     "setting": "Community-Acquired",
     "primaryPathogens": [
       "Salmonella enterica serovar Typhi & Paratyphi"
@@ -5846,7 +5846,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefotaxime"
     ],
     "firstLineTherapy": {
-      "regimen": "Demam Tifoid Ringan (Pesakit Luar): Oral Azithromycin 10 - 20 mg/kg OD x 7 hari. Demam Tifoid Sederhana/Teruk (Dimasukkan Wad): IV Ceftriaxone 75 - 100 mg/kg OD x 7-10 hari (or IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H).",
+      "regimen": "Demam Tifoid Ringan (Pesakit Luar): Oral Azithromycin 10 - 20 mg/kg OD x 7 days. Demam Tifoid Sederhana/Teruk (Dimasukkan Wad): IV Ceftriaxone 75 - 100 mg/kg OD x 7-10 days (or IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H).",
       "routeAndDose": "Oral / IV.",
       "durationDays": "7 days (Azithromycin) / 7 - 10 days (Ceftriaxone)",
       "remarks": "Azithromycin menghasilkan kadar kesembuhan klinikal yang sangat baik dan mengurangkan kadar pembawa kronik (chronic carriage rate) pada kanak-kanak."
@@ -5856,12 +5856,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral/IV Ciprofloxacin 15 mg/kg/dos BD x 7-10 hari atau IV Meropenem 20 mg/kg/dos Q8H (untuk strain Salmonella XDR).",
+      "regimen": "Oral/IV Ciprofloxacin 15 mg/kg/dos BD x 7-10 days or IV Meropenem 20 mg/kg/dos Q8H (untuk strain Salmonella XDR).",
       "routeAndDose": "Oral / IV.",
       "durationDays": "7 - 10 days",
       "remarks": "Bagi isolat resistan berbilang ubat."
     },
-    "pediatricWeightDoseHint": "Oral Azithromycin: 10-20 mg/kg OD (maks 1g OD) x 7 hari. IV Ceftriaxone: 75-100 mg/kg OD (maks 2g OD).",
+    "pediatricWeightDoseHint": "Oral Azithromycin: 10-20 mg/kg OD (maks 1g OD) x 7 days. IV Ceftriaxone: 75-100 mg/kg OD (maks 2g OD).",
     "maxDailyDose": "Azithromycin: maks 1g/hari; Ceftriaxone: maks 2g/hari",
     "amsNotes": [
       "Notifikasi kes kepialu kepada Pejabat Kesihatan Daerah dalam masa 24 jam adalah wajib di sisi undang-undang.",
@@ -5890,7 +5890,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "primaquine"
     ],
     "firstLineTherapy": {
-      "regimen": "Malaria Tidak Kompleks: Oral Artemether-Lumefantrine (Riamet 20/120mg) mengikut jalur berat badan pada jam 0, 8, 24, 36, 48, 60 (Jumlah 6 dos selama 3 hari) DIBERIKAN BERSAMA SUSU: (Berat 5-14kg: 1 tab/dos; 15-24kg: 2 tabs/dos; 25-34kg: 3 tabs/dos; ≥35kg: 4 tabs/dos) + Oral Primaquine (0.25 mg/kg stat untuk P. falciparum; ATAU 0.5 mg/kg OD x 14 hari untuk P. vivax/ovale jika G6PD normal). Malaria Pediatrik Teruk: IV Artesunate (Berat <20kg: 3.0 mg/kg/dos; Berat ≥20kg: 2.4 mg/kg/dos) pada jam 0, 12, 24 kemudian OD sehingga toleran oral.",
+      "regimen": "Malaria Tidak Kompleks: Oral Artemether-Lumefantrine (Riamet 20/120mg) mengikut jalur berat badan pada jam 0, 8, 24, 36, 48, 60 (Jumlah 6 dos selama 3 days) DIBERIKAN BERSAMA SUSU: (Berat 5-14kg: 1 tab/dos; 15-24kg: 2 tabs/dos; 25-34kg: 3 tabs/dos; ≥35kg: 4 tabs/dos) + Oral Primaquine (0.25 mg/kg stat untuk P. falciparum; or 0.5 mg/kg OD x 14 days untuk P. vivax/ovale jika G6PD normal). Malaria Pediatrik Teruk: IV Artesunate (Berat <20kg: 3.0 mg/kg/dos; Berat ≥20kg: 2.4 mg/kg/dos) pada jam 0, 12, 24 kemudian OD sehingga toleran oral.",
       "routeAndDose": "Oral bersama susu / IV bolus perlahan.",
       "durationDays": "3 days (Riamet) / Minimum 24 jam (IV Artesunate) / 14 days (Primaquine vivax)",
       "remarks": "DOS TINGGI IV ARTESUNATE PADA KANAK-KANAK <20kg (3.0 mg/kg/dos) adalah disyorkan oleh WHO kerana isipadu pengedaran (volume of distribution) ubat yang lebih besar pada kanak-kanak kecil."
@@ -5900,7 +5900,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "quinine"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Dihydroartemisinin-Piperaquine (DHA-PPQ) x 3 hari atau IV Quinine Dihydrochloride loading 20 mg/kg infusi 4 jam kemudian 10 mg/kg Q8H + Oral Clindamycin 10 mg/kg BD x 7 hari.",
+      "regimen": "Oral Dihydroartemisinin-Piperaquine (DHA-PPQ) x 3 days or IV Quinine Dihydrochloride loading 20 mg/kg infusi 4 jam kemudian 10 mg/kg Q8H + Oral Clindamycin 10 mg/kg BD x 7 days.",
       "routeAndDose": "Oral / IV infusi.",
       "durationDays": "3 - 7 days",
       "remarks": "Quinine memerlukan pemantauan ketat paras glukosa darah (risiko hipoglisemia teruk pada kanak-kanak)."
@@ -5909,7 +5909,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "maxDailyDose": "Riamet: mengikut jalur berat badan; Artesunate: dos berat badan pediatrik",
     "amsNotes": [
       "Ujian Filem Darah Tebal & Nipis (BFMP) wajib diulang setiap 12-24 jam sehingga paras parasit darah sifar (negative clearance).",
-      "Periksa status G6PD sebelum memberikan Primaquine 14 hari."
+      "Periksa status G6PD sebelum memberikan Primaquine 14 days."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / WHO Malaria Guidelines 2023)"
   },
@@ -5921,7 +5921,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "1. PAEDIATRIC LOWER UTI / CYSTITIS",
     "topicNumber": 1,
     "bodySystem": "Urinary",
-    "conditionName": "Paediatric Lower Urinary Tract Infection (Acute Cystitis / Sistitis Pediatrik)",
+    "conditionName": "Paediatric Lower Urinary Tract Infection (Acute Cystitis)",
     "setting": "Outpatient (OPD/KK)",
     "primaryPathogens": [
       "Escherichia coli (UPEC - 80-85%)",
@@ -5937,10 +5937,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "nitrofurantoin"
     ],
     "firstLineTherapy": {
-      "regimen": "Oral Cephalexin 50 mg/kg/hari dibahagi TDS x 5-7 hari (or Oral Augmentin 30-45 mg/kg/hari dibahagi BD/TDS x 5-7 hari; Oral Nitrofurantoin 3-5 mg/kg/hari dibahagi QID x 5-7 hari HANYA untuk kanak-kanak umur >3 bulan).",
+      "regimen": "Oral Cephalexin 50 mg/kg/hari dibahagi TDS x 5-7 days (or Oral Augmentin 30-45 mg/kg/hari dibahagi BD/TDS x 5-7 days; Oral Nitrofurantoin 3-5 mg/kg/hari dibahagi QID x 5-7 days HANYA untuk kanak-kanak umur >3 bulan).",
       "routeAndDose": "Oral.",
       "durationDays": "5 - 7 days",
-      "remarks": "Kultur Urin (Urine C&S) melalui kaedah pancutan bersih (Clean-Catch) atau kateterisasi pundi kencing adalah WAJIB diambil sebelum antibiotik pada kanak-kanak."
+      "remarks": "Kultur Urin (Urine C&S) melalui kaedah pancutan bersih (Clean-Catch) or kateterisasi pundi kencing adalah WAJIB diambil sebelum antibiotik pada kanak-kanak."
     },
     "secondLineDrugs": [
       "cefuroxime",
@@ -5948,7 +5948,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Cefuroxime Axetil 20-30 mg/kg/hari dibahagi BD x 5-7 hari atau Oral Bactrim (TMP 6-8 mg/kg/hari dibahagi BD x 5 hari jika umur >2 bulan).",
+      "regimen": "Oral Cefuroxime Axetil 20-30 mg/kg/hari dibahagi BD x 5-7 days or Oral Bactrim (TMP 6-8 mg/kg/hari dibahagi BD x 5 days jika umur >2 bulan).",
       "routeAndDose": "Oral.",
       "durationDays": "5 - 7 days",
       "remarks": "Alternatif mengikut laporan sensitiviti mikrobiologi."
@@ -5960,9 +5960,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "ciprofloxacin"
     ],
     "penicillinAllergyOption": {
-      "regimen": "Oral Bactrim (TMP 6-8 mg/kg/hari BD) atau Oral Nitrofurantoin 3-5 mg/kg/hari dibahagi QID (jika eGFR >30 mL/min dan tiada pielonefritis)",
+      "regimen": "Oral Bactrim (TMP 6-8 mg/kg/hari BD) or Oral Nitrofurantoin 3-5 mg/kg/hari dibahagi QID (jika eGFR >30 mL/min dan tiada pielonefritis)",
       "routeAndDose": "Oral.",
-      "remarks": "Sesuai untuk pesakit alahan penisilin."
+      "remarks": "Suitable for patients with penicillin allergy."
     },
     "pediatricWeightDoseHint": "Oral Cephalexin: 15-20 mg/kg/dos TDS (maks 500mg TDS). Oral Augmentin: 15-20 mg/kg/dos BD/TDS (maks 625mg BD).",
     "maxDailyDose": "Cephalexin: maks 2g/hari; Augmentin: maks 1.5g/hari",
@@ -5980,7 +5980,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     "topic": "2. PAEDIATRIC FEBRILE PYELONEPHRITIS",
     "topicNumber": 2,
     "bodySystem": "Urinary",
-    "conditionName": "Paediatric Acute Febrile Pyelonephritis (Pielonefritis Berdemam Kanak-Kanak)",
+    "conditionName": "Paediatric Acute Febrile Pyelonephritis",
     "setting": "Hospital-Acquired (HAP/VAP)",
     "primaryPathogens": [
       "Escherichia coli (termasuk strain ESBL)",
@@ -5996,9 +5996,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "firstLineTherapy": {
-      "regimen": "IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H (or IV Ceftriaxone 75 mg/kg OD / IV Gentamicin 5-7.5 mg/kg OD) selama 2-4 hari pertama sehingga afebril, diikuti pertukaran kepada Oral Cephalexin 50-100 mg/kg/hari atau Oral Augmentin 45-60 mg/kg/hari melengkapkan 7 HINGGA 10 HARI JUMLAH.",
+      "regimen": "IV Cefotaxime 150 mg/kg/hari dibahagi Q6H-Q8H (or IV Ceftriaxone 75 mg/kg OD / IV Gentamicin 5-7.5 mg/kg OD) selama 2-4 days pertama sehingga afebril, diikuti pertukaran kepada Oral Cephalexin 50-100 mg/kg/hari or Oral Augmentin 45-60 mg/kg/hari melengkapkan 7 HINGGA 10 HARI JUMLAH.",
       "routeAndDose": "IV bertukar cepat ke Oral.",
-      "durationDays": "7 - 10 days total (Kajian klinikal membuktikan 7-10 hari sama berkesan dengan 14 hari dan mengurangkan parut ginjal)",
+      "durationDays": "7 - 10 days total (Kajian klinikal membuktikan 7-10 days sama berkesan dengan 14 days dan mengurangkan parut ginjal)",
       "remarks": "Semua bayi berumur <3 bulan dengan demam dan UTI WAJIB dimasukkan ke wad untuk rawatan antibiotik parenteral."
     },
     "secondLineDrugs": [
@@ -6008,10 +6008,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Tazocin 80-100 mg/kg/dos Q8H atau IV Amikacin 15 mg/kg OD (or IV Meropenem 20 mg/kg/dos Q8H untuk kuman ESBL).",
+      "regimen": "IV Tazocin 80-100 mg/kg/dos Q8H or IV Amikacin 15 mg/kg OD (or IV Meropenem 20 mg/kg/dos Q8H untuk kuman ESBL).",
       "routeAndDose": "IV.",
       "durationDays": "7 - 10 days",
-      "remarks": "Untuk kes sepsis urologi atau jangkitan berulang dengan anatomi saluran kencing abnormal."
+      "remarks": "Untuk kes sepsis urologi or jangkitan berulang dengan anatomi saluran kencing abnormal."
     },
     "stepDownDrugs": [
       "cephalexin",
@@ -6020,13 +6020,13 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefuroxime"
     ],
     "oralStepDownOption": {
-      "regimen": "Oral Cephalexin 50-75 mg/kg/hari dibahagi TDS atau Oral Augmentin 45 mg/kg/hari dibahagi TDS.",
+      "regimen": "Oral Cephalexin 50-75 mg/kg/hari dibahagi TDS or Oral Augmentin 45 mg/kg/hari dibahagi TDS.",
       "criteria": "Kanak-kanak afebril >24-48 jam, tiada muntah, toleransi cecair oral baik, keputusan kultur urin menunjukkan sensitiviti."
     },
     "pediatricWeightDoseHint": "IV Cefotaxime: 50 mg/kg/dos Q8H (maks 2g Q8H). IV Ceftriaxone: 50-75 mg/kg OD (maks 2g OD). IV Gentamicin: 5-7.5 mg/kg OD (maks 300mg OD).",
     "maxDailyDose": "Cefotaxime: maks 6g/hari; Ceftriaxone: maks 2g/hari",
     "amsNotes": [
-      "IMBASAN ULTRASOUND GINJAL & PUNDI KENCING (USG KUB) WAJIB DIBUAT dalam masa 24-48 jam pada kes teruk atau sebelum keluar wad untuk mengesan hidronefrosis atau abses renal.",
+      "IMBASAN ULTRASOUND GINJAL & PUNDI KENCING (USG KUB) WAJIB DIBUAT dalam masa 24-48 jam pada kes teruk or sebelum keluar wad untuk mengesan hidronefrosis or abses renal.",
       "Pertimbangkan Micturating Cystourethrogram (MCUG) dan DMSA Renal Scan bagi mengesan Vesicoureteral Reflux (VUR) dan parut parenkima ginjal."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / NICE & AAP Paediatric UTI Guidelines)"
@@ -6053,10 +6053,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "bactrim"
     ],
     "firstLineTherapy": {
-      "regimen": "Profilaksis Dos Rendah Waktu Malam (Nightly Low-Dose Chemoprophylaxis): Oral Nitrofurantoin 1 - 2 mg/kg ON (waktu tidur) bagi umur >3 bulan ATAU Oral Cephalexin 10 - 15 mg/kg ON waktu tidur (pilihan selamat untuk bayi umur <3 bulan) ATAU Oral Bactrim (TMP 2 mg/kg ON waktu tidur bagi umur >2 bulan).",
-      "routeAndDose": "Oral dos tunggal setiap malam sebelum tidur.",
-      "durationDays": "Berdasarkan penilaian gred VUR (biasanya 6 hingga 12 bulan sehingga resolusi VUR atau pembedahan)",
-      "remarks": "Diindikasikan untuk: VUR Gred III-V, VUR dengan parut renal pada DMSA scan, atau UTI berulang yang kerap (>3 episod setahun)."
+      "regimen": "Profilaksis Dos Rendah Waktu Malam (Nightly Low-Dose Chemoprophylaxis): Oral Nitrofurantoin 1 - 2 mg/kg ON (waktu tidur) bagi umur >3 bulan or Oral Cephalexin 10 - 15 mg/kg ON waktu tidur (pilihan selamat untuk bayi umur <3 bulan) or Oral Bactrim (TMP 2 mg/kg ON waktu tidur bagi umur >2 bulan).",
+      "routeAndDose": "Oral single dose setiap malam sebelum tidur.",
+      "durationDays": "Berdasarkan penilaian gred VUR (biasanya 6 hingga 12 bulan sehingga resolusi VUR or pembedahan)",
+      "remarks": "Diindikasikan untuk: VUR Gred III-V, VUR dengan parut renal pada DMSA scan, or UTI berulang yang kerap (>3 episod setahun)."
     },
     "secondLineDrugs": [
       "cephalexin",
@@ -6064,12 +6064,12 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "augmentin"
     ],
     "secondLineTherapy": {
-      "regimen": "Oral Cephalexin 10-15 mg/kg ON atau Oral Augmentin 10-15 mg/kg ON waktu tidur",
+      "regimen": "Oral Cephalexin 10-15 mg/kg ON or Oral Augmentin 10-15 mg/kg ON waktu tidur",
       "routeAndDose": "Oral dos malam.",
       "durationDays": "6 - 12 months",
       "remarks": "Pilihan profilaksis sekunder mengikut keputusan kultur urin terdahulu."
     },
-    "pediatricWeightDoseHint": "Oral Nitrofurantoin (Profilaksis): 1-2 mg/kg dos tunggal malam ON. Oral Cephalexin (Profilaksis): 10-15 mg/kg dos tunggal malam ON. Oral Bactrim (Profilaksis): TMP 2 mg/kg ON.",
+    "pediatricWeightDoseHint": "Oral Nitrofurantoin (Profilaksis): 1-2 mg/kg single dose malam ON. Oral Cephalexin (Profilaksis): 10-15 mg/kg single dose malam ON. Oral Bactrim (Profilaksis): TMP 2 mg/kg ON.",
     "maxDailyDose": "Nitrofurantoin: maks 100mg ON; Cephalexin: maks 500mg ON",
     "amsNotes": [
       "Nilai semula keperluan profilaksis setiap 6-12 bulan; VUR Gred I-II yang tidak bergejala sering kali tidak memerlukan profilaksis berpanjangan.",
@@ -6103,9 +6103,9 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
     ],
     "firstLineTherapy": {
       "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H (trough 15-20 mcg/mL) + IV Cefepime 50 mg/kg/dos Q8H (or IV Tazocin 80-100 mg/kg/dos Q6H-Q8H / IV Cefotaxime 150 mg/kg/hari).",
-      "routeAndDose": "IV infusi berterusan/berkala dengan pemantauan TDM.",
-      "durationDays": "7 - 14 days (panjangkan ke 4-6 minggu jika ada bakteremia S. aureus berterusan / endokarditis)",
-      "remarks": "CABUT TALIAN SEGERA (CATHETER REMOVAL) sekiranya organisma adalah S. aureus, Candida spp., Pseudomonas, atau terdapat syok septik / infeksi terowong bernanah."
+      "routeAndDose": "IV continuous infusion/berkala dengan pemantauan TDM.",
+      "durationDays": "7 - 14 days (panjangkan ke 4-6 weeks jika ada bakteremia S. aureus berterusan / endokarditis)",
+      "remarks": "CABUT TALIAN SEGERA (CATHETER REMOVAL) sekiranya organisma adalah S. aureus, Candida spp., Pseudomonas, or terdapat syok septik / infeksi terowong bernanah."
     },
     "secondLineDrugs": [
       "meropenem",
@@ -6117,7 +6117,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "regimen": "IV Meropenem 20-40 mg/kg/dos Q8H + IV Vancomycin 15 mg/kg/dos Q8H +/- IV Caspofungin 70 mg/m2 loading kemudian 50 mg/m2 OD",
       "routeAndDose": "IV ICU.",
       "durationDays": "10 - 14 days",
-      "remarks": "Untuk sepsis berat di PICU dengan risiko kuman MDR atau jangkitan kulat talian."
+      "remarks": "Untuk sepsis berat di PICU dengan risiko kuman MDR or jangkitan kulat talian."
     },
     "allergyDrugs": [
       "ciprofloxacin",
@@ -6162,10 +6162,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefotaxime"
     ],
     "firstLineTherapy": {
-      "regimen": "Omfalitis / Jangkitan Talian Umbilikal Sederhana: IV Cloxacillin 100-200 mg/kg/hari dibahagi Q6H-Q8H + IV Gentamicin 4-5 mg/kg OD (atau IV Cefotaxime 100-150 mg/kg/hari). Sepsis Talian Kateter UVC/UAC di NICU: IV Vancomycin 15 mg/kg/dos Q8H-Q12H + IV Amikacin 15 mg/kg OD + CABUT KATETER UMBILIKAL DENGAN SEGERA.",
-      "routeAndDose": "IV infusi perlahan dengan pemantauan TDM berkala.",
+      "regimen": "Omfalitis / Jangkitan Talian Umbilikal Sederhana: IV Cloxacillin 100-200 mg/kg/hari dibahagi Q6H-Q8H + IV Gentamicin 4-5 mg/kg OD (or IV Cefotaxime 100-150 mg/kg/hari). Sepsis Talian Kateter UVC/UAC di NICU: IV Vancomycin 15 mg/kg/dos Q8H-Q12H + IV Amikacin 15 mg/kg OD + CABUT KATETER UMBILIKAL DENGAN SEGERA.",
+      "routeAndDose": "IV slow infusion dengan pemantauan TDM berkala.",
       "durationDays": "7 - 14 days",
-      "remarks": "Kateter UVC/UAC yang dijangkiti mesti dicabut serta-merta untuk mengelakkan pembentukan trombus terinfeksi pada vena kava inferior atau arteri aorta."
+      "remarks": "Kateter UVC/UAC yang dijangkiti mesti dicabut serta-merta untuk mengelakkan pembentukan trombus terinfeksi pada vena kava inferior or arteri aorta."
     },
     "secondLineDrugs": [
       "meropenem",
@@ -6178,10 +6178,10 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "durationDays": "10 - 14 days",
       "remarks": "Untuk syok septik refraktori di NICU."
     },
-    "pediatricWeightDoseHint": "IV Cloxacillin: 25-50 mg/kg/dos Q8H (<7 hari) atau Q6H (≥7 hari). IV Vancomycin: 15 mg/kg/dos Q12H (<29 minggu PMA) atau Q8H (≥30 minggu PMA).",
+    "pediatricWeightDoseHint": "IV Cloxacillin: 25-50 mg/kg/dos Q8H (<7 days) or Q6H (≥7 days). IV Vancomycin: 15 mg/kg/dos Q12H (<29 weeks PMA) or Q8H (≥30 weeks PMA).",
     "maxDailyDose": "Cloxacillin: maks 200 mg/kg/hari; Vancomycin: disasarkan kepada paras palung TDM",
     "amsNotes": [
-      "Lakukan Ultrasound Doppler Abdomen untuk menolak Trombosis Vena Portal (Portal Vein Thrombosis) atau abses hepar sekunder akibat UVC.",
+      "Lakukan Ultrasound Doppler Abdomen untuk menolak Trombosis Vena Portal (Portal Vein Thrombosis) or abses hepar sekunder akibat UVC.",
       "Kultur hujung kateter umbilikal wajib dihantar sebaik sahaja dicabut."
     ],
     "evidenceLevel": "Grade A (NAG 2024 / AAP Neonatal Catheter Infection Consensus)"
@@ -6210,7 +6210,7 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "cefotaxime"
     ],
     "firstLineTherapy": {
-      "regimen": "Tromboflebitis Bernanah Kanula Periferi: CABUT KANULA SERTA-MERTA + IV Cloxacillin 150-200 mg/kg/hari dibahagi Q6H (or IV Cefazolin 100 mg/kg/hari) + IV Gentamicin 5-7.5 mg/kg OD. Sindrom Lemierre (Trombosis Vena Jugular Dalaman Pasca-Tonsilitis): IV Ceftriaxone 100 mg/kg OD (or IV Cefotaxime 150 mg/kg/hari) + IV Metronidazole 30 mg/kg/hari dibahagi Q8H (atau IV Co-Amoxiclav 30 mg/kg/dos TDS) x 3 HINGGA 6 MINGGU.",
+      "regimen": "Tromboflebitis Bernanah Kanula Periferi: CABUT KANULA SERTA-MERTA + IV Cloxacillin 150-200 mg/kg/hari dibahagi Q6H (or IV Cefazolin 100 mg/kg/hari) + IV Gentamicin 5-7.5 mg/kg OD. Sindrom Lemierre (Trombosis Vena Jugular Dalaman Pasca-Tonsilitis): IV Ceftriaxone 100 mg/kg OD (or IV Cefotaxime 150 mg/kg/hari) + IV Metronidazole 30 mg/kg/hari dibahagi Q8H (or IV Co-Amoxiclav 30 mg/kg/dos TDS) x 3 HINGGA 6 MINGGU.",
       "routeAndDose": "IV parenteral dos tinggi berpanjangan.",
       "durationDays": "2 - 3 weeks (Kanula periferi) / 3 - 6 weeks (Sindrom Lemierre / Vena sentral)",
       "remarks": "Pencabutan kanula/talian yang bernanah dan penilaian antikoagulasi (Heparin) bersama Pakar Hematologi Pediatrik adalah komponen rawatan penting."
@@ -6222,15 +6222,15 @@ export const NAG_GUIDELINES: NAGInfectionGuideline[] = [
       "meropenem"
     ],
     "secondLineTherapy": {
-      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H + IV Tazocin 80 mg/kg/dos Q6H (atau IV Meropenem 20 mg/kg/dos Q8H)",
+      "regimen": "IV Vancomycin 60 mg/kg/hari dibahagi Q6H + IV Tazocin 80 mg/kg/dos Q6H (or IV Meropenem 20 mg/kg/dos Q8H)",
       "routeAndDose": "IV.",
       "durationDays": "3 - 6 weeks",
-      "remarks": "Untuk kes MRSA terbukti atau sepsis pembentukan abses paru-paru septik emboli."
+      "remarks": "Untuk kes MRSA terbukti or sepsis pembentukan abses paru-paru septik emboli."
     },
     "pediatricWeightDoseHint": "IV Cloxacillin: 35-50 mg/kg/dos Q6H (maks 2g Q6H). IV Ceftriaxone: 100 mg/kg OD (maks 2g OD). IV Metronidazole: 10 mg/kg/dos Q8H (maks 500mg Q8H).",
     "maxDailyDose": "Cloxacillin: maks 8g/hari; Ceftriaxone: maks 2g/hari; Metronidazole: maks 1.5g/hari",
     "amsNotes": [
-      "Lakukan Ultrasound Doppler Vena (Venous Doppler USG) atau CT Angiografi Leher/Dada untuk memetakan kepanjangan trombus dan mengesan emboli septik pulmonari.",
+      "Lakukan Ultrasound Doppler Vena (Venous Doppler USG) or CT Angiografi Leher/Dada untuk memetakan kepanjangan trombus dan mengesan emboli septik pulmonari.",
       "Eksisi venotomi pembedahan (vein excision) dipertimbangkan jika nanah mengalir berterusan dari tapak venipuntur periferi walaupun dengan antibiotik."
     ],
     "evidenceLevel": "Grade B (NAG 2024 / ESPID Vascular Infection Guidelines)"

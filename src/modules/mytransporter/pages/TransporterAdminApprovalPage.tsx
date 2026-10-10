@@ -92,8 +92,8 @@ const TransporterAdminApprovalPage: React.FC = () => {
       if (res.error) throw new Error(res.error)
       
       toast.success(
-        isEn ? 'Requisition Approved' : 'Permohonan Diluluskan', 
-        isEn ? 'Transport request successfully authorized.' : 'Permohonan pengangkutan berjaya diluluskan.'
+        isEn ? 'Requisition Approved' : 'Request Approved', 
+        isEn ? 'Transport request successfully authorized.' : 'Transport requisition successfully approved.'
       )
       fetchData()
       setIsDetailOpen(false)
@@ -114,8 +114,8 @@ const TransporterAdminApprovalPage: React.FC = () => {
   const handleRejectSubmit = async () => {
     if (!rejectingReqId || !rejectReason) {
       toast.error(
-        isEn ? 'Reason Required' : 'Sebab Diperlukan', 
-        isEn ? 'Please state the reason for requisition rejection.' : 'Sila nyatakan sebab penolakan permohonan.'
+        isEn ? 'Reason Required' : 'Reason Required', 
+        isEn ? 'Please state the reason for requisition rejection.' : 'Please state the reason for rejecting the requisition.'
       )
       return
     }
@@ -727,7 +727,7 @@ const TransporterAdminApprovalPage: React.FC = () => {
                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm bg-slate-50/50 p-5 rounded-2xl border border-slate-200 shadow-xs">
                    <div>
                      <span className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">
-                       {isEn ? 'Assigned Duty Driver' : 'Pemandu Bertugas'}
+                       {isEn ? 'Assigned Duty Driver' : 'On-Duty Driver'}
                      </span>
                      <span className="font-bold text-slate-800">{selectedReq.pemandu?.full_name || (isEn ? 'Assigned Driver' : 'Driver')}</span>
                    </div>

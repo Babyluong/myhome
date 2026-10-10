@@ -553,12 +553,43 @@ export const AdminRbacTab: React.FC = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      {/* Sidebar: Role Selector */}
-      <div className="lg:col-span-1 bg-slate-900/40 border border-white/5 rounded-2xl p-5 backdrop-blur-md space-y-4">
+    <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-4 lg:gap-6">
+      {/* Mobile Role Selector (< lg) */}
+      <div className="lg:hidden bg-slate-900/60 border border-slate-800 rounded-xl p-3.5 space-y-2">
+        <div className="flex items-center justify-between text-xs">
+          <label className="font-semibold text-slate-300 flex items-center gap-1.5">
+            <Shield className="w-4 h-4 text-teal-400" />
+            <span>Pilih Peranan (Role)</span>
+          </label>
+          {hasAnyChanges && (
+            <button
+              onClick={handleSaveAll}
+              disabled={isSaving}
+              className="text-[11px] px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold"
+            >
+              Simpan Semua ({dirtyRoleIds.length})
+            </button>
+          )}
+        </div>
+        <select
+          value={selectedRoleId}
+          onChange={(e) => setSelectedRoleId(e.target.value)}
+          className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-teal-500 min-h-[44px]"
+        >
+          {roles.map((r) => (
+            <option key={r.id} value={r.id}>
+              {r.role_name} ({r.role_code.toUpperCase()})
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Desktop Sidebar: Role Selector (>= lg) */}
+      <div className="hidden lg:block lg:col-span-1 bg-slate-900/60 border border-slate-800 rounded-xl p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-            <Shield className="w-4 h-4 text-teal-400" /> Senarai Peranan
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+            <Shield className="w-4 h-4 text-teal-400" />
+            <span>Senarai Peranan</span>
           </h3>
           <div className="flex items-center gap-1.5">
             {hasAnyChanges && (
@@ -568,7 +599,7 @@ export const AdminRbacTab: React.FC = () => {
                 className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 font-bold transition-all disabled:opacity-50"
                 title="Simpan semua peranan yang diubah"
               >
-                Simpan Semua ({dirtyRoleIds.length})
+                Simpan ({dirtyRoleIds.length})
               </button>
             )}
             <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">
@@ -577,7 +608,7 @@ export const AdminRbacTab: React.FC = () => {
           </div>
         </div>
 
-        <div className="space-y-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
+        <div className="space-y-1.5 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
           {roles.map((r) => {
             const isSelected = r.id === selectedRoleId
             const roleCode = r.role_code.toLowerCase()
@@ -589,26 +620,26 @@ export const AdminRbacTab: React.FC = () => {
               <button
                 key={r.id}
                 onClick={() => setSelectedRoleId(r.id)}
-                className={`w-full p-3.5 rounded-xl text-left border transition-all flex flex-col gap-1.5 relative overflow-hidden ${
+                className={`w-full p-3 rounded-lg text-left border transition-colors flex flex-col gap-1 relative ${
                   isSelected
-                    ? 'bg-gradient-to-r from-teal-500/15 to-cyan-500/5 text-teal-300 border-teal-500/40 shadow-lg shadow-teal-500/5'
-                    : 'bg-slate-950/40 text-slate-300 border-white/5 hover:bg-white/5 hover:border-white/10'
+                    ? 'bg-slate-800 text-teal-300 border-teal-500/50'
+                    : 'bg-slate-950/40 text-slate-300 border-slate-800/80 hover:bg-slate-800/40 hover:border-slate-700'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold truncate">{r.role_name}</span>
+                  <span className="text-xs font-bold truncate">{r.role_name}</span>
                   <div className="flex items-center gap-1">
                     {isRoleDirty && (
                       <span className="px-1.5 py-0.5 rounded text-[9px] bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
                         Ubah
                       </span>
                     )}
-                    {isSelected && <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />}
+                    {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />}
                   </div>
                 </div>
-                <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
                   <span className="uppercase">{roleCode}</span>
-                  <span className={enabledCount > 0 ? 'text-teal-400 font-bold' : 'text-slate-500'}>
+                  <span className={enabledCount > 0 ? 'text-teal-400 font-semibold' : 'text-slate-500'}>
                     {enabledCount} modul aktif
                   </span>
                 </div>
@@ -619,65 +650,63 @@ export const AdminRbacTab: React.FC = () => {
       </div>
 
       {/* Main Panel: Fine-Grained Permission Matrix */}
-      <div className="lg:col-span-3 space-y-6">
+      <div className="lg:col-span-3 space-y-4 sm:space-y-6">
         {selectedRoleObj && (
-          <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/50 border border-white/10 flex flex-col gap-4 shadow-xl">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
-                    <Sliders className="w-5 h-5" />
+          <div className="p-4 sm:p-5 rounded-xl bg-slate-900/70 border border-slate-800 flex flex-col gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-slate-800 text-teal-400 border border-slate-700">
+                  <Sliders className="w-4 h-4 sm:w-5 sm:h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base sm:text-lg font-bold text-white">{selectedRoleObj.role_name}</h3>
+                    <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-teal-300 border border-slate-700 uppercase">
+                      {selectedRoleObj.role_code}
+                    </span>
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-extrabold text-white">{selectedRoleObj.role_name}</h3>
-                      <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-white/10 uppercase">
-                        {selectedRoleObj.role_code}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      {selectedRoleObj.description || 'Konfigurasi had kuasa dan kebenaran tindakan bagi peranan ini.'}
-                    </p>
-                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {selectedRoleObj.description || 'Konfigurasi had kuasa dan kebenaran tindakan bagi peranan ini.'}
+                  </p>
                 </div>
               </div>
 
               {/* Action Save Buttons */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 {hasAnyChanges && (
                   <button
                     onClick={handleSaveAll}
                     disabled={isSaving}
-                    className="px-4 py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
+                    className="flex-1 sm:flex-initial min-h-[40px] px-3.5 py-2 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
                     title="Simpan semua peranan ke pangkalan data Supabase"
                   >
                     <Save className="w-4 h-4" />
-                    {isSaving ? 'Menyimpan...' : `Simpan Semua (${dirtyRoleIds.length})`}
+                    <span>Simpan Semua ({dirtyRoleIds.length})</span>
                   </button>
                 )}
                 {hasChanges && (
                   <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white flex items-center gap-1.5 shadow-lg shadow-teal-500/20 transition-all disabled:opacity-50"
+                    className="flex-1 sm:flex-initial min-h-[40px] px-3.5 py-2 rounded-lg text-xs font-bold bg-teal-500 hover:bg-teal-600 text-white flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
                   >
                     <Save className="w-4 h-4" />
-                    {isSaving ? 'Menyimpan...' : 'Simpan Peranan Ini'}
+                    <span>Simpan Peranan Ini</span>
                   </button>
                 )}
               </div>
             </div>
 
             {/* Capability Presets Selector */}
-            <div className="pt-3 border-t border-white/5 flex flex-wrap items-center gap-2">
+            <div className="pt-2.5 border-t border-slate-800 flex flex-wrap items-center gap-1.5">
               <span className="text-xs text-slate-400 flex items-center gap-1 mr-1">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Pratetap Had Kuasa:
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Pratetap:
               </span>
               {Object.entries(ROLE_CAPABILITY_PRESETS).map(([key, preset]) => (
                 <button
                   key={key}
                   onClick={() => handleApplyPreset(key)}
-                  className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/5 hover:bg-teal-500/15 border border-white/5 hover:border-teal-500/30 text-slate-300 hover:text-teal-300 transition-all"
+                  className="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 transition-colors"
                   title={preset.description}
                 >
                   {preset.label}
@@ -688,27 +717,27 @@ export const AdminRbacTab: React.FC = () => {
         )}
 
         {/* Filters & Search */}
-        <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-900/40 p-4 rounded-xl border border-white/5">
+        <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-900/70 p-3.5 sm:p-4 rounded-xl border border-slate-800">
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
             <input
               type="text"
               placeholder="Carian modul, sub-ciri, kod..."
               value={rbacSearch}
               onChange={(e) => setRbacSearch(e.target.value)}
-              className="w-full bg-slate-950/60 border border-white/5 rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 transition-all"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 transition-colors"
             />
           </div>
 
-          <div className="flex overflow-x-auto gap-1.5 w-full sm:w-auto no-scrollbar">
+          <div className="flex overflow-x-auto gap-1.5 w-full sm:w-auto no-scrollbar pb-1 sm:pb-0">
             {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
                   selectedCategory === cat.id
-                    ? 'bg-teal-500/10 text-teal-300 border border-teal-500/30'
-                    : 'bg-transparent text-slate-400 border border-transparent hover:bg-white/5 hover:text-slate-200'
+                    ? 'bg-teal-500/10 text-teal-300 border border-teal-500/40'
+                    : 'bg-slate-900 text-slate-400 border border-slate-800 hover:bg-slate-800 hover:text-slate-200'
                 }`}
               >
                 {cat.label}
@@ -719,13 +748,13 @@ export const AdminRbacTab: React.FC = () => {
 
         {/* Matrix Grid */}
         {isLoading ? (
-          <div className="p-12 space-y-4">
-            <div className="h-24 bg-white/5 rounded-2xl animate-pulse" />
-            <div className="h-24 bg-white/5 rounded-2xl animate-pulse" />
-            <div className="h-24 bg-white/5 rounded-2xl animate-pulse" />
+          <div className="p-8 sm:p-12 space-y-4">
+            <div className="h-24 bg-slate-900/60 border border-slate-800 rounded-2xl animate-pulse" />
+            <div className="h-24 bg-slate-900/60 border border-slate-800 rounded-2xl animate-pulse" />
+            <div className="h-24 bg-slate-900/60 border border-slate-800 rounded-2xl animate-pulse" />
           </div>
         ) : filteredModules.length === 0 ? (
-          <div className="p-12 text-center text-slate-500 bg-slate-900/40 rounded-2xl border border-white/5">
+          <div className="p-12 text-center text-slate-500 bg-slate-900/40 rounded-2xl border border-slate-800">
             Tiada modul ditemui yang sepadan dengan carian.
           </div>
         ) : (
@@ -750,40 +779,42 @@ export const AdminRbacTab: React.FC = () => {
               return (
                 <div
                   key={modCode}
-                  className={`border rounded-2xl overflow-hidden transition-all duration-200 backdrop-blur-md ${
+                  className={`border rounded-xl sm:rounded-2xl overflow-hidden transition-colors ${
                     isModuleActive
-                      ? 'bg-slate-900/60 border-white/10 shadow-lg'
-                      : 'bg-slate-950/40 border-white/5 opacity-85'
+                      ? 'bg-slate-900/90 border-slate-700/80 shadow-md'
+                      : 'bg-slate-950/60 border-slate-800/80 opacity-90'
                   }`}
                 >
                   {/* Module Header Row */}
-                  <div className="p-5 bg-white/5 border-b border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div className="flex items-center gap-3.5">
-                      <div
+                  <div className="p-4 sm:p-5 bg-slate-900/50 border-b border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4">
+                    <div className="flex items-start sm:items-center gap-3 w-full sm:w-auto">
+                      <button
+                        type="button"
                         onClick={() => handleToggleModuleAction(modCode, 'view')}
-                        className={`w-6 h-6 rounded-lg flex items-center justify-center cursor-pointer transition-all ${
+                        aria-label={`Toggle access for ${moduleDef.name}`}
+                        className={`w-7 h-7 sm:w-6 sm:h-6 shrink-0 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${
                           isModuleActive
-                            ? 'bg-teal-500 text-slate-950 font-bold shadow-md shadow-teal-500/20'
+                            ? 'bg-teal-500 text-slate-950 font-bold shadow-sm'
                             : 'border-2 border-slate-600 hover:border-teal-400 bg-slate-900'
                         }`}
                       >
                         {isModuleActive && <Check className="w-4 h-4 stroke-[3]" />}
-                      </div>
+                      </button>
 
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-base font-extrabold text-white">{moduleDef.name}</h4>
-                          <span className="text-xs text-slate-400 font-medium">({moduleDef.officialName})</span>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-white/5 uppercase">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                          <h4 className="text-sm sm:text-base font-bold text-white truncate">{moduleDef.name}</h4>
+                          <span className="text-xs text-slate-400 font-normal">({moduleDef.officialName})</span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 uppercase">
                             {moduleDef.category}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-400 mt-0.5">{moduleDef.description}</p>
+                        <p className="text-xs text-slate-400 mt-0.5 line-clamp-2 sm:line-clamp-none">{moduleDef.description}</p>
                       </div>
                     </div>
 
                     {/* Actions Matrix Switches for Module Level */}
-                    <div className="flex items-center gap-2 flex-wrap self-end md:self-auto">
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap w-full md:w-auto justify-start md:justify-end pt-2 md:pt-0 border-t md:border-t-0 border-slate-800/60">
                       {(['view', 'create', 'edit', 'approve', 'delete', 'export', 'admin'] as ActionType[]).map((action) => {
                         const isActionActive = !!modState[action]
                         const colors = actionColors[action]
@@ -792,10 +823,10 @@ export const AdminRbacTab: React.FC = () => {
                           <button
                             key={action}
                             onClick={() => handleToggleModuleAction(modCode, action)}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all ${
+                            className={`min-h-[34px] px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-colors touch-manipulation ${
                               isActionActive
-                                ? `${colors.bg} ${colors.text} ${colors.border} shadow-sm`
-                                : 'bg-slate-950/60 text-slate-500 border-white/5 hover:border-white/10 hover:text-slate-400'
+                                ? `${colors.bg} ${colors.text} ${colors.border}`
+                                : 'bg-slate-950/70 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-300'
                             }`}
                             title={ACTION_DEFINITIONS[action].description}
                           >
@@ -809,8 +840,9 @@ export const AdminRbacTab: React.FC = () => {
                       {moduleDef.features.length > 0 && (
                         <button
                           onClick={() => toggleModuleExpand(modCode)}
-                          className="p-1.5 rounded-lg bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors ml-1"
+                          className="min-h-[34px] min-w-[34px] p-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors ml-auto sm:ml-1 flex items-center justify-center"
                           title="Pecahan Sub-Ciri & Had Kuasa Terperinci"
+                          aria-label="Pecahan Sub-Ciri"
                         >
                           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </button>
@@ -825,9 +857,9 @@ export const AdminRbacTab: React.FC = () => {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="bg-slate-950/60 divide-y divide-white/5"
+                        className="bg-slate-950/80 divide-y divide-slate-800/80"
                       >
-                        <div className="px-6 py-2 bg-slate-900/60 text-[11px] text-slate-400 font-mono flex items-center justify-between">
+                        <div className="px-4 sm:px-6 py-2 bg-slate-900/60 text-[11px] text-slate-400 font-mono flex items-center justify-between border-b border-slate-800">
                           <span>Sub-Ciri & Keupayaan Tindakan Terperinci ({moduleDef.features.length} ciri)</span>
                           <span className="text-teal-400">Kawalan Granular Aktif</span>
                         </div>
@@ -838,12 +870,12 @@ export const AdminRbacTab: React.FC = () => {
                           return (
                             <div
                               key={feature.code}
-                              className="px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-white/5 transition-colors"
+                              className="px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-slate-900/30 transition-colors"
                             >
-                              <div className="pl-4 border-l-2 border-teal-500/40">
+                              <div className="pl-3 border-l-2 border-teal-500/50">
                                 <div className="text-xs font-bold text-slate-200">{feature.name}</div>
                                 <p className="text-[11px] text-slate-500 mt-0.5">{feature.description}</p>
-                                <span className="text-[10px] font-mono text-slate-600 mt-1 block">
+                                <span className="text-[10px] font-mono text-slate-500 mt-1 block">
                                   {feature.code}
                                 </span>
                               </div>
@@ -858,10 +890,10 @@ export const AdminRbacTab: React.FC = () => {
                                     <button
                                       key={action}
                                       onClick={() => handleToggleFeatureAction(modCode, feature.code, action)}
-                                      className={`px-2 py-0.5 rounded text-[11px] font-semibold flex items-center gap-1 border transition-all ${
+                                      className={`min-h-[30px] px-2 py-0.5 rounded text-[11px] font-semibold flex items-center gap-1 border transition-colors touch-manipulation ${
                                         isFeatActionActive
                                           ? `${colors.bg} ${colors.text} ${colors.border}`
-                                          : 'bg-slate-900 text-slate-600 border-white/5 hover:text-slate-400'
+                                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
                                       }`}
                                     >
                                       {actionIcons[action]}
@@ -890,17 +922,17 @@ export const AdminRbacTab: React.FC = () => {
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
-            className="fixed bottom-6 right-6 left-6 lg:left-80 z-40 bg-slate-900/95 backdrop-blur-2xl border border-teal-500/40 shadow-2xl p-4 rounded-2xl max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+            className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 left-4 sm:left-6 lg:left-80 z-40 bg-slate-900/95 backdrop-blur-md border border-slate-700 shadow-xl p-3.5 sm:p-4 rounded-xl sm:rounded-2xl max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-teal-500/10 text-teal-400 rounded-xl border border-teal-500/20">
+              <div className="p-2 bg-teal-500/10 text-teal-400 rounded-lg border border-teal-500/30 shrink-0">
                 <Info className="w-5 h-5" />
               </div>
               <div>
                 <p className="text-sm font-bold text-white">
                   Perubahan Had Kuasa Dikesan ({dirtyRoleIds.length} peranan)
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-400 line-clamp-1 sm:line-clamp-none">
                   {hasChanges
                     ? `Perubahan dikesan bagi "${selectedRoleObj?.role_name}". Sila simpan untuk menyelaraskan ke pangkalan data Supabase.`
                     : `${dirtyRoleIds.length} peranan hospital mempunyai perubahan belum disimpan.`}
@@ -908,10 +940,10 @@ export const AdminRbacTab: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 self-end sm:self-auto">
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
               <button
                 onClick={() => setMatrixState(JSON.parse(JSON.stringify(savedMatrixState)))}
-                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+                className="min-h-[40px] px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-colors"
               >
                 Set Semula
               </button>
@@ -919,7 +951,7 @@ export const AdminRbacTab: React.FC = () => {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-teal-300 border border-teal-500/30 transition-all disabled:opacity-50 flex items-center gap-1.5"
+                  className="min-h-[40px] px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-teal-300 border border-slate-700 transition-colors disabled:opacity-50 flex items-center gap-1.5"
                 >
                   <Save className="w-4 h-4" />
                   {isSaving ? 'Menyimpan...' : 'Simpan Peranan Ini'}
@@ -928,7 +960,7 @@ export const AdminRbacTab: React.FC = () => {
               <button
                 onClick={handleSaveAll}
                 disabled={isSaving}
-                className="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white shadow-lg shadow-teal-500/20 disabled:opacity-50 transition-all flex items-center gap-1.5"
+                className="min-h-[40px] px-4 py-2 rounded-lg text-xs font-bold bg-teal-500 hover:bg-teal-600 text-white shadow-sm disabled:opacity-50 transition-colors flex items-center gap-1.5"
               >
                 <Save className="w-4 h-4" />
                 {isSaving ? 'Menyimpan...' : `Simpan Semua (${dirtyRoleIds.length})`}

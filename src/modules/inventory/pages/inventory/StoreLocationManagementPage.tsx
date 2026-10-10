@@ -305,7 +305,7 @@ export const StoreLocationManagementPage: React.FC = () => {
 
     const selectedIds = Array.from(selectedDrugIdsForAssign)
     if (selectedIds.length === 0) {
-      showError('Sila pilih sekurang-kurangnya 1 item untuk menetapkan lokasi.')
+      showError('Please select at least 1 item to assign storage location.')
       return
     }
 
@@ -495,7 +495,7 @@ export const StoreLocationManagementPage: React.FC = () => {
     }
 
     if (!subNameInput.trim()) {
-      showError('Sila isi nama sub-lokasi (Palet, Rak, Kabinet, Level, atau Column)')
+      showError('Please enter sub-location name (Pallet, Shelf, Cabinet, Level, or Column)')
       return
     }
 
@@ -562,7 +562,7 @@ export const StoreLocationManagementPage: React.FC = () => {
       setLocations(data)
     } catch (err) {
       console.error('Failed to load store locations:', err)
-      showError('Gagal memuatkan senarai lokasi stor')
+      showError('Failed to load store location list')
     } finally {
       setIsLoading(false)
     }

@@ -26,7 +26,6 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
-import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { ROUTES } from '@/lib/constants'
 import {
   getStaffDashboardStats,
@@ -38,12 +37,10 @@ import type {
   StaffMovement,
   StaffReminder
 } from '@/shared/types/mystaff'
-import { Badge, Button } from '@/components/ui'
+import { Badge, Button, Skeleton, SkeletonMobileCardList, ModulePageHeader } from '@/components/ui'
 
 export const StaffDashboardPage: React.FC = () => {
   const navigate = useNavigate()
-  const { language } = useLanguage()
-  const isMs = language === 'ms'
   const toast = useToast()
   const user = useAuthStore(state => state.user)
 
@@ -80,7 +77,7 @@ export const StaffDashboardPage: React.FC = () => {
       if (remRes.data) setReminders(remRes.data)
     } catch (err: any) {
       console.error('Error loading staff dashboard data', err)
-      toast.error(isMs ? 'Gagal memuatkan data papan pemuka' : 'Failed to load dashboard data')
+      toast.error('Failed to load dashboard data')
     } finally {
       setIsLoading(false)
     }
@@ -93,232 +90,227 @@ export const StaffDashboardPage: React.FC = () => {
   const todayStr = useMemo(() => new Date().toISOString().split('T')[0], [])
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-8 text-slate-800">
+    <div className="w-full space-y-6">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500" />
-        
-        <div className="flex items-center gap-4">
-          <div className="p-3.5 bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100">
-            <Users className="w-8 h-8" />
+      <ModulePageHeader
+        title="MyStaff Dashboard"
+        subtitle="Workforce Management, Staff Movement Monitoring & Department Operations"
+        badge="Workforce Management"
+        icon={<Users className="w-5 h-5 text-accent-base" />}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => navigate(ROUTES.STAFF_MOVEMENT)}
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold shadow-sm transition-all"
+            >
+              <Plus className="w-3.5 h-3.5 text-white shrink-0" />
+              <span>Record Movement</span>
+            </button>
+
+            <button
+              onClick={() => navigate(ROUTES.STAFF_REMINDERS)}
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all"
+            >
+              <Bell className="w-3.5 h-3.5 text-text-muted shrink-0" />
+              <span>Event Log</span>
+            </button>
+
+            <button
+              onClick={() => navigate(ROUTES.STAFF_CALENDAR)}
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all"
+            >
+              <Calendar className="w-3.5 h-3.5 text-text-muted shrink-0" />
+              <span>Department Calendar</span>
+            </button>
+
+            <button
+              onClick={() => navigate(ROUTES.STAFF_ORG_CHART)}
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all"
+            >
+              <Network className="w-3.5 h-3.5 text-text-muted shrink-0" />
+              <span>Org Chart</span>
+            </button>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-black tracking-tight text-slate-800">
-                {isMs ? 'Papan Pemuka MyStaff' : 'MyStaff Dashboard'}
-              </h1>
-              <Badge variant="gray" className="font-mono text-[10px] font-bold py-0.5 px-2 text-emerald-700 bg-emerald-50 border-emerald-200">
-                WFM ECOSYSTEM
-              </Badge>
-            </div>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
-              {isMs
-                ? 'Sistem Pemantauan Pergerakan Staf, Log Event & Kalendar Jabatan'
-                : 'Staff Movement Monitoring, Department Event Log & Calendar System'}
-            </p>
-          </div>
-        </div>
-
-        {/* Quick Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <Button
-            onClick={() => navigate(ROUTES.STAFF_MOVEMENT)}
-            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl shadow-md hover:shadow-lg font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm"
-          >
-            <Plus className="w-4 h-4 text-white" />
-            <span>{isMs ? 'Catat Pergerakan' : 'Record Movement'}</span>
-          </Button>
-
-          <Button
-            variant="ghost"
-            onClick={() => navigate(ROUTES.STAFF_REMINDERS)}
-            className="border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-2xl shadow-sm font-bold flex items-center gap-2 px-4 py-2.5 transition-all text-sm"
-          >
-            <Bell className="w-4 h-4 text-purple-600" />
-            <span>{isMs ? 'Log Event' : 'Event Log'}</span>
-          </Button>
-
-          <Button
-            variant="ghost"
-            onClick={() => navigate(ROUTES.STAFF_CALENDAR)}
-            className="border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-2xl shadow-sm font-bold flex items-center gap-2 px-4 py-2.5 transition-all text-sm bg-white"
-          >
-            <Calendar className="w-4 h-4 text-amber-500" />
-            <span>{isMs ? 'Kalendar Jabatan' : 'Department Calendar'}</span>
-          </Button>
-
-          <Button
-            variant="ghost"
-            onClick={() => navigate(ROUTES.STAFF_ORG_CHART)}
-            className="border border-teal-200 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-2xl shadow-sm font-bold flex items-center gap-2 px-4 py-2.5 transition-all text-sm"
-          >
-            <Network className="w-4 h-4 text-teal-600" />
-            <span>{isMs ? 'Carta Organisasi' : 'Organizational Chart'}</span>
-          </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         {/* Present Today */}
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-emerald-500 relative overflow-hidden group hover:shadow-xl transition-all">
+        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
-              {isMs ? 'Hadir di Stesen' : 'On Duty Station'}
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">
+              On Duty Station
             </span>
-            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
-              <CheckCircle2 className="w-4 h-4" />
+            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600">
+              <CheckCircle2 className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-3xl font-black font-mono mt-2 text-emerald-600">
-            {isLoading ? '...' : stats.presentToday}
-          </p>
-          <p className="text-xs text-slate-400 mt-1 font-medium">
-            {isMs ? `Daripada ${stats.totalStaff} orang staf` : `Out of ${stats.totalStaff} total staff`}
+          <div className="text-2xl font-bold font-mono mt-1 text-emerald-600 tabular-nums">
+            {isLoading ? (
+              <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" />
+            ) : (
+              stats.presentToday
+            )}
+          </div>
+          <p className="text-xs text-text-muted mt-0.5 font-medium">
+            {isLoading ? (
+              <Skeleton className="h-3 w-24 mt-1 inline-block bg-subtle rounded" />
+            ) : (
+              `Out of ${stats.totalStaff} total staff`
+            )}
           </p>
         </div>
 
         {/* Out of Office / Movement */}
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-sky-500 relative overflow-hidden group hover:shadow-xl transition-all">
+        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
-              {isMs ? 'Luar Stesen / Tugas' : 'Out of Station / Duty'}
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">
+              Out of Station / Duty
             </span>
-            <div className="p-2 rounded-xl bg-sky-50 text-sky-600">
-              <Briefcase className="w-4 h-4" />
+            <div className="p-1.5 rounded-lg bg-sky-500/10 text-sky-600">
+              <Briefcase className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-3xl font-black font-mono mt-2 text-sky-600">
-            {isLoading ? '...' : stats.onMovementToday}
-          </p>
-          <p className="text-xs text-slate-400 mt-1 font-medium">
-            {isMs ? 'Mesyuarat & Tugas Rasmi' : 'Meetings & Official Duties'}
+          <div className="text-2xl font-bold font-mono mt-1 text-sky-600 tabular-nums">
+            {isLoading ? (
+              <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" />
+            ) : (
+              stats.onMovementToday
+            )}
+          </div>
+          <p className="text-xs text-text-muted mt-0.5 font-medium">
+            Meetings & Official Duties
           </p>
         </div>
 
         {/* Courses & Training */}
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-purple-500 relative overflow-hidden group hover:shadow-xl transition-all">
+        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
-              {isMs ? 'Kursus & Bengkel' : 'Courses & Training'}
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">
+              Courses & Training
             </span>
-            <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
-              <GraduationCap className="w-4 h-4" />
+            <div className="p-1.5 rounded-lg bg-accent-base/10 text-accent-base">
+              <GraduationCap className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-3xl font-black font-mono mt-2 text-purple-600">
-            {isLoading ? '...' : stats.onCourseToday}
-          </p>
-          <p className="text-xs text-slate-400 mt-1 font-medium">
-            {isMs ? 'Latihan & Pembentangan' : 'Training & Presentations'}
+          <div className="text-2xl font-bold font-mono mt-1 text-accent-base tabular-nums">
+            {isLoading ? (
+              <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" />
+            ) : (
+              stats.onCourseToday
+            )}
+          </div>
+          <p className="text-xs text-text-muted mt-0.5 font-medium">
+            Training & Presentations
           </p>
         </div>
 
         {/* CME & Department Events */}
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg border-l-4 border-l-purple-600 relative overflow-hidden group hover:shadow-xl transition-all">
+        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
-              {isMs ? 'Log Event / CME' : 'Event Log / CME'}
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">
+              Event Log / CME
             </span>
-            <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
-              <Bell className="w-4 h-4" />
+            <div className="p-1.5 rounded-lg bg-accent-base/10 text-accent-base">
+              <Bell className="w-3.5 h-3.5" />
             </div>
           </div>
-          <p className="text-3xl font-black font-mono mt-2 text-purple-600">
-            {isLoading ? '...' : stats.upcomingRemindersCount}
-          </p>
-          <p className="text-xs text-slate-400 mt-1 font-medium">
-            {isMs ? 'Sesi & Peringatan Aktif' : 'Active Sessions & Reminders'}
+          <div className="text-2xl font-bold font-mono mt-1 text-text-primary tabular-nums">
+            {isLoading ? (
+              <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" />
+            ) : (
+              stats.upcomingRemindersCount
+            )}
+          </div>
+          <p className="text-xs text-text-muted mt-0.5 font-medium">
+            Active Sessions & Reminders
           </p>
         </div>
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Today's Movement & Department Activity */}
         <div className="lg:col-span-2 space-y-6">
           {/* Today's Out of Office Summary */}
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xl">
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-2xl bg-emerald-50 text-emerald-600">
-                  <Activity className="w-5 h-5" />
+          <div className="bg-surface border border-border-default rounded-xl p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-accent-base/10 text-accent-base">
+                  <Activity className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-slate-800">
-                    {isMs ? 'Status Pergerakan Hari Ini' : "Today's Movement Status"}
+                  <h3 className="text-sm font-bold text-text-primary">
+                    Today's Movement Status
                   </h3>
-                  <p className="text-xs text-slate-400 font-medium">
-                    {isMs
-                      ? 'Pegawai yang bertugas di luar wad / premis hospital'
-                      : 'Officers on official duty outside station or hospital premises'}
+                  <p className="text-xs text-text-muted font-medium">
+                    Officers on official duty outside station or hospital premises
                   </p>
                 </div>
               </div>
 
-              <Button
-                variant="ghost"
-                size="sm"
+              <button
                 onClick={() => navigate(ROUTES.STAFF_MOVEMENT)}
-                className="text-xs text-emerald-600 hover:text-emerald-700 font-bold p-0 h-auto"
+                className="text-xs text-accent-base hover:underline font-semibold flex items-center"
               >
-                <span>{isMs ? 'Lihat Semua Log' : 'View All Logs'}</span>
-                <ChevronRight className="w-3.5 h-3.5 ml-1" />
-              </Button>
+                <span>View All Logs</span>
+                <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+              </button>
             </div>
 
             {/* List of active movements today */}
-            {movements.length === 0 ? (
-              <div className="text-center py-10 border border-dashed border-slate-200 rounded-2xl">
-                <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto mb-2 opacity-60" />
-                <p className="text-xs font-bold text-slate-600">
-                  {isMs ? 'Semua staf berada di lokasi stesen bertugas.' : 'All staff are currently on station.'}
+            {isLoading ? (
+              <SkeletonMobileCardList count={3} />
+            ) : movements.length === 0 ? (
+              <div className="text-center py-8 border border-dashed border-border-default rounded-xl">
+                <CheckCircle2 className="w-7 h-7 text-emerald-500 mx-auto mb-2 opacity-70" />
+                <p className="text-xs font-bold text-text-primary">
+                  All staff are currently on station.
                 </p>
-                <p className="text-[11px] text-slate-400 mt-0.5">
-                  {isMs
-                    ? 'Tiada rekod keluar tugas rasmi atau mesyuarat luar hari ini.'
-                    : 'No official duty travel or external meetings recorded for today.'}
+                <p className="text-[11px] text-text-muted mt-0.5">
+                  No official duty travel or external meetings recorded for today.
                 </p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {movements.slice(0, 4).map(mov => {
-                  const staffName = mov.user?.full_name || mov.tajuk || (isMs ? 'Pegawai Bertugas' : 'Duty Officer')
+                  const staffName = mov.user?.full_name || mov.tajuk || 'Duty Officer'
                   return (
                     <div
                       key={mov.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-all gap-3"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-lg bg-subtle/50 border border-border-default hover:bg-subtle transition-colors gap-3"
                     >
-                      <div className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-2xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0 border border-emerald-200">
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-accent-base/10 text-accent-base flex items-center justify-center font-bold text-xs shrink-0 border border-accent-base/20">
                           {staffName.charAt(0)}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="font-extrabold text-sm text-slate-900">{staffName}</h4>
-                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600 uppercase">
+                            <h4 className="font-bold text-xs text-text-primary">{staffName}</h4>
+                            <span className="text-[10px] font-mono font-semibold px-1.5 py-0.2 rounded border border-border-default bg-surface text-text-secondary uppercase">
                               {mov.jenis_pergerakan}
                             </span>
                           </div>
-                          <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5 font-medium">
-                            <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <span>{mov.destination || mov.tujuan || (isMs ? 'Lokasi tidak dinyatakan' : 'Location not specified')}</span>
+                          <p className="text-xs text-text-muted mt-0.5 flex items-center gap-1.5 font-medium">
+                            <MapPin className="w-3.5 h-3.5 text-text-muted shrink-0" />
+                            <span>{mov.destination || mov.tujuan || 'Location not specified'}</span>
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3 sm:text-right text-xs text-slate-600 font-mono">
+                      <div className="flex items-center gap-3 sm:text-right text-xs text-text-secondary font-mono">
                         <div>
-                          <span className="text-[10px] text-slate-400 block font-sans uppercase">
-                            {isMs ? 'Masa Keluar - Balik' : 'Out - Return Time'}
+                          <span className="text-[10px] text-text-muted block font-sans uppercase">
+                            Out - Return Time
                           </span>
-                          <span className="font-bold text-slate-800">
+                          <span className="font-semibold text-text-primary tabular-nums">
                             {mov.masa_keluar?.slice(0, 5) || '08:00'} — {mov.masa_balik?.slice(0, 5) || '17:00'}
                           </span>
                         </div>
-                        <Badge variant="success" className="text-[10px] font-bold uppercase py-0.5 px-2">
+                        <span className="text-[10px] font-bold uppercase py-0.5 px-2 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-600">
                           {mov.status}
-                        </Badge>
+                        </span>
                       </div>
                     </div>
                   )
@@ -328,55 +320,49 @@ export const StaffDashboardPage: React.FC = () => {
           </div>
 
           {/* Quick Hub Navigation Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             <button
               onClick={() => navigate(ROUTES.STAFF_MOVEMENT)}
-              className="text-left p-6 rounded-3xl bg-white border border-slate-100 shadow-lg hover:shadow-xl hover:border-emerald-400 transition-all group"
+              className="text-left p-5 rounded-xl bg-surface border border-border-default shadow-sm hover:border-accent-base/40 transition-all group"
             >
-              <div className="p-3.5 w-fit rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-all">
-                <Briefcase className="w-6 h-6" />
+              <div className="p-2.5 w-fit rounded-lg bg-subtle text-text-secondary border border-border-default mb-3 group-hover:bg-accent-base/10 group-hover:text-accent-base transition-colors">
+                <Briefcase className="w-5 h-5" />
               </div>
-              <h3 className="font-extrabold text-slate-800 group-hover:text-emerald-700 transition-colors">
-                {isMs ? 'Borang Keluar Stesen' : 'Station Exit Form'}
+              <h3 className="font-bold text-sm text-text-primary group-hover:text-accent-base transition-colors">
+                Station Exit Form
               </h3>
-              <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed">
-                {isMs
-                  ? 'Daftar borang kebenaran keluar pejabat & tugasan luar stesen.'
-                  : 'Register official out-of-office travel and station duty permits.'}
+              <p className="text-xs text-text-muted mt-1 font-medium leading-relaxed">
+                Register official out-of-office travel and station duty permits.
               </p>
             </button>
 
             <button
               onClick={() => navigate(ROUTES.STAFF_REMINDERS)}
-              className="text-left p-6 rounded-3xl bg-white border border-slate-100 shadow-lg hover:shadow-xl hover:border-purple-400 transition-all group"
+              className="text-left p-5 rounded-xl bg-surface border border-border-default shadow-sm hover:border-accent-base/40 transition-all group"
             >
-              <div className="p-3.5 w-fit rounded-2xl bg-purple-50 text-purple-600 border border-purple-100 mb-4 group-hover:bg-purple-600 group-hover:text-white transition-all">
-                <Bell className="w-6 h-6" />
+              <div className="p-2.5 w-fit rounded-lg bg-subtle text-text-secondary border border-border-default mb-3 group-hover:bg-accent-base/10 group-hover:text-accent-base transition-colors">
+                <Bell className="w-5 h-5" />
               </div>
-              <h3 className="font-extrabold text-slate-800 group-hover:text-purple-700 transition-colors">
-                {isMs ? 'Log Event Jabatan' : 'Department Event Log'}
+              <h3 className="font-bold text-sm text-text-primary group-hover:text-accent-base transition-colors">
+                Department Event Log
               </h3>
-              <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed">
-                {isMs
-                  ? 'Jadual CME, CPD points, mesyuarat berkala & hebahan tugas.'
-                  : 'Schedule CME sessions, CPD points, periodic meetings & staff broadcasts.'}
+              <p className="text-xs text-text-muted mt-1 font-medium leading-relaxed">
+                Schedule CME sessions, CPD points, periodic meetings & staff broadcasts.
               </p>
             </button>
 
             <button
               onClick={() => navigate(ROUTES.STAFF_CALENDAR)}
-              className="text-left p-6 rounded-3xl bg-white border border-slate-100 shadow-lg hover:shadow-xl hover:border-amber-400 transition-all group"
+              className="text-left p-5 rounded-xl bg-surface border border-border-default shadow-sm hover:border-accent-base/40 transition-all group"
             >
-              <div className="p-3.5 w-fit rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 mb-4 group-hover:bg-amber-600 group-hover:text-white transition-all">
-                <Calendar className="w-6 h-6" />
+              <div className="p-2.5 w-fit rounded-lg bg-subtle text-text-secondary border border-border-default mb-3 group-hover:bg-accent-base/10 group-hover:text-accent-base transition-colors">
+                <Calendar className="w-5 h-5" />
               </div>
-              <h3 className="font-extrabold text-slate-800 group-hover:text-amber-700 transition-colors">
-                {isMs ? 'Kalendar Jabatan' : 'Department Calendar'}
+              <h3 className="font-bold text-sm text-text-primary group-hover:text-accent-base transition-colors">
+                Department Calendar
               </h3>
-              <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed">
-                {isMs
-                  ? 'Paparan jadual ketiadaan pegawai dan aktiviti bulanan wad.'
-                  : 'View officer absence schedules, leave, and monthly department activities.'}
+              <p className="text-xs text-text-muted mt-1 font-medium leading-relaxed">
+                View officer absence schedules, leave, and monthly department activities.
               </p>
             </button>
           </div>
@@ -385,43 +371,55 @@ export const StaffDashboardPage: React.FC = () => {
         {/* Right 1 Col: Log Event & CME Reminders */}
         <div className="space-y-6">
           {/* CME & Event Reminders Widget */}
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xl">
+          <div className="bg-surface border border-border-default rounded-xl p-5 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
-                  <Bell className="w-4 h-4" />
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-accent-base/10 text-accent-base">
+                  <Bell className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-slate-800">
-                    {isMs ? 'Log Event & CME' : 'Event Log & CME'}
+                  <h3 className="text-sm font-bold text-text-primary">
+                    Event Log & CME
                   </h3>
-                  <p className="text-[11px] text-slate-400 font-medium">
-                    {isMs ? 'Acara & peringatan tugas aktif' : 'Active events & schedule reminders'}
+                  <p className="text-[11px] text-text-muted font-medium">
+                    Active events & schedule reminders
                   </p>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
+              <button
                 onClick={() => navigate(ROUTES.STAFF_REMINDERS)}
-                className="text-xs text-purple-600 hover:text-purple-700 font-bold p-0 h-auto"
+                className="text-xs text-accent-base hover:underline font-semibold flex items-center"
               >
-                <span>{isMs ? 'Lihat Semua' : 'View All'}</span>
-                <ChevronRight className="w-3.5 h-3.5 ml-1" />
-              </Button>
+                <span>View All</span>
+                <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+              </button>
             </div>
 
-            <div className="space-y-3">
-              {reminders.length === 0 ? (
-                <div className="p-6 text-center rounded-2xl bg-slate-50 border border-dashed border-slate-200">
-                  <Bell className="w-6 h-6 text-slate-300 mx-auto mb-1.5" />
-                  <p className="text-xs font-bold text-slate-500">
-                    {isMs ? 'Tiada log event dijadualkan.' : 'No events scheduled.'}
+            <div className="space-y-2.5">
+              {isLoading ? (
+                <div className="space-y-2.5">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="p-3 rounded-lg bg-subtle border border-border-default space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <Skeleton className="h-3.5 w-14 rounded-full bg-subtle" />
+                        <Skeleton className="h-3 w-8 bg-subtle" />
+                      </div>
+                      <Skeleton className="h-3.5 w-3/4 bg-subtle rounded" />
+                      <Skeleton className="h-3 w-1/2 bg-subtle rounded" />
+                    </div>
+                  ))}
+                </div>
+              ) : reminders.length === 0 ? (
+                <div className="p-5 text-center rounded-lg bg-subtle/50 border border-dashed border-border-default">
+                  <Bell className="w-5 h-5 text-text-muted/60 mx-auto mb-1" />
+                  <p className="text-xs font-semibold text-text-primary">
+                    No events scheduled.
                   </p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">
-                    {isMs
-                      ? 'Sesi CME dan mesyuarat akan tersenarai di sini.'
-                      : 'Upcoming CME sessions and meetings will be listed here.'}
+                  <p className="text-[11px] text-text-muted mt-0.5">
+                    Upcoming CME sessions and meetings will be listed here.
                   </p>
                 </div>
               ) : (
@@ -430,26 +428,26 @@ export const StaffDashboardPage: React.FC = () => {
                   return (
                     <div
                       key={rem.id}
-                      className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-purple-300 transition-colors"
+                      className="p-3 rounded-lg bg-subtle/50 border border-border-default hover:bg-subtle transition-colors"
                     >
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 uppercase font-mono">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded border border-border-default bg-surface text-text-secondary uppercase font-mono">
                           {rem.jenis_peringatan}
                         </span>
-                        <span className="text-[10px] text-slate-400 font-mono">
-                          {remDate.toLocaleTimeString(isMs ? 'ms-MY' : 'en-MY', { hour: '2-digit', minute: '2-digit' })}
+                        <span className="text-[10px] text-text-muted font-mono tabular-nums">
+                          {remDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
-                      <h4 className="text-xs font-bold text-slate-900 line-clamp-1">{rem.tajuk}</h4>
+                      <h4 className="text-xs font-bold text-text-primary line-clamp-1">{rem.tajuk}</h4>
                       {rem.penerangan && (
-                        <p className="text-[11px] text-slate-500 line-clamp-2 mt-1 leading-relaxed">{rem.penerangan}</p>
+                        <p className="text-[11px] text-text-muted line-clamp-2 mt-1 leading-relaxed">{rem.penerangan}</p>
                       )}
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-200/60 text-[10px] text-slate-500">
+                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-border-default text-[10px] text-text-muted">
                         <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-purple-500" />
-                          <span>{remDate.toLocaleDateString(isMs ? 'ms-MY' : 'en-MY', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                          <Calendar className="w-3 h-3 text-text-muted" />
+                          <span>{remDate.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
                         </span>
-                        <span className="text-purple-600 font-bold">{isMs ? 'Jabatan' : 'Department'}</span>
+                        <span className="text-accent-base font-semibold">Department</span>
                       </div>
                     </div>
                   )

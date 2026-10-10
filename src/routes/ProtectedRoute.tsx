@@ -11,6 +11,8 @@ interface ProtectedRouteProps {
   allowedRoles?: string[]
   requiredModule?: string
   requiredAction?: ActionType
+  departmentCheck?: (user: any) => boolean
+  redirectTo?: string
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
@@ -18,6 +20,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   allowedRoles,
   requiredModule,
   requiredAction = 'view',
+  departmentCheck,
+  redirectTo,
 }) => {
   const location = useLocation()
   const { isAuthenticated, isLoading, user } = useAuthStore()
@@ -93,6 +97,21 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           attemptedPath: location.pathname,
           requiredRole: allowedRoles?.join(', ') || 'Had Kuasa Peranan Diperlukan',
           moduleName: targetModule,
+        }}
+        replace
+      />
+    )
+  }
+
+  // 5. Department-level guard (e.g. Pharmacy Logistics master catalog restriction)
+  if (departmentCheck && !departmentCheck(user)) {
+    return (
+      <Navigate
+        to={redirectTo || ROUTES.PHARMACY_INVENTORY || '/pharmacy/inventory'}
+        state={{
+          attemptedPath: location.pathname,
+          unauthorizedDepartment: true,
+          requiredRole: 'Pharmacy Logistics Only',
         }}
         replace
       />

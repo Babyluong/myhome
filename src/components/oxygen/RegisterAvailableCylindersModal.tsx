@@ -160,7 +160,7 @@ export const RegisterAvailableCylindersModal: React.FC<RegisterAvailableCylinder
     if (validRows.length === 0) {
       setErrorMessage(
         language === 'ms'
-          ? 'Sila masukkan sekurang-kurangnya satu nombor siri silinder.'
+          ? 'Please enter at least one cylinder serial number.'
           : 'Please enter at least one cylinder serial number.'
       );
       return;
@@ -169,7 +169,7 @@ export const RegisterAvailableCylindersModal: React.FC<RegisterAvailableCylinder
     if (!selectedComboId) {
       setErrorMessage(
         language === 'ms'
-          ? 'Sila pilih spesifikasi / jenis silinder.'
+          ? 'Please select cylinder specifications / type.'
           : 'Please select a cylinder specification/type.'
       );
       return;
@@ -259,7 +259,7 @@ export const RegisterAvailableCylindersModal: React.FC<RegisterAvailableCylinder
           {/* Cylinder Specification Selector */}
           <div>
             <label className="text-[11px] font-extrabold uppercase text-slate-600 tracking-wider block mb-1.5">
-              {language === 'ms' ? 'Pilih Jenis / Spesifikasi Silinder' : 'Select Cylinder Spec / Type'}
+              {language === 'ms' ? 'Select Cylinder Type / Specs' : 'Select Cylinder Spec / Type'}
             </label>
             <select
               value={selectedComboId}
@@ -306,7 +306,7 @@ export const RegisterAvailableCylindersModal: React.FC<RegisterAvailableCylinder
           {entryMode === 'rows' && (
             <div className="space-y-3">
               <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-500 uppercase px-1">
-                <span>{language === 'ms' ? 'Senarai Silinder Fizikal' : 'Physical Cylinder List'} ({validCount})</span>
+                <span>{language === 'ms' ? 'Physical Cylinder List' : 'Physical Cylinder List'} ({validCount})</span>
                 <span className="text-[10px] text-teal-700 normal-case font-semibold">
                   {language === 'ms' ? 'Kod QR automatik sama dengan No Siri jika dikosongkan' : 'QR code defaults to Serial No if left blank'}
                 </span>

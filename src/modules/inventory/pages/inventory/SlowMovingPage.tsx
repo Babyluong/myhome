@@ -5,11 +5,14 @@ import { AlertTriangle, TrendingDown, DollarSign, Clock, Sparkles, Filter, Refre
 import { useAuthStore } from '@/stores/authStore'
 import { Spinner } from '@/components/ui'
 import { getSlowMovingItems } from '@/services/pharmacy/inventoryService'
+import { useInventoryStore } from '../../context/InventoryStoreContext'
+import { StoreLocationSelector } from '../../components/StoreLocationSelector'
 import type { SlowMovingItem } from '@/types/pharmacy'
 import { cn, formatCurrency } from '@/lib/utils'
 
 export const SlowMovingPage: React.FC = () => {
   const { user } = useAuthStore()
+  const { activeStore, activeStoreId } = useInventoryStore()
   const hospitalId = user?.hospital_id
 
   const [items, setItems] = useState<SlowMovingItem[]>([])
@@ -22,7 +25,7 @@ export const SlowMovingPage: React.FC = () => {
     setIsLoading(true)
     setError(null)
 
-    const res = await getSlowMovingItems(hospitalId, daysSinceMovement)
+    const res = await getSlowMovingItems(hospitalId, daysSinceMovement, activeStoreId || undefined)
 
     if (res.error) {
       setError(res.error)
@@ -36,7 +39,7 @@ export const SlowMovingPage: React.FC = () => {
 
   useEffect(() => {
     void loadData()
-  }, [hospitalId, daysSinceMovement])
+  }, [hospitalId, daysSinceMovement, activeStoreId])
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '-'
@@ -103,7 +106,8 @@ export const SlowMovingPage: React.FC = () => {
         </div>
 
         {/* Filter Controls */}
-        <div className="flex items-center gap-3 self-start sm:self-center relative z-10">
+        <div className="flex flex-wrap items-center gap-3 self-start sm:self-center relative z-10">
+          <StoreLocationSelector />
           <div className="flex items-center gap-2 bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2 shadow-inner">
             <Filter className="w-4 h-4 text-slate-400" />
             <span className="text-xs font-medium text-slate-400">Tempoh Tiada Pergerakan:</span>

@@ -27,17 +27,17 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const id = props.id || props.name;
     
     const inputClasses = `
-      min-h-[2.75rem] w-full rounded-xl border bg-white px-4 py-2 text-sm text-slate-900 leading-normal 
-      placeholder:text-slate-400 
-      transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-offset-1
-      disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed
+      min-h-[2.5rem] w-full rounded-lg border bg-surface px-3.5 py-2 text-sm text-text-primary leading-normal 
+      placeholder:text-text-muted 
+      transition-colors duration-150
+      focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-canvas
+      disabled:bg-subtle disabled:text-text-muted disabled:cursor-not-allowed
       ${error 
-        ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
-        : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 hover:border-slate-400'
+        ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' 
+        : 'border-border-default focus:border-teal-600 dark:focus:border-teal-500 focus:ring-teal-500/20 hover:border-border-strong'
       }
-      ${leftIcon ? 'pl-10' : ''}
-      ${rightIcon ? 'pr-10' : ''}
+      ${leftIcon ? 'pl-9' : ''}
+      ${rightIcon ? 'pr-9' : ''}
       ${className}
     `;
     
@@ -46,7 +46,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label 
             htmlFor={id} 
-            className="block text-sm font-semibold text-slate-700 mb-2"
+            className="block text-xs font-medium text-text-secondary uppercase tracking-wider mb-1.5"
           >
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}

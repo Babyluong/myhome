@@ -13,7 +13,8 @@ import {
   Activity,
   Pill,
   ShieldAlert,
-  Building2
+  Building2,
+  Baby
 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -28,32 +29,26 @@ export const FormulariSubMenu: React.FC = () => {
 
   const menuItems = [
     {
-      title: language === 'ms' ? 'Formulari Ubat Hospital Lawas' : 'Hospital Lawas Formulary',
-      description: language === 'ms'
-        ? 'Pangkalan data formulari ubat rasmi Hospital Lawas. Diselaraskan terus mengikut baki inventori fasiliti MyInventory dan diasingkan mengikut kumpulan Eyedrop, Eardrop, Insulin, MDI, Antikoagulan & kelas klinikal.'
-        : 'Official Lawas Hospital Drug Formulary. Strictly reflects facility inventory from MyInventory, separated into Eyedrops, Eardrops, Insulin, MDI Inhalers, Anticoagulants and clinical groups.',
+      title: 'Hospital Lawas Formulary',
+      description: 'Official Lawas Hospital Drug Formulary. Strictly reflects facility inventory from MyInventory, separated into Eyedrops, Eardrops, Insulin, MDI Inhalers, Anticoagulants and clinical groups.',
       icon: Building2,
       path: ROUTES.FORMULARI_HOSPITAL_LAWAS,
       color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
-      badge: language === 'ms' ? 'Khas Hospital Lawas' : 'Lawas Special',
+      badge: 'Lawas Formulary',
       badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
     },
     {
-      title: language === 'ms' ? 'Carian & Pengkatalogan Formulari' : 'Formulary Search & Catalog',
-      description: language === 'ms'
-        ? 'Carian ubat lengkap mengikut nama generik (INN), jenama dagang, kod ATC, indikasi, kontraindikasi dan kategori preskriber FUKKM.'
-        : 'Comprehensive drug search by generic name, brand, ATC classification, clinical indications, and MOH prescriber categories.',
+      title: 'Formulary Search & Catalog',
+      description: 'Comprehensive drug search by generic name, brand, ATC classification, clinical indications, and MOH prescriber categories.',
       icon: Search,
       path: ROUTES.FORMULARI_DASHBOARD,
       color: 'text-violet-400 bg-violet-500/10 border-violet-500/20',
-      badge: `${stats.totalDrugs} Ubat`,
+      badge: `${stats.totalDrugs} Drugs`,
       badgeColor: 'bg-violet-500/20 text-violet-300 border-violet-500/30'
     },
     {
-      title: language === 'ms' ? 'Senarai Ubat Berisiko Tinggi (HAM)' : 'High Alert Medications (HAM)',
-      description: language === 'ms'
-        ? 'Daftar ubat berisiko tinggi KKM — elektrolit pekat, insulin, inotrop, antikoagulan, opioid, NMBA — beserta SOP semakan berganda mandatori (IDC).'
-        : 'KKM High Alert Medication registry: concentrated electrolytes, insulin, inotropes, anticoagulants, opioids, NMBAs, and mandatory IDC double-check SOP.',
+      title: 'High Alert Medications (HAM)',
+      description: 'KKM High Alert Medication registry: concentrated electrolytes, insulin, inotropes, anticoagulants, opioids, NMBAs, and mandatory IDC double-check SOP.',
       icon: Flame,
       path: ROUTES.FORMULARI_HAM,
       color: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
@@ -61,32 +56,26 @@ export const FormulariSubMenu: React.FC = () => {
       badgeColor: 'bg-rose-500 text-white border-transparent'
     },
     {
-      title: language === 'ms' ? 'Daftar Ubat LASA & TALL-Man Lettering' : 'LASA Registry & TALL-Man Lettering',
-      description: language === 'ms'
-        ? 'Senarai pasangan ubat rupa serupa / bunyi serupa dengan penonjolan huruf TALL-man dan panduan pengasingan simpanan stor / troli kecemasan.'
-        : 'Look-Alike Sound-Alike drug pairs with TALL-man lettering highlighting and storage separation guidance.',
+      title: 'LASA Registry & TALL-Man Lettering',
+      description: 'Look-Alike Sound-Alike drug pairs with TALL-man lettering highlighting and storage separation guidance.',
       icon: AlertTriangle,
       path: ROUTES.FORMULARI_LASA,
       color: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-      badge: `${stats.lasaCount} Pasangan`,
+      badge: `${stats.lasaCount} Pairs`,
       badgeColor: 'bg-amber-500 text-slate-900 border-transparent'
     },
     {
-      title: language === 'ms' ? 'Pusat Protokol Rekonstitusi & Pelarutan IV' : 'IV Dilution & Reconstitution Protocols',
-      description: language === 'ms'
-        ? 'Panduan bancuhan aseptik, pelarut yang sesuai, kepekatan maksima sekatan cecair, keserasian sambungan Y-Site, dan had laju infusi.'
-        : 'Aseptic reconstitution guide, compatible diluents, fluid restriction concentrations, Y-site compatibility, and infusion rate limits.',
+      title: 'IV Dilution & Reconstitution Protocols',
+      description: 'Aseptic reconstitution guide, compatible diluents, fluid restriction concentrations, Y-site compatibility, and infusion rate limits.',
       icon: Droplets,
       path: ROUTES.FORMULARI_DILUTION,
       color: 'text-teal-400 bg-teal-500/10 border-teal-500/20',
-      badge: `${stats.ivDilutionCount} Protokol`,
+      badge: `${stats.ivDilutionCount} Protocols`,
       badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/30'
     },
     {
-      title: language === 'ms' ? 'Garis Panduan Antimikrobial Kebangsaan (NAG 2024)' : 'National Antimicrobial Guidelines (NAG 2024)',
-      description: language === 'ms'
-        ? 'Rejimen empirik lini pertama & kedua mengikut sistem badan, profilaksis surgeri (SAP), kriteria tukar IV ke oral, dan semakan 72 jam AMS.'
-        : 'First and second line empiric regimens by body system, surgical prophylaxis (SAP), IV-to-oral switch criteria, and 72h AMS reviews.',
+      title: 'National Antimicrobial Guidelines (NAG 2024)',
+      description: 'First and second line empiric regimens by body system, surgical prophylaxis (SAP), IV-to-oral switch criteria, and 72h AMS reviews.',
       icon: ShieldCheck,
       path: ROUTES.FORMULARI_ANTIMICROBIAL,
       color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
@@ -94,68 +83,69 @@ export const FormulariSubMenu: React.FC = () => {
       badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
     },
     {
-      title: language === 'ms' ? 'Pemantauan Kuota & Amaran Stok Rendah' : 'Drug Quota & Low-Stock Alerts',
-      description: language === 'ms'
-        ? 'Pengesanan baki kuota bulanan fasiliti, amaran stok rendah / kritikal habis, anggaran baki hari penggunaan ubat, dan ubat alternatif tersedia.'
-        : 'Facility monthly quota tracking, low-stock / critical shortage threshold alerts, estimated run-out forecasting, and available drug alternatives.',
+      title: 'Drug Quota & Low-Stock Alerts',
+      description: 'Facility monthly quota tracking, low-stock / critical shortage threshold alerts, estimated run-out forecasting, and available drug alternatives.',
       icon: TrendingDown,
       path: ROUTES.FORMULARI_QUOTA,
       color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
-      badge: stats.lowStockCount > 0 ? `${stats.lowStockCount} Amaran` : 'Stok OK',
+      badge: stats.lowStockCount > 0 ? `${stats.lowStockCount} Alerts` : 'Stock OK',
       badgeColor: stats.lowStockCount > 0 ? 'bg-rose-500 text-white border-transparent' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
     },
     {
-      title: language === 'ms' ? 'Matriks Ubat Alternatif & Penggantian Terapi' : 'Drug Alternatives & Substitution Matrix',
-      description: language === 'ms'
-        ? 'Senarai ubat pengganti setara kelas atau lini kedua yang diluluskan KKM semasa berlaku gangguan bekalan atau kehabisan kuota.'
-        : 'MOH approved therapeutic substitutes and class equivalent alternatives during stock shortages or supply disruptions.',
+      title: 'Drug Alternatives & Substitution Matrix',
+      description: 'MOH approved therapeutic substitutes and class equivalent alternatives during stock shortages or supply disruptions.',
       icon: Layers,
       path: ROUTES.FORMULARI_ALTERNATIVES,
       color: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
-      badge: language === 'ms' ? 'Alternatif Terapi' : 'Therapeutic Alt.',
+      badge: 'Therapeutic Alt.',
       badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30'
     },
     {
-      title: language === 'ms' ? 'Daftar & Protokol Antidot KKM' : 'KKM Antidote & Poison Protocols',
-      description: language === 'ms'
-        ? 'Pangkalan data lengkap antidot KKM (List A, B, C), protokol dos intoksikasi ubat, pengurusan toksikologi & talian kecemasan Pusat Racun Negara (PRN).'
-        : 'Official MOH antidote registry (List A, B, C), drug intoxication reversal protocols, emergency toxicology management, and National Poison Centre hotline.',
+      title: 'KKM Antidote & Poison Protocols',
+      description: 'Official MOH antidote registry (List A, B, C), drug intoxication reversal protocols, emergency toxicology management, and National Poison Centre hotline.',
       icon: ShieldAlert,
       path: ROUTES.FORMULARI_ANTIDOTES,
       color: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
-      badge: language === 'ms' ? '25+ Antidot KKM' : '25+ MOH Antidotes',
+      badge: '25+ MOH Antidotes',
       badgeColor: 'bg-rose-500 text-white border-transparent'
+    },
+    {
+      title: 'Paediatric Drug Catalogue',
+      description: 'Official paediatric formulary and floor stock registry for Hospital Lawas. Directly synchronized with MyInventory facility stock with integrated weight-based dose calculator.',
+      icon: Baby,
+      path: ROUTES.FORMULARI_PAEDIATRIC_CATALOGUE,
+      color: 'text-teal-400 bg-teal-500/10 border-teal-500/20',
+      badge: 'Paediatric Ward',
+      badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/30'
     }
   ]
 
   return (
-    <div className="p-6 md:p-8 w-full min-h-screen text-slate-100">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto min-h-screen text-slate-100">
       {/* Back navigation */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <button
           onClick={() => navigate(ROUTES.HUB)}
-          className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-6 group text-sm font-medium"
+          className="min-h-[44px] flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-4 sm:mb-6 group text-sm font-medium cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
-          <span>{language === 'ms' ? 'Kembali ke Hub Utama' : 'Back to Main Hub'}</span>
+          <span>Back to Main Hub</span>
         </button>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3.5 bg-violet-500/10 text-violet-400 border border-violet-500/20 rounded-2xl shadow-inner">
-              <Pill className="w-9 h-9" />
+          <div className="flex items-center gap-3.5 sm:gap-4">
+            <div className="p-3 sm:p-3.5 bg-violet-500/10 text-violet-400 border border-violet-500/20 rounded-2xl shadow-inner flex-shrink-0">
+              <Pill className="w-8 h-8 sm:w-9 sm:h-9" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-3xl font-bold tracking-tight text-white">MyFormulari</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">MyFormulari</h1>
                 <Badge className="border-violet-500/30 text-violet-400 bg-violet-500/5">
-                  {language === 'ms' ? 'Formulari Klinikal KKM' : 'KKM Clinical Formulary'}
+                  KKM Clinical Formulary
                 </Badge>
               </div>
-              <p className="text-slate-400 mt-1">
-                {language === 'ms'
-                  ? 'Pusat Sehenti Formulari Ubat, Keselamatan HAM/LASA, Protokol IV & Garis Panduan Antimikrobial'
-                  : 'Drug Formulary One-Stop Centre, HAM/LASA Safety, IV Protocols & Antimicrobial Guidelines'}
+              <p className="text-slate-400 text-xs sm:text-sm mt-1">
+                Drug Formulary One-Stop Centre, HAM/LASA Safety, IV Protocols & Antimicrobial Guidelines
               </p>
             </div>
           </div>
@@ -163,64 +153,64 @@ export const FormulariSubMenu: React.FC = () => {
       </div>
 
       {/* Quick stats panel */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-5 rounded-2xl">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex justify-between items-start text-slate-500">
-            <span className="text-sm font-medium">{language === 'ms' ? 'Jumlah Ubat' : 'Total Drugs'}</span>
-            <Activity className="w-4 h-4 text-slate-400" />
+            <span className="text-xs sm:text-sm font-medium">Total Drugs</span>
+            <Activity className="w-4 h-4 text-slate-400 flex-shrink-0" />
           </div>
-          <p className="text-3xl font-bold font-mono mt-2 text-white">{stats.totalDrugs}</p>
-          <p className="text-xs text-slate-500 mt-1">Formulari FUKKM 2025</p>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-white min-h-[36px] flex items-center">{stats.totalDrugs}</div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">MOH Formulary 2025</p>
         </div>
 
-        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-5 rounded-2xl">
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex justify-between items-start text-slate-500">
-            <span className="text-sm font-medium">{language === 'ms' ? 'Ubat HAM' : 'HAM Items'}</span>
-            <Flame className="w-4 h-4 text-rose-400" />
+            <span className="text-xs sm:text-sm font-medium">HAM Items</span>
+            <Flame className="w-4 h-4 text-rose-400 flex-shrink-0" />
           </div>
-          <p className="text-3xl font-bold font-mono mt-2 text-rose-400">{stats.hamCount}</p>
-          <p className="text-xs text-slate-500 mt-1">High Alert Risk</p>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-rose-400 min-h-[36px] flex items-center">{stats.hamCount}</div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">High Alert Risk</p>
         </div>
 
-        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-5 rounded-2xl">
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex justify-between items-start text-slate-500">
-            <span className="text-sm font-medium">{language === 'ms' ? 'Pasangan LASA' : 'LASA Pairs'}</span>
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <span className="text-xs sm:text-sm font-medium">LASA Pairs</span>
+            <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
           </div>
-          <p className="text-3xl font-bold font-mono mt-2 text-amber-400">{stats.lasaCount}</p>
-          <p className="text-xs text-slate-500 mt-1">TALL-Man Lettering</p>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-amber-400 min-h-[36px] flex items-center">{stats.lasaCount}</div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">TALL-Man Lettering</p>
         </div>
 
-        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-5 rounded-2xl">
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex justify-between items-start text-slate-500">
-            <span className="text-sm font-medium">{language === 'ms' ? 'Amaran Stok' : 'Stock Alerts'}</span>
-            <TrendingDown className={`w-4 h-4 ${stats.lowStockCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`} />
+            <span className="text-xs sm:text-sm font-medium">Stock Alerts</span>
+            <TrendingDown className={`w-4 h-4 flex-shrink-0 ${stats.lowStockCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`} />
           </div>
-          <p className={`text-3xl font-bold font-mono mt-2 ${stats.lowStockCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+          <div className={`text-2xl sm:text-3xl font-bold font-mono mt-2 min-h-[36px] flex items-center ${stats.lowStockCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
             {stats.lowStockCount}
-          </p>
-          <p className="text-xs text-slate-500 mt-1">{language === 'ms' ? 'Stok rendah / habis' : 'Low / out of stock'}</p>
+          </div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Low / out of stock</p>
         </div>
       </div>
 
       {/* Action choices list */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-white tracking-wide">
-          {language === 'ms' ? 'PILIHAN MODUL KLINIKAL' : 'CLINICAL MODULE CHOICES'}
+        <h2 className="text-base sm:text-lg font-semibold text-white tracking-wide">
+          CLINICAL MODULE CHOICES
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {menuItems.map((item, idx) => {
             const Icon = item.icon
             return (
               <button
                 key={idx}
                 onClick={() => navigate(item.path)}
-                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl p-6 hover:bg-slate-800/40 hover:border-slate-700/80 transition-all duration-300 shadow-xl relative overflow-hidden flex flex-col justify-between"
+                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl p-4 sm:p-6 hover:bg-slate-800/40 hover:border-slate-700/80 active:scale-[0.98] transition-all duration-200 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[170px] cursor-pointer"
               >
                 <div>
                   <div className="flex justify-between items-center mb-4">
-                    <div className={`p-3 rounded-xl border ${item.color}`}>
-                      <Icon className="w-6 h-6" />
+                    <div className={`p-2.5 sm:p-3 rounded-xl border ${item.color}`}>
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
                     {item.badge && (
                       <span className={`text-xs px-2.5 py-1 rounded-full font-semibold border ${item.badgeColor}`}>
@@ -228,16 +218,16 @@ export const FormulariSubMenu: React.FC = () => {
                       </span>
                     )}
                   </div>
-                  <h3 className="text-base font-bold text-white group-hover:text-violet-400 transition-colors mb-2">
+                  <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-violet-400 transition-colors mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                  <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-4">
                     {item.description}
                   </p>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-violet-500/80 group-hover:text-violet-400 transition-colors mt-auto">
-                  <span>{language === 'ms' ? 'Masuk Modul' : 'Open Module'}</span>
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-violet-500/80 group-hover:text-violet-400 transition-colors mt-auto pt-2">
+                  <span>Open Module</span>
                   <span className="transform group-hover:translate-x-1 transition-transform">→</span>
                 </div>
               </button>

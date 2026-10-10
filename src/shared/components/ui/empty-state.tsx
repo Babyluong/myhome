@@ -53,12 +53,12 @@ export function EmptyState({
         </div>
       )}
       
-      <h3 className={`${titleSizeClasses[size]} font-bold text-gray-900 mb-2`}>
+      <h3 className={`${titleSizeClasses[size]} font-semibold text-text-primary mb-1.5`}>
         {title}
       </h3>
       
       {description && (
-        <p className="text-sm text-gray-600 max-w-md mb-6">
+        <p className="text-sm text-text-muted max-w-md mb-6 leading-relaxed">
           {description}
         </p>
       )}

@@ -36,6 +36,8 @@ import {
 import { useAuthStore } from '@/stores/authStore'
 import { Table, Spinner, Badge, Select } from '@/components/ui'
 import { getNearExpiryItems, getStockLocations, createStockTransaction } from '@/services/pharmacy/inventoryService'
+import { useInventoryStore } from '../../context/InventoryStoreContext'
+import { StoreLocationSelector } from '../../components/StoreLocationSelector'
 import type { ExpiryItem } from '@/types/pharmacy'
 
 export interface GroupedExpiryItem {
@@ -56,6 +58,7 @@ export interface GroupedExpiryItem {
 
 export const NearExpiryPage: React.FC = () => {
   const { user } = useAuthStore()
+  const { activeStore, activeStoreId } = useInventoryStore()
   const hospitalId = user?.hospital_id || '85bb6adc-b868-428b-83f4-e5af2f5cf904'
 
   // State Management
@@ -82,7 +85,7 @@ export const NearExpiryPage: React.FC = () => {
   // Interactive Form State
   const [transferQty, setTransferQty] = useState<number>(1)
   const [targetLocation, setTargetLocation] = useState<string>('Decanting')
-  const [disposalReason, setDisposalReason] = useState<string>('Telah Luput Tarikh (Expired)')
+  const [disposalReason, setDisposalReason] = useState<string>('Expired')
   const [disposalRefNo, setDisposalRefNo] = useState<string>('')
   const [isSubmittingAction, setIsSubmittingAction] = useState(false)
 
@@ -100,7 +103,7 @@ export const NearExpiryPage: React.FC = () => {
     setIsLoading(true)
     setError(null)
     try {
-      const res = await getNearExpiryItems(hospitalId)
+      const res = await getNearExpiryItems(hospitalId, undefined, activeStoreId || undefined)
       if (res.error) {
         setError(res.error)
         setRawItems([])
@@ -139,7 +142,7 @@ export const NearExpiryPage: React.FC = () => {
         }
       }
     } catch (err: any) {
-      setError(err?.message || 'Gagal memuatkan maklumat stok hampir luput')
+      setError(err?.message || 'Failed to load near-expiry stock records')
       setRawItems([])
     } finally {
       setIsLoading(false)
@@ -148,7 +151,7 @@ export const NearExpiryPage: React.FC = () => {
 
   useEffect(() => {
     void loadData()
-  }, [hospitalId])
+  }, [hospitalId, activeStoreId])
 
   // Calculate Expiry Status Buckets with Real Costs
   const stats = useMemo(() => {
@@ -318,11 +321,11 @@ export const NearExpiryPage: React.FC = () => {
   // Export CSV
   const handleExportCSV = () => {
     if (filteredItems.length === 0) {
-      showToast('Tiada rekod untuk dieksport', 'error')
+      showToast('No records to export', 'error')
       return
     }
 
-    const headers = ['Kod Item', 'Nama Item', 'Jenis', 'Pembungkusan', 'No Batch', 'Lokasi', 'Kuantiti', 'Tarikh Luput', 'Baki Hari', 'Status']
+    const headers = ['Kod Item', 'Nama Item', 'Jenis', 'Pembungkusan', 'No Batch', 'Lokasi', 'Kuantiti', 'Expiry Date', 'Days Remaining', 'Status']
     const rows = filteredItems.map((item) => [
       `"${item.item_code}"`,
       `"${item.item_name.replace(/"/g, '""')}"`,
@@ -428,6 +431,7 @@ export const NearExpiryPage: React.FC = () => {
 
           {/* Quick Header Actions */}
           <div className="flex flex-wrap items-center gap-3">
+            <StoreLocationSelector />
             <button
               onClick={() => void loadData()}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition-all shadow-sm active:scale-95"
@@ -1084,7 +1088,7 @@ export const NearExpiryPage: React.FC = () => {
                                           <th className="py-2.5 px-3">No. Batch</th>
                                           <th className="py-2.5 px-3">Lokasi Simpanan</th>
                                           <th className="py-2.5 px-3 text-right">Kuantiti Batch</th>
-                                          <th className="py-2.5 px-3">Tarikh Luput</th>
+                                          <th className="py-2.5 px-3">Expiry Date</th>
                                           <th className="py-2.5 px-3 text-center">Status Risiko</th>
                                           <th className="py-2.5 px-3 text-center">Tindakan Batch</th>
                                         </tr>
@@ -1240,7 +1244,7 @@ export const NearExpiryPage: React.FC = () => {
                     <th className="py-3.5 px-4">No. Batch</th>
                     <th className="py-3.5 px-4">Lokasi Depot / Wad</th>
                     <th className="py-3.5 px-4 text-right">Baki Kuantiti</th>
-                    <th className="py-3.5 px-4">Tarikh Luput</th>
+                    <th className="py-3.5 px-4">Expiry Date</th>
                     <th className="py-3.5 px-4 text-center">Status Risk</th>
                     <th className="py-3.5 px-4 text-center">Tindakan</th>
                   </tr>
@@ -1474,7 +1478,7 @@ export const NearExpiryPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-3.5 rounded-xl border border-slate-200 bg-white">
-                  <div className="text-xs text-slate-400">Tarikh Luput</div>
+                  <div className="text-xs text-slate-400">Expiry Date</div>
                   <div className="font-bold text-slate-800 mt-1">{formatDate(activeModalItem.expiry_date)}</div>
                 </div>
                 <div className="p-3.5 rounded-xl border border-slate-200 bg-white">
@@ -1589,7 +1593,7 @@ export const NearExpiryPage: React.FC = () => {
                 }}
                 className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-500"
               >
-                Hantar Permohonan
+                Submit Requisition
               </button>
               <button
                 onClick={() => setTransferModalItem(null)}
@@ -1634,7 +1638,7 @@ export const NearExpiryPage: React.FC = () => {
                   onChange={(e) => setDisposalReason(e.target.value)}
                   className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800"
                 >
-                  <option value="Telah Luput Tarikh (Expired)">Telah Luput Tarikh (Expired)</option>
+                  <option value="Expired">Expired</option>
                   <option value="Rosak / Kontaminasi">Rosak / Kontaminasi</option>
                   <option value="Perubahan Karakteristik Ubat">Perubahan Karakteristik Ubat</option>
                 </select>

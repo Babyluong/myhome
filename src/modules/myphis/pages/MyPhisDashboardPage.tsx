@@ -31,7 +31,9 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-  TabsContent
+  TabsContent,
+  Skeleton,
+  ModulePageHeader
 } from '@/components/ui'
 import { isSupabaseConfigured } from '@/services/supabase'
 import { 
@@ -740,80 +742,91 @@ export const MyPhisDashboardPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
-        <Spinner size="lg" />
-        <p className="text-slate-500 text-sm">Loading MyPHiS Integration Hub...</p>
+      <div className="w-full space-y-6 animate-pulse-subtle">
+        {/* Header Skeleton */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Skeleton className="w-12 h-12 rounded-xl" />
+            <div className="space-y-2">
+              <Skeleton className="h-7 w-64" />
+              <Skeleton className="h-4 w-96 max-w-full" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-9 w-36 rounded-lg" />
+            <Skeleton className="h-9 w-24 rounded-lg" />
+          </div>
+        </div>
+
+        {/* 4 Metric Card Skeletons */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-surface border border-border-default p-5 rounded-xl space-y-3">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-8 w-16" />
+              <Skeleton className="h-3 w-36" />
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar / Table Skeleton */}
+        <div className="bg-surface border border-border-default p-6 rounded-xl space-y-4">
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-9 w-32 rounded-lg" />
+          </div>
+          <div className="grid grid-cols-7 gap-2">
+            {Array.from({ length: 35 }).map((_, i) => (
+              <Skeleton key={i} className="h-20 rounded-xl" />
+            ))}
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16 text-slate-800">
-      {/* Premium Ambient Radial Lights */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-500/[0.04] to-indigo-500/[0.02] rounded-full blur-[140px] pointer-events-none -z-10 animate-pulse-subtle" />
-      <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-sky-500/[0.02] to-teal-500/[0.03] rounded-full blur-[120px] pointer-events-none -z-10" />
-
-      <div className="w-full p-6 lg:p-8 space-y-8">
-        {/* Breadcrumbs & Header Section */}
-        <div className="space-y-4">
-          {/* Breadcrumb Navigation */}
-          <nav className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            <button onClick={() => navigate('/pharmacy')} className="hover:text-indigo-600 transition-colors flex items-center gap-1">
-              Pharmacy
-            </button>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <span className="text-slate-800 font-extrabold tracking-wide">MyPHiS Integration Hub</span>
-          </nav>
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-20">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-gradient-to-tr from-slate-900 to-indigo-950 border border-slate-800/80 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
-                <Database className="h-6 w-6 text-white" />
-              </div>
-              <div className="space-y-0.5">
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
-                  MyPHiS Integration Hub
-                </h1>
-                <p className="text-slate-500 font-semibold text-[11px]">
-                  Launch external Pharmacy Information Systems and track daily server backup disk swaps.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 self-start sm:self-center">
-              {/* Connection status badge */}
-              <Badge variant={isSupabaseConfigured() ? 'success' : 'warning'} className="gap-1.5 font-medium py-1">
-                <span className={`w-1.5 h-1.5 rounded-full ${isSupabaseConfigured() ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                {isSupabaseConfigured() ? 'Supabase Connected' : 'Offline / Local Storage Mode'}
-              </Badge>
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => loadData(true)} 
-                disabled={refreshing}
-                className="flex items-center gap-1 bg-white hover:bg-slate-50 border-slate-200"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
-            </div>
+    <div className="w-full space-y-6">
+      {/* Universal Module Header */}
+      <ModulePageHeader
+        badge="Pharmacy Information System"
+        title="MyPHiS Integration Hub"
+        description="Launch external Pharmacy Information Systems and track daily server backup disk swaps."
+        icon={<Database className="w-5 h-5 text-accent-base" />}
+        actions={
+          <div className="flex items-center gap-2">
+            <Badge variant={isSupabaseConfigured() ? 'success' : 'warning'} className="gap-1.5 font-medium py-1">
+              <span className={`w-1.5 h-1.5 rounded-full ${isSupabaseConfigured() ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+              {isSupabaseConfigured() ? 'Supabase Connected' : 'Offline / Local Storage Mode'}
+            </Badge>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => loadData(true)} 
+              disabled={refreshing}
+              className="flex items-center gap-1 border-border-default"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>Refresh</span>
+            </Button>
           </div>
-        </div>
+        }
+      />
 
 
 
 
       {/* Warnings & Alerts */}
       {missedDays.length > 0 && (
-        <div className="bg-rose-50/60 border border-rose-100 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-rose-900 animate-fadeIn">
+        <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-rose-500 animate-fadeIn">
           <div className="flex gap-3 items-start">
-            <div className="p-2 bg-rose-500 text-white rounded-xl shadow-sm flex-shrink-0">
+            <div className="p-2 bg-rose-500/20 text-rose-500 rounded-lg shrink-0">
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <p className="font-semibold text-rose-950">Action Required: Missed Backup Disk Change Logs</p>
-              <p className="text-rose-800 text-xs mt-0.5 max-w-2xl leading-relaxed">
+              <p className="font-semibold text-text-primary text-sm">Action Required: Missed Backup Disk Change Logs</p>
+              <p className="text-text-muted text-xs mt-0.5 max-w-2xl leading-relaxed">
                 There {missedDays.length === 1 ? 'is 1 missed backup swap' : `are ${missedDays.length} missed backup swaps`} in the current month. 
                 Please complete the logs by selecting the highlighted days in the rotation calendar below.
               </p>
@@ -823,21 +836,20 @@ export const MyPhisDashboardPage: React.FC = () => {
           <Button
             size="sm"
             onClick={() => handleOpenLogModal(missedDays[0].dateStr)}
-            className="bg-rose-600 hover:bg-rose-700 text-white border-transparent shrink-0 self-start sm:self-center font-semibold text-xs py-2 px-3 shadow-sm"
+            className="bg-rose-600 hover:bg-rose-700 text-white border-transparent shrink-0 self-start sm:self-center font-semibold text-xs py-2 px-3 shadow-xs"
           >
             Log Most Recent ({new Date(missedDays[0].dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})
           </Button>
         </div>
       )}
 
-
       {/* Section 1: External Portal Navigation Launchpad */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-1 flex items-center gap-2">
+      <div className="bg-surface rounded-xl shadow-xs border border-border-default p-5 sm:p-6">
+        <h2 className="text-base font-bold text-text-primary mb-1 flex items-center gap-2">
           <span>Official PHiS Portals</span>
-          <Badge variant="gray" className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5">Audited Navigation</Badge>
+          <Badge className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 border-border-default bg-subtle text-text-muted">Audited Navigation</Badge>
         </h2>
-        <p className="text-slate-600 text-sm font-medium mb-4">
+        <p className="text-text-muted text-xs font-normal mb-4">
           All clicks to external systems are securely recorded with timestamp and username for security and compliance audits.
         </p>
         
@@ -852,22 +864,22 @@ export const MyPhisDashboardPage: React.FC = () => {
           ].map(portal => (
             <div 
               key={portal.name}
-              className="group flex flex-col justify-between p-5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-blue-300 hover:shadow-md transition-all duration-300"
+              className="group flex flex-col justify-between p-5 rounded-xl border border-border-default bg-subtle/30 hover:bg-surface hover:border-accent-base/40 hover:shadow-xs transition-all duration-200"
             >
               <div>
                 <div className="flex items-center justify-between mb-2.5">
-                  <Badge variant="gray" className="text-[10px] font-bold tracking-wide uppercase px-2 py-0.5">{portal.badge}</Badge>
-                  <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-blue-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                  <span className="text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded-md bg-surface border border-border-default text-text-muted">{portal.badge}</span>
+                  <ExternalLink className="w-4 h-4 text-text-muted group-hover:text-accent-base group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </div>
-                <h3 className="font-bold text-slate-900 text-lg mb-1 group-hover:text-blue-600 transition-colors">{portal.name}</h3>
-                <p className="text-slate-700 text-sm leading-relaxed">{portal.desc}</p>
+                <h3 className="font-bold text-text-primary text-base mb-1 group-hover:text-accent-base transition-colors">{portal.name}</h3>
+                <p className="text-text-muted text-xs leading-relaxed">{portal.desc}</p>
               </div>
               
               <Button
                 variant="default"
                 size="sm"
                 onClick={() => handleExternalLink(portal.name, portal.url)}
-                className="mt-5 w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm py-2"
+                className="mt-5 w-full flex items-center justify-center gap-2 bg-accent-base hover:bg-accent-dark text-white font-semibold shadow-xs py-2 rounded-lg"
               >
                 Launch Portal
                 <ArrowRight className="w-4 h-4" />
@@ -878,12 +890,12 @@ export const MyPhisDashboardPage: React.FC = () => {
       </div>
 
       {/* Section 2: Daily Backup Disk Rotation Tracker */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div className="bg-surface rounded-xl shadow-xs border border-border-default p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900 mb-0.5">Daily Backup Disk Rotation</h2>
-              <p className="text-slate-500 text-xs">
+              <h2 className="text-base font-bold text-text-primary mb-0.5">Daily Backup Disk Rotation</h2>
+              <p className="text-text-muted text-xs">
                 Everyday disk swaps are mandatory for the local database server backup routine. Select any day to record or edit logs.
               </p>
             </div>
@@ -894,7 +906,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                 <select
                   value={currentMonth}
                   onChange={(e) => setCurrentMonth(parseInt(e.target.value))}
-                  className="text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer shadow-sm uppercase tracking-wider w-full sm:min-w-[150px] appearance-none text-center h-9"
+                  className="text-xs font-semibold text-text-primary bg-surface border border-border-default rounded-lg px-4 py-2 outline-none cursor-pointer shadow-xs uppercase tracking-wider w-full sm:min-w-[150px] appearance-none text-center h-9"
                   style={{
                     backgroundImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E")`,
                     backgroundPosition: 'right 0.75rem center',
@@ -906,7 +918,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                   {Array.from({ length: 12 }).map((_, i) => {
                     const monthLabel = new Date(currentYear, i).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
                     return (
-                      <option key={i} value={i} className="text-slate-800 bg-white font-semibold normal-case">
+                      <option key={i} value={i} className="text-text-primary bg-surface font-semibold normal-case">
                         {monthLabel}
                       </option>
                     );
@@ -918,7 +930,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleAutoPlotLogs}
-                className="flex items-center justify-center gap-1.5 shadow-sm font-semibold border-slate-200 text-slate-700 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/30 h-9 transition-all px-3.5 whitespace-nowrap flex-1 sm:flex-initial"
+                className="flex items-center justify-center gap-1.5 shadow-xs font-semibold border-border-default text-text-primary hover:bg-subtle h-9 transition-all px-3.5 whitespace-nowrap flex-1 sm:flex-initial rounded-lg"
               >
                 <RefreshCw className="w-4 h-4" />
                 Auto Plot
@@ -928,7 +940,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                 variant="default"
                 size="sm"
                 onClick={() => handleOpenLogModal(todayStr)}
-                className="flex items-center justify-center gap-1.5 shadow-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 h-9 px-3.5 whitespace-nowrap flex-1 sm:flex-initial"
+                className="flex items-center justify-center gap-1.5 shadow-xs font-semibold bg-accent-base text-white hover:bg-accent-dark h-9 px-3.5 whitespace-nowrap flex-1 sm:flex-initial rounded-lg"
               >
                 <Plus className="w-4 h-4" />
                 Log Disk Swap
@@ -938,14 +950,14 @@ export const MyPhisDashboardPage: React.FC = () => {
         </div>
 
         {/* Calendar headers */}
-        <div className="grid grid-cols-7 gap-3 mb-2 text-center text-[10px] font-black text-slate-400 uppercase tracking-wider select-none border-b border-slate-100 pb-2">
+        <div className="grid grid-cols-7 gap-3 mb-2 text-center text-[10px] font-semibold text-text-muted uppercase tracking-wider select-none border-b border-border-default pb-2">
           <div>Mon</div>
           <div>Tue</div>
           <div>Wed</div>
           <div>Thu</div>
           <div>Fri</div>
-          <div className="text-indigo-500 font-black">Sat</div>
-          <div className="text-indigo-500 font-black">Sun</div>
+          <div className="text-accent-base font-semibold">Sat</div>
+          <div className="text-accent-base font-semibold">Sun</div>
         </div>
 
         {/* Calendar visual Grid (showing Mon-Sun fixed grid layout) */}
@@ -953,7 +965,7 @@ export const MyPhisDashboardPage: React.FC = () => {
           {placeholders.map((_, idx) => (
             <div 
               key={`placeholder-${idx}`} 
-              className="bg-slate-50/20 border border-dashed border-slate-200/50 rounded-xl min-h-[92px] opacity-25"
+              className="bg-subtle/20 border border-dashed border-border-default/50 rounded-xl min-h-[92px] opacity-25"
             />
           ))}
           {dateList.map(day => {
@@ -967,7 +979,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                 className={`relative flex flex-col items-center justify-between p-3 rounded-xl border text-center transition-all ${styles.bgColor} min-h-[92px] ${day.isFuture ? 'cursor-not-allowed pointer-events-none opacity-60' : ''}`}
               >
                 {day.isToday && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-blue-500 rounded-full ring-2 ring-white" title="Today" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent-base rounded-full ring-2 ring-surface" title="Today" />
                 )}
                 
                 <div className="flex justify-end w-full">
@@ -978,7 +990,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                   {styles.icon ? (
                     styles.icon
                   ) : (
-                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full block mx-auto" />
+                    <span className="w-1.5 h-1.5 bg-border-default rounded-full block mx-auto" />
                   )}
                 </div>
                 
@@ -991,8 +1003,8 @@ export const MyPhisDashboardPage: React.FC = () => {
         </div>
         
         {/* Color key */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-100 pt-4 text-xs text-slate-500">
-          <span className="font-medium text-slate-400 uppercase text-[10px] tracking-wider mr-2">Status Key:</span>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-border-default pt-4 text-xs text-text-muted">
+          <span className="font-medium text-text-muted uppercase text-[10px] tracking-wider mr-2">Status Key:</span>
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded bg-emerald-500 block border border-emerald-600/10" /> Swapped Successfully
           </span>
@@ -1009,10 +1021,10 @@ export const MyPhisDashboardPage: React.FC = () => {
       </div>
 
       {/* Section 3: Audit Tables (Tabs Layout) */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-b border-slate-100 gap-4">
+      <div className="bg-surface rounded-xl shadow-xs border border-border-default overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-5 sm:p-6 border-b border-border-default gap-4">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="bg-slate-100 p-1 rounded-lg self-start">
+            <TabsList className="bg-subtle p-1 rounded-lg self-start">
               <TabsTrigger value="disk-logs" className="px-4 py-1.5 rounded text-xs font-semibold">
                 Backup Rotations
               </TabsTrigger>
@@ -1028,7 +1040,7 @@ export const MyPhisDashboardPage: React.FC = () => {
               <select
                 value={tableMonthFilter}
                 onChange={(e) => setTableMonthFilter(e.target.value)}
-                className="w-full text-xs font-semibold text-slate-700 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer appearance-none pr-8 h-9 animate-fadeIn"
+                className="w-full text-xs font-semibold text-text-primary bg-surface border border-border-default rounded-lg px-3 py-2 outline-none cursor-pointer appearance-none pr-8 h-9"
                 style={{
                   backgroundImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E")`,
                   backgroundPosition: 'right 0.75rem center',
@@ -1050,13 +1062,13 @@ export const MyPhisDashboardPage: React.FC = () => {
 
             {/* Search Input bar */}
             <div className="relative w-full sm:max-w-xs">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
               <Input
                 type="text"
                 placeholder={activeTab === 'disk-logs' ? 'Search disk logs...' : 'Search portal clicks...'}
                 value={activeTab === 'disk-logs' ? diskSearch : navSearch}
                 onChange={e => activeTab === 'disk-logs' ? setDiskSearch(e.target.value) : setNavSearch(e.target.value)}
-                className="pl-9 bg-slate-50 border-slate-200 text-sm h-9"
+                className="pl-9 bg-subtle/30 border-border-default text-xs h-9"
               />
             </div>
 
@@ -1065,9 +1077,9 @@ export const MyPhisDashboardPage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleGeneratePdfReport}
-                className="flex items-center gap-1.5 shadow-sm font-semibold border-slate-200 text-slate-700 hover:text-red-600 hover:border-red-200 hover:bg-red-50/20 h-9 transition-all px-4 whitespace-nowrap"
+                className="flex items-center gap-1.5 shadow-xs font-semibold border-border-default text-text-primary hover:bg-subtle h-9 transition-all px-4 whitespace-nowrap rounded-lg"
               >
-                <FileText className="w-4 h-4 text-red-500" />
+                <FileText className="w-4 h-4 text-accent-base" />
                 Export PDF
               </Button>
             )}
@@ -1077,15 +1089,15 @@ export const MyPhisDashboardPage: React.FC = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsContent value="disk-logs" className="m-0">
             {filteredDiskChanges.length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
-                <FileText className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+              <div className="text-center py-12 text-text-muted">
+                <FileText className="w-10 h-10 text-border-default mx-auto mb-2" />
                 <p className="text-sm">No disk change records found matching search.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-sm">
                   <thead>
-                    <tr className="bg-slate-50/75 border-b border-slate-100 text-slate-500 font-medium">
+                    <tr className="bg-subtle/50 border-b border-border-default text-text-muted font-semibold text-xs uppercase">
                       <th className="p-4 pl-6">Date</th>
                       <th className="p-4">Time</th>
                       <th className="p-4">Disk Label</th>
@@ -1095,19 +1107,16 @@ export const MyPhisDashboardPage: React.FC = () => {
                       <th className="p-4 pr-6 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                  <tbody className="divide-y divide-border-default text-text-secondary">
                     {filteredDiskChanges.map(log => {
-                      const isMissedRetroactive = log.status === 'completed' && log.created_at && 
-                        new Date(log.created_at).toISOString().split('T')[0] > log.tarikh
-                      
                       return (
-                        <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 pl-6 font-semibold text-slate-900">
+                        <tr key={log.id} className="hover:bg-subtle/30 transition-colors">
+                          <td className="p-4 pl-6 font-semibold text-text-primary">
                             {new Date(log.tarikh).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
                           </td>
-                          <td className="p-4 text-slate-500">{log.waktu}</td>
+                          <td className="p-4 text-text-muted">{log.waktu}</td>
                           <td className="p-4 font-mono font-medium">
-                            <span className="bg-slate-100 text-slate-800 text-xs px-2 py-0.5 rounded">{log.disk_label}</span>
+                            <span className="bg-subtle text-text-primary text-xs px-2 py-0.5 rounded font-mono border border-border-default">{log.disk_label}</span>
                           </td>
                           <td className="p-4">{log.petugas_nama}</td>
                           <td className="p-4">
@@ -1117,7 +1126,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                               </Badge>
                             </div>
                           </td>
-                          <td className="p-4 text-slate-500 max-w-[200px] truncate" title={log.nota && !log.nota.startsWith('Auto-plotted') ? log.nota : ''}>
+                          <td className="p-4 text-text-muted max-w-[200px] truncate" title={log.nota && !log.nota.startsWith('Auto-plotted') ? log.nota : ''}>
                             {log.nota && !log.nota.startsWith('Auto-plotted') ? log.nota : '-'}
                           </td>
                           <td className="p-4 pr-6 text-right">
@@ -1125,7 +1134,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                               variant="ghost" 
                               size="sm" 
                               onClick={() => handleOpenLogModal(log.tarikh, log)}
-                              className="text-blue-600 hover:bg-blue-50 font-medium px-2 h-7"
+                              className="text-accent-base hover:text-accent-dark font-medium px-2 h-7"
                             >
                               Edit
                             </Button>
@@ -1141,29 +1150,29 @@ export const MyPhisDashboardPage: React.FC = () => {
 
           <TabsContent value="click-logs" className="m-0">
             {filteredNavLogs.length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
-                <ShieldCheck className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+              <div className="text-center py-12 text-text-muted">
+                <ShieldCheck className="w-10 h-10 text-border-default mx-auto mb-2" />
                 <p className="text-sm">No navigation click audits found matching search.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-sm">
                   <thead>
-                    <tr className="bg-slate-50/75 border-b border-slate-100 text-slate-500 font-medium">
+                    <tr className="bg-subtle/50 border-b border-border-default text-text-muted font-semibold text-xs uppercase">
                       <th className="p-4 pl-6">Timestamp</th>
                       <th className="p-4">Destination Portal</th>
                       <th className="p-4">Target URL</th>
                       <th className="p-4 pr-6">Accessed By</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                  <tbody className="divide-y divide-border-default text-text-secondary">
                     {filteredNavLogs.map(log => (
-                      <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="p-4 pl-6 text-slate-500">
+                      <tr key={log.id} className="hover:bg-subtle/30 transition-colors">
+                        <td className="p-4 pl-6 text-text-muted">
                           {new Date(log.tarikh_masa).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                         </td>
-                        <td className="p-4 font-semibold text-slate-900">{log.destination_name}</td>
-                        <td className="p-4 font-mono text-xs text-blue-600 max-w-[250px] truncate" title={log.destination_url}>
+                        <td className="p-4 font-semibold text-text-primary">{log.destination_name}</td>
+                        <td className="p-4 font-mono text-xs text-accent-base max-w-[250px] truncate" title={log.destination_url}>
                           {log.destination_url}
                         </td>
                         <td className="p-4 pr-6">{log.petugas_nama}</td>
@@ -1312,7 +1321,6 @@ export const MyPhisDashboardPage: React.FC = () => {
           </div>
         </form>
       </Modal>
-      </div>
     </div>
   )
 }

@@ -185,7 +185,7 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
             }`}
           >
             <User className="w-3 h-3" />
-            <span>Dewasa</span>
+            <span>Adult</span>
           </button>
           <button
             type="button"
@@ -197,7 +197,7 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
             }`}
           >
             <Baby className="w-3 h-3" />
-            <span>Pediatrik</span>
+            <span>Paediatric</span>
           </button>
         </div>
 
@@ -207,7 +207,7 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
           onChange={e => onSelectSetting(e.target.value)}
           className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-hidden focus:border-emerald-500 cursor-pointer shadow-2xs"
         >
-          <option value="ALL">Semua Tetapan Klinikal (All Settings)</option>
+          <option value="ALL">All Clinical Settings</option>
           <option value="Community-Acquired">Komuniti (Community-Acquired)</option>
           <option value="Hospital-Acquired (HAP/VAP)">Hospital (Nosocomial/HAP)</option>
           <option value="ICU / Severe">ICU / Sepsis Kritikal</option>
@@ -222,7 +222,7 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
         {searchTerm.trim() ? (
           <div className="space-y-2 pt-1">
             <div className="px-2 py-1 flex items-center justify-between text-xs text-slate-500 font-bold">
-              <span>Hasil Carian Pintar</span>
+              <span>Smart Search Results</span>
               <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-mono">
                 {searchResults.length} ditemui
               </span>
@@ -233,7 +233,7 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
                 <Search className="w-8 h-8 mx-auto opacity-40" />
                 <p className="text-xs font-bold text-slate-600">Tiada padanan ditemui</p>
                 <p className="text-[11px] text-slate-400">
-                  Cuba kata kunci lain atau pilih &apos;Semua&apos; pada penapis populasi.
+                  Try different keywords or select &apos;All&apos; on the population filter.
                 </p>
               </div>
             ) : (

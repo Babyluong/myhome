@@ -2,6 +2,7 @@
 // MyKunci integrated key management service with Supabase and localStorage fallback
 
 import { supabase, isSupabaseConfigured } from '@/services/supabase';
+import { offlineAdapter } from '@/services/offlineAdapter';
 import { mockUsers } from '@/services/mockData';
 import { recordAuditLog } from '@/services/auditLogService';
 import type { ApiResponse } from '@/types';
@@ -117,6 +118,20 @@ initMockData();
 // ============================================
 
 export const getKunciDaftar = async (departmentId?: string): Promise<ApiResponse<KunciDaftar[]>> => {
+  const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true
+  if (!isOnline) {
+    try {
+      const cached = await offlineAdapter.getCache<KunciDaftar>('kunci_daftar')
+      if (cached && cached.length > 0) {
+        let list = cached
+        if (departmentId) {
+          list = list.filter((k) => k.department_id === departmentId)
+        }
+        return { data: list, error: null }
+      }
+    } catch (_) {}
+  }
+
   if (!isSupabaseConfigured()) {
     let list = getMockData<KunciDaftar[]>('kunci_daftar', []);
     if (departmentId) {
@@ -138,9 +153,24 @@ export const getKunciDaftar = async (departmentId?: string): Promise<ApiResponse
 
     const { data, error } = await query.order('kod_kunci', { ascending: true });
     if (error) throw error;
+
+    if (data && data.length > 0) {
+      void offlineAdapter.setCache('kunci_daftar', data)
+    }
+
     return { data: data as KunciDaftar[], error: null };
   } catch (error: any) {
-    console.error('getKunciDaftar error:', error);
+    console.warn('getKunciDaftar error, trying offline cache:', error);
+    try {
+      const cached = await offlineAdapter.getCache<KunciDaftar>('kunci_daftar')
+      if (cached && cached.length > 0) {
+        let list = cached
+        if (departmentId) {
+          list = list.filter((k) => k.department_id === departmentId)
+        }
+        return { data: list, error: null }
+      }
+    } catch (_) {}
     return { data: null, error: error?.message || 'Failed to fetch registered keys' };
   }
 };
@@ -311,7 +341,19 @@ export const deleteKunci = async (id: string): Promise<ApiResponse<boolean>> => 
 };
 
 export const getKunciLogs = async (kunciId?: string): Promise<ApiResponse<KunciLog[]>> => {
-  if (isSupabaseConfigured()) {
+  const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true
+  if (!isOnline) {
+    try {
+      const cached = await offlineAdapter.getCache<KunciLog>('kunci_log', 'kunci', 'kunci_log')
+      if (cached && cached.length > 0) {
+        let list = cached
+        if (kunciId) list = list.filter((l) => l.kunci_id === kunciId)
+        return { data: list, error: null }
+      }
+    } catch (_) {}
+  }
+
+  if (isSupabaseConfigured() && isOnline) {
     try {
       let query = supabase.from('kunci_log').select(`
         *,
@@ -331,10 +373,21 @@ export const getKunciLogs = async (kunciId?: string): Promise<ApiResponse<KunciL
 
       const { data, error } = await query.order('tarikh_masa_ambil', { ascending: false });
       if (!error && Array.isArray(data)) {
+        if (data.length > 0 && !kunciId) {
+          void offlineAdapter.setCache('kunci_log', data)
+        }
         return { data: data as KunciLog[], error: null };
       }
     } catch (error: any) {
-      console.warn('Supabase fetch kunci_log error:', error);
+      console.warn('Supabase fetch kunci_log error, checking cache:', error);
+      try {
+        const cached = await offlineAdapter.getCache<KunciLog>('kunci_log', 'kunci', 'kunci_log')
+        if (cached && cached.length > 0) {
+          let list = cached
+          if (kunciId) list = list.filter((l) => l.kunci_id === kunciId)
+          return { data: list, error: null }
+        }
+      } catch (_) {}
     }
   }
 
@@ -387,19 +440,30 @@ export const checkoutKunci = async (
     }
   } else {
     try {
-      const { data: insertedLog, error: logError } = await supabase
-        .from('kunci_log')
-        .insert([log])
-        .select()
-        .single();
+      const res = await offlineAdapter.executeMutation<KunciLog>({
+        module: 'mykunci',
+        table: 'kunci_log',
+        action: 'INSERT',
+        payload: {
+          ...log,
+          is_overdue: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        conflictPolicy: 'server-wins',
+      });
 
-      if (logError) throw logError;
-      createdLog = insertedLog as KunciLog;
+      if (res.error) throw res.error;
+      createdLog = (res.data || { ...log, id: `log-${Date.now()}` }) as KunciLog;
 
-      await supabase
-        .from('kunci_daftar')
-        .update({ status: 'borrowed' })
-        .eq('id', log.kunci_id);
+      await offlineAdapter.executeMutation({
+        module: 'mykunci',
+        table: 'kunci_daftar',
+        action: 'UPDATE',
+        payload: { status: 'borrowed', updated_at: new Date().toISOString() },
+        matchCriteria: { id: log.kunci_id },
+        conflictPolicy: 'server-wins',
+      });
     } catch (error: any) {
       console.error('checkoutKunci error:', error);
       return { data: null, error: error?.message || 'Failed to record checkout transaction' };
@@ -492,28 +556,37 @@ export const returnKunci = async (
       const etaTime = new Date(originalLog.jangka_masa_pulang).getTime();
       const isOverdue = returnTime > etaTime;
 
-      const { data: resData, error: updateError } = await supabase
-        .from('kunci_log')
-        .update({
+      const res = await offlineAdapter.executeMutation<KunciLog>({
+        module: 'mykunci',
+        table: 'kunci_log',
+        action: 'UPDATE',
+        payload: {
           tarikh_masa_pulang: returnData.tarikh_masa_pulang,
           pegawai_penerima_id: returnData.pegawai_penerima_id,
           keadaan_kunci: returnData.keadaan_kunci,
           keadaan_mangga: returnData.keadaan_mangga,
           catatan_penggunaan: returnData.catatan_penggunaan,
           duration_seconds: durationSeconds,
-          is_overdue: isOverdue
-        })
-        .eq('id', logId)
-        .select()
-        .single();
+          is_overdue: isOverdue,
+          updated_at: new Date().toISOString(),
+        },
+        matchCriteria: { id: logId },
+        conflictPolicy: 'server-wins',
+      });
 
-      if (updateError) throw updateError;
-      updatedLog = resData as KunciLog;
+      if (res.error) throw res.error;
+      updatedLog = (res.data || { id: logId, ...returnData }) as KunciLog;
 
-      await supabase
-        .from('kunci_daftar')
-        .update({ status: 'available' })
-        .eq('id', originalLog.kunci_id);
+      if (targetKunciId) {
+        await offlineAdapter.executeMutation({
+          module: 'mykunci',
+          table: 'kunci_daftar',
+          action: 'UPDATE',
+          payload: { status: 'available', updated_at: new Date().toISOString() },
+          matchCriteria: { id: targetKunciId },
+          conflictPolicy: 'server-wins',
+        });
+      }
     } catch (error: any) {
       console.error('returnKunci error:', error);
       return { data: null, error: error?.message || 'Failed to record key return' };

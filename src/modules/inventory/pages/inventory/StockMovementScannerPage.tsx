@@ -380,7 +380,7 @@ export const StockMovementScannerPage: React.FC = () => {
     if (!hospitalId || !selectedItem) return
 
     if (!receiptBatchNum || !receiptQty || !receiptLocationId) {
-      setStatusMessage({ type: 'error', text: 'Sila isi Batch No, Kuantiti dan Lokasi Simpanan!' })
+      setStatusMessage({ type: 'error', text: 'Please fill in Batch No, Quantity, and Storage Location!' })
       playBeep('error')
       return
     }
@@ -437,7 +437,7 @@ export const StockMovementScannerPage: React.FC = () => {
     if (!hospitalId || !selectedItem) return
 
     if (!selectedBatchId || !issueQty) {
-      setStatusMessage({ type: 'error', text: 'Sila pilih Batch dan isi Kuantiti Pengeluaran!' })
+      setStatusMessage({ type: 'error', text: 'Please select Batch and enter Issuance Quantity!' })
       playBeep('error')
       return
     }
@@ -454,7 +454,7 @@ export const StockMovementScannerPage: React.FC = () => {
     if (qtyToIssue > availableQty) {
       setStatusMessage({ 
         type: 'error', 
-        text: `Kuantiti melebihi baki tersedia! Baki tersedia: ${availableQty}` 
+        text: `Quantity exceeds available balance! Available balance: ${availableQty}` 
       })
       playBeep('error')
       return
@@ -832,7 +832,7 @@ export const StockMovementScannerPage: React.FC = () => {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Tarikh Luput</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Expiry Date</label>
                         <div className="relative">
                           <Calendar className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                           <Input

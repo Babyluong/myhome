@@ -171,14 +171,14 @@ export const InventoryReportPage: React.FC = () => {
 
     const headers = [
       'Kod Item', 'Nama Item', 'Skim / Vote', 'Kategori', 'Harga Seunit (RM)',
-      'Baki Awal (Qty)', 'Nilai Awal (RM)',
+      'Opening Balance (Qty)', 'Nilai Awal (RM)',
       'Terima Supplier (Qty)', 'Nilai Terima Supplier (RM)',
       'Terima Fasiliti (Qty)', 'Nilai Terima Fasiliti (RM)',
       'Pengeluaran Dept (Qty)', 'Nilai Pengeluaran Dept (RM)',
       'Pindahan Keluar (Qty)', 'Nilai Pindahan Keluar (RM)',
       'Pulangan (Qty)', 'Nilai Pulangan (RM)',
       'Pelarasan (Qty)', 'Nilai Pelarasan (RM)',
-      'Baki Akhir (Qty)', 'Nilai Akhir (RM)'
+      'Closing Balance (Qty)', 'Nilai Akhir (RM)'
     ]
 
     const csvRows = filteredRows.map(r => [
@@ -222,7 +222,7 @@ export const InventoryReportPage: React.FC = () => {
     doc.setFontSize(10)
     doc.setTextColor(71, 85, 105)
     doc.text(`Tempoh Laporan: ${getPeriodTitle()} | Skim: ${procurementVote === 'all' ? 'Semua Skim (APPL/CC/LP/DP)' : procurementVote.toUpperCase()} | Kategori: ${itemType === 'all' ? 'Semua Item' : itemType === 'drug' ? 'Ubat' : 'Bukan Ubat'}`, 14, 22)
-    doc.text(`Tarikh Cetakan: ${new Date().toLocaleDateString('ms-MY')} | Jumlah Item: ${filteredRows.length}`, 14, 27)
+    doc.text(`Print Date: ${new Date().toLocaleDateString('ms-MY')} | Jumlah Item: ${filteredRows.length}`, 14, 27)
 
     // Summary Box
     doc.setDrawColor(226, 232, 240)
@@ -233,7 +233,7 @@ export const InventoryReportPage: React.FC = () => {
     doc.setTextColor(30, 41, 59)
     doc.text(`Jumlah Terima (Supplier): ${formatCurrency(totals.receiptValue)} (${totals.receiptQty} unit)`, 18, 37)
     doc.text(`Jumlah Agihan (Dept): ${formatCurrency(totals.issueValue)} (${totals.issueQty} unit)`, 105, 37)
-    doc.text(`Jumlah Nilai Pegangan Akhir: ${formatCurrency(totals.closingValue)}`, 200, 37)
+    doc.text(`Total Closing Inventory Value: ${formatCurrency(totals.closingValue)}`, 200, 37)
 
     const tableHeaders = [
       ['Kod', 'Nama Item', 'Skim', 'Baki Awal (Qty/RM)', 'Terima Supplier (Qty/RM)', 'Terima Fasiliti (Qty/RM)', 'Agihan Dept (Qty/RM)', 'Pindahan Out (Qty/RM)', 'Baki Akhir (Qty/RM)']
@@ -315,7 +315,7 @@ export const InventoryReportPage: React.FC = () => {
               <FileSpreadsheet className="w-4 h-4 mr-2 text-emerald-400" /> Export CSV
             </Button>
             <Button onClick={exportPDF} className="bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30">
-              <Printer className="w-4 h-4 mr-2" /> Cetak PDF
+              <Printer className="w-4 h-4 mr-2" /> Print PDF
             </Button>
           </div>
         </div>
@@ -572,7 +572,7 @@ export const InventoryReportPage: React.FC = () => {
                   <Table.Cell as="th" className="text-xs font-bold text-gray-700 text-center whitespace-nowrap">Skim</Table.Cell>
                   <Table.Cell as="th" className="text-xs font-bold text-gray-700 text-right whitespace-nowrap">Harga Unit (RM)</Table.Cell>
 
-                  <Table.Cell as="th" className="text-xs font-bold text-gray-700 text-right whitespace-nowrap bg-slate-100/70">Baki Awal (Qty)</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-gray-700 text-right whitespace-nowrap bg-slate-100/70">Opening Balance (Qty)</Table.Cell>
                   <Table.Cell as="th" className="text-xs font-bold text-gray-700 text-right whitespace-nowrap bg-slate-100/70">Nilai Awal (RM)</Table.Cell>
 
                   <Table.Cell as="th" className="text-xs font-bold text-emerald-800 text-right whitespace-nowrap bg-emerald-50/60">Terima Supplier (Qty)</Table.Cell>
@@ -586,7 +586,7 @@ export const InventoryReportPage: React.FC = () => {
                   <Table.Cell as="th" className="text-xs font-bold text-orange-800 text-right whitespace-nowrap bg-orange-50/60">Pindahan Keluar (Qty)</Table.Cell>
                   <Table.Cell as="th" className="text-xs font-bold text-purple-800 text-right whitespace-nowrap bg-purple-50/60">Pelarasan / Pulangan</Table.Cell>
 
-                  <Table.Cell as="th" className="text-xs font-bold text-indigo-900 text-right whitespace-nowrap bg-indigo-50/80">Baki Akhir (Qty)</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-indigo-900 text-right whitespace-nowrap bg-indigo-50/80">Closing Balance (Qty)</Table.Cell>
                   <Table.Cell as="th" className="text-xs font-bold text-indigo-900 text-right whitespace-nowrap bg-indigo-50/80">Nilai Akhir (RM)</Table.Cell>
                 </Table.Row>
               </Table.Head>

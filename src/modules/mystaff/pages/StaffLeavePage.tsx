@@ -74,7 +74,7 @@ export const StaffLeavePage: React.FC = () => {
             </h1>
             <p className="text-sm text-slate-500 mt-0.5 font-medium">
               {isMs
-                ? 'Semakan Baki Kelayakan Cuti Mengikut Perintah Am Bab C & Sejarah Permohonan Cuti'
+                ? 'General Orders Chapter C Leave Entitlement Balance & Application History'
                 : 'Leave Entitlement Balance under General Orders Chapter C & Application History'}
             </p>
           </div>
@@ -95,7 +95,7 @@ export const StaffLeavePage: React.FC = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-black text-slate-800">
-            {isMs ? `Baki Kelayakan Cuti Tahun ${new Date().getFullYear()}` : `${new Date().getFullYear()} Leave Entitlement Balance`}
+            {isMs ? `Annual Leave Entitlement Balance ${new Date().getFullYear()}` : `${new Date().getFullYear()} Leave Entitlement Balance`}
           </h2>
           <span className="text-xs font-mono font-bold text-slate-400">
             {isMs ? 'Perintah Am Bab C (Cuti)' : 'General Orders Chapter C (Leave)'}
@@ -157,7 +157,7 @@ export const StaffLeavePage: React.FC = () => {
               <FileText className="w-5 h-5" />
             </div>
             <h3 className="text-base font-black text-slate-800">
-              {isMs ? 'Sejarah Permohonan Cuti' : 'Leave Application History'}
+              {isMs ? 'Leave Application History' : 'Leave Application History'}
             </h3>
           </div>
           <span className="text-xs font-bold text-slate-400">
@@ -170,7 +170,7 @@ export const StaffLeavePage: React.FC = () => {
             <thead className="bg-slate-50/80 border-b border-slate-100 text-xs uppercase font-black text-slate-500">
               <tr>
                 <th className="px-6 py-4">{isMs ? 'Jenis Cuti' : 'Leave Type'}</th>
-                <th className="px-6 py-4">{isMs ? 'Tempoh & Jumlah Hari' : 'Duration & Total Days'}</th>
+                <th className="px-6 py-4">{isMs ? 'Duration & Total Days' : 'Duration & Total Days'}</th>
                 <th className="px-6 py-4">{isMs ? 'Sebab & Catatan' : 'Reason & Notes'}</th>
                 <th className="px-6 py-4">{isMs ? 'Pegawai Pengambil Alih Tugas' : 'Relief / Covering Officer'}</th>
                 <th className="px-6 py-4">{isMs ? 'Tarikh Mohon' : 'Application Date'}</th>

@@ -43,6 +43,7 @@ import { getBudgetForPO } from '@/services/pharmacy/budgetEngine'
 import type { PurchaseOrderWithRelations, PurchaseOrderItem } from '@/types/pharmacy'
 import { ROUTES } from '@/lib/constants'
 import { cn, formatCurrency, formatDateTime, isContractExpired, isApplOrder } from '@/lib/utils'
+import { normalizeRealMdcCode, resolveGenuineItemCode, isSyntheticMockCode } from '@/shared/utils/itemCodeUtils'
 
 const getStatusColor = (status: string) => {
   switch (status || '') {
@@ -386,30 +387,22 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                   }
                 }
 
-                // D. Upgrade synthetic 'CC-' code to genuine MDC/KKM item code if available in master catalog
-                const resolvedInitialCode = (stdData ? (stdData[codeCol] || stdData.drug_code || stdData.item_code) : item.item_code) || '';
-                if (resolvedInitialCode.toUpperCase().startsWith('CC-') && item.item_name) {
-                  try {
-                    const normTargetName = item.item_name.replace(/\+/g, 'dan').toLowerCase().trim();
-                    const { data: realCandidates } = await supabase
-                      .from(table)
-                      .select('*')
-                      .not(codeCol, 'ilike', 'CC-%')
-                      .limit(250);
-
-                    if (realCandidates && realCandidates.length > 0) {
-                      const realMatch = realCandidates.find((c: any) => {
-                        const cName = (c[nameCol] || c.drug_name || c.item_name || '').replace(/\+/g, 'dan').toLowerCase().trim();
-                        return cName === normTargetName || cName.includes(normTargetName) || normTargetName.includes(cName);
-                      });
-                      if (realMatch && (realMatch[codeCol] || realMatch.drug_code || realMatch.item_code)) {
-                        const genuineCode = realMatch[codeCol] || realMatch.drug_code || realMatch.item_code;
-                        stdData = { ...(stdData || {}), ...realMatch };
-                        stdData[codeCol] = genuineCode;
-                        if (isDrug) stdData.drug_code = genuineCode; else stdData.item_code = genuineCode;
-                      }
-                    }
-                  } catch (_err) {}
+                // D. Resolve genuine MDC / KKM item code from master catalog (strictly NO synthetic CC codes)
+                const currentRawCode = (stdData ? (stdData[codeCol] || stdData.drug_code || stdData.item_code) : item.item_code) || '';
+                const genuineMdcCode = await resolveGenuineItemCode(supabase, {
+                  item_code: currentRawCode,
+                  item_name: item.item_name || stdData?.[nameCol],
+                  item_type: item.item_type,
+                  item_id: item.item_id
+                });
+                if (genuineMdcCode && !isSyntheticMockCode(genuineMdcCode)) {
+                  if (stdData) {
+                    stdData[codeCol] = genuineMdcCode;
+                    if (isDrug) stdData.drug_code = genuineMdcCode; else stdData.item_code = genuineMdcCode;
+                  }
+                  if (item.id && (item.item_code !== genuineMdcCode || isSyntheticMockCode(item.item_code))) {
+                    void supabase.from('pharmacy_purchase_order_items').update({ item_code: genuineMdcCode }).eq('id', item.id);
+                  }
                 }
                 
                 let cNo = stdData ? (stdData.cc_contract_number || stdData.kkm_contract_number || stdData.contract_number) : null
@@ -496,11 +489,14 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                   }
                 }
 
+                const candidateCode = genuineMdcCode || (stdData ? (stdData[codeCol] || stdData.drug_code || stdData.item_code) : item.item_code) || '';
+                const displayCode = normalizeRealMdcCode(candidateCode, item.item_name) || (!isSyntheticMockCode(candidateCode) ? candidateCode : '');
+
                 if (stdData || cNo) {
                   return {
                     ...item,
                     item_name: stdData ? (stdData[nameCol] || stdData.drug_name || stdData.item_name || item.item_name) : item.item_name,
-                    item_code: stdData ? (stdData[codeCol] || stdData.drug_code || stdData.item_code || item.item_code) : item.item_code,
+                    item_code: displayCode,
                     // unit_price intentionally NOT overwritten — preserve the stored purchase price
                     packaging_description: (myPkg && myPkg !== 'unit') ? myPkg : (item.packaging_description && item.packaging_description !== 'unit' ? item.packaging_description : (myPkg || item.packaging_description)),
                     contract_number: cNo || (item as any).contract_number,
@@ -509,7 +505,6 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     contract_end_date: cEnd || (item as any).contract_end_date,
                     cc_contract_status: stdData?.cc_contract_status || stdData?.contract_status || (item as any).cc_contract_status || (item as any).contract_status
                   }
-
                 }
 
                 // 2. Try APPL Catalogs
@@ -606,7 +601,8 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
               } catch (err) {
                 // Silently ignore 406 or other lookup errors during background enrichment
               }
-              return item
+              const cleanItemCode = normalizeRealMdcCode(item.item_code, item.item_name) || (!isSyntheticMockCode(item.item_code) ? item.item_code : '');
+              return { ...item, item_code: cleanItemCode }
             })
           )
           setItems(enrichedItems)
@@ -1165,7 +1161,11 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     )}
                   </td>
                 <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] font-medium text-gray-900">
-                  {(!item.item_code || item.item_code === contractNo || item.item_code === order?.kkm_contract_number || item.item_code === order?.supplier?.contract_number) ? '-' : item.item_code}
+                  {(() => {
+                    const cleanCode = normalizeRealMdcCode(item.item_code, item.item_name);
+                    const finalCode = cleanCode || (!isSyntheticMockCode(item.item_code) ? item.item_code : '');
+                    return (!finalCode || isSyntheticMockCode(finalCode) || finalCode === contractNo || finalCode === order?.kkm_contract_number || finalCode === order?.supplier?.contract_number) ? '-' : finalCode;
+                  })()}
                 </td>
                 <td className="border border-gray-800 px-2 py-1 text-center font-bold text-[9.5pt] text-gray-900">{item.quantity_ordered}</td>
                 <td className="border border-gray-800 px-2 py-1 text-right font-medium text-[9pt] text-gray-900">{formatCurrency(item.unit_price)}</td>
@@ -1294,10 +1294,15 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     <div className="font-bold text-[9.5pt] mb-1 text-gray-900">{item.item_name}</div>
                   </td>
                   <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] font-medium text-gray-900">
-                    {(!item.item_code || 
-                      item.item_code === (item as any).contract_number || 
-                      item.item_code === order?.kkm_contract_number || 
-                      item.item_code === order?.supplier?.contract_number) ? '-' : item.item_code}
+                    {(() => {
+                      const cleanCode = normalizeRealMdcCode(item.item_code, item.item_name);
+                      const finalCode = cleanCode || (!isSyntheticMockCode(item.item_code) ? item.item_code : '');
+                      return (!finalCode || 
+                        isSyntheticMockCode(finalCode) ||
+                        finalCode === (item as any).contract_number || 
+                        finalCode === order?.kkm_contract_number || 
+                        finalCode === order?.supplier?.contract_number) ? '-' : finalCode;
+                    })()}
                   </td>
                   <td className="border border-gray-800 px-2 py-1 text-center font-bold text-[9.5pt] text-gray-900">{item.quantity_ordered}</td>
                   <td className="border border-gray-800 px-2 py-1 text-right font-medium text-[9pt] text-gray-900">{formatCurrency(item.unit_price)}</td>

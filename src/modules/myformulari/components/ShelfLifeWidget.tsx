@@ -27,10 +27,10 @@ export const ShelfLifeWidget: React.FC<ShelfLifeWidgetProps> = ({ shelfLife, dos
           <Clock className="w-5 h-5 text-violet-600" />
           <div>
             <h4 className="text-base font-bold text-slate-900">
-              Protokol Jangka Hayat, Storan & Panduan Penyimpanan ({shelfLife.dosageCategory || 'Standard KKM'})
+              Shelf Life, Storage & Preservation Protocol ({shelfLife.dosageCategory || 'Standard KKM'})
             </h4>
             <p className="text-xs text-slate-500">
-              Syarat penyimpanan selamat, lokasi simpanan, dan kestabilan selepas dibuka / dibancuh
+              Safe storage conditions, locations, and in-use stability after opening / reconstitution
             </p>
           </div>
         </div>
@@ -44,7 +44,7 @@ export const ShelfLifeWidget: React.FC<ShelfLifeWidgetProps> = ({ shelfLife, dos
         {/* 1. Intact Shelf Life */}
         <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-            Jangka Hayat Asal (Pek Belum Buka)
+            Original Shelf Life (Unopened Pack)
           </span>
           <div className="text-base font-bold text-slate-900">
             {shelfLife.intactShelfLife}
@@ -60,7 +60,7 @@ export const ShelfLifeWidget: React.FC<ShelfLifeWidgetProps> = ({ shelfLife, dos
           isColdChain ? 'bg-blue-50/70 border-blue-200' : 'bg-slate-50 border-slate-200/80'
         }`}>
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-            Suhu & Syarat Penyimpanan
+            Storage Temperature & Conditions
           </span>
           <div className={`text-sm font-bold flex items-center gap-1.5 ${isColdChain ? 'text-blue-900' : 'text-slate-900'}`}>
             <Thermometer className={`w-4 h-4 ${isColdChain ? 'text-blue-600' : 'text-slate-600'}`} />
@@ -109,7 +109,7 @@ export const ShelfLifeWidget: React.FC<ShelfLifeWidgetProps> = ({ shelfLife, dos
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-violet-700" />
               <h5 className="text-xs font-bold text-violet-950 uppercase tracking-wider">
-                Panduan Lokasi Penyimpanan Ubat (Di Mana Hendak Simpan):
+                Medication Storage Location Guide (Where to Store):
               </h5>
             </div>
 
@@ -117,7 +117,7 @@ export const ShelfLifeWidget: React.FC<ShelfLifeWidgetProps> = ({ shelfLife, dos
               <div className="bg-white p-3.5 rounded-xl border border-violet-200/60 shadow-2xs space-y-1">
                 <span className="font-bold text-emerald-800 flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  Lokasi Simpanan Disyorkan:
+                  Recommended Storage Location:
                 </span>
                 <p className="text-slate-700 leading-relaxed font-medium">
                   Simpan dalam almari ubat bertutup atau laci bilik pada suhu bilik terkawal (15 - 30°C). Pastikan bekas/pek asal tertutup rapat dan kering.
@@ -127,7 +127,7 @@ export const ShelfLifeWidget: React.FC<ShelfLifeWidgetProps> = ({ shelfLife, dos
               <div className="bg-white p-3.5 rounded-xl border border-rose-200/60 shadow-2xs space-y-1">
                 <span className="font-bold text-rose-800 flex items-center gap-1.5">
                   <AlertOctagon className="w-4 h-4 text-rose-600 shrink-0" />
-                  Lokasi DILARANG Simpan:
+                  PROHIBITED Storage Locations:
                 </span>
                 <p className="text-slate-700 leading-relaxed font-medium">
                   <strong>JANGAN</strong> simpan di dalam bilik air/tandas, di tepi sinki dapur, atau di dalam kereta/kenderaan yang panas kerana kelembapan dan haba merosakkan ubat.
@@ -233,8 +233,8 @@ export const ShelfLifeWidget: React.FC<ShelfLifeWidgetProps> = ({ shelfLife, dos
               <div className="bg-white p-3.5 rounded-xl border border-violet-200/60 shadow-2xs space-y-1">
                 <span className="font-bold text-violet-900 block">1. Selepas Rekonstitusi Serbuk (Vial):</span>
                 <div className="space-y-0.5 text-slate-700">
-                  <p>• Suhu Bilik (25°C): <strong>{shelfLife.postReconstitutionStability.roomTempDuration}</strong></p>
-                  <p>• Peti Sejuk (2-8°C): <strong>{shelfLife.postReconstitutionStability.refrigeratedDuration}</strong></p>
+                  <p>• Room Temperature (25°C): <strong>{shelfLife.postReconstitutionStability.roomTempDuration}</strong></p>
+                  <p>• Refrigerator (2-8°C): <strong>{shelfLife.postReconstitutionStability.refrigeratedDuration}</strong></p>
                 </div>
               </div>
             ) : (
@@ -248,8 +248,8 @@ export const ShelfLifeWidget: React.FC<ShelfLifeWidgetProps> = ({ shelfLife, dos
               <div className="bg-white p-3.5 rounded-xl border border-violet-200/60 shadow-2xs space-y-1">
                 <span className="font-bold text-violet-900 block">2. Selepas Pelarutan Dalam Beg Infusi IV:</span>
                 <div className="space-y-0.5 text-slate-700">
-                  <p>• Suhu Bilik (25°C): <strong>{shelfLife.postDilutionStability.roomTempDuration}</strong></p>
-                  <p>• Peti Sejuk (2-8°C): <strong>{shelfLife.postDilutionStability.refrigeratedDuration}</strong></p>
+                  <p>• Room Temperature (25°C): <strong>{shelfLife.postDilutionStability.roomTempDuration}</strong></p>
+                  <p>• Refrigerator (2-8°C): <strong>{shelfLife.postDilutionStability.refrigeratedDuration}</strong></p>
                 </div>
               </div>
             )}

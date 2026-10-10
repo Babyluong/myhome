@@ -38,7 +38,7 @@ import {
 
 import { WARRANT_CATEGORIES, WARRANT_DEPARTMENTS, normalize } from '@/services/pharmacy/warrantService'
 import type { UnifiedBudgetSummary } from '@/types/pharmacy'
-import { cn, formatCurrency, formatDateTime, formatDate } from '@/lib/utils'
+import { cn, formatCurrency, formatDateTime, formatDate, isCcVote } from '@/lib/utils'
 
 export const CCAllocationPage: React.FC = () => {
   const { user } = useAuthStore()
@@ -77,11 +77,17 @@ export const CCAllocationPage: React.FC = () => {
       setError(null)
 
       try {
+        const ccVoteCodes = filterCategory === 'duit_khas'
+          ? '080600 (CC)'
+          : filterCategory === 'all'
+            ? ['080702', '080600 (CC)', '080600']
+            : '080702'
+
         const [summaryResult, expensesResult] = await Promise.all([
           getUnifiedBudgetSummary({
             hospitalId,
             fiscalYear: selectedYear,
-            voteCode: '080702',
+            voteCode: ccVoteCodes,
             voteActivity: filterVoteActivity !== 'all' ? filterVoteActivity as any : undefined,
             category: filterCategory !== 'all' ? filterCategory as any : undefined,
             department: filterDepartment !== 'all' ? filterDepartment as any : undefined,
@@ -89,7 +95,7 @@ export const CCAllocationPage: React.FC = () => {
           getExpenseList({
             hospitalId,
             fiscalYear: selectedYear,
-            voteCode: '080702',
+            voteCode: ccVoteCodes,
             status: filterStatus !== 'all' ? filterStatus : undefined,
             voteActivity: filterVoteActivity !== 'all' ? filterVoteActivity as any : undefined,
             category: filterCategory !== 'all' ? filterCategory as any : undefined,
@@ -144,10 +150,11 @@ export const CCAllocationPage: React.FC = () => {
   const filteredExpenses = useMemo(() => {
     let filtered = expenses
 
-    // CRITICAL: Only show expenses whose PO belongs to CC (vote_code 080702)
+    // Show expenses whose PO belongs to CC family (080702, 080600 (CC), or other CC votes)
     filtered = filtered.filter((e) => {
-      if (e.purchase_order?.vote_code) {
-        return e.purchase_order.vote_code === '080702'
+      const vCode = e.purchase_order?.vote_code
+      if (vCode) {
+        return isCcVote(vCode) || vCode.includes('080600') || vCode.includes('CC')
       }
       return true // Keep manual entries without linked PO
     })
@@ -207,6 +214,8 @@ export const CCAllocationPage: React.FC = () => {
       'maternity_ward',
       'paediatric_ward',
       'general_ward',
+      'female_ward',
+      'male_ward',
       'emergency_trauma',
       'klinik_pakar',
       'cssu_cssd',
@@ -229,8 +238,12 @@ export const CCAllocationPage: React.FC = () => {
   // Get status badge
   const getStatusBadge = (status: string) => {
     const map: Record<string, { color: 'success' | 'warning' | 'error' | 'info' | 'secondary'; label: string }> = {
+      draft: { color: 'secondary', label: 'Draft' },
+      pending_approval: { color: 'warning', label: 'Pending' },
       pending: { color: 'warning', label: 'Pending' },
       approved: { color: 'info', label: 'Approve' },
+      sent: { color: 'info', label: 'Sent' },
+      partial_received: { color: 'warning', label: 'Partial' },
       completed: { color: 'success', label: 'Complete' },
       cancelled: { color: 'error', label: 'Cancel' },
     }

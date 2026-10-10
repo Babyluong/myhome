@@ -15,7 +15,7 @@ import {
 import { ROUTES } from '@/lib/constants'
 import { getUnitPemantauan, getBreachLogs } from '@/modules/mysuhu/services/suhuService'
 import { useAuthStore } from '@/stores/authStore'
-import { Badge } from '@/components/ui'
+import { Badge, Skeleton } from '@/components/ui'
 
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 
@@ -61,32 +61,34 @@ export const SuhuSubMenu: React.FC = () => {
 
   const menuItems = [
     {
-      title: language === 'ms' ? 'Papan Pemuka Pemantauan' : 'Temperature Dashboard',
-      description: language === 'ms'
-        ? 'Paparan real-time status suhu bagi kesemua unit peti sejuk, peti beku, dan bilik specimen.'
-        : 'Live telemetry overview of all ward refrigerators, ultra-cold freezers, and specimen storage rooms.',
+      title: 'Temperature Dashboard',
+      description: 'Live telemetry overview of all ward refrigerators, ultra-cold freezers, and specimen storage rooms.',
       icon: LayoutDashboard,
       path: ROUTES.HUB_SUHU_DASHBOARD,
       color: 'text-rose-500 bg-rose-500/10 border-rose-500/20',
-      badge: stats.activeBreaches > 0 ? `${stats.activeBreaches} ${language === 'ms' ? 'Pelanggaran' : 'Breaches'}` : null,
+      badge: stats.loading ? (
+        <Skeleton className="h-5 w-20 rounded-full" />
+      ) : stats.activeBreaches > 0 ? (
+        `${stats.activeBreaches} Breaches`
+      ) : null,
       badgeColor: 'bg-rose-500 text-white border-transparent'
     },
     {
-      title: language === 'ms' ? 'Log Pelanggaran Suhu (Breach Log)' : 'Temperature Breach Log',
-      description: language === 'ms'
-        ? 'Rekod pelanggaran had suhu (ambang) untuk tujuan kualiti, audit pematuhan MSQH dan tindakan pembetulan.'
-        : 'Out-of-range temperature incident records, MSQH compliance audit trail, and corrective action workflows.',
+      title: 'Temperature Breach Log',
+      description: 'Out-of-range temperature incident records, MSQH compliance audit trail, and corrective action workflows.',
       icon: AlertTriangle,
       path: ROUTES.HUB_SUHU_BREACHES,
       color: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
-      badge: stats.activeBreaches > 0 ? (language === 'ms' ? 'Tindakan Diperlukan' : 'Action Required') : null,
+      badge: stats.loading ? (
+        <Skeleton className="h-5 w-24 rounded-full" />
+      ) : stats.activeBreaches > 0 ? (
+        'Action Required'
+      ) : null,
       badgeColor: 'bg-amber-500 text-slate-900 border-transparent'
     },
     {
-      title: language === 'ms' ? 'Konfigurasi & Pendaftaran Unit' : 'Unit Registry & Configuration',
-      description: language === 'ms'
-        ? 'Pendaftaran lokasi fizikal baru, peralatan penyejukan, dan tetapan had julat suhu (Min/Max °C).'
-        : 'Register new cooling units, assign ward physical locations, and configure threshold ranges (Min/Max °C).',
+      title: 'Unit Registry & Configuration',
+      description: 'Register new cooling units, assign ward physical locations, and configure threshold ranges (Min/Max °C).',
       icon: Settings,
       path: ROUTES.HUB_SUHU_ADMIN,
       color: 'text-slate-500 bg-slate-500/10 border-slate-500/20',
@@ -95,33 +97,31 @@ export const SuhuSubMenu: React.FC = () => {
   ]
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto min-h-screen text-slate-100">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto min-h-screen text-slate-100">
       {/* Back navigation */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <button 
           onClick={() => navigate(ROUTES.HUB)}
-          className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-6 group text-sm font-medium"
+          className="min-h-[44px] flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors mb-4 sm:mb-6 group text-sm font-medium cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
-          <span>{language === 'ms' ? 'Kembali ke Hub Utama' : 'Back to Main Hub'}</span>
+          <span>Back to Main Hub</span>
         </button>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-2xl shadow-inner">
-              <Thermometer className="w-9 h-9" />
+          <div className="flex items-center gap-3.5 sm:gap-4">
+            <div className="p-3 sm:p-3.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-2xl shadow-inner flex-shrink-0">
+              <Thermometer className="w-8 h-8 sm:w-9 sm:h-9" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-3xl font-bold tracking-tight text-white">MySuhu</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">MySuhu</h1>
                 <Badge variant="gray" className="border-rose-500/30 text-rose-400 bg-rose-500/5">
-                  {language === 'ms' ? 'Sub-modul KKM' : 'MOH Cold Chain Sub-module'}
+                  MOH Cold Chain System
                 </Badge>
               </div>
-              <p className="text-slate-400 mt-1">
-                {language === 'ms'
-                  ? 'Sistem Pemantauan & Pematuhan Suhu Peralatan Klinikal'
-                  : 'Cold Chain Equipment Monitoring & Compliance Ecosystem'}
+              <p className="text-slate-400 text-xs sm:text-sm mt-1">
+                Cold Chain Equipment Monitoring & Compliance Ecosystem
               </p>
             </div>
           </div>
@@ -129,88 +129,97 @@ export const SuhuSubMenu: React.FC = () => {
       </div>
 
       {/* Quick stats panel */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-5 rounded-2xl">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex justify-between items-start text-slate-500">
-            <span className="text-sm font-medium">{language === 'ms' ? 'Jumlah Unit' : 'Total Units'}</span>
-            <Activity className="w-4 h-4 text-slate-400" />
+            <span className="text-xs sm:text-sm font-medium">Total Units</span>
+            <Activity className="w-4 h-4 text-slate-400 flex-shrink-0" />
           </div>
-          <p className="text-3xl font-bold font-mono mt-2 text-white">
-            {stats.loading ? '...' : stats.totalUnits}
-          </p>
-          <p className="text-xs text-slate-500 mt-1">{language === 'ms' ? 'Aktif dipantau' : 'Actively monitored'}</p>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-white min-h-[36px] flex items-center">
+            {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.totalUnits}
+          </div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Actively monitored</p>
         </div>
 
-        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-5 rounded-2xl">
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex justify-between items-start text-slate-500">
-            <span className="text-sm font-medium">{language === 'ms' ? 'Pelanggaran Aktif' : 'Active Breaches'}</span>
-            <AlertTriangle className="w-4 h-4 text-rose-400" />
+            <span className="text-xs sm:text-sm font-medium">Active Breaches</span>
+            <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
           </div>
-          <p className="text-3xl font-bold font-mono mt-2 text-rose-400">
-            {stats.loading ? '...' : stats.activeBreaches}
-          </p>
-          <p className="text-xs text-slate-500 mt-1">{language === 'ms' ? 'Perlu tindakan' : 'Requires action'}</p>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-rose-400 min-h-[36px] flex items-center">
+            {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.activeBreaches}
+          </div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Requires action</p>
         </div>
 
-        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-5 rounded-2xl">
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex justify-between items-start text-slate-500">
-            <span className="text-sm font-medium">{language === 'ms' ? 'Amaran' : 'Warnings'}</span>
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <span className="text-xs sm:text-sm font-medium">Warnings</span>
+            <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
           </div>
-          <p className="text-3xl font-bold font-mono mt-2 text-amber-400">
-            {stats.loading ? '...' : stats.warningUnits}
-          </p>
-          <p className="text-xs text-slate-500 mt-1">{language === 'ms' ? 'Hampir batas ambang' : 'Near threshold limit'}</p>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-amber-400 min-h-[36px] flex items-center">
+            {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.warningUnits}
+          </div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Near threshold limit</p>
         </div>
 
-        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-5 rounded-2xl">
+        <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex justify-between items-start text-slate-500">
-            <span className="text-sm font-medium">{language === 'ms' ? 'Status Normal' : 'Normal Status'}</span>
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs sm:text-sm font-medium">Normal Status</span>
+            <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
           </div>
-          <p className="text-3xl font-bold font-mono mt-2 text-emerald-400">
-            {stats.loading ? '...' : stats.normalUnits}
-          </p>
-          <p className="text-xs text-slate-500 mt-1">{language === 'ms' ? 'Suhu dalam julat selamat' : 'Within safe range'}</p>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-emerald-400 min-h-[36px] flex items-center">
+            {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.normalUnits}
+          </div>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Within safe range</p>
         </div>
       </div>
 
       {/* Main navigation card list */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {menuItems.map((item, index) => {
-          const Icon = item.icon
-          return (
-            <div 
-              key={index}
-              onClick={() => navigate(item.path)}
-              className="bg-slate-900/40 backdrop-blur hover:bg-slate-900/70 border border-slate-800 hover:border-slate-700 rounded-3xl p-6 cursor-pointer transition-all duration-300 flex flex-col justify-between group"
-            >
-              <div>
-                <div className="flex justify-between items-start mb-6">
-                  <div className={`p-3.5 rounded-2xl border ${item.color} shadow-sm`}>
-                    <Icon className="w-6 h-6" />
+      <div className="space-y-4">
+        <h2 className="text-base sm:text-lg font-semibold text-white tracking-wide">
+          MONITORING MODULE CHOICES
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          {menuItems.map((item, index) => {
+            const Icon = item.icon
+            return (
+              <button 
+                key={index}
+                onClick={() => navigate(item.path)}
+                className="text-left bg-slate-900/40 backdrop-blur-md hover:bg-slate-800/40 border border-slate-800/80 hover:border-slate-700/80 active:scale-[0.98] rounded-2xl p-4 sm:p-6 cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[170px] shadow-xl group"
+              >
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <div className={`p-2.5 sm:p-3 rounded-xl border ${item.color} shadow-sm`}>
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    {item.badge && (
+                      typeof item.badge === 'string' ? (
+                        <Badge className={`${item.badgeColor} border font-medium px-2.5 py-0.5 rounded-full text-xs`}>
+                          {item.badge}
+                        </Badge>
+                      ) : (
+                        item.badge
+                      )
+                    )}
                   </div>
-                  {item.badge && (
-                    <Badge className={`${item.badgeColor} border font-medium px-2.5 py-0.5 rounded-full text-xs`}>
-                      {item.badge}
-                    </Badge>
-                  )}
+                  <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-rose-400 transition-colors mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
-                <h3 className="text-lg font-bold text-white group-hover:text-rose-400 transition-colors mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-slate-400 leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-              
-              <div className="mt-8 flex items-center justify-end text-sm font-semibold text-rose-400 group-hover:text-rose-300 transition-colors">
-                <span className="mr-1 group-hover:translate-x-0.5 transition-transform">{language === 'ms' ? 'Masuk Modul' : 'Open Module'}</span>
-                <span>→</span>
-              </div>
-            </div>
-          )
-        })}
+                
+                <div className="mt-4 pt-2 flex items-center justify-end text-xs font-semibold text-rose-400 group-hover:text-rose-300 transition-colors">
+                  <span className="mr-1 group-hover:translate-x-0.5 transition-transform">Open Module</span>
+                  <span>→</span>
+                </div>
+              </button>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

@@ -4,6 +4,7 @@ import { Upload, X, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2, Sparkle
 import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/Modal'
 import { cn, calculateFileHash, parseAndNormalizeDate } from '@/lib/utils'
+import { normalizeRealMdcCode, isSyntheticMockCode } from '@/shared/utils/itemCodeUtils'
 import { analyzeCatalogDocument, type DocumentExtractionResult } from '@/services/aiService'
 import { getNonDrugCategories, createOrGetNonDrugCategory, getDrugCategories, createOrGetDrugCategory } from '@/services/pharmacy/inventoryService'
 import { checkFileDuplicate, recordFileUpload, updateUploadRecord } from '@/services/pharmacy/uploadService'
@@ -461,12 +462,17 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
           let code = catalogType === 'drug' ? item.drug_code : item.item_code
           const name = catalogType === 'drug' ? item.drug_name : item.item_name
 
-          if (!code && (item.cc_contract_number || (item as any).contract_number)) {
-            code = String(item.cc_contract_number || (item as any).contract_number).trim()
+          const cleanNormalized = normalizeRealMdcCode(code, name)
+          if (cleanNormalized && !isSyntheticMockCode(cleanNormalized)) {
+            code = cleanNormalized
             if (catalogType === 'drug') item.drug_code = code; else item.item_code = code;
-          } else if (!code && name) {
-            code = 'CC-' + String(name).trim().replace(/[^a-zA-Z0-9]/g, '').substring(0, 8).toUpperCase()
-            if (catalogType === 'drug') item.drug_code = code; else item.item_code = code;
+          } else if (isSyntheticMockCode(code)) {
+            if (item.cc_contract_number || (item as any).contract_number) {
+              code = String(item.cc_contract_number || (item as any).contract_number).trim()
+              if (catalogType === 'drug') item.drug_code = code; else item.item_code = code;
+            } else {
+              code = ''
+            }
           }
           
           if (!code || !name) {
@@ -884,14 +890,17 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
                     let code = transformed[codeField]
                     const name = transformed[nameField]
                     
-                    // Auto-fallback code if code field is missing in Excel but contract number or item name exists
-                    if (!code || String(code).trim() === '') {
+                    const cleanNormalized = normalizeRealMdcCode(code, name)
+                    if (cleanNormalized && !isSyntheticMockCode(cleanNormalized)) {
+                      code = cleanNormalized
+                      transformed[codeField] = code
+                    } else if (isSyntheticMockCode(code)) {
                       if (transformed.cc_contract_number || transformed.contract_number) {
                         code = String(transformed.cc_contract_number || transformed.contract_number).trim()
                         transformed[codeField] = code
-                      } else if (name && String(name).trim() !== '') {
-                        code = 'CC-' + String(name).trim().replace(/[^a-zA-Z0-9]/g, '').substring(0, 8).toUpperCase()
-                        transformed[codeField] = code
+                      } else {
+                        code = ''
+                        transformed[codeField] = ''
                       }
                     }
 
